@@ -1,0 +1,110 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap");
+
+p {
+  margin: 0;
+}
+
+.clip-contents {
+  overflow: hidden;
+}
+
+.flex-col-hstart-vstart {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.loadscreen{
+  position: relative;
+  padding: 0px 0px 141px 0px;
+  box-sizing: border-box;
+  background-color: rgba(19, 19, 19, 1);
+  width: 428px;
+  height: 100vh;
+  margin-left:auto;
+  margin-right:auto;
+  overflow-y: scroll;
+}
+
+.load-up-page {
+  position: relative;
+  background-color: rgba(19, 19, 19, 1);
+  width: 428px;
+  height: 926px;
+  margin-left:auto;
+  margin-right:auto;
+  height: 100vh;
+ 
+}
+
+.logo {
+  position: absolute;
+  top: 407px;
+  left: 158px;
+  width: 111px;
+  height: 111px;
+}
+
+.logo-frame {
+  position: absolute;
+  top: 327px;
+  left: 78px;
+  width: 271px;
+  height: 271px;
+}
+
+.txt-728 {
+  position: absolute;
+  top: 537px;
+  left: 167px;
+  font-size: 20px;
+  font-family: Inter, sans-serif;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 1);
+  width: 95px;
+  height: 24px;
+  word-wrap: break-word;
+}
+
+.background-vector {
+    top: 945px;
+    left: 480px;
+    width: 504px;
+    height: 316px;
+}
+
+.bottom-slope {
+    position:absolute;
+    bottom:0;
+    
+}
+.background-vector-1 {
+  top: 945px;
+  left: 480px;
+  width: 454px;
+  height: 316px;
+  
+}
+
+.background-vector-2 {
+  position: absolute;
+  top: -3px;
+  left: -6px;
+  width: 393.56px;
+  height: 216.5px;
+}
+
+.background-vector-3 {
+  position: absolute;
+  top: -21px;
+  left: -46px;
+  width: 536px;
+  height: 327px;
+}
+
+
+.loading-icon{
+    z-index: 2;
+}
+

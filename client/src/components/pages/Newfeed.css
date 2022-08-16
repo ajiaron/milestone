@@ -1,0 +1,26 @@
+ 
+.content{
+  position: relative;
+  box-sizing: border-box;
+  background-color: rgba(19, 19, 19, 1);
+  width: 428px;
+  min-height: 100vh;
+  margin-left:auto;
+  margin-right:auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.feed-container {
+    display:flex;
+    overflow: auto;
+    flex-flow:column;
+    min-width:100%;
+}
+  
+.feed-items {
+  padding:0;
+}
+

@@ -1,0 +1,114 @@
+.top-header {
+    box-sizing: border-box;
+    background-color: rgba(10, 10, 10, 1);
+    position: sticky;
+    top:0;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    z-index:999;
+    overflow:hidden;
+    width: 100%;
+    min-height: 3.75em;
+  }
+
+.bottom-footer {
+    box-sizing: border-box;
+    position: sticky;
+    bottom:0;
+    display: flex;
+    justify-content: center;
+    z-index:999;
+    background-color: rgba(10, 10, 10, 1);
+    width: 100%;
+    min-height: 3rem;
+}
+
+  .nav-wrapper {
+    padding:4px;
+    align-items: center;
+    max-width: fit-content;
+  }
+
+  .landing-link {
+    width:4px;
+    min-height:.275em;
+    justify-self:flex-start;
+    float:left;
+    text-decoration: none;
+    margin-right: 19em;
+
+  }
+  .landing-link:hover {
+    transform: scale(1.2);
+  }
+  .profile-link {
+    width: 100%;
+    min-height:.275em;
+    margin-top: 3px;
+    justify-self:flex-end;
+    float:right;
+    text-decoration: none;
+    transition: all 0.2s linear;
+
+    
+  }
+  .profile-link:hover {
+    transform: scale(1.2);
+  }
+  .milestone-logo {
+    min-width: 1.375em;
+    float: left;
+    min-height:1.25em;
+    margin-bottom: 2px;
+  }
+
+  .top-brand {
+    font-size: 20px;
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 1);
+    word-wrap: break-word;
+    line-height: 24px;
+  }
+  
+  .user-icon {
+    min-width: 1.385em;
+    min-height: 1.25em;
+    float:right;
+  }
+  .footer-line {
+    background-color: #00523F;
+    color: #00523F;
+    height:8px;
+    width: 100%;
+  }
+
+  .post-link {
+    text-decoration: none;
+    transition: all 0.2s linear;
+  }
+  
+  .post-link:hover {
+    transform: scale(1.05);
+  }
+  .milebook-button{
+
+   float:left;
+    min-height:1.25em;
+    background-color:transparent;
+    max-width: 1.75rem;
+
+    border:none;
+   outline:none;
+
+  }
+  .profile-button {
+   border:none;
+   min-height:1.25em;
+   max-width: 1.75rem;
+   outline:none;
+   padding-top:3px;
+   padding-right:4px;
+   background-color:transparent;
+  }

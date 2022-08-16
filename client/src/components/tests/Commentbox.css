@@ -1,0 +1,125 @@
+.comments-content{
+  position: relative;
+  box-sizing: border-box;
+  background-color: rgba(19, 19, 19, 1);
+  width: 428px;
+  min-height: 100vh;
+  margin-left:auto;
+  margin-right:auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;  
+}
+.action-toolbar-wrapper {
+    background-color: rgba(19, 19, 19, 1);
+}
+.btn-comment {
+    background-color: transparent;
+    border:none;
+}
+.btn-comment-closed {
+    background-color: transparent;
+    border:none;
+    transition: all .1s linear;
+}
+.btn-comment-closed:hover {
+    transform: scale(1.125)
+}
+.comment-icon-drop {
+    width:21px;
+    height:22px;
+    color:white;
+    margin-top: 2px;
+}
+.comments-container {
+    position: fixed;
+    border-top-left-radius: .725rem;
+    border-top-right-radius: .725rem;
+    left: 50%;
+    transform: translate(-50%, 0);
+    box-sizing: border-box;
+    background-color: rgb(34, 34, 34);
+    margin-right:auto;
+    width: 428px;
+    z-index:1;
+    bottom:48px;
+    overflow: hidden;
+    transition: all .175s linear;
+    display: block;
+    box-shadow: 0px 2px 4px 4px rgba(0,0,0,0.1);
+}
+
+.comment-input-area {
+    bottom:0;
+
+    min-width: 92%;
+    font-family: Inter;
+    display: inline-block;
+    padding:10px 8px 8px 12px;
+    background-color:rgb(24, 24, 24);
+    outline:none;
+    color:white;
+    word-wrap: break-word;
+    padding-right:3em;
+    font-family: Inter, sans-serif;
+    border:transparent;
+    font-size: 12px;
+    text-align: left;
+}
+input:-webkit-autofill
+{
+    box-shadow: 0 0 0 30px rgb(24, 24, 24) inset !important;
+    -webkit-box-shadow: 0 0 0 30px rgb(24, 24, 24) inset !important;
+    -webkit-text-fill-color: white !important;
+}
+.comment-input-area::placeholder {
+    font-family: Inter, sans-serif;
+    font-style: italic;
+    background-color:rgb(24, 24, 24);
+
+}
+.comment-input-item {
+    position: absolute;
+    bottom:0;
+    min-width: 100%;
+    display: flex;
+    background-color:rgb(34, 34, 34);
+    border-radius: .375em;
+    color:white;
+    word-wrap: break-word;
+    border:transparent;
+
+}
+.comment-submit-button {
+    background-color: rgb(24, 24, 24);
+    color:rgb(34, 34, 34);
+    z-index: 1;
+    border:none;
+    outline:none;
+}
+
+.comment-pen-icon {
+    color:rgb(214, 214, 214);
+    width:21px;
+    height:21px;
+    right:0;
+    margin-top: 4px;
+    justify-self: flex-end;
+    transition: all .125s linear;
+    margin-right:3.25em;
+}
+.comment-pen-icon:hover {
+    color:white;
+    transform: scale(1.1);
+}
+.comments-log {
+    margin-top:2px;
+    transition: all .15s linear;
+    list-style: none;
+    margin-bottom: 2em;
+}
+.comment-form {
+    display: flex;
+    width:100%;
+}

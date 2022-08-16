@@ -1,0 +1,56 @@
+[
+    {
+        "id":"0",
+        "username":"ajiaron",
+        "text":"i love running and listening to bossa nova <3",
+        "time":"3:43pm",
+        "context":"currently listening to ur mom",
+        "likes":0,
+        "comments":[]
+    },
+    {
+        "id":"1",
+        "username":"hzenry",
+        "text":"pooh shiesty thats my dog",
+        "time":"1:28am",
+        "context":"currently feeding the hood",
+        "likes":0,
+        "comments":[]
+    },
+    {
+        "id":"2",
+        "username":"antruong_",
+        "text":"they stay praying on my downfall",
+        "time":"5:32pm",
+        "context":"currently on the run from the police",
+        "likes":0,
+        "comments":[]
+    },
+    {
+        "id":"3",
+        "username":"jdason",
+        "text":"Made a movie about being sus",
+        "time":"11:12pm",
+        "context":"currently running stumble guys",
+        "likes":0,
+        "comments":[]
+    },
+    {
+        "id":"4",
+        "username":"timwang",
+        "text":"i think my draco might be gay",
+        "time":"7:05pm",
+        "context":"currently benching 155 for 2",
+        "likes":2,
+        "comments":[]
+    },
+    {
+        "id":"5",
+        "username":"fluffy",
+        "text":"ahh ahh",
+        "time":"7:45pm",
+        "context":"gotta tell em im him",
+        "likes":0,
+        "comments":[]
+    }
+]
