@@ -104,7 +104,7 @@ p {
 .full-name {
   margin-bottom: 12px;
   box-sizing: border-box;
-  width: 100%;
+  min-width: 100%;
 }
 
 .txt-332 {
@@ -188,7 +188,7 @@ p {
 
 }
 
-.vector {
+.email-at-icon {
   width: 10px;
   height: 12px;
   margin-top:2px;

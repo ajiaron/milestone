@@ -1,7 +1,7 @@
 .post-content{
     position: relative;
     box-sizing: border-box;
-    background-color: rgba(19, 19, 19, 1);
+    background-color: #1f1e1e;
     width: 428px;
     min-height: 100vh;
     margin-left:auto;
@@ -24,4 +24,8 @@
   overflow: auto;
   flex-flow:column;
   min-width:100%;
+}
+
+.top-space-standalone {
+  padding-top:3.5em;
 }

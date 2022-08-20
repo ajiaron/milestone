@@ -1,10 +1,21 @@
-import React from 'react'
+import React, { useState,useEffect} from 'react'
 import {Link} from 'react-router-dom'
 import './Feed.css'
 import './Post.css'
+import Axios from 'axios'
 import ActionBar from '../tests/ActionBar'
 
 export default function Post(props) {
+  const [userComments, setUserComments] = useState([])
+   /*   uncomment when turning on server
+  useEffect(() =>{
+ 
+     Axios.get('http://localhost:3000/newfeed/getcomments')
+    .then((response)=> {
+      setUserComments(response.data.filter(e => (props.myKey === e.postid)))
+    })  
+  }, [props.myKey, userComments])
+  */
     return (
         <>
         <li className='post-item'>
@@ -24,7 +35,7 @@ export default function Post(props) {
             <div className='image-wrapper'/>   {/* change to figure and insert img */}
         </div>
         <div className='actionbar-wrapper'>  
-        <ActionBar comments={props.comments} 
+        <ActionBar comments={props.comments}  
           currentuser={props.currentUser}
           postOwner={props.username}
           postId={props.myKey} 

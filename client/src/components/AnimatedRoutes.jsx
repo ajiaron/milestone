@@ -8,6 +8,7 @@ import Loading from './pages/Loading'
 import Newlanding from './Newlanding'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import Profile from './pages/Profile'
 import ActionBar from './tests/ActionBar'
 import Commentbox from './tests/Commentbox'
 import {LoginContext} from '../UserContext'
@@ -26,6 +27,7 @@ function AnimatedRoutes() {
     <Route path='/register' element={<Register />} />
     <Route path='/posts/:id' element={<Posts/>}/>
     <Route path='/newfeed' element={<Newfeed />}/>
+    <Route path='/profile/:name' element={<Profile />}/>
     <Route path='/actionbar' element={<ActionBar/>}/>
     <Route path='/commentbox' element={<Commentbox/>}/>
     <Route element={<Loading/>} />

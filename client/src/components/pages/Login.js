@@ -57,7 +57,7 @@ function Login() {
                     <img
                       src="https://firebasestorage.googleapis.com/v0/b/unify-bc2ad.appspot.com/o/j2pfzeam6qs-87%3A23?alt=media&token=1d5cfc98-a8f9-4da6-9d34-b5eb61a9dff4"
                       alt="Not Found"
-                      className="vector"
+                      className="email-at-icon"
                     />
                   </div>
                 </div>

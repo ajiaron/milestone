@@ -6,9 +6,9 @@ import {useParams, useLocation} from 'react-router-dom'
 import Navbar from '../Navbar'
 import Footer from '../Footer'
 import {motion} from 'framer-motion'
+import Axios from 'axios'
 
 function Posts(props) {
-  /* gotta hash the post IDs once we have enough sample data, it's just 0,1,2,3... right now */
   let { id } = useParams();
   const {state} = useLocation()
   const {username} = useContext(LoginContext)
@@ -17,6 +17,13 @@ function Posts(props) {
   const commentLog = (commentHistory)?state.comments:[]
  
   let [currentPost, setCurrentPost] = useState([])
+
+  const getCurrentPost = () => { 
+    Axios.get('http://localhost:3000/newfeed/newposts')
+    .then((response)=> {
+      setCurrentPost(response.data.find(e => parseInt(id) === e.id))
+    })
+  }
   
   const fetchPost = useCallback(()=> {
     fetch('../data.json', {
@@ -32,7 +39,7 @@ function Posts(props) {
     });
   }, [id])
   useEffect(() =>{
-    fetchPost()
+    fetchPost()      /* replace fetchPost() with getCurrentPost() when server is running */
   }, [fetchPost])
  
   
@@ -40,13 +47,13 @@ function Posts(props) {
     <motion.div className='postitem' initial={{width:0}} animate={{width:'100vw'}} exit={{x:window.innerWidth, transition:{duration:.3}}}>
       <div className='post-content'>
       <Navbar/>
-        <section className='top-space'>{''}</section>
+        <section className='top-space-standalone'>{''}</section>
         <div className='post-item-container'>
         <Post key={currentPost.id} 
               myKey={currentPost.id}
               username={currentPost.username} 
               text={currentPost.text} 
-              time={currentPost.time} 
+              time={new Date().toLocaleString("en-US", {month:"short"})+' '+new Date().toLocaleString("en-US", { day : '2-digit'})} 
               context={currentPost.context} 
               comments={commentLog}
               likes={currentPost.likes}

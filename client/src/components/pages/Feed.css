@@ -45,7 +45,7 @@ p {
   position: relative;
   padding: 0px 0px 141px 0px;
   box-sizing: border-box;
-  background-color: rgba(20, 20, 20, 1);
+  background-color: #212121;
   width: 428px;
   height: 100vh;
   overflow-y: scroll;

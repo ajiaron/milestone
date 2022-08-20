@@ -1,0 +1,85 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap");
+
+p {
+  margin: 0;
+}
+
+.flex-col-hstart-vstart {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+.personal-milestone-item {
+    transition: all .125s linear;
+}
+.personal-milestone-item:hover {
+    transform: scale(1.05);
+}
+
+.profile-milestone-content {
+  position: relative;
+  border-radius: 10px;
+  background-color: rgba(10, 10, 10, 1);
+  width: 336px;
+  height: 70px;
+  margin-bottom:1.5em;
+  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.1);
+  
+}
+
+.milestone-streak {
+  position: absolute;
+  font-size: 10px;
+  font-family: Inter, sans-serif;
+  font-weight: 600;
+  color: rgba(53, 174, 146, 1);
+  width: 77px;
+  height: 12px;
+  word-wrap: break-word;
+}
+
+.milestone-streak-context {
+  font-weight: 400;
+  color: rgba(195, 191, 191, 1);
+}
+
+.profile-milestone-item {
+  position: absolute;
+  top: 20px;
+  width: 294px;
+  height: 30px;
+  margin-left:18px;
+}
+
+.hobbies-music {
+  width: 30px;
+  margin-right: 13px;
+  background-color: rgb(214, 214, 214);
+  border-radius: 5px;
+  height: 100%;
+}
+
+.milestone-item-title {
+  font-size: 15px;
+  font-family: Inter, sans-serif;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 1);
+  word-wrap: break-word;
+  margin-right: 115px;
+}
+
+.milestone-item-dropdown {
+  width: 27px;
+  height: 27px;
+  margin-top:1px;
+}
+
+.milestone-item-context {
+    text-align: left;
+}

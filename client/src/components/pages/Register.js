@@ -37,7 +37,7 @@ function Register() {
               <img
                 src="https://firebasestorage.googleapis.com/v0/b/unify-bc2ad.appspot.com/o/vz2epq3egce-86%3A66?alt=media&token=ebb2e6d9-e7b8-4572-9fcd-719001b66abc"
                 alt="Not Found"
-                className="vector"
+                className="email-at-icon"
               />
             </div>
           </div>

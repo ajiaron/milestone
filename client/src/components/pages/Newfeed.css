@@ -2,7 +2,7 @@
 .content{
   position: relative;
   box-sizing: border-box;
-  background-color: rgba(19, 19, 19, 1);
+  background-color: #212121;
   width: 428px;
   min-height: 100vh;
   margin-left:auto;
@@ -18,9 +18,17 @@
     overflow: auto;
     flex-flow:column;
     min-width:100%;
+    background-color: #212121;
+    padding-top:4em;
+    padding-bottom:4em;
 }
   
 .feed-items {
   padding:0;
 }
 
+.top-space {
+  padding-top:6em;
+  background-color: #2c2b2b;
+  color:white;
+}

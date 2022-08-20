@@ -4,6 +4,7 @@ import './ActionBar.css'
 import { CommentsContext } from '../../CommentContext'
 import {Link} from 'react-router-dom'
 import {AiOutlineLike} from 'react-icons/ai'
+import Axios from 'axios'
 
 
 function ActionBar(props) {
@@ -11,6 +12,7 @@ function ActionBar(props) {
   const [upVotes, setUpVotes] = useState(likes);
   const [isLiked, setIsLiked] = useState(false)
   const [commentList, setCommentList] = useState(comments)
+
   const handleLiked = () => {
     if (isLiked) {
       setUpVotes(upVotes-1)
@@ -18,6 +20,7 @@ function ActionBar(props) {
       setUpVotes(upVotes+1)
     }
     setIsLiked(!isLiked)
+    console.log(comments)
   }
 
   return (
@@ -25,7 +28,14 @@ function ActionBar(props) {
         <button className={`btn-like ${isLiked && 'liked'}`} onClick={ handleLiked }>
         <AiOutlineLike className={`outline-like-${isLiked ? 'liked':'icon '}`}/>
         </button>
-        <Commentbox onSendComment={myComment=> setCommentList([...commentList, myComment])}
+        {/*
+        <Commentbox onSendComment={myComment=> setCommentList([...comments, myComment])}
+         commentList={comments} username={currentuser}
+         date={new Date().toISOString().slice(0, 19).replace('T', ' ')}
+         postKey={postId} postOwner={postOwner}
+         />
+         */}
+         <Commentbox onSendComment={myComment=> setCommentList([...commentList, myComment])}
          commentList={commentList} username={currentuser}
          date={new Date().toISOString().slice(0, 19).replace('T', ' ')}
          postKey={postId} postOwner={postOwner}

@@ -1,0 +1,102 @@
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap");
+
+p {
+  margin: 0;
+}
+
+.flex-col-hstart-vstart {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+.group-tag-item {
+    transition: all .125s linear;
+}
+.group-tag-item:hover {
+    transform: scale(1.05);
+}
+.profile-group-container {
+  position: relative;
+  border-radius: 10px;
+  background-color: rgba(10, 10, 10, 1);
+  width: 336px;
+  height: 70px;
+  margin-bottom:1.25em;
+  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.1);
+}
+
+.group-members-text {
+  font-size: 10px;
+  font-family: Inter, sans-serif;
+  font-weight: 400;
+  color: rgba(195, 191, 191, 1);
+  width: 154px;
+  height: 12px;
+  word-wrap: break-word;
+}
+
+.group-members-context {
+  font-weight: 600;
+  color: rgba(53, 174, 146, 1);
+}
+
+.group-members-wrapper {
+  position: absolute;
+  top: 20px;
+  width: 294px;
+  height: 30px;
+  margin-left:18px;
+}
+
+.hobbies-cello {
+  width: 30px;
+  margin-right: 13px;
+  height: 100%;
+  background-color: rgb(216, 215, 215);
+  border-radius: 5px;
+  
+}
+
+.profile-group-members {
+  box-sizing: border-box;
+  height: 100%;
+}
+
+.group-title-name {
+  font-size: 15px;
+  font-family: Inter, sans-serif;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 1);
+  word-wrap: break-word;
+}
+
+.user-icon-small {
+  width: 11px;
+  margin-right: 4px;
+  height: 11px;
+}
+
+.profile-group-dropdown {
+  width: 27px;
+  height: 27px;
+  margin-top:1px;
+  margin-left:3.375em;
+}
+
+.group-tag-context {
+  margin-top:2px;
+  display: flex;
+  overflow: visible;
+}

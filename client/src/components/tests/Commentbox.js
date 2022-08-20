@@ -29,6 +29,7 @@ const Commentbox = ({onSendComment, commentList, username, date, postKey, postOw
       {comment:commentInfo.comment, date:commentInfo.date, postId:commentInfo.postId, username:commentInfo.username,})
       .then(()=> {console.log('comment posted')})
       setFormData(clearData)
+      
   }
   
   function useOutside(ref) {     /* clicking outside comment-box closes it */
@@ -56,7 +57,7 @@ const Commentbox = ({onSendComment, commentList, username, date, postKey, postOw
             toggleForm && 
             <div className='comments-container' ref ={wrapperRef}>
                 <ul className='comments-log'>
-                {commentList.map(entry => (<Comments submission={entry} username={entry.username} time={date} key={entry.id}/> ))}
+                {commentList.map(entry => (<Comments key={entry.idcomments} submission={entry} username={entry.username} time={date} /> ))}
                 </ul>    
             <div className='comment-input-item'>
             <form className='comment-form' onSubmit={formDataPublish}>

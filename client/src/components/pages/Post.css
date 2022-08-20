@@ -1,13 +1,13 @@
   
   .post-item {
       padding-top: .875em;
-      padding-bottom: 2em;
+      padding-bottom: 1.5em;
   }
 
   .image-wrapper {
     margin-top: 1em;
     background-color: rgba(10, 10, 10, 1);
-    height: 238px;
+    height: 236px;
     border-radius: 10px;
     position: relative;
     width: 100%;
