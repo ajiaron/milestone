@@ -1,0 +1,73 @@
+
+
+.action-icons-header {
+    width: 122px;
+    min-height: 18.75px;
+  }
+
+.actions-container {
+    display:flex;
+    color:white;
+    align-items:center;
+    gap:2em;
+}
+.outline-like-icon {
+    width:22px;
+    height:21px;
+    color:white;
+}
+.comment-icon {
+    width:21px;
+    height:22px;
+    color:white;
+    margin-top: 2px;
+
+}
+
+.milestone-icon {
+    width:22px;
+    max-height:22px;
+    margin-bottom:2px;
+    margin-left:2px;
+}
+.btn-milebook {
+    background-color: transparent;
+    border:none;
+    transition: all .1s linear;
+}
+.btn-milebook:hover {
+    transform: scale(1.125);
+}
+.btn-like {
+    background-color: transparent;
+    border:none;
+    transition: all .1s linear;
+}
+
+.outline-like-liked {
+    width:22px;
+    height:22px;
+    color:#3aad93;
+    border:none;
+}
+.btn-like:hover {
+    transform: scale(1.125);
+}
+.btn-comment {
+    background-color: transparent;
+    border:none;
+    transition: all .1s linear;
+}
+.btn-comment:hover {
+    transform: scale(1.125);
+}
+.like-counter {
+    color:white;
+    font-size: 17px;
+    margin-left:5px;
+    margin-top:3px;
+    position: absolute;
+}
+.post-item-link {
+    text-decoration: none;
+}

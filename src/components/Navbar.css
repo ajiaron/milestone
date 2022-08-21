@@ -1,0 +1,143 @@
+.top-header {
+    background-color: rgba(10, 10, 10, 1);
+    position: fixed;
+    top:0;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    z-index:999;
+    overflow:hidden;
+    width: 428px;
+    height: 3.625em;
+  }
+
+.bottom-footer {
+    box-sizing: border-box;
+    position: fixed;
+    bottom:0;
+    display: flex;
+    justify-content: center;
+    z-index:999;
+    background-color: rgba(10, 10, 10, 1);
+    width: 428px;
+    min-height: 3rem;
+}
+
+  .nav-wrapper {
+    padding:4px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  .foot-wrapper {
+    padding:4px;
+    width: fit-content;
+  }
+  .landing-link {
+    width:4px;
+    min-height:.275em;
+    justify-self:flex-start;
+    float:left;
+    text-decoration: none;
+    margin-right: 19em;
+
+  }
+  .landing-link:hover {
+    transform: scale(1.2);
+  }
+  .profile-link {
+    width: 100%;
+    min-height:.275em;
+    margin-top: 3px;
+    justify-self:flex-end;
+    float:right;
+    text-decoration: none;
+    transition: all 0.2s linear;
+
+    
+  }
+  .profile-link:hover {
+    transform: scale(1.2);
+  }
+  .milestone-logo {
+    min-width: 1.525em;
+    float: left;
+    min-height:1.475em;
+    margin-bottom:1px;
+  }
+
+  .top-brand {
+    font-size: 20px;
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 1);
+    word-wrap: break-word;
+    line-height: 24px;
+  }
+  
+  .user-icon {
+    min-width: 1.65em;
+    min-height: 1.65em;
+    float:right;
+  }
+  .footer-line {
+    background-color: #00523F;
+    color: #00523F;
+    height:8px;
+    width: 100%;
+  }
+
+  .post-link {
+    text-decoration: none;
+    transition: all 0.2s linear;
+  }
+  
+  .post-link:hover {
+    transform: scale(1.05);
+  }
+  .milebook-button{
+    float:left;
+    min-height:1.25em;
+    background-color:transparent;
+    max-width: 1.75rem;
+    border:none;
+    outline:none;
+
+  }
+  .profile-button {
+   border:none;
+   min-height:1.25em;
+   max-width: 1.75rem;
+   outline:none;
+   padding-top:3px;
+   padding-right:4px;
+   background-color:transparent;
+  }
+  .top-arrow-toggle {
+    color:white;
+    left:0;
+    margin-left:2.25em;
+    width:10px;
+    height:14px;
+    position: absolute;
+    transform: scaleX(1.1);
+    transition:all .15s linear;
+  }
+  .top-arrow-toggle:hover {
+    transform: scale(1.3);
+  }
+  .toggle-backarrow-button {
+    left:0;
+    border:none;
+    position: absolute;
+    outline:none;
+    max-width: 10px;
+  }
+.profile-back-link {
+  left:0;
+  border:none;
+  position: absolute;
+  outline:none;
+  max-width: 10px;
+  padding-bottom: .75em;
+}

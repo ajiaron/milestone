@@ -1,0 +1,18 @@
+  
+  .post-item {
+      padding-top: .875em;
+      padding-bottom: 1.5em;
+  }
+
+  .image-wrapper {
+    margin-top: 1em;
+    background-color: rgba(10, 10, 10, 1);
+    height: 236px;
+    border-radius: 10px;
+    position: relative;
+    width: 100%;
+  }
+.actionbar-wrapper {
+  margin-top:.5em;
+  margin-left:1.275em;
+}
