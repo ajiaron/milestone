@@ -57,7 +57,6 @@ p {
     justify-content: flex-start;
     align-items: flex-start;
     box-sizing: border-box;
-
   }
   
   .settings-notification-icon {
@@ -68,7 +67,9 @@ p {
     width: 8px;
     height: 8px;
     border-radius: 4px;
+    
   }
+
   
   .profile-container {
     position: absolute;
@@ -147,6 +148,10 @@ p {
     right:12%;
     height: 19px;
     position: absolute;
+    transition: all .15s linear;
+  }
+  .settings-logo:hover {
+    transform: scale(1.25);
   }
   
   .milestone-container {

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import Commentbox  from './Commentbox'
 import './ActionBar.css'
 import { CommentsContext } from '../../CommentContext'
@@ -8,7 +8,7 @@ import Axios from 'axios'
 
 
 function ActionBar(props) {
-  const {comments, currentuser, postOwner, postId, likes} = props
+  const {comments, currentuser, postOwner, postId, likes, serverState} = props
   const [upVotes, setUpVotes] = useState(likes);
   const [isLiked, setIsLiked] = useState(false)
   const [commentList, setCommentList] = useState(comments)
@@ -20,7 +20,6 @@ function ActionBar(props) {
       setUpVotes(upVotes+1)
     }
     setIsLiked(!isLiked)
-    console.log(comments)
   }
 
   return (
@@ -28,20 +27,14 @@ function ActionBar(props) {
         <button className={`btn-like ${isLiked && 'liked'}`} onClick={ handleLiked }>
         <AiOutlineLike className={`outline-like-${isLiked ? 'liked':'icon '}`}/>
         </button>
-        {/*
-        <Commentbox onSendComment={myComment=> setCommentList([...comments, myComment])}
-         commentList={comments} username={currentuser}
-         date={new Date().toISOString().slice(0, 19).replace('T', ' ')}
-         postKey={postId} postOwner={postOwner}
-         />
-         */}
-         <Commentbox onSendComment={myComment=> setCommentList([...commentList, myComment])}
-         commentList={commentList} username={currentuser}
+         <Commentbox onSendComment={myComment=> 
+         serverState ? setCommentList([...comments, myComment]) : setCommentList([...commentList, myComment])} 
+         commentList={serverState?comments:commentList} username={currentuser} /* 'comments' when server is on, 'commentList' when off */
          date={new Date().toISOString().slice(0, 19).replace('T', ' ')}
          postKey={postId} postOwner={postOwner}
          />
         <Link to={`/posts/${postId}`}
-         state={{comments:commentList, likes:upVotes}} 
+         state={{comments:serverState?comments:commentList, likes:upVotes, server:serverState}} 
          className='post-item-link'>
         <button className='btn-milebook'>
         <img

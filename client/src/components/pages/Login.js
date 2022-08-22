@@ -2,16 +2,27 @@ import React, { useState, useContext } from 'react'
 import { LoginContext } from '../../UserContext'
 import './Login.css'
 import {Link} from 'react-router-dom'
+import Axios from 'axios'
 import { motion } from 'framer-motion'
 
 function Login() {
     const [password, setPassword] = useState('')
     const [checked, setChecked] = useState(false)
-    const {username, setUsername} = useContext(LoginContext)
-  
+    const {username, setUsername,userId, setUserId, userData, setUserData, clearData} = useContext(LoginContext)
+    const [serverState, setServerState] = useState(false)
+
+    const getUsers = () => {    /* gets data when server is running */
+      setUserData(clearData)
+      Axios.get('http://localhost:3000/login/account')
+      .then((response)=> {
+        setUserData(response.data.find(e => e.name === username))
+        setUserId(response.data.find(e => e.name === username).id)
+        setServerState(true)
+      })
+    }
+
     function handleClick() {
-      console.log(username)
-      /* handle authentication here; checks when clicking submit-button */
+      getUsers()
     }
 
     return (

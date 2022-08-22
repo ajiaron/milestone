@@ -5,11 +5,10 @@ import AnimatedRoutes from './components/AnimatedRoutes';
 export const LoginContext = createContext();
 
 function UserContext() {
-    const [user, setUser] = useState('testguy')
-    console.log(user)
+
     return (
         <>
-        <LoginContext.Provider value={user}>
+        <LoginContext.Provider >
             <AnimatedRoutes/>
         </LoginContext.Provider>
         </>

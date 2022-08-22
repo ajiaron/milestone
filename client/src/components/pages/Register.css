@@ -273,6 +273,8 @@
     border-radius: 4px;
     background-color: rgba(0, 82, 63, 1);
     min-height: 26px;
+    border:none;
+    outline:none;
     width: fit-content;
   }
   
@@ -282,6 +284,7 @@
     font-weight: 600;
     color: rgba(255, 255, 255, 1);
     word-wrap: break-word;
+    padding-bottom:1px;
   }
   
   .switch-login-text {

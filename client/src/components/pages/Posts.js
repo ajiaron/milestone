@@ -15,15 +15,9 @@ function Posts(props) {
   
   const commentHistory = state && state.comments
   const commentLog = (commentHistory)?state.comments:[]
+  const serverState = (state && state.server)?true:false
  
   let [currentPost, setCurrentPost] = useState([])
-
-  const getCurrentPost = () => { 
-    Axios.get('http://localhost:3000/newfeed/newposts')
-    .then((response)=> {
-      setCurrentPost(response.data.find(e => parseInt(id) === e.id))
-    })
-  }
   
   const fetchPost = useCallback(()=> {
     fetch('../data.json', {
@@ -38,9 +32,18 @@ function Posts(props) {
       setCurrentPost(data.find(e => id === e.id))
     });
   }, [id])
+
   useEffect(() =>{
-    fetchPost()      /* replace fetchPost() with getCurrentPost() when server is running */
-  }, [fetchPost])
+    if (serverState) {
+      Axios.get('http://localhost:3000/newfeed/newposts')
+    .then((response)=> {
+      setCurrentPost(response.data.find(e => parseInt(id) === e.id))
+    })  
+    } else {
+      console.log('server not fetching post')
+      fetchPost()
+    }
+  }, [fetchPost, serverState, id])
  
   
   return (
@@ -58,6 +61,7 @@ function Posts(props) {
               comments={commentLog}
               likes={currentPost.likes}
               currentUser={username}
+              serverState={serverState}
           />
         </div>
         <div className='post-footer'> 

@@ -1,7 +1,5 @@
 import React, {useState} from 'react'
 import {Link} from 'react-router-dom'
-import {RiArrowLeftSLine} from 'react-icons/ri'
-import {FaLessThan} from 'react-icons/fa'
 import './Navbar.css'
 
 function Navbar(props) {
@@ -19,7 +17,7 @@ function Navbar(props) {
             />
             </button>
             </Link>
-          <p className="top-brand">{props.title}</p>
+          <p className="top-brand-toggled">{props.title}</p>
           </div>):(
           <div className="nav-wrapper flex-row-vcenter-hstart">
           <p className="top-brand">milestone</p>

@@ -10,12 +10,15 @@ import {motion} from 'framer-motion'
 
 export default function Newfeed(props) {
     let [feedList, setFeedList] = useState([])
-    const {username} = useContext(LoginContext) 
+    const {username, userId, userData} = useContext(LoginContext) 
+    const [server, setServer] = useState(false)
 
-    const getPosts = () => {  
+    const getPosts = () => {    /* gets data when server is running */
+      console.log(userData)
       Axios.get('http://localhost:3000/newfeed/newposts')
       .then((response)=> {
         setFeedList(response.data)
+        setServer(true)
       })
     }
 
@@ -24,7 +27,7 @@ export default function Newfeed(props) {
       new Date().toLocaleString("en-US", {month:"short"})+' '+new Date().toLocaleString("en-US", { day : '2-digit'})
     )
     
-    const fetchData = useCallback(()=> {
+    const fetchData = useCallback(()=> {     /* gets data when server is not running */
         fetch('../data.json', {
           method:'GET',
           headers: {
@@ -39,8 +42,11 @@ export default function Newfeed(props) {
       }, [])
 
       useEffect(() =>{
-        fetchData()   /* replace with getPosts() when server is running */
-      }, [fetchData])
+        getPosts()
+        if (!server) {
+          fetchData()
+        } 
+      }, [fetchData,server])
 
     return (
       <motion.div className='feed' initial={{width:0}} animate={{width:'100vw'}} exit={{x:window.innerWidth, transition:{duration:.3}}}>
@@ -56,9 +62,10 @@ export default function Newfeed(props) {
                         text={post.text} 
                         time={postTime} 
                         context={post.context} 
-                        comments={postComments}
+                        comments={postComments}    /* might want to get rid of this */
                         likes={post.likes}
                         currentUser={username}
+                        serverState={server}
                         />
                     ))}
                 </ul>

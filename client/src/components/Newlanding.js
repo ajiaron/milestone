@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useContext } from "react"
+import { LoginContext } from "../UserContext"
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Loading from './pages/Loading'
@@ -9,9 +10,13 @@ import './Newlanding.css'
 
 function Newlanding() {
   const [loading, setLoading] = useState(true);
+  const { setUsername, setUserData, clearData} = useContext(LoginContext)
+
   useEffect(() => {
+    setUserData(clearData)
+    setUsername("testguy")
     setTimeout(() => setLoading(false),2000)
-  }, [])
+  }, [setUserData, setUsername, clearData])
 
   return (
       <>
@@ -32,7 +37,7 @@ function Newlanding() {
         <Link className="button-for-create" to='/register'>
           <p className="txt-163">Create an account</p>
         </Link>
-        <Link to='/login' className="button-for-login">     
+        <Link to='/login' className="button-for-login">    
           <p className="txt-163">Login</p>
         </Link>
       </div>

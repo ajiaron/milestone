@@ -1,5 +1,4 @@
 import React, {useState, useEffect, useCallback, useContext} from 'react'
-
 import { useParams } from 'react-router-dom'
 import Navbar from '../Navbar'
 import Footer from '../Footer'
@@ -13,6 +12,7 @@ import Grouptag from '../interactions/Grouptag'
 
 function Profile() {
   let [milestones, setMilestones] = useState([])
+  const {username, userData} = useContext(LoginContext) 
   let [groups, setGroups] = useState([])
   const fetchStones = useCallback(()=> {
     fetch('../sample.json', {
@@ -44,13 +44,11 @@ function Profile() {
     fetchStones()
     fetchGroups()
   }, [fetchStones, fetchGroups])
-  console.log(groups)
 
-  const {username} = useContext(LoginContext)
   return (
     <motion.div className='postitem' initial={{width:0}} animate={{width:'100vw'}} exit={{x:window.innerWidth, transition:{duration:.3}}}>
       <div className='profile-page'>
-      <Navbar title='profile'/>
+      <Navbar title='My Profile'/>
       <div className="profile-container flex-col-hcenter">
         <div className="profile-stats flex-col">
           <div className="profile-page-header flex-row">
@@ -60,9 +58,9 @@ function Profile() {
               className="profile-main-pic"
             />
             <div className="profile-user-wrapper flex-col">
-              <p className="profile-handle">@ajiaron</p>
-              <p className="profile-fullname">Aaron Jiang</p>
-              <p className="profile-blurb">gym, running, and coding. </p>
+              <p className="profile-handle">@{userData?username:'testguy'}</p>
+              <p className="profile-fullname">{userData?userData.fullname:'Testley Guyverson'}</p>
+              <p className="profile-blurb">{userData? userData.blurb:'gym, running, and coding.'}</p>
             </div>
             <div className='settings-wrapper'>
             <img
@@ -74,7 +72,7 @@ function Profile() {
             </div>
           </div>
           <div className="milestone-container flex-col">
-            <p className="profile-milestone-name">Aaron Jiang</p>
+            <p className="profile-milestone-name">{userData?userData.fullname:'Testley Guyverson'}</p>
             <div className="profile-milestone-insights flex-col-hend">
               <div className="milestone-insights-headers flex-row-vstart-hstart">
                 <p className="milestone-insights-text">MILESTONES</p>

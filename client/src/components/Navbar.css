@@ -29,45 +29,59 @@
     justify-content: center;
     width: 100%;
   }
+
   .foot-wrapper {
     padding:4px;
     width: fit-content;
+    display: flex;
+    gap:3.75em;
   }
   .landing-link {
     width:4px;
     min-height:.275em;
-    justify-self:flex-start;
-    float:left;
-    text-decoration: none;
-    margin-right: 19em;
-
+  }
+  .create-milestone-link {
+    width:100%;
+    min-height:.275em;
+  }
+  .create-milestone-link:hover{
+   transform: scale((1.25));
   }
   .landing-link:hover {
-    transform: scale(1.2);
+    transform: scale(1.25);
   }
   .profile-link {
     width: 100%;
-    min-height:.275em;
-    margin-top: 3px;
+    min-height:.25em;
+    margin-top:3px;
     justify-self:flex-end;
     float:right;
     text-decoration: none;
-    transition: all 0.2s linear;
-
-    
+    transition: all 0.15s linear;
   }
   .profile-link:hover {
-    transform: scale(1.2);
+    transform: scale(1.25);
   }
   .milestone-logo {
     min-width: 1.525em;
     float: left;
     min-height:1.475em;
-    margin-bottom:1px;
+    transition: all .15s linear;
+  }
+  .milestone-logo:hover {
+    transform: scale(1.2)
   }
 
   .top-brand {
     font-size: 20px;
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 1);
+    word-wrap: break-word;
+    line-height: 24px;
+  }
+  .top-brand-toggled {
+    font-size: 18px;
     font-family: Inter, sans-serif;
     font-weight: 600;
     color: rgba(255, 255, 255, 1);
@@ -99,9 +113,11 @@
     float:left;
     min-height:1.25em;
     background-color:transparent;
-    max-width: 1.75rem;
+    width: 1.5rem;
     border:none;
     outline:none;
+    padding-left: 16px;
+    padding-top:2px;
 
   }
   .profile-button {
@@ -109,25 +125,25 @@
    min-height:1.25em;
    max-width: 1.75rem;
    outline:none;
-   padding-top:3px;
+   padding-top:2px;
    padding-right:4px;
    background-color:transparent;
   }
   .top-arrow-toggle {
     color:white;
     left:0;
-    margin-left:2.25em;
+    margin-left:2em;
     width:10px;
     height:14px;
     position: absolute;
     transform: scaleX(1.1);
-    transition:all .15s linear;
+    transition: all .2s linear;
   }
   .top-arrow-toggle:hover {
     transform: scale(1.3);
   }
   .toggle-backarrow-button {
-    left:0;
+    
     border:none;
     position: absolute;
     outline:none;
@@ -139,5 +155,61 @@
   position: absolute;
   outline:none;
   max-width: 10px;
-  padding-bottom: .75em;
+  padding-bottom: .875em;
+}
+
+.feedpage-button {
+  max-width: 2em;
+  min-height:2em;
+  background-color: transparent;
+  outline:none;
+  border:none;
+  padding-top:2px;
+
+}
+.feedpage-icon {
+  min-width: 2em;
+  color:white;
+  min-height:1.75em;
+}
+
+.add-post-button{
+  max-width: 2em;
+  min-height:2em;
+  background-color: transparent;
+  outline:none;
+  border:none;
+  padding-top:6px;
+}
+.add-post-icon {
+  min-width: 1.875em;
+  color:white;
+  min-height:1.875em;
+  margin-left:10px;
+  transition: all 0.15s linear;
+}
+
+.add-post-icon:hover {
+  transform: scale(1.25);
+  color:#2a8772;
+}
+
+.friends-page-button{
+  max-width: 2em;
+  min-height:2.5em;
+  background-color: transparent;
+  outline:none;
+  border:none;
+  padding-top:6px;
+  padding-left:4px;
+}
+.friends-list-icon {
+  min-width: 1.825em;
+  color:white;
+  min-height:1.825em;
+  transition: all 0.15s linear;
+}
+.friends-list-icon:hover {
+  transform: scale(1.25);
+
 }
