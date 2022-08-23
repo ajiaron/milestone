@@ -1,7 +1,7 @@
 import './CreateMilestone.css'
 import Navbar from '../Navbar'
 import Footer from '../Footer'
-import React, { useState, useEffect, useCallback, useContext } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { LoginContext } from '../../UserContext'
 import Axios from 'axios'
 import {motion} from 'framer-motion'
