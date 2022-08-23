@@ -1,0 +1,310 @@
+.register-page-contents {
+    position: relative;
+    box-sizing: border-box;
+    background-color: rgba(19, 19, 19, 1);
+    width: 428px;
+    min-height: 100vh;
+    margin-left:auto;
+    margin-right:auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+
+
+.clip-contents {
+    overflow: auto;
+}
+
+  p {
+    margin: 0;
+  }
+  
+.register-contents {
+    top:50%;
+    position: absolute;
+    margin-left:.5em;
+    transform: translateY(-50%);
+    padding:3em;
+}
+  
+  .flex-col-hstart-vstart {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  
+  .flex-col {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .flex-col-hend-vstart {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-end;
+  }
+  
+  .flex-row {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .flex-hcenter {
+    justify-content: center;
+  }
+  
+  
+  .password {
+    height: 100%;
+  }
+  
+  .back-arrow {
+    width: 12px;
+    min-height: 14px;
+    margin-left:3.5em;
+    margin-top:3em;
+    box-shadow: 0px 4px 4px 2px rgba(0,0,0,0.15);
+    transition: all .15s linear
+  }
+ .back-link {
+    width: 12px;
+    min-height: 14px;
+
+ }
+  .back-arrow:hover {
+    transform: scale(1.35);
+
+  }
+  
+  .top-text {
+    font-size: 20px;
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 1);
+    word-wrap: break-word;
+    margin-bottom: 15px;
+  }
+  
+  .register-container {
+    padding: 18px 32px 3px 32px;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+    border-radius: 12px;
+    z-index: 1;
+    background-color: rgba(10, 10, 10, 0.71);
+    width: fit-content;
+    box-shadow: 0px 4px 4px 2px rgba(0,0,0,0.1);
+  }
+  
+  .sign-up-credentials {
+    margin-bottom: 16px;
+    box-sizing: border-box;
+    width: fit-content;
+  }
+  
+  .full-name {
+    margin-bottom: 13px;
+    box-sizing: border-box;
+    width: 100%;
+  }
+  
+  .txt-736 {
+    font-size: 14px;
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 1);
+    word-wrap: break-word;
+    margin-bottom: 11px;
+  }
+  
+  .name-input-wrapper {
+    padding: 8px 9px 7px 1px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    background-color: rgba(30, 30, 30, 1);
+    width: 100%;
+  }
+  
+  .name-input {
+    font-size: 10px;
+    font-family: Inter, sans-serif;
+    font-weight: 500;
+    color:white;
+    text-align: left;
+    min-width: 226px;
+    word-wrap: break-word;
+    padding-left: 7px;
+    border:1px solid transparent;
+    background-color: rgba(30, 30, 30, 1);
+    outline:none;
+  }
+  .name-input::placeholder {
+    background-color: transparent;
+  }
+  
+  .name-logo {
+    width: 13px;
+    height: 12px;
+  }
+  
+  .full-name {
+    margin-bottom: 13px;
+    box-sizing: border-box;
+    width: fit-content;
+  }
+  
+  .txt-736 {
+    font-size: 14px;
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 1);
+    word-wrap: break-word;
+    margin-bottom: 11px;
+  }
+  
+  .email-input-wrapper {
+    padding: 6px 9px 5px 7px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    background-color: rgba(30, 30, 30, 1);
+    width: fit-content;
+  }
+  
+  .email-input {
+    font-size: 10px;
+    font-family: Inter, sans-serif;
+    font-weight: 500;
+    color: white;
+    background-color: rgba(30, 30, 30, 1);;
+    text-align: left;
+    min-width: 222px;
+    padding-left:3px;
+    word-wrap: break-word;
+    outline:none;
+    border: 1px solid transparent;
+
+  }
+  .email-input::placeholder {
+    background-color: transparent;
+  }
+  
+  .vector {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .password {
+    width: 100%;
+  }
+  
+  .user-input {
+    font-size: 14px;
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 1);
+    word-wrap: break-word;
+    margin-bottom: 11px;
+  }
+  
+  .pass-input-wrapper {
+    padding: 6px 9px 5px 8px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    background-color: rgba(30, 30, 30, 1);
+    width: 100%;
+  }
+  
+  .pass-input {
+    font-size: 10px;
+    font-family: Inter, sans-serif;
+    font-weight: 500;
+    color: white;
+    text-align: left;
+    min-width: 222px;
+    padding-left: 3px;
+    word-wrap: break-word;
+    outline:none;
+    border: 1px solid transparent;
+    background-color: rgba(30, 30, 30, 1);
+  }
+  .pass-input::placeholder {
+    background-color: transparent;
+  }
+  .vector-1 {
+    width: 10px;
+    height: 12px;
+  }
+  
+  .remember-my-account-box {
+    margin-bottom: 13px;
+    box-sizing: border-box;
+    width: fit-content;
+  }
+  
+  .remember-checkbox {
+    background-color: rgba(217, 217, 217, 1);
+    width: 9px;
+    height: 9px;
+    border-radius: 2px;
+    margin-right: 8px;
+
+  }
+  
+  .remember-account {
+    font-size: 10px;
+    font-family: Inter, sans-serif;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 1);
+    word-wrap: break-word;
+  }
+  .return-link {
+    text-decoration: none;
+    transition: all .15s linear;
+    max-height: 3em;
+
+  }
+
+  .button-for-create {
+    box-sizing: border-box;
+    border-radius: 4px;
+    background-color: rgba(0, 82, 63, 1);
+    min-height: 26px;
+    border:none;
+    outline:none;
+    width: fit-content;
+  }
+  
+  .create-account-text {
+    font-size: 12px;
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 1);
+    word-wrap: break-word;
+    padding-bottom:1px;
+  }
+  
+  .switch-login-text {
+    font-size: 11px;
+    font-family: Inter, sans-serif;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 1);
+    text-align: center;
+    width: 316px;
+    word-wrap: break-word;
+    text-decoration: none;
+  }
+
+  .switch-login-link {
+    text-decoration: none;
+    font-weight: 700;
+    transition: all .12s linear;
+    color:white;
+  }
+  .switch-login-link:hover {
+    text-decoration: none;
+    color:rgb(2, 112, 86);
+  }

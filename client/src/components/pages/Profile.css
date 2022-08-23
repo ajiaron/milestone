@@ -1,0 +1,283 @@
+
+
+p {
+    margin: 0;
+  }
+  
+  .clip-contents {
+    overflow: hidden;
+  }
+  
+  .flex-col-hstart-vstart {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  
+  .flex-col-hcenter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .flex-row {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .flex-col {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .flex-col-hend {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  
+  .flex-row-vstart-hstart {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  
+  
+  .profile-page {
+    position: relative;
+    background-color: rgba(19, 19, 19, 0.94);
+    width: 428px;
+    min-height: 926px;
+    margin-left:auto;
+    margin-right:auto;
+    display: flex;
+    flex-flow: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    box-sizing: border-box;
+  }
+  
+  .settings-notification-icon {
+    position: absolute;
+    margin-top:4px;
+    right:12%;
+    background-color: rgba(238, 64, 64, 0.75);
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    
+  }
+
+  
+  .profile-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    padding-top:5.5em;
+  }
+  
+  
+  .back-arrow {
+    width: 9px;
+    height: 13px;
+    margin-right: 150px;
+  }
+  
+  .txt-409 {
+    font-size: 20px;
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 1);
+    word-wrap: break-word;
+  }
+  
+  .profile-stats {
+    padding-bottom: 2.5em;
+    box-sizing: border-box;
+    width: fit-content;
+  }
+  
+  .profile-page-header {
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    width: fit-content;
+  }
+  
+  .profile-main-pic {
+    width: 49px;
+    height: 49px;
+    margin-right: 16px;
+  }
+  
+  .profile-user-wrapper {
+    box-sizing: border-box;
+    height: 100%;
+    min-width: 100%;
+  }
+  
+  .profile-handle{
+    font-size: 15px;
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 1);
+    word-wrap: break-word;
+    margin-bottom: 3px;
+  }
+  
+  .profile-fullname {
+    font-size: 10px;
+    font-family: Inter, sans-serif;
+    font-weight: 500;
+    color: rgba(178, 168, 168, 1);
+    word-wrap: break-word;
+    margin-bottom: 4px;
+  }
+  
+  .profile-blurb {
+    font-size: 10px;
+    font-family: Inter, sans-serif;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 1);
+    word-wrap: break-word;
+  }
+  
+  .settings-logo {
+    margin-top:6px;
+    right:12%;
+    height: 19px;
+    position: absolute;
+    transition: all .15s linear;
+  }
+  .settings-logo:hover {
+    transform: scale(1.25);
+  }
+  
+  .milestone-container {
+    padding: 24px 25px 31px 27px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    border-radius: 15px;
+    background-color: rgba(10, 10, 10, 1);
+    width: 336px;
+    box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.1);
+  }
+  
+  .profile-milestone-name {
+    font-size: 20px;
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 1);
+    word-wrap: break-word;
+    margin-bottom: 24px;
+  }
+  
+  .profile-milestone-insights {
+    padding: 16px 21px 17px 13px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    background-color: rgba(37, 37, 37, 1);
+  }
+  
+  .milestone-insights-headers {
+    padding: 0px 8px;
+    margin-bottom: 8px;
+    box-sizing: border-box;
+  }
+  
+  .milestone-insights-text {
+    font-size: 8px;
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+    color: rgba(195, 191, 191, 1);
+    word-wrap: break-word;
+    padding-right: 54px;
+  }
+  
+  .milestone-insights-friends {
+    font-size: 8px;
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+    color: rgba(195, 191, 191, 1);
+    word-wrap: break-word;
+    padding-right:6px;
+
+  }
+  
+  .profile-socials {
+    padding-right:20px;
+  }
+  
+  .personal-milestone-count {
+    font-size: 16px;
+    font-family: Inter, sans-serif;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 1);
+    word-wrap: break-word;
+    margin-right: 84px;
+  }
+  
+  .personal-group-count {
+    font-size: 16px;
+    font-family: Inter, sans-serif;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 1);
+    word-wrap: break-word;
+    margin-right: 77px;
+  }
+  
+  .personal-friends-count {
+    font-size: 16px;
+    font-family: Inter, sans-serif;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 1);
+    word-wrap: break-word;
+  }
+  
+  .text-header-milestones {
+    font-size: 19px;
+    font-family: Inter, sans-serif;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 1);
+    word-wrap: break-word;
+    margin-bottom: 19px;
+  }
+  
+  .hobbies-music {
+    width: 30px;
+    margin-right: 13px;
+    height: 100%;
+  }
+  
+  .txt-725 {
+    font-size: 15px;
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 1);
+    word-wrap: break-word;
+    margin-right: 115px;
+  }
+  
+  .text-header-groups {
+    font-size: 19px;
+    font-family: Inter, sans-serif;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 1);
+    word-wrap: break-word;
+    margin-bottom:19px;
+  }
+  
+  .milestone {
+    width: 22px;
+    height: 18.63px;
+    margin-right: 267px;
+  }
+
+  .personal-milestone-list {
+      list-style: none;
+  }
+  .milestone-group-list {
+      list-style: none;
+      padding-bottom:2em;
+  }

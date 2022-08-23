@@ -1,0 +1,208 @@
+.root {
+    position: relative;
+    width: 428px;
+    height: 926px;
+    align-items: flex-start;
+    background-color: #131313;
+    overflow: hidden;
+  }
+  .frameForButtons {
+    position: absolute;
+    left: 88px;
+    top: 513px;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 38px;
+  }
+  .buttonForCreate {
+    position: relative;
+    width: 252px;
+    height: 26px;
+  }
+  .createAnAccountBox {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 252px;
+    height: 26px;
+    border-radius: 4px;
+    background-color: #00523f;
+  }
+  .createAnAccountText {
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+      'Liberation Sans', sans-serif;
+    position: absolute;
+    left: 28.5714%;
+    right: 28.9683%;
+    top: 23.0769%;
+    bottom: 19.2308%;
+    white-space: nowrap;
+  }
+  .buttonForLogin {
+    position: relative;
+    width: 252px;
+    height: 26px;
+  }
+  .greenRectangleForLogin {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 252px;
+    height: 26px;
+    border-radius: 4px;
+    background-color: #00523f;
+  }
+  .loginText {
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+      'Liberation Sans', sans-serif;
+    position: absolute;
+    left: 43.254%;
+    right: 43.6508%;
+    top: 23.0769%;
+    bottom: 19.2308%;
+    white-space: nowrap;
+  }
+  .alrdyHaveAnAccText {
+    color: #fff;
+    font-size: 10px;
+    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+      'Liberation Sans', sans-serif;
+    position: absolute;
+    left: 152px;
+    top: 551px;
+    width: 123px;
+    text-align: center;
+    justify-content: center;
+  }
+  .line2 {
+    position: absolute;
+    left: 285px;
+    top: 558px;
+    width: 55px;
+    max-width: 100%;
+    height: 1px;
+    max-height: 100%;
+    overflow: visible;
+  }
+  .icon {
+    width: 100%;
+    height: 100%;
+  }
+  .line1 {
+    position: absolute;
+    left: 88px;
+    top: 558px;
+    width: 53px;
+    max-width: 100%;
+    height: 1px;
+    max-height: 100%;
+    overflow: visible;
+  }
+  .icon2 {
+    width: 100%;
+    height: 100%;
+  }
+  .descriptionText {
+    position: absolute;
+    left: 88px;
+    top: 460px;
+    width: 251px;
+    text-align: center;
+    justify-content: center;
+  }
+  .labelWrapper {
+    font-size: 10px;
+    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+      'Liberation Sans', sans-serif;
+    flex-shrink: 1;
+  }
+  .label {
+    color: #fff;
+    font-size: 10px;
+    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+      'Liberation Sans', sans-serif;
+  }
+  .label2 {
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+      'Liberation Sans', sans-serif;
+  }
+  .label3 {
+    color: #fff;
+    font-size: 10px;
+    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+      'Liberation Sans', sans-serif;
+  }
+  .backgroundVector {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 428px;
+    height: 277px;
+    overflow: visible;
+  }
+  .icon3 {
+    width: 100%;
+    height: 100%;
+  }
+  .backgroundVector2 {
+    position: absolute;
+    left: -19px;
+    top: 682px;
+    width: 447px;
+    height: 255px;
+    overflow: visible;
+  }
+  .icon4 {
+    width: 100%;
+    height: 100%;
+  }
+  .ellipse1 {
+    position: absolute;
+    left: 79px;
+    top: 210px;
+    width: 271px;
+    height: 271px;
+    overflow: visible;
+    filter: drop-shadow(0px 4px 4px #00000040);
+  }
+  .icon5 {
+    width: 100%;
+    height: 100%;
+  }
+  .group5 {
+    position: absolute;
+    left: 159px;
+    top: 290px;
+    width: 111px;
+    height: 111px;
+    overflow: visible;
+  }
+  .icon6 {
+    width: 100%;
+    height: 100%;
+  }
+  .logoText {
+    color: #fff;
+    font-size: 20px;
+    font-weight: 600;
+    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+      'Liberation Sans', sans-serif;
+    position: absolute;
+    left: 164px;
+    top: 420px;
+    white-space: nowrap;
+  }
+  
