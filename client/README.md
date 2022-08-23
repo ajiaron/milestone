@@ -1,6 +1,6 @@
-# Getting Started 
+# Get Your Funny Up
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Stack: React.js, Node.js, Express, MySQL
 
 ## 
 
@@ -22,6 +22,7 @@ To add and render a formatted blank page (including navbar & header), import and
     </Link>
   );
 
+##
 Then, to add the page to the project, add the following line of code to AnimatedRoutes.jsx in /src/components:
 
     <Route path='/something' element={<Something/>}/>
@@ -37,13 +38,16 @@ majority of the project, so it will definitely be useful to save a blank copy as
 The server file doesn't really need to be touched if you arent running the server, and I haven't found a way to push milestoneDB from mySQL Workbench
 to github. Although if you want to connect to Postman with /server.js, lemme know and I can set it up for you.
 
+##
 If there are any errors coming from the backend, make sure the following dependencies are included in /server/package.json 
 
   "dependencies": {
+  
     "mysql": "^2.18.1",
     "express": "^4.18.1",
     "body-parser": "^1.20.0",
     "cors": "^2.8.5"
+    
   },
  
 If anything is missing just do "npm install express" or whichever dependancy is missing.
