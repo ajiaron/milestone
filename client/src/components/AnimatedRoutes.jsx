@@ -13,6 +13,7 @@ import ActionBar from './tests/ActionBar'
 import Commentbox from './tests/Commentbox'
 import CreateMilestone from './pages/CreateMilestone';
 import Friends from './pages/Friends'
+import CreatePost from './pages/CreatePost';
 import {LoginContext} from '../UserContext'
 
 
@@ -44,6 +45,7 @@ function AnimatedRoutes() {
     <Route path='/profile/:name' element={<Profile />}/>
     <Route path='/actionbar' element={<ActionBar/>}/>
     <Route path='/commentbox' element={<Commentbox/>}/>
+    <Route path='/createpost' element={<CreatePost/>}/>
     <Route path='/createmilestone' element={<CreateMilestone/>}/>
     <Route path='/friends' element={<Friends/>}/>
     <Route element={<Loading/>} />

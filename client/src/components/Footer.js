@@ -30,10 +30,11 @@ function Footer(props) {
               </button>
               </Link>
 
+            <Link to={'/createpost'} className='create-newpost-link'>   
               <button className='add-post-button'>
                 <AiOutlinePlusCircle className='add-post-icon'/>
               </button>
-              
+              </Link>
               <Link to={'/friends'} className='friends-list-link'>
               <button className='friends-page-button'>
                 <HiOutlineUserGroup className='friends-list-icon'/>

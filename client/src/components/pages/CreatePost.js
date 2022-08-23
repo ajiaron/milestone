@@ -1,0 +1,112 @@
+import './CreatePost.css'
+import React, { useState, useEffect, useContext, useCallback } from 'react'
+import {useParams} from 'react-router-dom'
+import Navbar from '../Navbar'
+import Footer from '../Footer'
+import Milestones from '../interactions/Milestones'
+import { LoginContext } from '../../UserContext'
+import Axios from 'axios'
+import {motion} from 'framer-motion'
+
+
+function CreatePost() {
+    const [limit, setLimit] = useState(false)
+    const {username, userData} = useContext(LoginContext) 
+    let [milestones, setMilestones] = useState([])
+    const fetchStones = useCallback(()=> {
+        fetch('../sample.json', {
+          method:'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+         }
+        })
+        .then(response => response.json())
+        .then(data => {
+          setMilestones(data)
+        }) 
+      }, [])
+    function handleClick() {
+        console.log(milestones)
+    }
+    useEffect(()=> {
+        fetchStones()
+    }, [fetchStones])
+    return (  
+        <motion.div initial={{width:0}} animate={{width:'100vw'}} exit={{x:window.innerWidth, transition:{duration:.25}}}>
+        <div className='create-post-content'>
+        <Navbar title='Create Post'/>
+
+
+
+        <div className="post-description-container flex-col">
+          <p className="description-text">DESCRIPTION</p>
+          <div className="post-description-wrapper flex-row">
+            <div className="description-input-area">
+              <p className="description-input">Add a desciption...</p>
+            </div>
+            <img
+              src="https://firebasestorage.googleapis.com/v0/b/unify-bc2ad.appspot.com/o/vl0mb6lpx3-208%3A3147?alt=media&token=fa86e560-22c7-4a9e-9811-7bdbe66b3938"
+              alt="Not Found"
+              className="post-image-preview"
+            />
+          </div>
+        </div>
+        <div className='select-milestone-container'>
+        <p className="select-milestone-text">SELECT A MILESTONE</p>
+        <div className='select-milestone-wrapper'>
+            <ul className='select-milestone-log'>
+            {milestones.map(stone => (
+               <Milestones key={stone.id} title={stone.title} entries={stone.entries} streak={stone.streak} src={stone.src} from={limit}/>
+            ))}
+            </ul>
+        </div>
+        </div>
+
+        <div className='toggle-switch-container'>
+        <div className="comment-switch-wrapper">
+            <p className="switch-label">Comments</p>
+            <img
+            src="https://firebasestorage.googleapis.com/v0/b/unify-bc2ad.appspot.com/o/7rwd65eiz57-208%3A3176?alt=media&token=73634f95-4dff-4c4a-8f86-9158cdbf2cc3"
+            alt="slider"
+            className="switch-toggle"
+            />
+        </div>
+        <div className="likes-switch-wrapper">
+            <p className="switch-label">Likes</p>
+            <img
+            src="https://firebasestorage.googleapis.com/v0/b/unify-bc2ad.appspot.com/o/7rwd65eiz57-208%3A3176?alt=media&token=73634f95-4dff-4c4a-8f86-9158cdbf2cc3"
+            alt="slider"
+            className="switch-toggle"
+            />
+        </div>
+        <div className="link-switch-wrapper">
+            <p className="link-sharing-label">Link Sharing</p>
+            <img
+            src="https://firebasestorage.googleapis.com/v0/b/unify-bc2ad.appspot.com/o/7rwd65eiz57-208%3A3176?alt=media&token=73634f95-4dff-4c4a-8f86-9158cdbf2cc3"
+            alt="slider"
+            className="switch-toggle"
+            />
+        </div>
+        </div>
+        <div className="publish-save-container flex-col-hstart-vstart">
+            <button className="save-button" onClick={()=>handleClick()}>
+                <div className='save-button-container'>
+              <p className="save-text">Save</p>
+              </div>
+            </button>
+            <button className="publish-button">
+                <div className='publish-button-container'>
+              <p className="publish-text">Publish</p>
+              </div>
+            </button>
+          </div>
+       
+
+          <Footer logged={true}/> 
+        </div>
+    </motion.div>
+      )
+}
+
+export default CreatePost

@@ -14,6 +14,7 @@ function Profile() {
   let [milestones, setMilestones] = useState([])
   const {username, userData} = useContext(LoginContext) 
   let [groups, setGroups] = useState([])
+  let [limit, setLimit] = useState(true)
   const fetchStones = useCallback(()=> {
     fetch('../sample.json', {
       method:'GET',
@@ -40,7 +41,7 @@ function Profile() {
       setGroups(data)
     }) 
   }, [])
-  useEffect(() =>{
+  useEffect(() => {
     fetchStones()
     fetchGroups()
   }, [fetchStones, fetchGroups])
@@ -89,7 +90,7 @@ function Profile() {
           <p className="text-header-milestones">Personal Milestones</p>
           <ul className='personal-milestone-list'>
             {milestones.map(stone => (
-               <Milestones key={stone.id} title={stone.title} entries={stone.entries} streak={stone.streak}/>
+               <Milestones key={stone.id} title={stone.title} entries={stone.entries} streak={stone.streak} src={stone.src} from={limit}/>
             ))}
              </ul>
           <p className="text-header-groups">Groups</p>

@@ -3,11 +3,11 @@ import './Milestones.css'
 
 function Milestones(props) {
     return (
-        <li className='personal-milestone-item'>
+        <li className={props.from?('personal-milestone-item'):('post-milestone-item')}>
         <div className="profile-milestone-content flex-col-hstart-vstart">
           <div className="profile-milestone-item flex-row">
             <img
-              src="https://firebasestorage.googleapis.com/v0/b/unify-bc2ad.appspot.com/o/e9l0ihcreg-153%3A105?alt=media&token=1b843546-7b48-4040-a603-7c52f630a7aa"
+              src={props.src}
               alt="Not Found"
               className="hobbies-music"
             />
@@ -17,10 +17,12 @@ function Milestones(props) {
             {props.entries} days<span className="milestone-streak-context"> {props.streak}</span>
             </p>
             </div>
+            
             <img
-              src="https://firebasestorage.googleapis.com/v0/b/unify-bc2ad.appspot.com/o/e9l0ihcreg-153%3A106?alt=media&token=57a337c9-c527-4d5d-826a-8cd161a52035"
+              src="https://firebasestorage.googleapis.com/v0/b/unify-bc2ad.appspot.com/o/6ibzja7dt2g-I190%3A746%3B153%3A38?alt=media&token=1cea81c4-d4bd-44c1-9e3c-9a354cde061f"
               alt="Not Found"
-              className="milestone-item-dropdown"
+              className={props.from?"milestone-item-dropdown":"milestone-item-disabled"}
+          
             />
           </div>
         </div>
