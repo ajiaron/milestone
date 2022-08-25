@@ -1,6 +1,6 @@
 import './CreatePost.css'
 import React, { useState, useEffect, useContext, useCallback } from 'react'
-import {useParams} from 'react-router-dom'
+import {useParams, useLocation} from 'react-router-dom'
 import Navbar from '../Navbar'
 import Footer from '../Footer'
 import Milestones from '../interactions/Milestones'
@@ -10,9 +10,30 @@ import {motion} from 'framer-motion'
 
 
 function CreatePost() {
-    const [limit, setLimit] = useState(false)
-    const {username, userData} = useContext(LoginContext) 
-    let [milestones, setMilestones] = useState([])
+  const {state} = useLocation()
+  const lastpost = (state && state.lastpost)?state.lastpost:1
+  const [limit, setLimit] = useState(false)
+  const {username, userData} = useContext(LoginContext) 
+  let [milestones, setMilestones] = useState([])
+  const [server, setServer] = useState(false)
+
+  const postInfo = {
+    id: lastpost + 1,
+    username: username,
+    text: 'Add a description...',
+    context: 'Currently developing a post...',
+    date:new Date().toISOString().slice(0, 19).replace('T', ' '),
+    likes:0
+  }
+  const [postData, setPostData] = useState(postInfo)
+
+  function postDataPublish(e) {
+    console.log(lastpost)
+    Axios.post('http://localhost:3000/createpost/newpost', 
+    {id:postData.id, username:username, text:postData.text, context:postData.context, date: postData.date, likes:postData.likes})
+    .then(() => {console.log('new user posted')})
+  }
+
     const fetchStones = useCallback(()=> {
         fetch('../sample.json', {
           method:'GET',
@@ -26,12 +47,20 @@ function CreatePost() {
           setMilestones(data)
         }) 
       }, [])
+
     function handleClick() {
-        console.log(milestones)
+      console.log(postData)
     }
+
     useEffect(()=> {
+      if (!server) {
+        console.log('server not on')
         fetchStones()
-    }, [fetchStones])
+      } else {
+        console.log('server is on')
+      }
+    }, [server, fetchStones])
+
     return (  
         <motion.div initial={{width:0}} animate={{width:'100vw'}} exit={{x:window.innerWidth, transition:{duration:.25}}}>
         <div className='create-post-content'>
@@ -43,7 +72,9 @@ function CreatePost() {
           <p className="description-text">DESCRIPTION</p>
           <div className="post-description-wrapper flex-row">
             <div className="description-input-area">
-              <p className="description-input">Add a desciption...</p>
+              <textarea className="description-input" placeholder='Add a desciption...'
+              onChange={(event)=>{setPostData({...postData, text:event.target.value})}}
+               ></textarea>
             </div>
             <img
               src="https://firebasestorage.googleapis.com/v0/b/unify-bc2ad.appspot.com/o/vl0mb6lpx3-208%3A3147?alt=media&token=fa86e560-22c7-4a9e-9811-7bdbe66b3938"
@@ -95,7 +126,7 @@ function CreatePost() {
               <p className="save-text">Save</p>
               </div>
             </button>
-            <button className="publish-button">
+            <button className="publish-button" onClick={()=>postDataPublish()}>
                 <div className='publish-button-container'>
               <p className="publish-text">Publish</p>
               </div>

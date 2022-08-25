@@ -30,7 +30,7 @@ function Footer(props) {
               </button>
               </Link>
 
-            <Link to={'/createpost'} className='create-newpost-link'>   
+            <Link to={'/createpost'} className='create-newpost-link' state={{lastpost:props.lastpost}} >   
               <button className='add-post-button'>
                 <AiOutlinePlusCircle className='add-post-icon'/>
               </button>

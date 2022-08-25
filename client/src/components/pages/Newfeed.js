@@ -43,6 +43,7 @@ export default function Newfeed(props) {
 
       useEffect(() =>{
         getPosts()
+
         if (!server) {
           fetchData()
         } 
@@ -72,7 +73,7 @@ export default function Newfeed(props) {
             </div>
             </div>
             <div className='bottom-space'>{''}</div>
-            <Footer logged={false} />
+            <Footer logged={false} lastpost={feedList.length}/>
         </div> 
          </motion.div>
     );

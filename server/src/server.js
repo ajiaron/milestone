@@ -71,6 +71,33 @@ app.get('/newfeed/newposts', (req,res)=> {
     })
 })
 
+app.get('/createpost/getposts', (req,res)=> {
+    db.query('SELECT * FROM posts', (err, result)=> {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+
+app.post('/createpost/newpost', (req, res)=> {
+    const id = req.body.id
+    const username = req.body.username
+    const text = req.body.text
+    const context = req.body.context
+    const date = req.body.date
+    const likes = req.body.likes
+    db.query('INSERT INTO posts (id, username, text, context, date, likes) VALUES (?,?,?,?,?,?)', 
+    [id, username, text, context, date, likes], (err, result) => {
+        if(err) {
+            console.log(err)
+        } else {
+            res.send("post all good sir")
+        }
+    })
+})
+
 app.post('/newfeed/comment', (req, res) => {
     const comment = req.body.comment
     const date = req.body.date
