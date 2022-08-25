@@ -1,70 +1,55 @@
-# Getting Started with Create React App
+# Get Your Funny Up
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Stack: React.js, Node.js, Express, MySQL
 
-## Available Scripts
+## 
 
-In the project directory, you can run:
+The /client folder holds the react app, with relevant files being /public and /src. 
+The /public folder will have different .json files, which are used to fetch data when the server has not been started.
+The /src folder will have the project's /components, /pages, and /interactions, along with the sstandard app.jsx and index.jsx.
 
-### `npm start`
+##
+Important to note, there may be many files that have no functionality in the app. In most cases, either smaller components were not needed or larger components were broken down after the fact.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+##
+To add and render a formatted blank page (including navbar & header), import and add the following to any page on the project: 
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+  import {Link} from 'react-router-dom'
+  
+  return (
+    ... 
+    <Link to={'/filename'}> 
+    </Link>
+  );
 
-### `npm test`
+##
+Then, to add the page to the project, add the following line of code to AnimatedRoutes.jsx in /src/components:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+    <Route path='/something' element={<Something/>}/>
+    
+There should be many Routes in the file like this, put it anywhere with the rest of them.
 
-### `npm run build`
+##
+Also, the two mostly blank files '/Friends.js' and '/CreateMilestone.js' have the imports and css styling that should be featured on the 
+majority of the project, so it will definitely be useful to save a blank copy as a reference.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+##
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+The server file doesn't really need to be touched if you arent running the server, and I haven't found a way to push milestoneDB from mySQL Workbench
+to github. Although if you want to connect to Postman with /server.js, lemme know and I can set it up for you.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+##
+If there are any errors coming from the backend, make sure the following dependencies are included in /server/package.json 
 
-### `npm run eject`
+  "dependencies": {
+  
+    "mysql": "^2.18.1",
+    "express": "^4.18.1",
+    "body-parser": "^1.20.0",
+    "cors": "^2.8.5"
+    
+  },
+ 
+If anything is missing just do "npm install express" or whichever dependancy is missing.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Big Body Bands
