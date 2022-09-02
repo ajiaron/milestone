@@ -32,7 +32,7 @@ p {
 margin: 0;
 }
 .toggle-switch-container {
-gap:2.65em;
+gap:2.5em;
 margin-bottom:2em;
 align-self: center;
 bottom:18%;
@@ -151,7 +151,7 @@ transform: scale(1.05);
 .post-description-container {
 width: fit-content;
 align-self: center;
-margin-top:6.75em;
+margin-top:6.25em;
 }
 .description-text {
 font-size: 10px;
@@ -202,7 +202,6 @@ min-height: 100%;
 margin-bottom:.75em;
 min-width: 336px;
 align-self: center;
-
 }
 .select-milestone-text {
 font-size: 10px;

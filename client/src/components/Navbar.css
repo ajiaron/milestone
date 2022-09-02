@@ -5,6 +5,7 @@
     display: flex;
     text-align: center;
     justify-content: center;
+
     z-index:999;
     overflow:hidden;
     width: 428px;
@@ -27,6 +28,8 @@
     padding:4px;
     display: flex;
     justify-content: center;
+    align-self: center;
+    
     width: 100%;
   }
 
@@ -80,6 +83,7 @@
     word-wrap: break-word;
     line-height: 24px;
   }
+
   .top-brand-toggled {
     font-size: 18px;
     font-family: Inter, sans-serif;

@@ -24,7 +24,6 @@ p {
 }
 .post-milestone-item:hover {
   transform: scale(1.02);
-  
 }
 .personal-milestone-item {
   transition: all .125s linear;
@@ -55,6 +54,24 @@ p {
   color: rgb(248, 210, 57);
 }
 .profile-milestone-content:hover .milestone-streak-context {
+  color: white;
+}
+
+.selected-milestone-content {
+  position: relative;
+  border-radius: 8px;
+  background-color: #35AE92;
+  outline: 4px solid #00523F;
+  width: 336px;
+  height: 70px;
+  margin-bottom:1.5em;
+  box-shadow: 0px 4px 2px 2px rgba(0,0,0,0.1);
+  transition: all .15s linear;
+}
+.selected-milestone-content .milestone-streak {
+  color: rgb(248, 210, 57);
+}
+.selected-milestone-content .milestone-streak-context {
   color: white;
 }
 
@@ -113,4 +130,14 @@ p {
 .milestone-item-context {
     text-align: left;
     width: 222px;
+}
+.milestone-page-link {
+  text-decoration: none;
+  color:transparent;
+  background-color: transparent;
+  outline:none;
+  border:none;
+}
+.milestone-page-link:hover {
+  text-decoration: none;
 }

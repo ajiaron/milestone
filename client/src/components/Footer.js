@@ -10,6 +10,7 @@ function Footer(props) {
     const logged = props.logged
     const {username} = useContext(LoginContext)
 
+
     return (
         <>
         <div className="bottom-footer">

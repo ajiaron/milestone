@@ -23,7 +23,6 @@ p {
 .flex-row-vcenter-hstart {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
   align-items: center;
 }
 
@@ -53,13 +52,6 @@ p {
   margin-right:auto;
 }
 
-.top-header {
-  padding: 19px 61px 18px 57px;
-  box-sizing: border-box;
-  background-color: rgba(10, 10, 10, 1);
-  height: 63px;
-  width: 100%;
-}
 
 .frame-11 {
   height: 100%;
@@ -103,18 +95,25 @@ p {
 .caption-header {
   font-size: 14px;
   font-family: Inter, sans-serif;
-  font-weight: 600;
+  font-weight: 300;
   color: rgba(255, 255, 255, 1);
   word-wrap: break-word;
-  margin-bottom: 4px;
+
+
 }
 
 .caption-context {
   font-size: 10px;
   font-family: Inter, sans-serif;
   font-weight: 300;
-  color: rgba(255, 255, 255, 1);
+  color: rgb(144, 144, 144);
   word-wrap: break-word;
+  text-decoration: none;
+
+  transition: all .1s linear;
+}
+.caption-context:hover {
+  color:#3aad93;
 }
 
 .frame-10 {
@@ -145,22 +144,6 @@ p {
   width: 100%;
 }
 
-.frame-7 { /* unused */
-  position: absolute;
-  top: 96px;
-  left: 19px;
-  width: 120px;
-  height: 427px;
-}
-
-.frame-5 {  /* unused */
-  margin-bottom: 365px;
-  box-sizing: border-box;
-  width: 100%;
-  padding-left:1.15em;
-  padding-top:35px;
-}
-
 .profile-pic {
   width: 30px;
   height: 30px;
@@ -188,12 +171,6 @@ p {
   word-wrap: break-word;
 }
 
-.post-profile-wrapper {
-  width: 100%;
-  box-sizing: border-box;
-  display: flex;
-  padding-left: 1.125em;
-}
 
 .profile-pic {
   width: 30px;

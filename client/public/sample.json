@@ -1,6 +1,6 @@
 [
     {
-        "id":0,
+        "idmilestones":0,
         "title":"Learning Piano",
         "entries": 15,
         "streak": "in a row",
@@ -10,7 +10,7 @@
         "viewable":1
     },
     {
-        "id":1,
+        "idmilestones":1,
         "title":"Ironman Prep",
         "entries": 22,
         "streak": "in the last month",
@@ -20,7 +20,7 @@
         "viewable":1
     },
     {
-        "id":2,
+        "idmilestones":2,
         "title":"Leetcode Neatcode",
         "entries": 19,
         "streak": "in a row",
@@ -30,7 +30,7 @@
         "viewable":1
     },
     {
-        "id":3,
+        "idmilestones":3,
         "title":"Reading & Reflecting",
         "entries": 13,
         "streak": "in the last 2 weeks",
@@ -40,7 +40,7 @@
         "viewable":1
     },
     {
-        "id":4,
+        "idmilestones":4,
         "title":"Internship Apps",
         "entries": 9,
         "streak": "in a row",
@@ -50,7 +50,7 @@
         "viewable":1
     },
     {
-        "id":5,
+        "idmilestones":5,
         "title":"Milestone Progress",
         "entries": 24,
         "streak": "in a row",

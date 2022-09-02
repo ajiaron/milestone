@@ -7,19 +7,21 @@ import Navbar from '../Navbar'
 import Footer from '../Footer'
 import {motion} from 'framer-motion'
 import Axios from 'axios'
+import Milestones from '../interactions/Milestones'
 
 function Posts(props) {
   let { id } = useParams();
   const {state} = useLocation()
   const {username} = useContext(LoginContext)
-  
   const commentHistory = state && state.comments
   const commentLog = (commentHistory)?state.comments:[]
   const serverState = (state && state.server)?true:false
- 
+  const [milestones, setMilestones] = useState([])
+  const [stoneList, setStoneList] = useState([])
+
   let [currentPost, setCurrentPost] = useState([])
   
-  const fetchPost = useCallback(()=> {
+  const fetchPost = useCallback(()=> {   // serverless function for setting the current post
     fetch('../data.json', {
       method:'GET',
       headers: {
@@ -33,23 +35,52 @@ function Posts(props) {
     });
   }, [id])
 
+  const fetchStones = useCallback(()=> {   // unused for now, this gets the milestones if ur not on server
+    fetch('../sample.json', {
+      method:'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      setMilestones(data)
+      console.log('fetched from local')
+    }) 
+  }, [])
+
+  useEffect(()=> {
+    if (serverState) {
+      Axios.get(`http://localhost:3000/posts/${id}/showmilestones`)
+      .then((response)=> {
+        setStoneList(response.data)
+      })
+    } 
+  }, [serverState, id])
+
   useEffect(() =>{
     if (serverState) {
-      Axios.get('http://localhost:3000/newfeed/newposts')
+      Axios.get('http://localhost:3000/newfeed/newposts')       // server function for setting the current post
     .then((response)=> {
       setCurrentPost(response.data.find(e => parseInt(id) === e.id))
-    })  
+    })
+    Axios.get(`http://localhost:3000/posts/${id}/showlinked`)     // gets milestones related to post
+    .then((response)=> {
+      setMilestones(response.data)
+    })
     } else {
       console.log('server not fetching post')
       fetchPost()
+      
     }
   }, [fetchPost, serverState, id])
- 
+
   
   return (
     <motion.div className='postitem' initial={{width:0}} animate={{width:'100vw'}} exit={{x:window.innerWidth, transition:{duration:.3}}}>
       <div className='post-content'>
-      <Navbar/>
+      <Navbar title='milestone' from={'/posts'}/>
         <section className='top-space-standalone'>{''}</section>
         <div className='post-item-container'>
         <Post key={currentPost.id} 
@@ -62,7 +93,21 @@ function Posts(props) {
               likes={currentPost.likes}
               currentUser={username}
               serverState={serverState}
+              from={`/posts/${id}`}
           />
+        </div>
+        <div className='post-milestones-container'> 
+          {(milestones.length > 0)?
+          <p className='text-header-milestones'>Post Milestones</p>:''}
+          <ul className='post-milestones-log'>
+          {   /* solution is cheese; stoneList.find() renders only the milestones related to the post, theres probably a better way */
+              milestones.map(stone=> ( 
+                <Milestones key={stoneList.find(e=> e.idmilestones === stone.milestoneid).idmilestones} myKey={stoneList.find(e=> e.idmilestones === stone.milestoneid).idmilestones} 
+                title={stoneList.find(e=> e.idmilestones === stone.milestoneid).title} entries={stoneList.find(e=> e.idmilestones === stone.milestoneid).entries} streak={stoneList.find(e=> e.idmilestones === stone.milestoneid).streak} src={stoneList.find(e=> e.idmilestones === stone.milestoneid).src} from={'post'}
+                />
+              ))
+              }
+          </ul>
         </div>
         <div className='post-footer'> 
         <Footer logged={true}/> 

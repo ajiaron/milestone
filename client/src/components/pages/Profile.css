@@ -153,7 +153,23 @@ p {
   .settings-logo:hover {
     transform: scale(1.25);
   }
-  
+  .milestone-list-expand {
+    align-self: center;
+    font-size: 10px;
+    font-family: Inter, sans-serif;
+    font-weight: 800;
+    color: rgb(248, 210, 57);
+
+    height: 12px;
+    margin-bottom: 17px;
+    margin-left:12px;
+    padding-right:4px;
+    transition: all .15s linear;
+  }
+  .milestone-list-expand:hover {
+    color:rgb(243, 213, 93);
+    transform: scale(1.15);
+  }
   .milestone-container {
     padding: 24px 25px 31px 27px;
     margin-bottom: 20px;
@@ -276,8 +292,13 @@ p {
 
   .personal-milestone-list {
       list-style: none;
+
   }
+  
   .milestone-group-list {
       list-style: none;
       padding-bottom:2em;
   }
+.milestone-text-wrapper {
+  display: flex;
+}

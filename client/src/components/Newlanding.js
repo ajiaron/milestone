@@ -14,7 +14,6 @@ function Newlanding() {
 
   useEffect(() => {
     setUserData(clearData)
-    setUsername("testguy")
     setTimeout(() => setLoading(false),2000)
   }, [setUserData, setUsername, clearData])
 

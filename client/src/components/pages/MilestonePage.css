@@ -1,0 +1,201 @@
+.milestone-page-content {
+    position: relative;
+    box-sizing: border-box;
+    background-color: #1f1e1e;
+    width: 428px;
+    min-height: 926px;
+    margin-left:auto;
+    margin-right:auto;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+.milestone-standalone-context {
+    display: flex;
+    overflow-y: scroll;
+
+
+}
+.milestone-standalone-container {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    top: 9%;
+    width: 294px;
+    height: 30px;
+    margin-right: 2.25em;
+    align-self: center;
+}
+.milestone-image {
+    width: 30px;
+    margin-right: 14px;
+    background-color: rgb(214, 214, 214);
+    border-radius: 5px;
+    height: 100%;
+}
+.milestone-info-context {
+    text-align: left;
+    display: flex;
+    width: 222px;
+    
+}
+.milestone-info-title {
+  font-size: 18.5px;
+  margin-top:2px;
+  line-height: 1.4em;
+  font-family: Inter, sans-serif;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 1);
+  word-wrap: break-word;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+.milestone-standalone-button {
+    padding: 5px 30px 6px 31px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    background-color: rgba(194, 99, 78, 1);
+    bottom:0;
+    align-self:flex-end;
+    width: 99px;
+    height: 26px;
+    outline:none;
+    border:none;
+}
+.standalone-button-text {
+    font-size: 12px;
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 1);
+    word-wrap: break-word;
+  }
+.standalone-button {
+    border:none;
+    outline:none;
+    color:transparent;
+    background-color: transparent;
+    height:100%;
+    padding:0;
+}
+.link-icon{
+    color: #C3BFBF;
+    transform: rotate(-45deg);
+    min-width: 1.1em;
+    min-height:1.1em;
+    margin-top:.5em;
+    margin-right:30px;
+  
+}
+.milestone-link-disabled {
+    pointer-events: none;
+}
+.milestone-standalone-caption {
+  background-color: rgba(10, 10, 10, 1);
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  width: 337px;
+  height: 120px;
+  border-radius: 10px;
+  align-self: center;
+  top:14.25%;
+  padding: 28px 21px 28px 21px;
+  position: absolute;
+  text-align:left;
+}
+.standalone-caption-text {
+    font-size:13px;
+    font-family: Inter, sans-serif;
+    font-weight:400;
+    line-height: 16px;
+    color:white;
+}
+.recent-milestone-wrapper {
+    position: absolute;
+    top:29%;
+    margin-left: 3em;
+}
+.recent-milestone-header {
+  font-size: 18.5px;
+  font-family: Inter, sans-serif;
+  font-weight: 500;
+  line-height: 24px;
+  color: rgba(255, 255, 255, 1);
+  word-wrap: break-word;
+  align-self: flex-start;
+}
+.milestone-posts-list {
+    list-style: none;
+    padding:0;
+    margin-top: 18.5em;
+
+}
+.milestone-posts-container {
+    display:flex;
+    overflow: auto;
+    flex-flow:column;
+    min-width:100%;
+    background-color: #1f1e1e;
+}
+.milestone-timeline-container {
+    display: flex;
+    width: 337px;
+    align-self: center;
+    gap:2.5em;
+    padding-bottom: 1em;
+}
+.milestone-timestamp {
+  font-size: 19px;
+  line-height: 24px;
+  font-family: Inter, sans-serif;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 1);
+  word-wrap: break-word;
+}
+.grid-calender-container {
+
+    display:grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    background-color: transparent;
+    gap:8px;
+    width:336px;
+    align-self: center;
+    height:190px;
+
+}
+.grid-calender-item {
+    color: rgba(53, 174, 146, 1);
+    display: table-cell;
+ 
+    font-size:10.5px;
+    padding-right: 5px;
+    padding-top:27px;
+    background-color:rgba(53, 174, 146, 1);
+    box-sizing: border-box;
+    width:40px;
+    border-radius: 3px;
+    vertical-align: bottom;
+    height:100%;
+    font-weight: 800;
+    text-align:end;
+    justify-content: flex-end;
+}
+.grid-calender-item:nth-child(1),
+.grid-calender-item:nth-child(2),
+.grid-calender-item:nth-child(3),
+.grid-calender-item:nth-child(6),
+.grid-calender-item:nth-child(18),
+.grid-calender-item:nth-child(27),
+.grid-calender-item:nth-child(28) {
+    background-color: #696969;
+    color:#696969;
+}
+
+.grid-calender-item:nth-child(10),
+.grid-calender-item:nth-child(12),
+.grid-calender-item:nth-child(12),
+.grid-calender-item:nth-child(23) {
+    background-color:rgb(37, 124, 103);
+    color:rgb(37, 124, 103);
+}

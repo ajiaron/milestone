@@ -71,16 +71,6 @@ app.get('/newfeed/newposts', (req,res)=> {
     })
 })
 
-app.get('/createpost/getposts', (req,res)=> {
-    db.query('SELECT * FROM posts', (err, result)=> {
-        if (err) {
-            console.log(err)
-        } else {
-            res.send(result)
-        }
-    })
-})
-
 app.post('/createpost/newpost', (req, res)=> {
     const id = req.body.id
     const username = req.body.username
@@ -94,6 +84,233 @@ app.post('/createpost/newpost', (req, res)=> {
             console.log(err)
         } else {
             res.send("post all good sir")
+        }
+    })
+})
+
+app.post('/createmilestone/addmilestone', (req, res) => {
+    const idmilestones = req.body.idmilestones
+    const title = req.body.title
+    const ownerID = req.body.ownerID
+    const ownerName = req.body.ownerName
+    const entries = req.body.entries
+    const description = req.body.description
+    const src = req.body.src
+    const streak = req.body.streak
+    const date = req.body.idmilestones
+    db.query(
+    'INSERT INTO personal_milestones (idmilestones, title, ownerID, ownerName, entries, description, src, streak, date) VALUES (?,?,?,?,?,?,?,?,?)',
+    [idmilestones, title, ownerID, ownerName, entries, description, src, streak, date], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send("new milestone added")
+        }
+    })
+})
+
+app.post('/createmilestone/addpermissions', (req, res) => {
+    const idmilestones = req.body.idmilestones
+    const title = req.body.title
+    const ownerID = req.body.ownerID
+    const collaborate = req.body.collaborate
+    const viewable = req.body.viewable
+    const comments = req.body.comments
+    const likes = req.body.likes
+    const links = req.body.links
+    const duration = req.body.duration
+    db.query('INSERT INTO milestone_permissions (idmilestones, title, ownerID, collaborate, viewable, comments, likes, links, duration) VALUES (?,?,?,?,?,?,?,?,?)',
+    [idmilestones, title, ownerID, collaborate, viewable, comments, likes, links, duration], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send("milestone permissions added")
+        }
+    })
+})
+
+
+app.get('/createpost/showmilestones', (req, res) => {
+    db.query('SELECT * FROM personal_milestones', (err, result)=> {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.get('/editpost/:postid/showmilestones', (req, res) => {
+    db.query('SELECT * FROM personal_milestones', (err, result)=> {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.get('/createpost/getposts', (req, res) => {
+    db.query('SELECT * FROM posts', (err, result)=> {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.get('/editpost/:postid/getposts', (req, res) => {
+    db.query('SELECT * FROM posts', (err, result)=> {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+
+app.get('/editpost/:postid/getusers', (req, res) => {
+    db.query('SELECT * FROM users', (err, result)=> {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+
+app.post('/createpost/linkmilestone', (req, res) => {
+    const milestoneid = req.body.milestoneid
+    const postid = req.body.postid
+    const ownerID = req.body.ownerID
+    const ownerName = req.body.ownerName
+    const milestoneTitle = req.body.milestoneTitle
+    db.query('INSERT INTO milestoneposts (milestoneid, postid, ownerID, ownerName, milestoneTitle) VALUES (?,?,?,?,?)', 
+    [milestoneid, postid, ownerID, ownerName, milestoneTitle], (err, result) => {
+        if(err) {
+            console.log(err)
+        } else {
+            res.send("milestone linked to post")
+        }
+    })
+})
+
+app.post('/editpost/:postid/linkmilestone', (req, res) => {
+    const milestoneid = req.body.milestoneid
+    const postid = req.body.postid
+    const ownerID = req.body.ownerID
+    const ownerName = req.body.ownerName
+    const milestoneTitle = req.body.milestoneTitle
+    db.query('INSERT INTO milestoneposts (milestoneid, postid, ownerID, ownerName, milestoneTitle) VALUES (?,?,?,?,?)', 
+    [milestoneid, postid, ownerID, ownerName, milestoneTitle], (err, result) => {
+        if(err) {
+            console.log(err)
+        } else {
+            res.send("milestone linked to post")
+        }
+    })
+})
+
+app.put('/editpost/:postid/updatepost', (req, res) => {
+    const id = req.body.postid
+    const text = req.body.text
+    db.query('UPDATE posts SET text = ? WHERE id = ?', [text, id],
+    (err, result)=> {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.get('/editpost/:postid/getlinked', (req, res) => {
+    db.query('SELECT * FROM milestoneposts', (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+
+app.delete('/editpost/:postid/removelinked', (req, res) => {
+    const postid = req.params.postid
+    db.query("DELETE FROM milestoneposts WHERE postid = ?", [postid], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.delete('/editpost/:postid/removelinktag', (req, res) => {
+    const postid = req.params.postid
+    const milestoneid = req.body.milestoneid
+    db.query("DELETE FROM milestoneposts WHERE postid = ? AND milestoneid = ?", [postid, milestoneid], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+
+app.get('/posts/:id/showmilestones', (req, res) => {
+    const id = req.params.id
+    db.query('SELECT * FROM personal_milestones', (err, result)=> {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+
+app.get('/posts/:id/showlinked', (req, res) => {
+    const id = req.params.id
+    db.query('SELECT DISTINCT (milestoneid) FROM milestoneposts WHERE postid = ?',id, (err, result)=> {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+
+
+app.get('/profile/:name/showmilestones', (req, res) => {
+    db.query('SELECT * FROM personal_milestones', (err, result)=> {
+        if (err) {
+            console.log('not connected to server')
+        } else {
+            res.send(result)
+        }
+    })
+})
+
+app.get('/profile/:name/showgroups', (req, res) => {
+    db.query('SELECT * FROM milestone_groups', (err, result)=> {
+        if (err) {
+            console.log('not connected to server')
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.get('/profile/:name/showmembers', (req, res) => {
+    db.query('SELECT * FROM groupmembers', (err, result)=> {
+        if (err) {
+            console.log('not connected to server')
+        } else {
+            res.send(result)
+        }
+    })
+})
+
+app.get('/profile/:name/insights', (req, res) => {
+    db.query('SELECT * FROM users', (err, result)=> {
+        if (err) {
+            console.log('not connected to server')
+        } else {
+            res.send(result)
         }
     })
 })

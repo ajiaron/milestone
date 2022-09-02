@@ -11,10 +11,20 @@ import Grouptag from '../interactions/Grouptag'
 
 
 function Profile() {
+  let {name} = useParams()
+  let [groupData, setGroupData]  = useState([]) // for server
+  const [members, setMembers] = useState([])      // for server
+  
   let [milestones, setMilestones] = useState([])
   const {username, userData} = useContext(LoginContext) 
   let [groups, setGroups] = useState([])
-  let [limit, setLimit] = useState(true)
+  let [limit, setLimit] = useState('profile')
+  const [server, setServer] = useState(false)
+  const showmilestones = `http://localhost:3000/profile/${name}/showmilestones`
+  const showgroups = `http://localhost:3000/profile/${name}/showgroups`
+  const showmembers = `http://localhost:3000/profile/${name}/showmembers`
+  
+
   const fetchStones = useCallback(()=> {
     fetch('../sample.json', {
       method:'GET',
@@ -26,7 +36,7 @@ function Profile() {
     .then(response => response.json())
     .then(data => {
       setMilestones(data)
-    }) 
+    })
   }, [])
   const fetchGroups = useCallback(()=> {
     fetch('../testgroups.json', {
@@ -41,10 +51,41 @@ function Profile() {
       setGroups(data)
     }) 
   }, [])
+
   useEffect(() => {
-    fetchStones()
-    fetchGroups()
-  }, [fetchStones, fetchGroups])
+    Axios.get(showmilestones)
+    .then((response)=> {
+      setMilestones(response.data)
+      console.log('fetched milestones from server')
+      setServer(true)
+    })
+    .catch((e)=> {console.log('fetched milestones from local')})
+    if (!server){
+      fetchGroups()
+      fetchStones()
+  }
+}, [fetchStones, fetchGroups, showmilestones])
+
+  useEffect(()=> {
+    Axios.get(showgroups)
+    .then((response)=> {
+      setGroupData(response.data)
+      console.log('fetched groups from server')
+    })
+    .catch((e)=> {console.log('fetched groups from local')})
+  }, [showgroups, server])
+
+
+  useEffect(()=> {
+    Axios.get(showmembers)
+    .then((response)=> {
+      setMembers(response.data)
+      console.log('fetched group members from server')
+    })
+    .catch((e)=> {console.log('fetched group members from local')})
+  }, [showmembers])
+  
+
 
   return (
     <motion.div className='postitem' initial={{width:0}} animate={{width:'100vw'}} exit={{x:window.innerWidth, transition:{duration:.3}}}>
@@ -87,17 +128,28 @@ function Profile() {
               </div>
             </div>
           </div>
+          <div className='milestone-text-wrapper'>
           <p className="text-header-milestones">Personal Milestones</p>
+          <p className='milestone-list-expand'>+{milestones.length} more</p>
+          </div>
           <ul className='personal-milestone-list'>
             {milestones.map(stone => (
-               <Milestones key={stone.id} title={stone.title} entries={stone.entries} streak={stone.streak} src={stone.src} from={limit}/>
+               <Milestones key={stone.idmilestones} myKey={stone.idmilestones} title={stone.title} entries={stone.entries} streak={stone.streak} src={stone.src} from={limit} milestoneList={[]}/>
             ))}
              </ul>
           <p className="text-header-groups">Groups</p>
           <ul className='milestone-group-list'>
-            {groups.map(group=> (
-               <Grouptag key={group.id} title={group.title} members={group.members} membercount={group.membercount} image={group.image}/>
-            ))}
+            {server?
+             groupData.map(data=> (
+              <Grouptag key={data.idgroups} title={data.groupname} 
+               members={members.filter(e=>e.idgroups === data.idgroups).map((item) => item.membername)}
+               membercount={data.membercount} image={data.src} name={name} server={server}/>
+            )) 
+            : groups.map(group=> (
+              <Grouptag key={group.id} title={group.title} 
+               members={group.members} membercount={group.membercount} image={group.image} name={name} server={server}/>
+            ))
+            }
           </ul>
         </div>
       </div>

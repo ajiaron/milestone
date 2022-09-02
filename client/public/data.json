@@ -2,6 +2,7 @@
     {
         "id":"0",
         "username":"ajiaron",
+        "src":"",
         "text":"i love running and listening to bossa nova <3",
         "time":"5:43pm",
         "context":"currently listening to david goggins",
@@ -11,6 +12,7 @@
     {
         "id":"1",
         "username":"hzenry",
+        "src":"",
         "text":"pooh shiesty thats my dog",
         "time":"1:28am",
         "context":"currently feeding the hood",
@@ -20,6 +22,7 @@
     {
         "id":"2",
         "username":"antruong_",
+        "src":"",
         "text":"they stay praying on my downfall",
         "time":"5:32pm",
         "context":"currently on the run from the police",
@@ -29,6 +32,7 @@
     {
         "id":"3",
         "username":"jdason",
+        "src":"",
         "text":"Made a movie about being sus",
         "time":"11:12pm",
         "context":"currently running stumble guys",
@@ -38,6 +42,7 @@
     {
         "id":"4",
         "username":"timwang",
+        "src":"",
         "text":"i think my draco might be gay",
         "time":"7:05pm",
         "context":"currently benching 155 for 2",
@@ -47,6 +52,7 @@
     {
         "id":"5",
         "username":"fluffy",
+        "src":"",
         "text":"ahh ahh",
         "time":"7:45pm",
         "context":"gotta tell em im him",

@@ -3,7 +3,18 @@
       padding-top: .875em;
       padding-bottom: 1.5em;
   }
-
+  .sample-image-wrapper {
+    margin-top: .875em;
+    background-color: rgb(108, 162, 183);
+    height: 236px;
+    border-radius: 10px;
+    position: relative;
+    width: 100%;
+  }
+  .mile-post-item {
+    padding-top: .875em;
+    padding-bottom: .825em;
+  }
   .image-wrapper {
     margin-top: 1em;
     background-color: rgba(10, 10, 10, 1);
@@ -12,7 +23,44 @@
     position: relative;
     width: 100%;
   }
+  .post-profile-wrapper {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    padding-left: 1.125em;
+  }
 .actionbar-wrapper {
   margin-top:.5em;
   margin-left:1.275em;
+}
+.edit-post-button {
+  background-color: transparent;
+  border:none;
+  outline:none;
+  align-self: flex-end;
+
+}
+.edit-post-icon {
+
+  right:0;
+  background-color: transparent;
+  color:rgb(187, 187, 187);
+  min-width:1.725em;
+  min-height:1.725em;
+  margin-right:1.275em;
+  bottom:0;
+  transition: all .15s linear;
+}
+.edit-post-icon:hover {
+  transform: scale(1.15);
+  color: #3aad93;
+}
+.edit-post-link {
+  bottom:0;
+  align-self: flex-end;
+}
+.milestone-post-image {
+  max-height:236px;
+  object-fit:contain;
+  min-width: 100%;
 }

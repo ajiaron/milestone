@@ -14,12 +14,12 @@ export default function Newfeed(props) {
     const [server, setServer] = useState(false)
 
     const getPosts = () => {    /* gets data when server is running */
-      console.log(userData)
       Axios.get('http://localhost:3000/newfeed/newposts')
       .then((response)=> {
         setFeedList(response.data)
         setServer(true)
       })
+      .catch((e)=> {console.log(e.message + (' (server not running)'))})
     }
 
     const [postComments, setPostComments] = useState([])
@@ -43,7 +43,6 @@ export default function Newfeed(props) {
 
       useEffect(() =>{
         getPosts()
-
         if (!server) {
           fetchData()
         } 
@@ -67,13 +66,14 @@ export default function Newfeed(props) {
                         likes={post.likes}
                         currentUser={username}
                         serverState={server}
+                        from={'/newfeed'}
                         />
                     ))}
                 </ul>
             </div>
             </div>
             <div className='bottom-space'>{''}</div>
-            <Footer logged={false} lastpost={feedList.length}/>
+            <Footer logged={false} lastpost={feedList.length} onSendPost={(post)=> setFeedList([...feedList, post])} />
         </div> 
          </motion.div>
     );

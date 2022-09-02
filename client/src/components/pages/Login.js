@@ -23,6 +23,7 @@ function Login() {
 
     function handleClick() {
       getUsers()
+      setUserData({...userData, name: username, password:password})
     }
 
     return (
