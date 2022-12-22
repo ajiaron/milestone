@@ -1,0 +1,205 @@
+.settings-page-content {
+    position: relative;
+    box-sizing: border-box;
+    background-color: #1f1e1e;
+    width: 428px;
+    min-height: 100vh;
+    margin-left:auto;
+    margin-right:auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    overflow: auto;
+}
+
+p {
+    margin: 0;
+}
+.profile-wrapper {
+    align-self: center;
+    margin-top: 108px;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+}
+.profile-settings-pic {
+    max-width:70px;
+    max-height:70px;
+    align-self: center;
+    border-radius: 50%;
+}
+.edit-image-text {
+    font-size: 10px;
+    line-height: 12px;
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+    color: #35AE92;
+    word-wrap: break-word;
+    margin-top: 10px;
+    transition: all .125s linear;
+  }
+  .edit-image-text:hover {
+    color: rgb(220, 192, 78);
+  }
+.user-settings-wrapper {
+    min-width:280px;
+    display: flex;
+    flex-direction: column;
+    box-sizing:border-box;
+    margin-top:6px;
+    align-self: center;
+}
+.username-settings-wrapper {
+    max-width:280px;
+    display: flex;
+    flex-direction: column;
+    box-sizing:border-box;
+}
+.user-settings-header {
+    font-size: 10px;
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+
+    color: rgba(195, 191, 191, 1);
+    width: 35px;
+    word-wrap: break-word;
+    white-space: nowrap;
+    margin-top:12px;
+    margin-bottom: 8px;
+}
+.public-settings-header {
+    font-size: 10px;
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+    line-height: 12px;
+    color: rgba(195, 191, 191, 1);
+    margin-right: 4px;
+    word-wrap: break-word;
+    white-space: nowrap;
+    margin-bottom: 10px;
+}
+
+.description-settings-header {
+  
+    font-size: 10px;
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+
+    color: rgba(195, 191, 191, 1);
+    width: 35px;
+    word-wrap: break-word;
+    white-space: nowrap;
+    margin-top:16px;
+    margin-bottom: 8px;
+    
+}
+.username-settings-input {
+
+    box-sizing: border-box;
+    border-radius: 10px;
+    background-color: rgba(10, 10, 10, 1);
+    height: 25px;
+    min-width: 277px;
+    padding-left: 12px;
+    justify-content: center;
+  }
+  .username-settings-context {
+    font-size: 10px;
+    font-family: Inter, sans-serif;
+    line-height: 25px;
+    color:white;
+    font-weight: 600;
+    background-color: transparent;
+    outline:none;
+    border:none;
+    min-width: 100%;
+    word-wrap: break-word;
+  }
+  .username-settings-context::placeholder {
+      color:white;
+  }
+
+.reset-password-button {
+    padding: 6px 99px 6px 96px;
+
+    box-sizing: border-box;
+    border-radius: 5px;
+    background-color: rgba(0, 82, 63, 1);
+    height: 25px;
+    min-width: 277px;
+    align-content: center;
+    text-align: center;
+    box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.1);
+    outline:none;
+    border:none;
+    transition: all .15s linear;
+}
+.reset-password-button:hover {
+    transform: scale(1.05);
+    }
+.reset-password-container{
+    background-color: transparent;
+    outline:none;
+    border:none;
+
+    width:100%;
+    }
+.reset-password-text {
+    font-size: 11px;
+    font-family: Inter, sans-serif;
+    line-height: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 1);
+
+    word-wrap: break-word;
+    white-space:nowrap;
+    align-self: center;
+    
+}
+.profile-link-wrapper {
+    display:flex;
+    align-items: center;
+    margin-top:18px;
+}
+
+.link-profile-icon{
+    color: #C3BFBF;
+    transform: rotate(-45deg);
+    min-width: 1.15em;
+    min-height:1.15em;
+    margin-right: 4px;
+  }
+
+.user-settings-link {
+    text-decoration: none;
+    font-family: Inter,sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 10px;
+    transition: all .15s linear;
+    color: #FFFFFF;
+}
+.user-settings-link:hover {
+    color: rgba(53, 174, 146, 1);
+}
+.public-switch-wrapper {
+    box-sizing: border-box;
+    gap:10px;
+    height: 100%;
+    align-items: center;
+    text-align: center;
+    margin-bottom:8px;
+    margin-top:18px;
+    display:flex;
+    }
+    .public-label {
+        font-size: 10px;
+        font-family: Inter, sans-serif;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 1);
+        word-wrap: break-word;
+        }  
+    .reset-password-link {
+        max-height: 25px;
+    }
