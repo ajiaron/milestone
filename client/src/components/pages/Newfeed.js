@@ -7,8 +7,10 @@ import { useState, useEffect, useCallback, useContext } from 'react'
 import { LoginContext } from '../../UserContext'
 import Axios from 'axios'
 import {motion} from 'framer-motion'
+import { useAuth0 } from '@auth0/auth0-react'
 
 export default function Newfeed(props) {
+    const {user} = useAuth0()
     let [feedList, setFeedList] = useState([])
     const {username, userId, userData} = useContext(LoginContext) 
     const [server, setServer] = useState(false)
@@ -51,7 +53,7 @@ export default function Newfeed(props) {
     return (
       <motion.div className='feed' initial={{width:0}} animate={{width:'100vw'}} exit={{x:window.innerWidth, transition:{duration:.3}}}>
         <div className="content">
-        <Navbar/>
+        <Navbar server={server}/>
         <div className='feed-container'>
             <div className='feed-wrapper'>
                 <ul className='feed-items'>
@@ -64,7 +66,7 @@ export default function Newfeed(props) {
                         context={post.context} 
                         comments={postComments}    /* might want to get rid of this */
                         likes={post.likes}
-                        currentUser={username}
+                        currentUser={user?user.nickname:username}
                         serverState={server}
                         from={'/newfeed'}
                         />

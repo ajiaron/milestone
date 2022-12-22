@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useCallback, useContext} from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import Navbar from '../Navbar'
 import Footer from '../Footer'
 import {motion} from 'framer-motion'
@@ -8,21 +8,25 @@ import {LoginContext} from  '../../UserContext'
 import Axios from 'axios'
 import Milestones from '../interactions/Milestones'
 import Grouptag from '../interactions/Grouptag'
+import { useAuth0 } from '@auth0/auth0-react'
 
 
 function Profile() {
+  const {user} = useAuth0()
   let {name} = useParams()
   let [groupData, setGroupData]  = useState([]) // for server
   const [members, setMembers] = useState([])      // for server
-  
   let [milestones, setMilestones] = useState([])
   const {username, userData} = useContext(LoginContext) 
   let [groups, setGroups] = useState([])
-  let [limit, setLimit] = useState('profile')
   const [server, setServer] = useState(false)
-  const showmilestones = `http://localhost:3000/profile/${name}/showmilestones`
-  const showgroups = `http://localhost:3000/profile/${name}/showgroups`
-  const showmembers = `http://localhost:3000/profile/${name}/showmembers`
+  const showmilestones = `http://localhost:3000/profile/${user?user.nickname:name}/showmilestones`
+  const showgroups = `http://localhost:3000/profile/${user?user.nickname:name}/showgroups`
+  const showmembers = `http://localhost:3000/profile/${user?user.nickname:name}/showmembers`
+  const [self, setSelf] = useState(false)
+  const [requested, setRequested] = useState(false)
+  const [isFriend, setIsFriend] = useState(false)
+  let [limit, setLimit] = useState(`/profile/${(user&&self)?user.nickname:name}`)
   
 
   const fetchStones = useCallback(()=> {
@@ -51,6 +55,17 @@ function Profile() {
       setGroups(data)
     }) 
   }, [])
+  function requestFriend() {
+    setRequested(!requested)
+  }
+  
+  useEffect(()=> {
+    if (userData.name === name) {
+      setSelf(true)
+    } else {
+      setSelf(false)
+    }
+  }, [userData.name, name])
 
   useEffect(() => {
     Axios.get(showmilestones)
@@ -59,7 +74,6 @@ function Profile() {
       console.log('fetched milestones from server')
       setServer(true)
     })
-    .catch((e)=> {console.log('fetched milestones from local')})
     if (!server){
       fetchGroups()
       fetchStones()
@@ -72,7 +86,6 @@ function Profile() {
       setGroupData(response.data)
       console.log('fetched groups from server')
     })
-    .catch((e)=> {console.log('fetched groups from local')})
   }, [showgroups, server])
 
 
@@ -82,39 +95,46 @@ function Profile() {
       setMembers(response.data)
       console.log('fetched group members from server')
     })
-    .catch((e)=> {console.log('fetched group members from local')})
   }, [showmembers])
-  
 
+  
+  
 
   return (
     <motion.div className='postitem' initial={{width:0}} animate={{width:'100vw'}} exit={{x:window.innerWidth, transition:{duration:.3}}}>
       <div className='profile-page'>
-      <Navbar title='My Profile'/>
+      <Navbar title={`${(user && self)?'My Profile':(name)?name:'Profile'}`}/>
       <div className="profile-container flex-col-hcenter">
         <div className="profile-stats flex-col">
           <div className="profile-page-header flex-row">
             <img
-              src="https://firebasestorage.googleapis.com/v0/b/unify-bc2ad.appspot.com/o/h1b9t5cw8uj-152%3A3?alt=media&token=00d30aad-2cb8-45e6-805a-380273c20a6e"
+              src={`${(user && self)?user.picture:'https://firebasestorage.googleapis.com/v0/b/unify-bc2ad.appspot.com/o/h1b9t5cw8uj-152%3A3?alt=media&token=00d30aad-2cb8-45e6-805a-380273c20a6e'}`}
               alt="profilepicture"
               className="profile-main-pic"
             />
             <div className="profile-user-wrapper flex-col">
-              <p className="profile-handle">@{userData?username:'testguy'}</p>
-              <p className="profile-fullname">{userData?userData.fullname:'Testley Guyverson'}</p>
-              <p className="profile-blurb">{userData? userData.blurb:'gym, running, and coding.'}</p>
+              <p className="profile-handle">@{(user && self)?userData.name:(name)?name:'testguy'}</p>
+              <p className="profile-fullname">{(user && self)?userData.fullname:(name)?'Full Name':'Testley Guyverson'}</p>
+              <p className="profile-blurb">{(userData)? userData.blurb:'gym, running, and coding.'}</p>
             </div>
+            {(user && self)?
             <div className='settings-wrapper'>
-            <img
-              src="https://firebasestorage.googleapis.com/v0/b/unify-bc2ad.appspot.com/o/h1b9t5cw8uj-153%3A16?alt=media&token=207b8217-0873-4d5a-81e6-2f7a3fcf9e9b"
-              alt="Not Found"
-              className="settings-logo"
-            />
-            <div className='settings-notification-icon'/>
-            </div>
+            <Link to={'/settings'} className='settings-link'>
+              <img
+                src="https://firebasestorage.googleapis.com/v0/b/unify-bc2ad.appspot.com/o/h1b9t5cw8uj-153%3A16?alt=media&token=207b8217-0873-4d5a-81e6-2f7a3fcf9e9b"
+                alt="Not Found"
+                className="settings-logo"
+              />
+              <div className='settings-notification-icon'/>
+            </Link>
+            </div>:
+            <button className={(requested)?'request-button-toggled':'request-button'} onClick={requestFriend}>
+              <p className={(requested)?"request-button-text-toggled":"request-button-text"}>{(requested)?'Requested':'Request'}</p>
+            </button>
+            }
           </div>
           <div className="milestone-container flex-col">
-            <p className="profile-milestone-name">{userData?userData.fullname:'Testley Guyverson'}</p>
+            <p className="profile-milestone-name">{(user && self)?user.name:(name)?'Full Name':'Testley Guyverson'}</p>
             <div className="profile-milestone-insights flex-col-hend">
               <div className="milestone-insights-headers flex-row-vstart-hstart">
                 <p className="milestone-insights-text">MILESTONES</p>
@@ -130,11 +150,13 @@ function Profile() {
           </div>
           <div className='milestone-text-wrapper'>
           <p className="text-header-milestones">Personal Milestones</p>
-          <p className='milestone-list-expand'>+{milestones.length} more</p>
+          <Link to={`/${(user&&self)?user.nickname:(name)?name:'testguy'}/milestonelist`} className='milestone-list-link'>
+          <p className='milestone-list-expand'>+{milestones.length - 1} more</p>
+          </Link>
           </div>
           <ul className='personal-milestone-list'>
             {milestones.map(stone => (
-               <Milestones key={stone.idmilestones} myKey={stone.idmilestones} title={stone.title} entries={stone.entries} streak={stone.streak} src={stone.src} from={limit} milestoneList={[]}/>
+               <Milestones key={stone.idmilestones} myKey={stone.idmilestones} title={stone.title} entries={stone.entries} streak={stone.streak} src={stone.src} from={limit} milestoneList={[]} expand={false}/>
             ))}
              </ul>
           <p className="text-header-groups">Groups</p>

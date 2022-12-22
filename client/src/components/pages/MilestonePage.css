@@ -3,7 +3,7 @@
     box-sizing: border-box;
     background-color: #1f1e1e;
     width: 428px;
-    min-height: 926px;
+    min-height: 100vh;
     margin-left:auto;
     margin-right:auto;
     overflow-y: scroll;
@@ -14,26 +14,29 @@
 }
 .milestone-standalone-context {
     display: flex;
-    overflow-y: scroll;
+    overflow:auto;
 
 
+}
+.milestone-info {
+    display: block;
 }
 .milestone-standalone-container {
     display: flex;
     flex-direction: row;
     position: absolute;
-    top: 9%;
+    top: 8.5%;
     width: 294px;
     height: 30px;
-    margin-right: 2.25em;
+    margin-right: 2.625em;
     align-self: center;
 }
 .milestone-image {
-    width: 30px;
+    width: 33px;
     margin-right: 14px;
     background-color: rgb(214, 214, 214);
     border-radius: 5px;
-    height: 100%;
+    height: 33px;
 }
 .milestone-info-context {
     text-align: left;
@@ -41,28 +44,61 @@
     width: 222px;
     
 }
+.milestone-button-container {
+    display:flex;
+    width: 336px;
+    white-space: nowrap;
+    margin-top:1.625em;
+    margin-bottom:4.25em;
+    gap:3.5em;
+    
+    justify-content: center;
+    align-self:center;
+    
+    
+}
 .milestone-info-title {
   font-size: 18.5px;
-  margin-top:2px;
-  line-height: 1.4em;
+
+  line-height: 30px;
   font-family: Inter, sans-serif;
   font-weight: 600;
   color: rgba(255, 255, 255, 1);
   word-wrap: break-word;
-  margin-right: 8px;
+  margin-right: 6px;
   white-space: nowrap;
 }
-.milestone-standalone-button {
-    padding: 5px 30px 6px 31px;
+.milestone-delete-button {
+    padding: 5px 30px 5px 30px;
     box-sizing: border-box;
     border-radius: 4px;
-    background-color: rgba(194, 99, 78, 1);
+    background-color: #b95b46;
     bottom:0;
-    align-self:flex-end;
+    align-self:flex-start;
+    transition: all .15s linear;
     width: 99px;
     height: 26px;
     outline:none;
     border:none;
+}
+.milestone-delete-button:hover {
+    transform: scale(1.1);
+}
+.milestone-archive-button {
+    padding: 5px 30px 5px 27px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    background-color: #252525;
+    bottom:0;
+    align-self:flex-end;
+    transition: all .15s linear;
+    width: 99px;
+    height: 26px;
+    outline:none;
+    border: 1px dashed white;
+}
+.milestone-archive-button:hover {
+    transform: scale(1.1);
 }
 .standalone-button-text {
     font-size: 12px;
@@ -70,6 +106,8 @@
     font-weight: 600;
     color: rgba(255, 255, 255, 1);
     word-wrap: break-word;
+    align-self: center;
+    justify-self: center;
   }
 .standalone-button {
     border:none;
@@ -82,11 +120,11 @@
 .link-icon{
     color: #C3BFBF;
     transform: rotate(-45deg);
-    min-width: 1.1em;
-    min-height:1.1em;
-    margin-top:.5em;
-    margin-right:30px;
-  
+    min-width: 1.15em;
+    min-height:1.15em;
+    margin-top:.375em;
+    margin-right:32px;
+
 }
 .milestone-link-disabled {
     pointer-events: none;
@@ -94,12 +132,12 @@
 .milestone-standalone-caption {
   background-color: rgba(10, 10, 10, 1);
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-  width: 337px;
+  min-width: 337px;
   height: 120px;
   border-radius: 10px;
   align-self: center;
-  top:14.25%;
-  padding: 28px 21px 28px 21px;
+  top:13.5%;
+  padding: 21px 21px 28px 21px;
   position: absolute;
   text-align:left;
 }
@@ -112,11 +150,11 @@
 }
 .recent-milestone-wrapper {
     position: absolute;
-    top:29%;
+    top:26.25%;
     margin-left: 3em;
 }
 .recent-milestone-header {
-  font-size: 18.5px;
+  font-size: 18px;
   font-family: Inter, sans-serif;
   font-weight: 500;
   line-height: 24px;
@@ -127,7 +165,7 @@
 .milestone-posts-list {
     list-style: none;
     padding:0;
-    margin-top: 18.5em;
+    margin-top: 17.125em;
 
 }
 .milestone-posts-container {
@@ -141,6 +179,7 @@
     display: flex;
     width: 337px;
     align-self: center;
+    margin-top:.5em;
     gap:2.5em;
     padding-bottom: 1em;
 }
@@ -167,7 +206,6 @@
 .grid-calender-item {
     color: rgba(53, 174, 146, 1);
     display: table-cell;
- 
     font-size:10.5px;
     padding-right: 5px;
     padding-top:27px;
@@ -179,6 +217,7 @@
     height:100%;
     font-weight: 800;
     text-align:end;
+    transition: all .15s linear;
     justify-content: flex-end;
 }
 .grid-calender-item:nth-child(1),
@@ -198,4 +237,8 @@
 .grid-calender-item:nth-child(23) {
     background-color:rgb(37, 124, 103);
     color:rgb(37, 124, 103);
+}
+.grid-calender-item:hover {
+    transform: scale(1.15);
+   
 }

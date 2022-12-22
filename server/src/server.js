@@ -44,6 +44,38 @@ app.get('/login/account', (req,res)=> {
     })
 })
 
+app.put('/login/updateuser', (req, res) => {
+    const id = req.body.id
+    const fullname = req.body.fullname
+    const src = req.body.src
+    db.query('UPDATE users SET fullname = ?, src = ? WHERE id = ?', [fullname, src, id],
+    (err, result)=> {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+
+app.put('/settings/updateinfo', (req, res) => {
+    const id = req.body.id
+    const username = req.body.username
+    const description = req.body.description
+    const email = req.body.email
+    const fullname = req.body.fullname
+    const src = req.body.src
+    const isPublic = req.body.isPublic
+    db.query('UPDATE users SET name = ?, blurb = ?, email = ?, fullname = ?, src = ?, public = ? WHERE id = ?', [username, description, email, fullname, src, isPublic, id],
+    (err, result)=> {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+
 app.post('/newfeed/create', (req, res) => {
     const id = req.body.id
     const username = req.body.username
@@ -70,7 +102,16 @@ app.get('/newfeed/newposts', (req,res)=> {
         }
     })
 })
-
+app.get('/posts/:id/getpost', (req, res) => {
+    const id = req.params.id
+    db.query('SELECT * FROM posts WHERE id = ?', id, (err, result)=> {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
 app.post('/createpost/newpost', (req, res)=> {
     const id = req.body.id
     const username = req.body.username
@@ -340,6 +381,125 @@ app.get('/newfeed/getcomments', (req,res)=> {
     })
 })
 
+app.get('/friends/getfriends', (req, res)=> {
+    db.query('SELECT * FROM users', (err, result)=> {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.get('/:name/milestonelist/showmilestones', (req, res) => {
+    db.query('SELECT * FROM personal_milestones', (err, result)=> {
+        if (err) {
+            console.log('not connected to server')
+        } else {
+            res.send(result)
+        }
+    })
+})
 
+app.post('/createmilestone/postmilestone', (req, res) => {
+    const idmilestones = req.body.idmilestones
+    const title = req.body.title
+    const ownerID = req.body.ownerID
+    const ownerName = req.body.ownerName
+    const entries = req.body.entries
+    const description = req.body.description
+    const src = req.body.src
+    const streak = req.body.streak
+    db.query('INSERT INTO personal_milestones (idmilestones, title, ownerID, ownerName, entries, description, src, streak) VALUES (?,?,?,?,?,?,?,?)',
+    [idmilestones, title, ownerID, ownerName, entries, description, src, streak], (err, result)=> {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send("personal milestone posted")
+        }
+    })
+})
+
+app.post('/createmilestone/posticons', (req, res) => {
+    const src = req.body.src
+    const alt = req.body.alt
+    db.query('INSERT INTO icons (src, alt) VALUES (?,?)',
+    [src, alt], (err, result)=> {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send("icons posted")
+        }
+    })
+})
+
+
+app.get('/createmilestone/getmilestones', (req, res)=> {
+    db.query('SELECT * FROM personal_milestones', (err, result)=> {
+        if (err) {
+            console.log('not connected to server')
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.get('/createmilestone/getuser', (req, res)=> {
+    db.query('SELECT * FROM users', (err, result)=> {
+        if (err) {
+            console.log('not connected to server')
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.post('/createmilestone/postpermissions', (req, res) => {
+    const idmilestones = req.body.idmilestones
+    const title = req.body.title
+    const ownerID = req.body.ownerID
+    const collaborate = req.body.collaborate
+    const viewable = req.body.viewable
+    const comments = req.body.comments
+    const likes = req.body.likes
+    const links = req.body.links
+    const duration = req.body.duration
+    db.query('INSERT INTO milestone_permissions (idmilestones, title, ownerID, collaborate, viewable, comments, likes, links, duration) VALUES (?,?,?,?,?,?,?,?,?)',
+    [idmilestones, title, ownerID, collaborate, viewable, comments, likes, links, duration], (err, result)=> {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send("personal milestone posted")
+        }
+    })
+})
+
+app.get('/createmilestone/geticons', (req, res) => {
+    db.query('SELECT * FROM milestone_icons', (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.get('/milestone/:milestoneid/getmilestone', (req, res) => {
+    const milestoneid = req.params.milestoneid
+    db.query('SELECT * FROM personal_milestones WHERE idmilestones = ?',milestoneid, (err, result)=> {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    }) 
+})
+
+app.delete('/milestone/:milestoneid/removemilestone', (req, res) => {
+    const milestoneid = req.params.milestoneid
+    db.query("DELETE FROM personal_milestones WHERE idmilestones = ?", milestoneid, (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
 
 app.listen(3000, () => console.log('Listening on port 3000'))

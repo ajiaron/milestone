@@ -7,6 +7,8 @@ import Milestones from '../interactions/Milestones'
 import { LoginContext } from '../../UserContext'
 import Axios from 'axios'
 import {motion} from 'framer-motion'
+import {BsChevronDown} from 'react-icons/bs'
+import ToggleSwitch from '../interactions/ToggleSwitch'
 
 
 function CreatePost() {
@@ -19,6 +21,10 @@ function CreatePost() {
   let [milestones, setMilestones] = useState([])
   const [milestoneForm, setMilestoneForm] = useState([])
   const [server, setServer] = useState(false)
+  const [commentToggle, setCommentToggle] = useState(true)
+  const [likesToggle, setLikesToggle] = useState(true)
+  const [linksToggle, setLinksToggle] = useState(true)
+  const [expand, setExpand] = useState(false)
   const postInfo = {
     id: latestPost,
     username: username,
@@ -29,7 +35,10 @@ function CreatePost() {
   }
   const [postData, setPostData] = useState(postInfo)
 
-
+  function toggleExpand() {
+    setExpand(!expand)
+    console.log(expand)
+  }
   function postDataPublish(e) {
     Axios.post('http://localhost:3000/createpost/newpost', 
     {id:latestPost, username:username, text:postData.text, context:postData.context, date: postData.date, likes:postData.likes})
@@ -123,46 +132,44 @@ function CreatePost() {
           </div>
         </div>
         <div className='select-milestone-container'>
-        <p className="select-milestone-text">SELECT A MILESTONE</p>
+          <div className='expand-select-milestone'>
+            <p className="select-milestone-text">SELECT A MILESTONE</p>
+            <button className='down-arrow-button' onClick={toggleExpand}>
+            <BsChevronDown className={(expand)?'down-arrow-toggled':'down-arrow'}/>
+            </button>
+          </div>
+  
         <div className='select-milestone-wrapper'>
             <ul className='select-milestone-log'>
-            {milestones.map(stone => (
+            {[...milestones].reverse().map(stone => (
                <Milestones key={server?stone.idmilestones:stone.id} myKey={server?stone.idmilestones:stone.id}
                title={stone.title} entries={stone.entries} 
                streak={stone.streak} src={stone.src} from={limit} milestoneList={milestoneForm}
                onSendMilestone={selected=>setMilestoneForm([...milestoneForm, selected])} 
                onDeleteMilestone={selected=>setMilestoneForm(milestoneForm.filter(e=>e.id !== selected.id))}
-               post={latestPost}
+               post={latestPost} expand={expand}
                />
             ))}
             </ul>
+          
+            
         </div>
         </div>
         <div className='toggle-switch-container'>
-        <div className="comment-switch-wrapper">
-            <p className="switch-label">Comments</p>
-            <img
-            src="https://firebasestorage.googleapis.com/v0/b/unify-bc2ad.appspot.com/o/7rwd65eiz57-208%3A3176?alt=media&token=73634f95-4dff-4c4a-8f86-9158cdbf2cc3"
-            alt="slider"
-            className="switch-toggle"
-            />
-        </div>
-        <div className="likes-switch-wrapper">
-            <p className="switch-label">Likes</p>
-            <img
-            src="https://firebasestorage.googleapis.com/v0/b/unify-bc2ad.appspot.com/o/7rwd65eiz57-208%3A3176?alt=media&token=73634f95-4dff-4c4a-8f86-9158cdbf2cc3"
-            alt="slider"
-            className="switch-toggle"
-            />
-        </div>
-        <div className="link-switch-wrapper">
-            <p className="link-sharing-label">Link Sharing</p>
-            <img
-            src="https://firebasestorage.googleapis.com/v0/b/unify-bc2ad.appspot.com/o/7rwd65eiz57-208%3A3176?alt=media&token=73634f95-4dff-4c4a-8f86-9158cdbf2cc3"
-            alt="slider"
-            className="switch-toggle"
-            />
-        </div>
+      
+          <div className="comment-switch-wrapper">
+              <p className="switch-label">Comments</p>
+              <ToggleSwitch label={"Comments"} onToggleSwitch={toggle=>setCommentToggle(toggle)}/>
+          </div>
+          <div className="likes-switch-wrapper">
+              <p className="switch-label">Likes</p>
+              <ToggleSwitch label={"Likes"} onToggleSwitch={toggle=>setLikesToggle(toggle)}/>
+          </div>
+          <div className="link-switch-wrapper">
+              <p className="link-sharing-label">Link Sharing</p>
+              <ToggleSwitch label={"Link Sharing"} onToggleSwitch={toggle=>setLinksToggle(toggle)}/>
+          </div>
+
         </div>
         <div className="publish-save-container flex-col-hstart-vstart">
             <button className="save-button" onClick={()=>handleClick()}>

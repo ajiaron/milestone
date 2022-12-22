@@ -13,7 +13,6 @@ function Newlanding() {
   const { setUsername, setUserData, clearData} = useContext(LoginContext)
 
   useEffect(() => {
-    setUserData(clearData)
     setTimeout(() => setLoading(false),2000)
   }, [setUserData, setUsername, clearData])
 

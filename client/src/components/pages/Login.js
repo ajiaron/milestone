@@ -4,8 +4,10 @@ import './Login.css'
 import {Link} from 'react-router-dom'
 import Axios from 'axios'
 import { motion } from 'framer-motion'
+import { useAuth0 } from '@auth0/auth0-react'
 
 function Login() {
+    const {loginWithRedirect, logout, user, isLoading} = useAuth0()
     const [password, setPassword] = useState('')
     const [checked, setChecked] = useState(false)
     const {username, setUsername,userId, setUserId, userData, setUserData, clearData} = useContext(LoginContext)
@@ -15,15 +17,30 @@ function Login() {
       setUserData(clearData)
       Axios.get('http://localhost:3000/login/account')
       .then((response)=> {
-        setUserData(response.data.find(e => e.name === username))
-        setUserId(response.data.find(e => e.name === username).id)
+        setUserId(response.data.find(e => e.email === (user?user.email:username+'@gmail.com')).id)
+        setUserData(response.data.find(e => e.email === (user?user.email:username+'@gmail.com')))
         setServerState(true)
       })
     }
 
-    function handleClick() {
+    function handleLogin() {
       getUsers()
-      setUserData({...userData, name: username, password:password})
+      if (!isLoading && !user) {
+        loginWithRedirect()
+      } 
+      if (userData.src !== user.picture) {
+        Axios.put('http://localhost:3000/login/updateuser', 
+      {id:userId, fullname:user.name, src:(user.picture)})
+      .then(console.log('user info updated'))
+      } else {
+        console.log('user info up to date')
+      }
+      setUserData({...userData, id:userId, name: user.nickname, email:user.email, fullname:user.name, password:password})
+    }
+    function handleLogout() {
+      if (!isLoading && user) {
+        logout()
+      }
     }
 
     return (
@@ -43,10 +60,10 @@ function Login() {
             <div className="group-995 flex-col">
               <div className="sign-up-credentials flex-col-hend-vstart">
                 <div className="full-name flex-col">
-                  <p className="txt-332">Full name</p>
+                  <p className="txt-332">Username</p>
                   <div className="group-875 flex-row">
-                    <input className="username-input flex-hcenter"
-                    placeholder="Type your name here"
+                    <input className={user?"username-input-logged flex-hcenter":"username-input flex-hcenter"}
+                    placeholder={user?user.nickname:"Type your name here"}
                     type='text' name='username' id='username' 
                     onChange={(event)=>{setUsername(event.target.value)}}
                     >
@@ -62,8 +79,9 @@ function Login() {
                   <p className="txt-332">Password</p>
                   <div className="group-433 flex-row">
                     {/* type = {hidden ? 'text':'password'} */}
-                    <input className="userpass-input flex-hcenter" placeholder='*************' 
-                    type='text' name='pass' id ='pass'
+                    <input className={user?"userpass-input-logged":"userpass-input flex-hcenter"} 
+                    placeholder='&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;'
+                    type='password' name='pass' id ='pass' 
                     onChange={(event)=> setPassword(event.target.value)}
                     ></input>
                     <img
@@ -78,11 +96,22 @@ function Login() {
                 <input className="pass-checkbox" type='checkbox' onChange={()=>setChecked(!checked)} checked={checked}/>
                 <p className="txt-754">remember my account</p>
               </div>
-              <Link to='/newfeed' className='login-feed-link'>
-              <button className="btn--login" onClick={handleClick}>
-                <p className="txt-1109">Login</p>
+              <div className='login-button-container'>
+
+           
+              <Link to={user?'/newfeed':'#'} className='login-feed-link'>
+              <button className="btn--login" onClick={handleLogin}>
+                <p className="btn--text">Login</p>
               </button>
               </Link>
+              {user?         
+              <Link to={'#'} className='login-feed-link'>
+               <button className="btn--logout" onClick={handleLogout}>
+               <p className="btn--text">Logout</p>
+             </button>
+             </Link> 
+              :""}
+            </div>
             </div>
             <p className="txt-890">
               don’t have an account? 

@@ -8,7 +8,7 @@ import Axios from 'axios'
 
 
 function ActionBar(props) {
-  const {comments, currentuser, postOwner, postId, likes, serverState} = props
+  const {comments, currentuser, postOwner, postId, likes, serverState, from} = props
   const [upVotes, setUpVotes] = useState(likes);
   const [isLiked, setIsLiked] = useState(false)
   const [commentList, setCommentList] = useState(comments)
@@ -31,10 +31,10 @@ function ActionBar(props) {
          serverState ? setCommentList([...comments, myComment]) : setCommentList([...commentList, myComment])} 
          commentList={serverState?comments:commentList} username={currentuser} /* 'comments' when server is on, 'commentList' when off */
          date={new Date().toISOString().slice(0, 19).replace('T', ' ')}
-         postKey={postId} postOwner={postOwner}
+         postKey={postId} postOwner={postOwner} from={props.from}
          />
         <Link to={`/posts/${postId}`}
-         state={{comments:serverState?comments:commentList, likes:upVotes, server:serverState}} 
+         state={{comments:serverState?comments:commentList, likes:upVotes, server:serverState, from:from}} 
          className='post-item-link'>
         <button className='btn-milebook'>
         <img

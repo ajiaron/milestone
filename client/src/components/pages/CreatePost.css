@@ -33,7 +33,7 @@ margin: 0;
 }
 .toggle-switch-container {
 gap:2.5em;
-margin-bottom:2em;
+margin-bottom:.65em;
 align-self: center;
 bottom:18%;
 display: flex;
@@ -133,8 +133,52 @@ word-wrap: break-word;
 background-color: transparent;
 outline:none;
 border:none;
+justify-content: center;
+
+align-items: center;
 width:100%;
+
 }
+.expand-select-milestone {
+  max-width: 336px;
+  text-align: center;
+  display: flex;
+}
+.down-arrow-button {
+  border:none;
+  outline:none;
+  background-color: transparent;
+  margin-left:2.5em;
+  max-height: 1em;
+  max-width: 1em;
+}
+.down-arrow {
+  color:rgb(169, 169, 169);
+  transition: all .15s linear;
+}
+.down-arrow-toggled {
+  color:rgb(169, 169, 169);
+  transition: all .15s linear;
+  transform: rotate(180deg);
+}
+.down-arrow-toggled:hover {
+  transform: scale(1.2), rotate(180deg);
+  color:rgb(54, 175, 147);
+}
+.down-arrow:hover {
+  transform: scale(1.2);
+  color:rgb(54, 175, 147);
+}
+.delete-button-container{
+  background-color: transparent;
+  outline:none;
+  border:none;
+  justify-content: center;
+  margin-left: 4px;
+  align-items: center;
+  width:100%;
+  
+  }
 .publish-button-container{
 background-color: transparent;
 outline:none;
@@ -202,6 +246,7 @@ min-height: 100%;
 margin-bottom:.75em;
 min-width: 336px;
 align-self: center;
+align-items: center;
 }
 .select-milestone-text {
 font-size: 10px;
@@ -215,4 +260,5 @@ white-space:nowrap;
 }
 .select-milestone-log{
     list-style: none;
+    
 }

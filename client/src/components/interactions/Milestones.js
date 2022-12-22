@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom'
 import './Milestones.css'
 
 function Milestones(props) {
-  const {myKey, title, entries, streak, src, from, milestoneList, onSendMilestone, onDeleteMilestone} = props
+  const {myKey, title, entries, streak, src, from, milestoneList, onSendMilestone, onDeleteMilestone, expand} = props
 
   const [selected, setSelected] = useState(false)
   const [renderCount, setRenderCount] = useState(0)
@@ -16,7 +16,7 @@ function Milestones(props) {
     src: src,
   };
   function selectStone() {
-    if (from === 'create'|| from === 'edit') {
+    if (from === 'create'|| from.includes('edit')) {
       if (selected && from === 'edit') {
         onDeleteMilestone(selectedStone)
       } else {
@@ -35,10 +35,9 @@ function Milestones(props) {
   }, [milestoneList, renderCount, myKey])
   
     return (
-        <li className={from==='profile'?('personal-milestone-item'):('post-milestone-item')}>
-          <Link to={(from==='profile')?`/milestone/${myKey}`:'#'} state={{name:title}} className='milestone-page-link' >
+        <li className={from.includes('profile')?('personal-milestone-item'):(from.includes('milestonelist')||expand===true)?'full-milestone-item':'post-milestone-item'}>
+          <Link to={(from.includes('profile')||from.includes('milestonelist'))?`/milestone/${myKey}`:'#'} state={{name:title, from:from}} className='milestone-page-link' >
 
-          
         <div className={(selected?'selected-milestone-content':'profile-milestone-content')+' flex-col-hstart-vstart'} onClick={selectStone}>
           <div className="profile-milestone-item flex-row">
             <img
@@ -49,14 +48,14 @@ function Milestones(props) {
             <div className='milestone-item-context'>
             <p className="milestone-item-title">{title}</p>
             <p className="milestone-streak">
-            {entries} days<span className="milestone-streak-context"> {streak}</span>
+            {entries+1} days<span className="milestone-streak-context"> {streak}</span>
             </p>
             </div>
             
             <img
               src="https://firebasestorage.googleapis.com/v0/b/unify-bc2ad.appspot.com/o/6ibzja7dt2g-I190%3A746%3B153%3A38?alt=media&token=1cea81c4-d4bd-44c1-9e3c-9a354cde061f"
               alt="Not Found"
-              className={(from === 'profile')?"milestone-item-dropdown":"milestone-item-disabled"}
+              className={(from === 'profile' || from === 'milestonelist')?"milestone-item-dropdown":"milestone-item-disabled"}
           
             />
           </div>

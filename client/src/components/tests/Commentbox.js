@@ -6,7 +6,7 @@ import {RiQuillPenLine} from 'react-icons/ri'
 import Comments from '../interactions/Comments'
 import Axios from 'axios'
 
-const Commentbox = ({onSendComment, commentList, username, date, postKey, postOwner}) => {
+const Commentbox = ({onSendComment, commentList, username, date, postKey, postOwner, from}) => {
   const clearData = {
       comment:''
   }
@@ -54,7 +54,7 @@ const Commentbox = ({onSendComment, commentList, username, date, postKey, postOw
              <RiMessage2Line className='comment-icon-drop'/>
         </button>
         {
-            toggleForm && 
+            (toggleForm) && 
             <div className='comments-container' ref ={wrapperRef}>
                 <ul className='comments-log'>
                 {commentList.map(entry => (<Comments key={entry.idcomments} submission={entry} username={entry.username} time={date} /> ))}

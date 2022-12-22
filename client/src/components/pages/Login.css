@@ -96,8 +96,8 @@ p {
 }
 
 .sign-up-credentials {
-  margin-bottom: 13px;
   box-sizing: border-box;
+
   width: fit-content;
 }
 
@@ -117,7 +117,8 @@ p {
 }
 
 .group-875 {
-  padding: 8px 9px 10px 4px;
+  padding: 9px 8px 9px 7px;
+
   box-sizing: border-box;
   border-radius: 4px;
   background-color: rgba(30, 30, 30, 1);
@@ -129,7 +130,6 @@ p {
   font-family: Inter, sans-serif;
   font-weight: 500;
   color:white;
-  margin-left:5px;
   text-align:left;
   min-width: 220px;
   word-wrap: break-word;
@@ -139,7 +139,26 @@ p {
 }
 .username-input::placeholder {
   background-color: transparent;
+}
+.username-input-logged {
+  font-size: 10.5px;
+  font-family: Inter, sans-serif;
+  font-weight: 500;
+  color:white;
+  margin-left:5px;
+  text-align:left;
 
+  min-width: 220px;
+  word-wrap: break-word;
+  background-color: rgba(30, 30, 30, 1);
+  border:none;
+  outline:none;
+
+}
+.username-input-logged::placeholder {
+  color: white;
+  background-color: transparent;
+  
 }
 
 .name-logo {
@@ -161,7 +180,7 @@ p {
 }
 
 .group-433 {
-  padding: 6px 9px 5px 8px;
+  padding: 6px 5px 6px 7.5px;
   box-sizing: border-box;
   border-radius: 4px;
   background-color: rgba(30, 30, 30, 1);
@@ -185,12 +204,31 @@ p {
 }
 .userpass-input::placeholder {
   background-color: transparent;
+}
+.userpass-input-logged {
+  font-size: 10.5px;
+  font-family: Inter, sans-serif;
+  font-weight: 500;
+  color: white;
+  text-align: left;
+  padding-left: 1px;
+  min-width: 90%;
+  word-wrap: break-word;
+  margin-right: 10px;
+  background-color: rgba(30, 30, 30, 1);
+  border:2px solid transparent;
+  outline:none;
+  object-fit: cover;
+}
+.userpass-input-logged::placeholder {
+  background-color: transparent;
 
 }
 
 .email-at-icon {
   width: 10px;
   height: 12px;
+  color:white;
   margin-top:2px;
 }
 
@@ -217,33 +255,63 @@ p {
   color: rgba(255, 255, 255, 1);
   word-wrap: break-word;
 }
-
+.btn--logout {
+  min-width: 252px;
+  align-content: center;
+  border-radius: 4px;
+  background-color: rgba(10, 10, 10, 1);
+  border:1px dashed rgb(229, 229, 229);
+  height: 26px;
+  transition: all .125s linear;
+  outline:none;
+}
+.btn-logout:hover {
+  transform: scale(.95);
+}
 .btn--login {
-  padding: 5px 107px 6px 109px;
-  box-sizing: border-box;
+  min-width: 252px;
+  align-content: center;
   border-radius: 4px;
   background-color: rgba(0, 82, 63, 1);
-  height: 26px;
-  align-self: center;
-  justify-content: center;
-  width: fit-content;
+  min-height: 26px;
   outline:none;
   border:none;
 }
+.login-button-container {
+  max-width: 252px;
+  display: flex;
+  gap: 1em;
+  flex-direction: column;
+}
 .login-feed-link {
   text-decoration: none;
+  min-height: 26px;
+  outline:none;
+  border:none;
   transition: all .125s linear;
 }
 .login-feed-link:hover {
-  transform: scale(0.95);
+  transform: scale(.98);
+}
+.logout-feed-link {
+  text-decoration: none;
+  min-height: 26px;
+  outline:none;
+  border:none;
+  transition: all .125s linear;
+}
+.logout-feed-link:hover {
+  transform: scale(.98);
 }
 
-.txt-1109 {
+.btn--text {
   font-size: 12px;
   font-family: Inter, sans-serif;
   font-weight: 600;
   color: rgba(255, 255, 255, 1);
-  word-wrap: break-word;
+  text-align: center;
+  line-height: 2em;
+  align-self: center;
 }
 
 .txt-890 {

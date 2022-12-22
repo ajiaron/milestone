@@ -15,6 +15,7 @@
     "cores": "^0.8.5",
     "cors": "^2.8.5",
     "express": "^4.18.1",
+    "express-openid-connect": "^2.8.0",
     "mysql": "^2.18.1"
   },
   "devDependencies": {

@@ -5,11 +5,10 @@
     display: flex;
     text-align: center;
     justify-content: center;
-
     z-index:999;
     overflow:hidden;
     width: 428px;
-    height: 3.625em;
+    min-height: 3.625em;
   }
 
 .bottom-footer {
@@ -66,10 +65,12 @@
     transform: scale(1.25);
   }
   .milestone-logo {
-    min-width: 1.525em;
+    min-width: 1.575em;
     float: left;
-    min-height:1.475em;
+    height:1.525em;
     transition: all .15s linear;
+    margin-top:1px;
+    margin-left:2px;
   }
   .milestone-logo:hover {
     transform: scale(1.2)
@@ -85,7 +86,7 @@
   }
 
   .top-brand-toggled {
-    font-size: 18px;
+    font-size: 18.5px;
     font-family: Inter, sans-serif;
     font-weight: 600;
     color: rgba(255, 255, 255, 1);
@@ -94,9 +95,11 @@
   }
   
   .user-icon {
-    min-width: 1.65em;
-    min-height: 1.65em;
+
+    width: 1.75em;
+    height: 1.75em;
     float:right;
+    border-radius: 50%;
   }
   .footer-line {
     background-color: #00523F;
@@ -163,12 +166,12 @@
 }
 
 .feedpage-button {
-  max-width: 2em;
+  min-width: 2.15em;
   min-height:2em;
   background-color: transparent;
   outline:none;
   border:none;
-  padding-top:2px;
+  padding-top:3px;
 
 }
 .feedpage-icon {
@@ -189,7 +192,7 @@
   min-width: 1.875em;
   color:white;
   min-height:1.875em;
-  margin-left:10px;
+  margin-left:13px;
   transition: all 0.15s linear;
 }
 
@@ -200,17 +203,18 @@
 
 .friends-page-button{
   max-width: 2em;
-  min-height:2.5em;
+  min-height:2em;
   background-color: transparent;
   outline:none;
   border:none;
-  padding-top:6px;
-  padding-left:4px;
+  padding-top:7px;
+  padding-left:6px;
 }
 .friends-list-icon {
-  min-width: 1.825em;
+  min-width: 1.875em;
   color:white;
-  min-height:1.825em;
+  min-height:1.875em;
+  margin-bottom:1px;
   transition: all 0.15s linear;
 }
 .friends-list-icon:hover {

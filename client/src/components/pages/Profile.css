@@ -108,13 +108,14 @@ p {
   .profile-main-pic {
     width: 49px;
     height: 49px;
-    margin-right: 16px;
+    margin-right: 14px;
+    border-radius: 50%;
   }
   
   .profile-user-wrapper {
     box-sizing: border-box;
     height: 100%;
-    min-width: 100%;
+    width: fit-content;
   }
   
   .profile-handle{
@@ -123,7 +124,7 @@ p {
     font-weight: 600;
     color: rgba(255, 255, 255, 1);
     word-wrap: break-word;
-    margin-bottom: 3px;
+    margin-bottom: 4px;
   }
   
   .profile-fullname {
@@ -161,10 +162,21 @@ p {
     color: rgb(248, 210, 57);
 
     height: 12px;
-    margin-bottom: 17px;
+    
     margin-left:12px;
     padding-right:4px;
     transition: all .15s linear;
+  }
+  .milestone-list-link {
+    align-self: center;
+    font-size: 10px;
+    font-family: Inter, sans-serif;
+    font-weight: 800;
+    height: 12px;
+    margin-bottom: 17px;
+    justify-self: center;
+    text-decoration: none;
+
   }
   .milestone-list-expand:hover {
     color:rgb(243, 213, 93);
@@ -301,4 +313,66 @@ p {
   }
 .milestone-text-wrapper {
   display: flex;
+}
+.request-button {
+  box-sizing: border-box;
+  border-radius: 4px;
+  background-color: #00523F;
+  position: absolute;
+  right:12%;
+  margin-top:1px;
+  transition: all .1s linear;
+  width: 99px;
+  height: 26px;
+  outline:none;
+  padding-right: 1px;
+  border:none;
+
+}
+.request-button-toggled {
+  transition: all .1s linear;
+  box-sizing: border-box;
+  border-radius: 4px;
+  background-color: #565454;
+  position: absolute;
+  right:12%;
+  margin-top:1px;
+  width: 99px;
+  height: 26px;
+  outline:none;
+  padding-right: 1px;
+  align-items: center;
+  text-align: center;
+  align-content: center;
+  border:none;
+}
+.friend-button {
+  padding: 5px 30px 5px 30px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  background-color: #00523F;
+  bottom:0;
+  align-self:flex-start;
+  transition: all .1s linear;
+  width: 99px;
+  height: 26px;
+  outline:none;
+  border:none;
+}
+.request-button-text {
+  font-size: 12px;
+  transition: all .1s linear;
+  font-family: Inter, sans-serif;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 1);
+  white-space: nowrap;
+}
+.request-button-text-toggled {
+  font-size: 12px;
+  transition: all .1s linear;
+  font-family: Inter, sans-serif;
+  font-weight: 600;
+  color: #191919;
+  white-space: nowrap;
+  
 }

@@ -1,4 +1,50 @@
-  
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap");
+
+p {
+  margin: 0;
+}
+
+.flex-col-hcenter-vcenter {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+.post-tag {
+  padding: 2px 8px;
+  padding-right:12px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  background-color: rgba(53, 174, 146, 1);
+  border: 3px solid rgba(0, 82, 63, 1);
+  width: 117px;
+  margin-top: 1px;
+  margin-left: 9em;
+  height: 30px;
+}
+.post-tag-content {
+  width: 100%;
+}
+.post-tag-icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 8px;
+}
+.post-tag-text {
+  font-size: 12px;
+  font-family: Inter, sans-serif;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 1);
+ 
+  white-space: nowrap;
+  word-wrap: break-word;
+}
+
   .post-item {
       padding-top: .875em;
       padding-bottom: 1.5em;
@@ -16,18 +62,22 @@
     padding-bottom: .825em;
   }
   .image-wrapper {
-    margin-top: 1em;
+    margin-top: .75em;
     background-color: rgba(10, 10, 10, 1);
     height: 236px;
     border-radius: 10px;
     position: relative;
-    width: 100%;
+    max-width: 100%;
   }
   .post-profile-wrapper {
-    width: 100%;
+    max-width: 100%;
     box-sizing: border-box;
     display: flex;
     padding-left: 1.125em;
+  }
+  .post-profile-header {
+    display: flex;
+    width:100%;
   }
 .actionbar-wrapper {
   margin-top:.5em;
@@ -48,6 +98,7 @@
   min-width:1.725em;
   min-height:1.725em;
   margin-right:1.275em;
+ 
   bottom:0;
   transition: all .15s linear;
 }
@@ -58,9 +109,32 @@
 .edit-post-link {
   bottom:0;
   align-self: flex-end;
+  vertical-align: bottom;
+  margin-left: auto;
+
 }
 .milestone-post-image {
   max-height:236px;
   object-fit:contain;
   min-width: 100%;
+}
+.caption-button {
+  font-size: 10px;
+  font-family: Inter, sans-serif;
+  font-weight: 300;
+  color: rgb(144, 144, 144);
+  word-wrap: break-word;
+  text-decoration: none;
+  transition: all .1s linear;
+  background-color: transparent;
+  outline:none;
+  border:none;
+}
+.caption-button:hover {
+  color:#3aad93;
+}
+.user-profile-link {
+  text-decoration: none;
+  padding: 0;
+  margin:0;
 }

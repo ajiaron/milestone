@@ -18,9 +18,10 @@
     width: 45px;
     text-align: center;
     justify-self: center;
+ 
 }
 .update-post-button {
-    padding: 4px 143px 4px 144px;
+    padding: 4px 143px 4px 148px;
     box-sizing: border-box;
     border-radius: 4px;
     background-color: rgba(0, 82, 63, 1);
@@ -69,3 +70,33 @@
     width:100%;
 
 }
+.expand-select-milestone {
+    max-width: 336px;
+    text-align: center;
+    display: flex;
+  }
+  .down-arrow-button {
+    border:none;
+    outline:none;
+    background-color: transparent;
+    margin-left:2.5em;
+    max-height: 1em;
+    max-width: 1em;
+  }
+  .down-arrow {
+    color:rgb(169, 169, 169);
+    transition: all .15s linear;
+  }
+  .down-arrow-toggled {
+    color:rgb(169, 169, 169);
+    transition: all .15s linear;
+    transform: rotate(180deg);
+  }
+  .down-arrow-toggled:hover {
+    transform: scale(1.2), rotate(180deg);
+    color:rgb(54, 175, 147);
+  }
+  .down-arrow:hover {
+    transform: scale(1.2);
+    color:rgb(54, 175, 147);
+  }

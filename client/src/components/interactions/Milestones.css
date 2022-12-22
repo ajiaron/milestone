@@ -29,6 +29,13 @@ p {
   transition: all .125s linear;
   display:none;
 }
+.full-milestone-item {
+  transition: all .125s linear;
+  display:list-item;
+}
+.full-milestone-item:hover {
+  transform: scale(1.02);
+}
 .personal-milestone-item:nth-child(-n+1) {
   display: list-item;
 }

@@ -8,21 +8,28 @@ import Milestones from '../interactions/Milestones'
 import { LoginContext } from '../../UserContext'
 import Axios from 'axios'
 import {motion} from 'framer-motion'
+import ToggleSwitch from '../interactions/ToggleSwitch'
+import {BsChevronDown} from 'react-icons/bs'
 
 function EditPost() {
   const {postid} = useParams()
+  const [expand, setExpand] = useState(false) 
   const [milestoneTags, setMilestoneTags] = useState([])
   const [postOwner, setPostOwner] = useState({})
   const [latestPost, setLatestPost] = useState(0)
   const [deleteForm, setDeleteForm] = useState([])
-  const [limit, setLimit] = useState('edit')
+  const [commentToggle, setCommentToggle] = useState(true)
+  const [likesToggle, setLikesToggle] = useState(true)
+  const [linksToggle, setLinksToggle] = useState(true)
+  const [limit, setLimit] = useState(`/editpost/${postid}`)
   const {username, userData, userId} = useContext(LoginContext) 
   let [milestones, setMilestones] = useState([])
   const [milestoneForm, setMilestoneForm] = useState([])
-  const [server, setServer] = useState(false)
   let [currentPost, setCurrentPost] = useState([])
   const {state} = useLocation()
   const previousPage = (state && state.from)?state.from:'/newfeed'
+
+  const [server, setServer] = useState(false)
   
   const fetchPost = useCallback(()=> {
     fetch('../data.json', {
@@ -53,15 +60,13 @@ function EditPost() {
         console.log('fetched from local')
       }) 
     }, [])
-
+  function toggleExpand(){
+    setExpand(!expand)
+  }
   function handleClick() {
     console.log(milestoneForm)
     console.log(milestoneTags)
     console.log(deleteForm)
- //   Axios.delete(`http://localhost:3000/editpost/${postid}/removelinked`) removes all linked milestones
- //   .then((response)=> {
- //      console.log(response.data)
- //   })
   }
   function addMilestone(selected) {
     setDeleteForm(deleteForm.filter(e=> e !== selected.id))
@@ -75,26 +80,29 @@ function EditPost() {
   }
 
   function postDataUpdate(e) {
-    deleteForm.map((item) => {
+    if (server) {
+    deleteForm.map((item) => (
       Axios.delete(`http://localhost:3000/editpost/${postid}/removelinktag`, {data: {milestoneid:item}})
       .then((response)=> console.log(response.data))
-    })
+    ))
     Axios.put('http://localhost:3000/editpost/:postid/updatepost', 
     {postid:parseInt(postid), text:currentPost.text})
     .then(console.log('post caption updated'))
     milestoneForm.map((tag)=> {
-      Axios.post('http://localhost:3000/editpost/:postid/linkmilestone',
+      Axios.post(`http://localhost:3000/editpost/${postid}/linkmilestone`,
       {milestoneid:tag.key, postid:parseInt(postid), ownerID:postOwner?postOwner.id:0, ownerName:postOwner?postOwner.name:'testguy', milestoneTitle:tag.title})
       .then(()=> console.log('updated post linked to milestone'))
     })
   }
+  }
   
   useEffect(()=> {
-    Axios.get('http://localhost:3000/editpost/:postid/getlinked')
+    Axios.get(`http://localhost:3000/editpost/${postid}/getlinked`)
       .then((response) => {
         setMilestoneTags(response.data.filter((e)=> e.postid === parseInt(postid)).map(stone=>stone.milestoneid))
+        setServer(true)
       })
-    Axios.get('http://localhost:3000/editpost/:postid/showmilestones')
+    Axios.get(`http://localhost:3000/editpost/${postid}/showmilestones`)
       .then((response)=> {
         setMilestones(response.data)
         console.log('milestones retrieved')
@@ -102,25 +110,27 @@ function EditPost() {
       .catch((err) => {
         console.log(err)
       })
-      .then(setServer(true))
      if (!server) {
       fetchStones()
     } 
   }, [server, fetchStones, postid])
 
   useEffect(()=> {
-    Axios.get('http://localhost:3000/editpost/:postid/getusers')
+    if (server) {
+    Axios.get(`http://localhost:3000/editpost/${postid}/getusers`)
     .then((response)=> {
       setPostOwner(currentPost?response.data.find(e => currentPost.username === e.name):'testguy')
+   
     })
     .catch((e)=> {console.log(e.message + (' (server not running)'))})
- 
-  }, [currentPost])
+  }
+  }, [server,currentPost])
 
   useEffect(()=> {
-    Axios.get('http://localhost:3000/editpost/:postid/getposts')
+    Axios.get(`http://localhost:3000/editpost/${postid}/getposts`)
     .then((response)=> {
       setCurrentPost(response.data.find(e => parseInt(postid) === e.id))
+      setServer(true)
     })
     .catch((e)=> {console.log(e.message + (' (server not running)'))})
     if (!server) {
@@ -131,12 +141,12 @@ function EditPost() {
     return (  
         <motion.div initial={{width:0}} animate={{width:'100vw'}} exit={{x:window.innerWidth, transition:{duration:.25}}}>
         <div className='create-post-content'>
-        <Navbar title='Edit Post' from={previousPage}/>
+        <Navbar title='Edit Post' from={previousPage} server={server}/>
         <div className="post-description-container flex-col">
           <p className="description-text">DESCRIPTION</p>
           <div className="post-description-wrapper flex-row">
             <div className="description-input-area">
-              <textarea className="description-input" placeholder={currentPost.text?currentPost.text:'Add a desciption...'}
+              <textarea className="description-input" placeholder={currentPost?currentPost.text:'Add a desciption...'}
               onChange={(event)=>{setCurrentPost({...currentPost, text:event.target.value})}}
                ></textarea>
             </div>
@@ -148,50 +158,43 @@ function EditPost() {
           </div>
         </div>
         <div className='select-milestone-container'>
+        <div className='expand-select-milestone'>
         <p className="select-milestone-text">SELECT A MILESTONE</p>
+        <button className='down-arrow-button' onClick={toggleExpand}>
+            <BsChevronDown className={(expand)?'down-arrow-toggled':'down-arrow'}/>
+            </button>
+          </div>
         <div className='select-milestone-wrapper'>
             <ul className='select-milestone-log'>
-            {milestones.map(stone => (
+            {[...milestones].reverse().map(stone => (
                <Milestones key={server?stone.idmilestones:stone.id} myKey={server?stone.idmilestones:stone.id}
                title={stone.title} entries={stone.entries} 
                streak={stone.streak} src={stone.src} from={limit} milestoneList={milestoneTags}
                onSendMilestone={selected => addMilestone(selected)} 
                onDeleteMilestone={selected => deleteMilestone(selected.id)}
-               post={latestPost} 
+               post={latestPost} expand={expand}
                />
             ))}
             </ul>
         </div>
         </div>
         <div className='toggle-switch-container'>
-        <div className="comment-switch-wrapper">
-            <p className="switch-label">Comments</p>
-            <img
-            src="https://firebasestorage.googleapis.com/v0/b/unify-bc2ad.appspot.com/o/7rwd65eiz57-208%3A3176?alt=media&token=73634f95-4dff-4c4a-8f86-9158cdbf2cc3"
-            alt="slider"
-            className="switch-toggle"
-            />
-        </div>
-        <div className="likes-switch-wrapper">
-            <p className="switch-label">Likes</p>
-            <img
-            src="https://firebasestorage.googleapis.com/v0/b/unify-bc2ad.appspot.com/o/7rwd65eiz57-208%3A3176?alt=media&token=73634f95-4dff-4c4a-8f86-9158cdbf2cc3"
-            alt="slider"
-            className="switch-toggle"
-            />
-        </div>
-        <div className="link-switch-wrapper">
-            <p className="link-sharing-label">Link Sharing</p>
-            <img
-            src="https://firebasestorage.googleapis.com/v0/b/unify-bc2ad.appspot.com/o/7rwd65eiz57-208%3A3176?alt=media&token=73634f95-4dff-4c4a-8f86-9158cdbf2cc3"
-            alt="slider"
-            className="switch-toggle"
-            />
-        </div>
+          <div className="comment-switch-wrapper">
+              <p className="switch-label">Comments</p>
+              <ToggleSwitch label={"Comments"} onToggleSwitch={toggle=>setCommentToggle(toggle)}/>
+          </div>
+          <div className="likes-switch-wrapper">
+              <p className="switch-label">Likes</p>
+              <ToggleSwitch label={"Likes"} onToggleSwitch={toggle=>setLikesToggle(toggle)}/>
+          </div>
+          <div className="link-switch-wrapper">
+              <p className="link-sharing-label">Link Sharing</p>
+              <ToggleSwitch label={"Link Sharing"} onToggleSwitch={toggle=>setLinksToggle(toggle)}/>
+          </div>
         </div>
         <div className="publish-save-container flex-col-hstart-vstart">
             <button className="delete-post-button" onClick={()=>handleClick()}>
-                <div className='save-button-container'>
+                <div className='delete-button-container'>
               <p className="save-text">Delete</p>
               </div>
             </button>

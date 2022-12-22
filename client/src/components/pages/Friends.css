@@ -10,4 +10,75 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
+    overflow: auto;
 }
+.temp-button-container {
+    position: absolute;
+    margin-left:auto;
+    margin-right:auto;
+    top:50%;
+    color:transparent;
+    background-color: transparent;
+    align-self: center;
+    min-width: 2em;
+    min-height: 2em;
+    border:none;
+    outline:none;
+}
+.temp-button {
+    min-width: 2em;
+    min-height: 2em;
+    background-color: transparent;
+    color:white;
+}
+.friends-list {
+    list-style:none;
+    margin-bottom: 4.25em;
+    align-self: center;
+}
+.friends-list-wrapper {
+    position: absolute;
+    padding-top:6em;
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 3.75em;
+
+}
+
+.friend-search-input {
+
+    margin-bottom:1em;
+    box-sizing: border-box;
+    border-radius: 10px;
+    background-color: rgba(10, 10, 10, 1);
+    min-height: 28px;
+    max-width: 336px;
+    padding-left: 13px;
+    display: flex;
+    align-self: center;
+  }
+  .friend-search-context {
+    font-size: 11px;
+    font-family: Inter, sans-serif;
+    line-height: 28px;
+    color:white;
+    font-weight: 600;
+    background-color: transparent;
+    outline:none;
+    border:none;
+    min-width: 295px;
+    word-wrap: break-word;
+  }
+  .friend-search-context::placeholder {
+    color:rgb(143, 143, 143);
+  }
+  .search-icon {
+    color:rgb(143, 143, 143);
+    background-color: transparent;
+    margin-top: 1px;
+    min-width: 1em;
+    min-height: 1em;
+    margin-right:10px;
+    align-self: center;
+  }

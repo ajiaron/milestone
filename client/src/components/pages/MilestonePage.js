@@ -9,9 +9,11 @@ import { LoginContext } from '../../UserContext'
 import Axios from 'axios'
 import {motion} from 'framer-motion'
 import {MdInsertLink} from 'react-icons/md'
+import { useAuth0 } from '@auth0/auth0-react'
 
 function MilestonePage() {
   const [milestones, setMilestones] = useState([])
+  const {user} = useAuth0()
   const [postComments, setPostComments] = useState([])
   const [feedList, setFeedList] = useState([])
   const [latestPost, setLatestPost] = useState({})
@@ -20,6 +22,7 @@ function MilestonePage() {
   let {milestoneid} = useParams();
   const {state} = useLocation();
   const milestoneName = (state && state.name)?state.name:'Milestone';
+  const from = (state && state.from)?state.from:`/${user.nickname}/milestonelist`
   const {username} = useContext(LoginContext);
   const [postTime, setPostTime] = useState(
     new Date().toLocaleString("en-US", {month:"short"})+' '+new Date().toLocaleString("en-US", { day : '2-digit'})
@@ -27,17 +30,15 @@ function MilestonePage() {
   function getDaysInMonth(year, month) {
     return new Date(year, month, 0).getDate();
   }
-  function getDays() {
-    return [...Array(daysInCurrentMonth)].map((e,i)=> {
-        return <div className='grid-calender-item' key={i}>{i}</div>
-    }
-    )
-  }
-
   const date = new Date();
   const currentYear = date.getFullYear();
   const currentMonth = date.getMonth() + 1; 
   const daysInCurrentMonth = getDaysInMonth(currentYear, currentMonth);
+
+  function deleteMilestone(){
+    Axios.delete(`/milestone/${milestoneid}/removemilestone`)
+    .then((response)=> console.log(response.data))
+  }
   const fetchData = useCallback(()=> {     /* gets data when server is not running */
   fetch('../data.json', {
     method:'GET',
@@ -70,18 +71,26 @@ function MilestonePage() {
 
   function handleClick() {
     console.log(latestPost)
+    console.log(currentStone)
+    console.log(from)
     console.log(daysInCurrentMonth);
+
   }
   useEffect(()=> {
-
+    Axios.get(`http://localhost:3000/milestone/${milestoneid}/getmilestone`)
+    .then((response)=> {
+      setCurrentStone(response.data[0])
+      console.log(response.data[0])
+    })
+  
     fetchData()
     fetchStones()
-  }, [fetchStones, fetchData])
+  }, [milestoneid,fetchStones, fetchData])
 
   return (
     <motion.div initial={{width:0}} animate={{width:'100vw'}} exit={{x:window.innerWidth, transition:{duration:.25}}}>
         <div className='milestone-page-content'>
-            <Navbar title={milestoneName}/>
+            <Navbar title={currentStone.title} from={from}/>
             <div className="milestone-standalone-container">
            
             <img
@@ -89,24 +98,18 @@ function MilestonePage() {
               alt="Not Found"
               className="milestone-image"
             />
-            <div className='milestone-info-context'>
-              <p className="milestone-info-title">{milestoneName}</p>
-              <MdInsertLink className='link-icon'/>
-              </div>                          
-                <button className="milestone-standalone-button" onClick={handleClick}>
-                 <p className="standalone-button-text">Delete</p>
-                </button>
+         
+              <div className='milestone-info-context'>
+                <p className="milestone-info-title">{currentStone.title}</p>
+                <MdInsertLink className='link-icon'/>
+              </div>                
             </div>
+           
             <div className='milestone-standalone-caption'> {/* placeholder text */}
-                <p className='standalone-caption-text'>Re-Learning piano. 
-                <br/>Currently trying to learn Fantasie Impromptu.<br/>
-                <br/>🔥 Follow me on my journey!</p>
-            </div>
-            <div className='recent-milestone-wrapper'>
-            <p className='recent-milestone-header'>🌟 Today&lsquo;s Milestone</p>
+                <p className='standalone-caption-text'>{currentStone.description?currentStone.description:"New start, new milestone! 👋 "}
+              </p>        
             </div>
             <div className='milestone-posts-container'>
-            
             <ul className='milestone-posts-list'>
             <Post key={latestPost.id} 
                 myKey={latestPost.id}
@@ -162,6 +165,16 @@ function MilestonePage() {
                 <div className='grid-calender-item'>27</div>
                 <div className='grid-calender-item'>28</div>
              </div>
+             <div className='milestone-button-container'>       
+               <Link to={`/profile/${user.nickname}`} className='milestone-delete-link'>
+                  <button className="milestone-delete-button" onClick={deleteMilestone}>
+                  <p className="standalone-button-text">Delete</p>
+                  </button>
+               </Link>
+                  <button className="milestone-archive-button" onClick={handleClick}>
+                  <p className="standalone-button-text">Archive</p>
+                  </button>
+              </div>    
             <Footer logged={true}/>
         </div>
     </motion.div>
