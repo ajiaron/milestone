@@ -1,16 +1,35 @@
-import  React, {useState} from "react";
+import  React, {useState, useContext} from "react";
 import { Text, StyleSheet, View, Image, Pressable, TextInput} from "react-native";
 import AppLoading from 'expo-app-loading'
 import { useFonts, Inter_400Black } from '@expo-google-fonts/inter';
 import { useNavigation } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
+import { CheckBox } from "react-native-elements";
+import userContext from '../contexts/userContext'
+
+const LoginButton = () => {
+  const navigation = useNavigation();
+  return (
+    <Pressable
+      style={[styles.loginButton, styles.boxLayout]}
+      onPress={()=> navigation.navigate("Feed")}>
+      <View style={[styles.createAnAccountBox, styles.boxLayout]} />
+      <Text style={[styles.createAnAccountText1, styles.loginText]}>
+        Login
+      </Text>
+  </Pressable>
+  )
+}
 
 const Login = () => {
   const navigation = useNavigation();
   const [usernameText, onChangeUsernameText] = useState("")
   const [passwordText, onChangePasswordText] = useState("")
+  const user = useContext(userContext)
 
-
+  function handlePress() {
+    console.log(user.username)
+  }
 
   return (
     <View style={styles.loginPage}>
@@ -20,16 +39,15 @@ const Login = () => {
           <View style={styles.signUpCredentials}>
             <View style={styles.fullName}>
               <View style={[styles.fullNameTextBox, styles.textPosition]} />
-         
                 <TextInput  style={[
                   styles.fullNameFiller,
                   styles.fillerTypo,
                   styles.fillerTypo1,
                 ]}
-                onChangeText={onChangeUsernameText}
+                onChangeText={(e)=>user.setUsername(e)}
                 placeholder={"Type your name here"}
                 placeholderTextColor={'rgba(130, 130, 130, 1)'}
-                value={usernameText}/>
+                value={user.username}/>
 
               <Text style={[styles.fullNameHeader, styles.headerTypo]}>
                 Username
@@ -58,17 +76,15 @@ const Login = () => {
           </View>
           <View style={styles.rememberMyAccountBox}>
             <Text style={styles.rememberAccountText}>remember my account</Text>
-            <View style={styles.rememberMyAccountBoxChild} /> 
+
+            <Pressable onPress={handlePress}>
+              <View style={styles.rememberMyAccountBoxChild} /> 
+            </Pressable>
+
           </View>
-          <Pressable
-            style={[styles.loginButton, styles.boxLayout]}
-            onPress={() => navigation.navigate("Feed")}
-          >
-            <View style={[styles.createAnAccountBox, styles.boxLayout]} />
-            <Text style={[styles.createAnAccountText1, styles.loginText]}>
-              Login
-            </Text>
-          </Pressable>
+           
+          <LoginButton/>
+
           <Text style={styles.newAccountText}>don't have an account? 
           <Pressable
             style={[styles.newAccountTextButton]}

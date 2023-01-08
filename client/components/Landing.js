@@ -1,10 +1,13 @@
 import * as React from "react";
-import { StyleSheet, View, Text, Pressable, Image } from "react-native";
+import { StyleSheet, View, Text, Pressable, Image, Dimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
 import RadialGradient from 'react-native-radial-gradient';
 import { useFonts, Inter_400Black } from '@expo-google-fonts/inter';
 import AppLoading from 'expo-app-loading'
+
+const windowW= Dimensions.get('window').width
+const windowH = Dimensions.get('window').height
 
 const LogoGradient = () => {
   return (
@@ -24,8 +27,6 @@ const LogoGradient = () => {
 }
 const Landing = () => {
   const navigation = useNavigation();
-
-
   return (
     <View style={styles.landingPage}>
       <View style={[styles.headerBorder, styles.backgroundIconPosition]} />
@@ -165,8 +166,6 @@ const styles = StyleSheet.create({
     lineHeight:12,
     width: 252
   },
-
-
   descriptionForText: {
     top:434,
     alignSelf:'center',
@@ -212,8 +211,8 @@ const styles = StyleSheet.create({
   landingPage: {
     backgroundColor: GlobalStyles.Color.gray_300,
     flex: 1,
-    minWidth: "100%",
-    minHeight: "100%",
+    minWidth: windowW,
+    minHeight: windowH,
     overflow: "hidden",
     alignItems:"center",
     justifyContent:"center"

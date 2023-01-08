@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "milestonenative",
+    "slug": "milestonenative",
+    "version": "1.0.0",
+    "sdkVersion": "47.0.0",
+    "platforms": [],
+    "android": {
+      "package": "com.ajiaron.milestonenative"
+    },
+    "ios": {
+      "bundleIdentifier": "com.ajiaron.milestonenative"
+    }
+  }
+}

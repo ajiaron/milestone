@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react"
-
 import AppLoading from 'expo-app-loading'
 import * as Font from 'expo-font'
 import { FlatList, StyleSheet, Text, View, Button } from 'react-native';
@@ -12,12 +11,14 @@ import Landing from './components/Landing'
 import Login from './components/Login'
 import Register from './components/Register'
 import Feed from './components/Feed'
+import Post from './components/Post'
+import Profile from './components/Profile'
+import UserProvider from "./contexts/UserProvider";
 
 const Stack = createNativeStackNavigator()
 
 
 function App() {
-
   const [loaded] = useFonts({
     Inter: require('./assets/fonts/Inter-Medium.otf'),
     InterBold: require('./assets/fonts/Inter-SemiBold.otf'),
@@ -28,15 +29,18 @@ function App() {
     return null
   }
     return (
-      <NavigationContainer>
-   
-        <Stack.Navigator screenOptions={{headerShown: false}}initialRouteName="Landing">
-          <Stack.Screen name="Landing" component={Landing} />
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Register" component={Register} />
-          <Stack.Screen name="Feed" component={Feed} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <UserProvider>
+          <NavigationContainer>
+            <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName="Landing">
+              <Stack.Screen name="Landing" component={Landing} />
+              <Stack.Screen name="Login" component={Login} />
+              <Stack.Screen name="Register" component={Register} />
+              <Stack.Screen name="Feed" component={Feed} />
+              <Stack.Screen name="Post" component={Post} />
+              <Stack.Screen name="Profile" component={Profile} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </UserProvider>
       );
     }
 

@@ -1,0 +1,27 @@
+[
+    {
+      "id": 1,
+      "title": "Learning Piano",
+      "streak": 16,
+      "img": "music"
+    },
+    {
+      "id": 2,
+      "title": "Gym Grind",
+      "streak": 9,
+      "img": "dumbbell"
+    },
+    {
+      "id": 3,
+      "title": "Internship Apps",
+      "streak": 21,
+      "img": "money"
+
+    },
+    {
+      "id": 4,
+      "title": "Guitar Practice",
+      "streak": 14,
+      "img": "guitar"
+    }
+]

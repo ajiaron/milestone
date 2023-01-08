@@ -11,7 +11,7 @@ const Footer = () => {
         <View style={[styles.footerContainer]}>
             <View style={[styles.iconContainer]}>
                 <Pressable  
-                    onPress={() => navigation.navigate("Landing")}>
+                    onPress={() => navigation.navigate("Feed")}>
                 <View styles={styles.feedIcon}>
                     <Icon 
                         name='dynamic-feed'
@@ -21,7 +21,8 @@ const Footer = () => {
                     />
                 </View>
                 </Pressable>
-                
+                <Pressable  
+                    onPress={() => navigation.navigate("Landing")}>
                 <View styles={styles.addMilestoneIcon}>
                     <Image
                         style={styles.milebookImage}
@@ -29,6 +30,7 @@ const Footer = () => {
                         source={require("../assets/milebook-logo.png")} 
                     />
                 </View>
+                </Pressable>
                 <View styles={styles.createPostIcon}>
                     <Icon
                         name='add-circle-outline'
@@ -44,12 +46,16 @@ const Footer = () => {
                         size={29}
                     />
                 </View>
+                <Pressable styles={styles.profileButton}
+                    onPress={() => navigation.navigate("Profile")}> 
+                
                 <View styles={styles.profileIcon}>
                     <Image
                     style={styles.profilePic}
                     resizeMode="contain"
                     source={require("../assets/profile-pic-empty.png")}/>
                 </View>
+                </Pressable>
             </View>
         </View>
 
@@ -57,17 +63,17 @@ const Footer = () => {
 }
 const styles = StyleSheet.create({
     footerContainer: {
-        minHeight:64,
+        height:66,
         minWidth:"100%",
+        bottom:0,
+        position:"relative",
         backgroundColor:"rgba(10, 10, 10, 1)",
-        
-  
     },
     iconContainer: {
         flex: 1,
         justifyContent:"space-evenly",
         alignItems:"center",
-        paddingBottom:12,
+        paddingBottom:14,
         flexDirection:"row"
     },
     footerIcons: {
@@ -75,29 +81,22 @@ const styles = StyleSheet.create({
     },
     milebookImage: {
         maxHeight:26,
-        maxWidth:26
+        maxWidth:26,
+        top:17
+    },
+    profileButton: {
+       minHeight:25,
+       minWidth:25
     },
     profilePic: {
         maxHeight:25,
         maxWidth:25,
-        top:0
-        
-    },
-    feedIcon: {
-
-    },
-    addMilestoneIcon: {
-  
-    },
-    createPostIcon: {
-
+        top:18
     },
     friendsIcon: {
         top:1,
     },
-    profileIcon: {
-  
-    },
+
 
 
 })
