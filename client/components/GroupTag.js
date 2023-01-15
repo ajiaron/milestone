@@ -43,7 +43,6 @@ const GroupTag = ({title, users, img}) => {
                         size={32}
                     />
                 </View>
-            
             </View>
         </View>
     )
@@ -74,7 +73,7 @@ const styles = StyleSheet.create({
         justifyContent:"center",
     },
     groupTagIcon: {
-        left:6,
+        left:8,
         alignItems:"center",
     },
     groupIcon: {
@@ -110,7 +109,7 @@ const styles = StyleSheet.create({
 
         
         overflow:"visible",
-        left:windowW*0.0365,
+        left:windowW*0.035,
         color:"rgba(53, 174, 146, 1)",
     },
     groupMembersContext: {

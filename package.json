@@ -1,20 +1,30 @@
 {
   "dependencies": {
-    "expo-font": "^11.0.1",
+    "concurrently": "^7.6.0",
+    "cors": "^2.8.5",
     "expo": "~47.0.9",
+    "expo-device": "~5.0.0",
+    "expo-font": "^11.0.1",
     "expo-splash-screen": "~0.17.5",
     "expo-status-bar": "~1.4.2",
+    "expo-updates": "^0.15.6",
+    "express": "^4.18.2",
+    "mysql": "^2.18.1",
     "react": "18.1.0",
-    "react-native": "0.70.5"
+    "react-native": "0.70.5",
+    "react-native-device-info": "^10.3.0"
   },
   "name": "milestonenative",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start --dev-client",
+    "server": "nodemon --quiet server",
+    "client": "expo start --dev-client",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
     "android": "expo run:android",
     "ios": "expo run:ios"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9"
+    "@babel/core": "^7.12.9",
+    "nodemon": "^2.0.20"
   }
 }

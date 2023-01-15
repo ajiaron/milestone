@@ -35,7 +35,6 @@ const Login = () => {
     <View style={styles.loginPage}>
       <View style={styles.loginFrame}>
       <Text style={[styles.loginHeader, styles.loginText]}>Login</Text>
-          
           <View style={styles.signUpCredentials}>
             <View style={styles.fullName}>
               <View style={[styles.fullNameTextBox, styles.textPosition]} />
@@ -125,6 +124,7 @@ const styles = StyleSheet.create({
   },
   passwordInput: {
     top:"65%",
+    width:"100%"
   },
   fillerTypo1: {
     color: "white",
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
   fullNameFiller: {
     top: 37, 
     left: 0,
-    maxWidth: "100%",
+    width: "100%",
     textAlign:"left"
   },
   fullNameHeader: {
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   passwordFiller: {
     top: 36,
     left: 9,
-    width: 73,
+    width: "100%",
   },
   passwordHeader: {
     left: 1,

@@ -1,31 +1,54 @@
-import  React, {useState} from "react";
-import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView } from "react-native";
+import  React, {useState, useEffect, useContext} from "react";
+import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView, FlatList, Dimensions} from "react-native";
 import { Icon } from 'react-native-elements'
 import AppLoading from 'expo-app-loading'
 import { useNavigation } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
 import Footer from './Footer'
 import PostItem from './PostItem'
+import userContext from '../contexts/userContext'
 
-const Feed = () => {
+
+const windowW = Dimensions.get('window').width
+const windowH = Dimensions.get('window').height
+const Feed = ({route}) => {
+    const user = useContext(userContext)
+    const postData = require('../data/PostData.json')
+    const [newPost, setNewPost] = useState(null)
+    const [milestones, setMilestones] = useState([])
+    const [postList, setPostList] = useState([])
+    useEffect(()=> {
+      if (route.params) {
+        setNewPost(route.params.post)
+        setMilestones(route.params.milestones)
+        setPostList([newPost, ...postData])
+      }
+      console.log(postList)
+    }, [route])
+    const renderPost = ({ item }) => {
+      return (
+          <PostItem 
+              username={item.username}
+              caption={item.caption}
+              src={item.profilePic}
+              postId={item.id}
+              isLast={item.id == postData.length}
+              milestones={[]}
+          />
+      )
+  }
     return (
       <View style={styles.feedPage}>
-        <View style={styles.feedContainer}>
-         <ScrollView>
-          <View style={styles.feedSpace}/>
-            <PostItem username={'ajiaron'} caption={'call me kyrie cause i aint playing this year'} 
-            src={require("../assets/profile-pic-empty.png")} postId={1}/>
-            <PostItem username={'hzenry'} caption={'once you start learning the L goes silent'} 
-            src={require("../assets/profile-pic-empty.png")} postId={2}/>
-            <PostItem username={'antruong'} caption={'yodie gang i am obliviated'} 
-            src={require("../assets/profile-pic-empty.png")} postId={3}/>
-            <PostItem username={'jdason'} caption={'generic test caption'}
-            src={require("../assets/profile-pic-empty.png")} postId={4}/>
-            <PostItem username={'timwang'} caption={'my story written in braille'}
-            src={require("../assets/profile-pic-empty.png")} postId={5}/>
-          <View style={styles.footerSpace}/>
-         </ScrollView>
-        </View>
+          <View style={styles.feedContainer}>
+               <FlatList 
+                style={{paddingTop:48}}
+                snapToAlignment="start"
+                showsVerticalScrollIndicator={false}
+                data={postData} 
+                renderItem={renderPost} 
+                keyExtractor={(item)=>item.id}>
+            </FlatList> 
+            </View>
         <Footer/>
       </View>
     );

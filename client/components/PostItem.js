@@ -1,12 +1,16 @@
 import  React, {useState} from "react";
-import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView } from "react-native";
+import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView, Dimensions } from "react-native";
 import { Icon } from 'react-native-elements'
 import AppLoading from 'expo-app-loading'
 import { useNavigation } from "@react-navigation/native";
+import Icons from '../data/Icons.js'
 import GlobalStyles from "../styles/GlobalStyles";
 import Footer from './Footer'
+const windowW = Dimensions.get('window').width
+const windowH = Dimensions.get('window').height
 
-const PostItem = ({username, caption, src, postId, liked}) => {
+const PostItem = ({username, caption, src, postId, liked, isLast, milestones}) => {
+    const milestoneList = milestones?milestones:[]
     const navigation = useNavigation();
     const [isLiked, setIsLiked] = useState(liked?liked:false);
     const handlePress = () => {
@@ -19,7 +23,8 @@ const PostItem = ({username, caption, src, postId, liked}) => {
         username:username,
         src:src,
         caption:caption, 
-        liked:isLiked
+        liked:isLiked,
+        milestones:milestoneList
     }
     return (
      <View style={[styles.postContainer]}>
@@ -28,7 +33,7 @@ const PostItem = ({username, caption, src, postId, liked}) => {
             <Image
                 style={styles.profilePic}
                 resizeMode="contain"
-                source={src}/>
+                source={Icons[src]}/>
             </View>
             <View style={[styles.postUserHeader]}>
                 <Text style={[styles.postOwnerName]}> {username} </Text>
@@ -74,6 +79,7 @@ const PostItem = ({username, caption, src, postId, liked}) => {
             <Text style={[styles.commentsContent]}>{caption}</Text>
             <Text style={[styles.viewPostLink]}>View Milestones {'&'} Groups</Text>
         </View>
+        {isLast?<View style={{marginBottom:48}}/>:null}
      </View>
     );
 }
@@ -109,7 +115,7 @@ const styles = StyleSheet.create({
         backgroundColor:"rgba(28, 28, 28, 1)"
     },
     postWrapper: {
-        height:252,
+        height:windowH*(266/windowH),
         maxWidth:"100%",
         backgroundColor:"rgba(10,10,10,1)",
         position:"relative",
@@ -151,7 +157,7 @@ const styles = StyleSheet.create({
     commentsContainer: {
         paddingLeft:20,
         paddingTop:10,
-        minHeight:80,
+        minHeight:windowH*(80/windowH),
         flex:1,
         backgroundColor:"rgba(28, 28, 28, 1)",
     },

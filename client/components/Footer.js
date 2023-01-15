@@ -1,28 +1,42 @@
 import  React, {useState} from "react";
-import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView } from "react-native";
+import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView , Dimensions} from "react-native";
 import { Icon } from 'react-native-elements'
 import AppLoading from 'expo-app-loading'
 import { useNavigation } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
-
-const Footer = () => {
+const windowW = Dimensions.get('window').width
+const windowH = Dimensions.get('window').height
+const Footer = ({disable}) => {
+    const preventNavigation = disable?disable:false
     const navigation = useNavigation()
+    const routes = navigation.getState()?.routes;
+    const prevRoute = routes[routes.length - 2]
+    function handlePress() {
+        console.log(routes[routes.length - 1])
+        if (preventNavigation !== "CreatePost"){
+            navigation.navigate("CreatePost", {uri:false})
+        }
+    }
+    function returnPage() {
+        console.log(routes[routes.length-1])
+        navigation.navigate((routes[routes.length-1].name == "Feed")?"Landing":"Feed")
+    }
     return (
         <View style={[styles.footerContainer]}>
             <View style={[styles.iconContainer]}>
                 <Pressable  
-                    onPress={() => navigation.navigate("Feed")}>
+                    onPress={returnPage}>
                 <View styles={styles.feedIcon}>
                     <Icon 
                         name='dynamic-feed'
                         type='material'
                         color='white'
-                        size={27}
+                        size={30}
                     />
                 </View>
                 </Pressable>
                 <Pressable  
-                    onPress={() => navigation.navigate("Landing")}>
+                    onPress={() => navigation.navigate("CreateMilestone")}>
                 <View styles={styles.addMilestoneIcon}>
                     <Image
                         style={styles.milebookImage}
@@ -31,21 +45,27 @@ const Footer = () => {
                     />
                 </View>
                 </Pressable>
-                <View styles={styles.createPostIcon}>
-                    <Icon
-                        name='add-circle-outline'
-                        color='white'
-                        size={28}
-                    />
-                </View>
-                <View styles={styles.friendsIcon}>
-                    <Icon 
-                        style={styles.friendsIcon}
-                        name='people-outline'
-                        color='white'
-                        size={29}
-                    />
-                </View>
+                <Pressable onPress={handlePress}>
+                    <View styles={styles.createPostIcon}>
+                        <Icon
+                            name='add-circle-outline'
+                            color='white'
+                            size={30}
+                        />
+                    </View>
+                </Pressable>
+                <Pressable onPress={()=>navigation.navigate("TakePost", {
+                    previous_screen: routes[routes.length - 1]
+                    })}>
+                    <View styles={styles.friendsIcon}>
+                        <Icon 
+                            style={styles.friendsIcon}
+                            name='person-add-alt'
+                            color='white'
+                            size={31}
+                        />
+                    </View>
+                </Pressable>
                 <Pressable styles={styles.profileButton}
                     onPress={() => navigation.navigate("Profile")}> 
                 
@@ -63,7 +83,7 @@ const Footer = () => {
 }
 const styles = StyleSheet.create({
     footerContainer: {
-        height:66,
+        height:76,
         minWidth:"100%",
         bottom:0,
         position:"relative",
@@ -73,28 +93,28 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent:"space-evenly",
         alignItems:"center",
-        paddingBottom:14,
+        paddingBottom:18,
         flexDirection:"row"
     },
     footerIcons: {
-        height:16
+
     },
     milebookImage: {
-        maxHeight:26,
-        maxWidth:26,
-        top:17
+        maxHeight:windowH*(29/windowH),
+        maxWidth:windowW*(29/windowW),
+        top:16
     },
     profileButton: {
-       minHeight:25,
-       minWidth:25
+        minHeight:windowH*(30/windowH),
+        minWidth:windowW*(30/windowW),
     },
     profilePic: {
-        maxHeight:25,
-        maxWidth:25,
-        top:18
+        maxHeight:windowH*(26/windowH),
+        maxWidth:windowW*(26/windowW),
+        top:17.75
     },
     friendsIcon: {
-        top:1,
+        top:1
     },
 
 

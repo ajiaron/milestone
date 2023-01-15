@@ -13,6 +13,10 @@ import Register from './components/Register'
 import Feed from './components/Feed'
 import Post from './components/Post'
 import Profile from './components/Profile'
+import Settings from './components/Settings'
+import CreatePost from './components/CreatePost'
+import TakePost from './components/TakePost'
+import CreateMilestone from './components/CreateMilestone'
 import UserProvider from "./contexts/UserProvider";
 
 const Stack = createNativeStackNavigator()
@@ -38,6 +42,10 @@ function App() {
               <Stack.Screen name="Feed" component={Feed} />
               <Stack.Screen name="Post" component={Post} />
               <Stack.Screen name="Profile" component={Profile} />
+              <Stack.Screen name="Settings" component={Settings} />
+              <Stack.Screen name="TakePost" component={TakePost} />
+              <Stack.Screen name="CreatePost" component={CreatePost} />
+              <Stack.Screen name="CreateMilestone" component={CreateMilestone} />
             </Stack.Navigator>
           </NavigationContainer>
         </UserProvider>

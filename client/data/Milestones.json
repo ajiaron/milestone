@@ -16,12 +16,36 @@
       "title": "Internship Apps",
       "streak": 21,
       "img": "money"
-
     },
     {
       "id": 4,
       "title": "Guitar Practice",
       "streak": 14,
       "img": "guitar"
+    },
+    {
+      "id":5,
+      "title":"Milestone Progress",
+      "streak": 25,
+      "img":"phone"
+    },
+    {
+      "id":6,
+      "title":"Kanban Plan",
+      "streak": 10,
+      "img":"interface"
+    },
+    {
+      "id":7,
+      "title":"Reading & Reflecting",
+      "streak": 14,
+      "img":"handout"
+    },
+    {
+      "id":8,
+      "title":"Walko Doggo",
+      "streak": 20,
+      "img":"doggo"
     }
+
 ]

@@ -7,8 +7,9 @@ import Footer from './Footer'
 import MilestoneTag from "./MilestoneTag";
 import GroupTag from "./GroupTag";
 import userContext from '../contexts/userContext'
+import axios from 'axios'
 
-const windowW= Dimensions.get('window').width
+const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
 const ProfileInfo = ({name, milestones, groups, friends}) => {
@@ -46,19 +47,21 @@ const Profile = () => {
     const [milestones, setMilestones] = useState([])
     const milestoneData = require('../data/Milestones.json')
     const user = useContext(userContext)
+    const navigation = useNavigation()
 
     const renderMilestone = ({ item }) => {
         return (
             (item.id == 1) ?
-            <MilestoneTag title={item.title} streak={item.streak} img={item.img}/>: null
+            <MilestoneTag title={item.title} streak={item.streak} img={item.img} id={item.id} isLast={false}/>: null
         )
     }
     function handlePress() {
-        console.log(user.username)
+        navigation.navigate("Settings")
     }
 
     return (
         <View style={[styles.profilePage]}>
+            
             <View style={[styles.userInfoContainer]}>
                 <View styles={styles.profileIcon}>
                     <Image
@@ -73,13 +76,13 @@ const Profile = () => {
                 </View>
                 <View style={styles.settingsIcon}>
                     <Pressable onPress={handlePress}>
-                    <View style={styles.settingsNotification}/>
-                    <Icon 
-                        name='settings'
-                        type='material'
-                        color='white'
-                        size={26}
-                    />
+                        <View style={styles.settingsNotification}/>
+                        <Icon 
+                            name='settings'
+                            type='material'
+                            color='white'
+                            size={26}
+                        />
                     </Pressable>
                 </View>
             </View>
@@ -91,11 +94,6 @@ const Profile = () => {
                         Personal Milestones
                     </Text>
                 </View>
-                {
-            /*  <View style={[styles.milestoneTagList]}>
-                  <MilestoneTag title={"Learning Piano"} streak={16} img={require("../assets/music-notes.png")}/>
-                </View> 
-                {/* */}
                 <FlatList 
                     style={[styles.milestoneList]} 
                     data={milestoneData} 
@@ -109,14 +107,16 @@ const Profile = () => {
                 </View>
                 <View style={[styles.groupTagList]}>
                     <GroupTag title={"Gym Grind"} users={['hzenry', 'antruong']} img={require("../assets/dumbbell.png")}/>
-                    <GroupTag title={"Diversity Hires"} users={['tnompson', 'timwang']} img={require("../assets/money.png")}/>
+                    <GroupTag title={"Diversity Hires"} users={['antruong','timwang']} img={require("../assets/money.png")}/>
                     <GroupTag title={"Guitar Gang"} users={['jdason', 'hzenry']} img={require("../assets/guitar.png")}/>
                 </View>
             </View>
+
             <Footer/>
         </View>
     )
 }
+
 const styles = StyleSheet.create({
     profilePage: {
         backgroundColor: "rgba(28, 28, 28, 1)",
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
         width:windowW*0.8,
         height: windowH*0.185,
         borderRadius:15,
-        top:windowH*0.2125,
+        top:windowH*0.205-8,
         position:"absolute",
 
         alignSelf:"center",
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
         flexDirection:"row",
         position:"relative",
         maxHeight:22,
-        marginTop:16
+        marginTop:windowH*(18/windowH)
      
     },
     milestoneInsightsHeader: {
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     groupTagList: {
-        top:16,
+        top:18,
         position:"relative"
     },
     profileTagContainer: {
@@ -247,11 +247,10 @@ const styles = StyleSheet.create({
         width: 336,
         alignSelf:"center",
         position:"relative",
-        bottom:30
-
+        bottom:windowH*(30/windowH) + 4
     },
     userInfoContainer: {
-        top:"22%",
+        top:"20%",
         left:2,
         alignSelf:"center",
         maxWidth:windowW*0.8275,

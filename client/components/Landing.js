@@ -97,8 +97,8 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   createLayout: {
-    height: 26,
-    width: 252,
+    height: windowH * (26/windowH),
+    width: windowW * (252/windowW),
     position:'relative',
   },
   textTypo1: {
