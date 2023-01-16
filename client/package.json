@@ -30,6 +30,7 @@
     "react": "18.1.0",
     "react-native": "0.70.5",
     "react-native-auth0": "^2.16.0",
+    "react-native-dropdown-select-list": "^2.0.4",
     "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "^2.8.0",
     "react-native-radial-gradient": "^1.1.2",

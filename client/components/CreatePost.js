@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     },
     savePostButtonText: {
         fontFamily:"InterBold",
-        fontSize:13.5,
+        fontSize:14,
         color:"white",
         alignSelf:"center"
     },
@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
     },
     publishPostButtonText: {
         fontFamily:"InterBold",
-        fontSize:13.5,
+        fontSize:14,
         color:"white",
         alignSelf:"center"
     },
