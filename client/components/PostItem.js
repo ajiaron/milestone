@@ -7,6 +7,7 @@ import Icons from '../data/Icons.js'
 import GlobalStyles from "../styles/GlobalStyles";
 import axios from 'axios'
 import Footer from './Footer'
+import { Video } from 'expo-av'
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
@@ -14,6 +15,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     const milestoneList = milestones?milestones:[]
     const navigation = useNavigation()
     const route = useRoute()
+    var fileExt = image.split('.').pop()
     const month = new Date().toLocaleString("en-US", { month: "short" })
     const day = new Date().getDate()
     const postdate = month + ' ' + day
@@ -49,9 +51,14 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         </View>
         <View style={[styles.postWrapper, 
             {backgroundColor:(route.name === 'MilestonePage')?'rgba(108, 162, 183,1)':"rgba(10,10,10,1)",
-            height:(route.name === 'MilestonePage')?windowH*(246/windowH):windowH*(266/windowH)
+            height:(route.name === 'MilestonePage')?windowH*(246/windowH):(fileExt === 'mov' || fileExt === 'mp4')?windowH*(526/windowH):windowH*(266/windowH)
             }]}>
             {(route.name === 'MilestonePage' || image !=='defaultpost')?
+            (fileExt === 'mov' || fileExt === 'mp4')? 
+            <Video isLooping shouldPlay
+                source={{uri:image}}
+                resizeMode={'cover'}
+                style={{height:"100%", width:"100%",alignSelf:"center"}}/>:
             <Image
                 source={(image === 'defaultpost')?Icons[image]:{uri:image}}
                 resizeMode={'cover'}

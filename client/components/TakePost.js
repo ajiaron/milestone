@@ -6,6 +6,7 @@ import AppLoading from 'expo-app-loading'
 import { useNavigation } from "@react-navigation/native"
 import Footer from './Footer'
 import { Camera, CameraType } from 'expo-camera'
+import { Video } from 'expo-av'
 import { shareAsync } from 'expo-sharing'
 import * as MediaLibrary from 'expo-media-library'
 import * as ImagePicker from 'expo-image-picker'
@@ -20,21 +21,26 @@ const TakePost = ({route}) => {
     const prevroute = route.params.previous_screen.name?route.params.previous_screen.name:"Feed"
     const [type, setType] = useState(CameraType.back);
     const [photoUri, setPhotoUri] = useState()
-    const [permission, requestPermission] = Camera.useCameraPermissions();
+    const [videoUri, setVideoUri] = useState()
     let cameraRef = useRef()
     const [cameraPermission, setCameraPermission] = useState()
+    const [microphonePermission, setMicrophonePermission] = useState()
     const [mediaPermission, setMediaPermission] = useState()
     const [photo, setPhoto] = useState()
+    const [video, setVideo] = useState() 
     const [ready, setReady] = useState(false);
     const [image, setImage] = useState(null);
     const [isActive, setIsActive] = useState(false)
+    const [isRecording, setIsRecording] = useState()
 
     useEffect(()=> {
         if (Device.isDevice) {
         (async () => {
             const cameraPermissions = await Camera.requestCameraPermissionsAsync();
+            const microphonePermissions = await Camera.requestMicrophonePermissionsAsync();
             const mediaPermissions = await MediaLibrary.requestPermissionsAsync();
             setCameraPermission(cameraPermissions.status === "granted")
+            setMicrophonePermission(microphonePermissions.status === "granted")
             setMediaPermission(mediaPermissions.status === "granted")
         })() } 
     }, [])
@@ -48,15 +54,49 @@ const TakePost = ({route}) => {
         if (!result.canceled) {
             setImage(result.assets[0].uri)
             setPhotoUri(result.assets[0].uri)
+            setVideo(result.assets[0].uri) // check for asset type
+            setVideoUri(result.assets[0].uri)   // check for asset type
             setType(current => (current === CameraType.front ? CameraType.back : CameraType.back));
         }
+    }
+    let recordVideo = async () => {
+        setIsRecording(true)
+        let options = {
+            quality: "1080p",
+            maxDuration: 60,
+            mute: false,
+        }
+        cameraRef.current.recordAsync(options).then((recording)=> {
+            setVideo(recording)
+            setVideoUri(recording.uri)
+            setIsRecording(false)
+        })
+    }
+    let stopRecording = () => {
+        setIsRecording(false)
+        cameraRef.current.stopRecording()
     }
     function handleSelection() {
         setIsActive(true)
         pickImage()
     }
+    function backPress() {
+        console.log(prevroute)
+        if (prevroute === "CreatePost") {
+            navigation.navigate("Feed")
+        }
+        navigation.navigate(prevroute=="Post"||prevroute=="CreatePost"?"Feed":prevroute)
+    }
+    function handlePress() {
+        console.log("Device: ", Device.isDevice ? Device.modelName:"Simulator")
+        takePicture()
+    }
+    function toggleCameraType() {
+        setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
+        console.log(type)
+    }
 
-    if (cameraPermission === undefined) {
+    if (cameraPermission === undefined || microphonePermission === undefined) {
         // Camera permissions are still loading
         return (
         <View style={[styles.takePostPage]}>
@@ -99,24 +139,47 @@ const TakePost = ({route}) => {
         setPhotoUri(newPhoto.uri)
         setPhoto(newPhoto)
      };
-    if (photo || image) {
+    if (photo || image || video) {
         let sharePhoto = () => {
-            shareAsync(photo.uri)
+            if (video) {
+                shareAsync(video.uri)
+            } else {
+                shareAsync(photo.uri)
+            }
         }
         let savePhoto = () => {
-            MediaLibrary.saveToLibraryAsync(photo.uri)
+            if (video) {
+                MediaLibrary.saveToLibraryAsync(video.uri)
+            } else {
+                MediaLibrary.saveToLibraryAsync(photo.uri)
+            }
         }
         let postPhoto = () => {
-            navigation.navigate("CreatePost", {uri: photoUri, type:type})
+            if (video) {
+                var fileExt = video.uri.split('.').pop();
+                console.log(fileExt)
+                navigation.navigate("CreatePost", {uri: video.uri, type:type})
+            }
+            else {
+                var fileExt = photo.uri.split('.').pop();
+                console.log(fileExt)
+                navigation.navigate("CreatePost", {uri: photoUri, type:type})
+            }
         }
         let deletePhoto = () => {
             setPhoto(undefined)
             setImage(undefined)
+            setVideo(undefined)
         }
         return (
             <View style={styles.takePostPage}>
-                <Image style={(type==="front")?
-                [styles.preview, {transform:[{rotateY:'180deg'}]}]:styles.preview} source={{uri: photoUri}} resizeMode="contain"/>
+                {(video)? <Video 
+                style={styles.videoPreview} videoStyle={{minHeight:windowH}} source={{uri:video.uri}} resizeMode="cover" isLooping
+                shouldPlay
+                /> 
+                : <Image style={(type==="front")?
+                [styles.preview, {transform:[{rotateY:'180deg'}]}]:styles.preview} source={{uri: photoUri}} resizeMode="cover"/>}
+              
                 <View style={styles.mediaContainer}>
                     <View>
                         <Pressable onPress={postPhoto}>
@@ -153,21 +216,6 @@ const TakePost = ({route}) => {
             </View>
         )
     }
-    function backPress() {
-        console.log(prevroute)
-        if (prevroute === "CreatePost") {
-            navigation.navigate("Feed")
-        }
-        navigation.navigate(prevroute=="Post"||prevroute=="CreatePost"?"Feed":prevroute)
-    }
-    function handlePress() {
-        console.log("Device: ", Device.isDevice ? Device.modelName:"Simulator")
-        takePicture()
-    }
-    function toggleCameraType() {
-        setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
-        console.log(type)
-    }
 
     return (
         <View style={styles.takePostPage}>
@@ -182,6 +230,7 @@ const TakePost = ({route}) => {
                         />
                     </Pressable>
                 </View>
+                { (isRecording)?null:
                 <Pressable onPress={handleSelection} style={{bottom:windowH*(80/windowH), position:"absolute", left:windowW*(60/windowW)}}>
                     <Icon 
                         style={styles.galleryButton}
@@ -189,9 +238,9 @@ const TakePost = ({route}) => {
                         color='white'
                         size={32}
                     />
-                </Pressable>
+                </Pressable>}
                 <View style={styles.cameraButtonContainer}>
-                    <Pressable onPress={handlePress}>
+                    <Pressable onPress={handlePress} onLongPress={recordVideo} delayLongPress={150} onPressOut={stopRecording}>
                         <Icon 
                             style={styles.cameraButton}
                             name='circle'
@@ -313,6 +362,11 @@ const styles = StyleSheet.create({
         alignSelf:"stretch",
         height:windowH*0.0885,
         flex:1,
+    },
+    videoPreview: {
+        flex: 1,
+        minHeight:windowH,
+        alignSelf:"stretch"
     }
 })
 export default TakePost

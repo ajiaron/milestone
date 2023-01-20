@@ -8,6 +8,7 @@ import Footer from './Footer'
 import MilestoneTag from "./MilestoneTag";
 import userContext from '../contexts/userContext'
 import axios from 'axios'
+import { Video } from 'expo-av'
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
@@ -15,6 +16,7 @@ const windowH = Dimensions.get('window').height
 const CreatePost = ({route}) => {
     const img = (route.params.uri !== undefined)?route.params.uri:require('../assets/samplepostwide.png')
     const imgType = (route.params.type !== undefined)?route.params.type:"back"
+    var fileExt = (route.params.uri !== undefined)?route.params.uri.split('.').pop():'png';
     const date = new Date().toISOString().slice(0, 19).replace('T', ' ')
     const [commmentsEnabled, setCommentsEnabled] = useState(true)
     const toggleComments = () => setCommentsEnabled(previousState => !previousState)
@@ -78,11 +80,19 @@ const CreatePost = ({route}) => {
                             value={caption}
                             />
                     </View>           
-                    <Image 
+                    {(fileExt === 'mov' || fileExt === 'mp4')?
+                        <Video isLooping shouldPlay
+                        style={(imgType==="front")?[styles.newPostImageContainer, {transform:[{rotateY:'180deg'}]}]:styles.newPostImageContainer}
+                        resizeMode="cover"
+                        source={{uri:img}}/>
+                    :
+                        <Image 
                         style={(imgType==="front")?[styles.newPostImageContainer, {transform:[{rotateY:'180deg'}]}]:styles.newPostImageContainer}
                         resizeMode="cover"
                         source={route.params.uri?{uri:img}:require('../assets/samplepost.png')}
                     />
+                    }
+       
                 </View>
                 <View style={styles.milestoneListHeader}>
                     <Text style={styles.milestoneHeaderText}>SELECT A MILESTONE</Text>
