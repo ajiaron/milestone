@@ -81,4 +81,7 @@ const navigation = useNavigation()  #important
 ```
 
 That image (or whichever component is wrapped) is now the link to your new page. This is the general outline for how I made the other pages on the app, but feel free to follow the other pages to see how I formatted them. 
+
+There are other some small components that may be device specific, but since we're mainly focused on developing for iOS, the only significant feature that requires your phone is the camera and video recording, which is unsupported on the iOS simulator. However, the photo gallery and image picker is still available via simulator.
+
 Don't sweat the small stuff, there's a lot of small stuff!
