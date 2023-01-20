@@ -15,7 +15,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     const milestoneList = milestones?milestones:[]
     const navigation = useNavigation()
     const route = useRoute()
-    var fileExt = image.split('.').pop()
+    var fileExt = (image !== undefined)?image.toString().split('.').pop():'png'
     const month = new Date().toLocaleString("en-US", { month: "short" })
     const day = new Date().getDate()
     const postdate = month + ' ' + day
@@ -55,7 +55,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
             }]}>
             {(route.name === 'MilestonePage' || image !=='defaultpost')?
             (fileExt === 'mov' || fileExt === 'mp4')? 
-            <Video isLooping shouldPlay
+            <Video isLooping shouldPlay={true}
                 source={{uri:image}}
                 resizeMode={'cover'}
                 style={{height:"100%", width:"100%",alignSelf:"center"}}/>:

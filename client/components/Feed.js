@@ -30,17 +30,16 @@ const Feed = ({route}) => {
         setRefreshing(false);
         }, 800);
     }, []);
+
     useEffect(()=> {
         axios.get('http://10.10.110.94:19001/api/getposts')  // if this throws an error, replace 10.0.0.160 with localhost
         .then((response)=> {
             setPostFeed(response.data)
         }).catch(error => console.log(error))
-        
     }, [route])
     const renderPost = ({ item }) => {
-
-      var d = new Date(item.date).toLocaleString("en-US", {month:"short"})+' '+new Date().toLocaleString("en-US", { day : '2-digit'})
       return (
+        
           <PostItem 
               key={item.idposts}
               username={item.username}
@@ -50,7 +49,7 @@ const Feed = ({route}) => {
               postId={item.idposts}
               isLast={item.idposts == 1}
               milestones={[]}
-              date={d}
+              date={new Date(item.date).toLocaleString("en-US", {month:"short"})+' '+new Date().toLocaleString("en-US", { day : '2-digit'})}
           />
       )
   }

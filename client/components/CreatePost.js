@@ -16,7 +16,7 @@ const windowH = Dimensions.get('window').height
 const CreatePost = ({route}) => {
     const img = (route.params.uri !== undefined)?route.params.uri:require('../assets/samplepostwide.png')
     const imgType = (route.params.type !== undefined)?route.params.type:"back"
-    var fileExt = (route.params.uri !== undefined)?route.params.uri.split('.').pop():'png';
+    var fileExt = (route.params.uri !== undefined)?route.params.uri.toString().split('.').pop():'png';
     const date = new Date().toISOString().slice(0, 19).replace('T', ' ')
     const [commmentsEnabled, setCommentsEnabled] = useState(true)
     const toggleComments = () => setCommentsEnabled(previousState => !previousState)
