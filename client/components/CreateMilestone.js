@@ -8,7 +8,6 @@ import Icons from '../data/Icons.js'
 import userContext from '../contexts/userContext'
 import axios from 'axios'
 import { ScrollView } from "react-native-gesture-handler";
-import * as MediaLibrary from 'expo-media-library'
 import * as ImagePicker from 'expo-image-picker'
 
 const windowW = Dimensions.get('window').width

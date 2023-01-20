@@ -56,7 +56,14 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(10, 10, 10, 1)",
         borderRadius: 8,
         marginBottom:16,
-        alignSelf:"center"
+        alignSelf:"center",
+        shadowColor: '#000',
+        shadowOffset: {
+        width: 0,
+        height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
     },
     groupContentContainer: {
         width:(windowW*0.8)*0.875,

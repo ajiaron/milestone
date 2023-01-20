@@ -12,13 +12,11 @@ const Footer = ({disable}) => {
     const routes = navigation.getState()?.routes;
     const prevRoute = routes[routes.length - 2]
     function handlePress() {
-        console.log(routes[routes.length - 1])
         if (preventNavigation !== "CreatePost"){
             navigation.navigate("CreatePost", {uri:false})
         }
     }
     function returnPage() {
-        console.log(routes[routes.length-1])
         navigation.navigate((routes[routes.length-1].name == "Feed")?"Landing":"Feed")
     }
     return (

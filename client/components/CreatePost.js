@@ -13,8 +13,9 @@ const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
 const CreatePost = ({route}) => {
-    const img = (route.params.uri !== undefined)?route.params.uri:require('../assets/samplepost.png')
+    const img = (route.params.uri !== undefined)?route.params.uri:require('../assets/samplepostwide.png')
     const imgType = (route.params.type !== undefined)?route.params.type:"back"
+    const date = new Date().toISOString().slice(0, 19).replace('T', ' ')
     const [commmentsEnabled, setCommentsEnabled] = useState(true)
     const toggleComments = () => setCommentsEnabled(previousState => !previousState)
     const [likesEnabled, setLikesEnabled] = useState(true)
@@ -31,20 +32,21 @@ const CreatePost = ({route}) => {
         img:require('../assets/samplepost.png'),
         caption:'',
         profilePic:'defaultpic',
-        username:user.username?user.username:'ajiaron'
+        username:user.username?user.username:'ajiaron',
+        src:'defaultpost'
     }
     function handlePress() {
-        axios.get('http://10.0.0.160:19005/api/getmilestones')  // if this throws an error, replace 10.0.0.160 with localhost
-        .then((response)=> {
-            console.log(response.data.map((val, k) => val.title))
-        }).catch(error => console.log(error))
+        axios.post('http://10.10.110.94:19001/api/pushposts', 
+        {username:user.username?user.username:'ajiaron', caption:caption, profilepic:'defaultpic', src:img, date: date})
+        .then(() => {console.log('new user posted')})
+        .catch((error)=> console.log(error))
     }
     function sendPost() {
-        postData.img = route.params.uri?{uri:img}:require('../assets/samplepost.png')
+        postData.img = route.params.uri?{uri:img}:'defaultpost'
         postData.caption = caption
     }
     function submitPost() {
-        sendPost()
+        handlePress()
         navigation.navigate("Feed", {post: postData, milestones:milestones})
     }
     const renderMilestone = ({ item }) => {
@@ -133,7 +135,7 @@ const CreatePost = ({route}) => {
                     </View>
                 </View>
                 <View style={[styles.buttonContainer]}>
-                    <Pressable onPress={handlePress}>
+                    <Pressable>
                         <View style={styles.savePostButtonContainer}>
                             <Text style={styles.savePostButtonText}>Archive</Text>
                         </View>

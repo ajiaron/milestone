@@ -17,6 +17,7 @@ import Settings from './components/Settings'
 import CreatePost from './components/CreatePost'
 import TakePost from './components/TakePost'
 import CreateMilestone from './components/CreateMilestone'
+import MilestonePage from './components/MilestonePage'
 import UserProvider from "./contexts/UserProvider";
 
 const Stack = createNativeStackNavigator()
@@ -46,6 +47,7 @@ function App() {
               <Stack.Screen name="TakePost" component={TakePost} />
               <Stack.Screen name="CreatePost" component={CreatePost} />
               <Stack.Screen name="CreateMilestone" component={CreateMilestone} />
+              <Stack.Screen name="MilestonePage" component={MilestonePage} />
             </Stack.Navigator>
           </NavigationContainer>
         </UserProvider>

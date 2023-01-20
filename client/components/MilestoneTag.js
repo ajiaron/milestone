@@ -19,7 +19,7 @@ function normalize(size) {           /* normalizes font size to screen size */
       }
 }
 
-const MilestoneTag = ({title, streak, img, id, isLast, onSelectMilestone, onRemoveMilestone}) => {
+const MilestoneTag = ({title, streak, img, id, isLast, description, onSelectMilestone, onRemoveMilestone}) => {
     const navigation = useNavigation();
     const [isSelected, setIsSelected] = useState(false)
     const route = useRoute();
@@ -44,6 +44,8 @@ const MilestoneTag = ({title, streak, img, id, isLast, onSelectMilestone, onRemo
             else {
                 onRemoveMilestone(milestoneData)
             }
+        } else if (route.name === "Profile") {
+            navigation.navigate("MilestonePage", {milestone:milestoneData})
         }
         
         setIsSelected(!isSelected)
@@ -94,6 +96,13 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(10, 10, 10, 1)",
         borderRadius: 8,
         marginBottom:16,
+        shadowColor: '#000',
+        shadowOffset: {
+        width: 0,
+        height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
         alignSelf:"center"
     },
     selectedContainer: {

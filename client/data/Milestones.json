@@ -46,6 +46,54 @@
       "title":"Walko Doggo",
       "streak": 20,
       "img":"doggo"
+    },
+    {
+      "id":9,
+      "title":"Going Green",
+      "streak": 11,
+      "img":"lightbulb"
+    },
+    {
+      "id":10,
+      "title":"Great Outdoors",
+      "streak": 20,
+      "img":"campfire"
+    },
+    {
+      "id":11,
+      "title":"Ranked Stumble",
+      "streak": 18,
+      "img":"videogames"
+    },
+    {
+      "id":12,
+      "title":"Study Sessions",
+      "streak": 24,
+      "img":"pencil"
+    },
+    {
+      "id":13,
+      "title":"Touring & Exploring",
+      "streak": 19,
+      "img":"map"
+    },
+    {
+      "id":14,
+      "title":"Daily Ones",
+      "streak": 17,
+      "img":"boxing"
+    },
+    {
+      "id":15,
+      "title":"Portfolio Posts",
+      "streak": 22,
+      "img":"camera"
+    },
+    {
+      "id":16,
+      "title":"Update Milestones",
+      "streak": 31,
+      "img":"calender"
     }
-
+    
 ]

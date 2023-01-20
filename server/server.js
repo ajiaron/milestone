@@ -24,7 +24,7 @@ app.get('/api/getmilestones', (req, res)=> {
 })
 
 app.get('/api/getposts', (req, res) => {
-    db.query('SELECT * FROM posts', (err, result)=> {
+    db.query('SELECT * FROM userposts', (err, result)=> {
         if (err) {
             console.log(err)
         } else {
@@ -33,6 +33,22 @@ app.get('/api/getposts', (req, res) => {
     })
 })
 
-app.listen(19005, () => {
+app.post('/api/pushposts', (req, res)=> {
+    const username = req.body.username
+    const caption = req.body.caption
+    const profilepic = req.body.profilepic
+    const src = req.body.src
+    const date = req.body.date
+    db.query('INSERT INTO userposts (username, caption, profilepic, src, date) VALUES (?,?,?,?,?)', 
+    [username, caption, profilepic, src, date], (err, result) => {
+        if(err) {
+            console.log(err)
+        } else {
+            res.send("post all good sir")
+        }
+    })
+})
+
+app.listen(19001, () => {
     console.log("ayo server running on port 19001")
 })

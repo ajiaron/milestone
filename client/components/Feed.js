@@ -1,11 +1,12 @@
-import  React, {useState, useEffect, useContext} from "react";
-import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView, FlatList, Dimensions} from "react-native";
+import  React, {useState, useEffect, useContext, useCallback} from "react";
+import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView, FlatList, Dimensions, RefreshControl} from "react-native";
 import { Icon } from 'react-native-elements'
 import AppLoading from 'expo-app-loading'
 import { useNavigation } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
 import Footer from './Footer'
 import PostItem from './PostItem'
+import axios from 'axios'
 import userContext from '../contexts/userContext'
 
 
@@ -14,26 +15,42 @@ const windowH = Dimensions.get('window').height
 const Feed = ({route}) => {
     const user = useContext(userContext)
     const postData = require('../data/PostData.json')
+    const [postFeed, setPostFeed]= useState(postData)
     const [newPost, setNewPost] = useState(null)
     const [milestones, setMilestones] = useState([])
     const [postList, setPostList] = useState([])
+    const [refreshing, setRefreshing] = React.useState(false);
+    const month = new Date().toLocaleString("en-US", { month: "short" })
+    const day = new Date().getDate()
+    const currentDate = month + ' ' + day
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+        setRefreshing(false);
+        }, 800);
+    }, []);
     useEffect(()=> {
-      if (route.params) {
-        setNewPost(route.params.post)
-        setMilestones(route.params.milestones)
-        setPostList([newPost, ...postData])
-      }
-      console.log(postList)
+        axios.get('http://10.10.110.94:19001/api/getposts')  // if this throws an error, replace 10.0.0.160 with localhost
+        .then((response)=> {
+            setPostFeed(response.data)
+        }).catch(error => console.log(error))
+        
     }, [route])
     const renderPost = ({ item }) => {
+
+      var d = new Date(item.date).toLocaleString("en-US", {month:"short"})+' '+new Date().toLocaleString("en-US", { day : '2-digit'})
       return (
           <PostItem 
+              key={item.idposts}
               username={item.username}
               caption={item.caption}
-              src={item.profilePic}
-              postId={item.id}
-              isLast={item.id == postData.length}
+              src={item.profilepic}
+              image={item.src}
+              postId={item.idposts}
+              isLast={item.idposts == 1}
               milestones={[]}
+              date={d}
           />
       )
   }
@@ -41,14 +58,18 @@ const Feed = ({route}) => {
       <View style={styles.feedPage}>
           <View style={styles.feedContainer}>
                <FlatList 
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                  }
                 style={{paddingTop:48}}
                 snapToAlignment="start"
                 showsVerticalScrollIndicator={false}
-                data={postData} 
+                data={[...postFeed].reverse()} 
                 renderItem={renderPost} 
-                keyExtractor={(item)=>item.id}>
+                keyExtractor={(item, index)=>index}>
             </FlatList> 
             </View>
+     
         <Footer/>
       </View>
     );

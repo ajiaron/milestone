@@ -2,21 +2,28 @@ import  React, {useState} from "react";
 import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView, Dimensions } from "react-native";
 import { Icon } from 'react-native-elements'
 import AppLoading from 'expo-app-loading'
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import Icons from '../data/Icons.js'
 import GlobalStyles from "../styles/GlobalStyles";
+import axios from 'axios'
 import Footer from './Footer'
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const PostItem = ({username, caption, src, postId, liked, isLast, milestones}) => {
+const PostItem = ({username, caption, src, image, postId, liked, isLast, milestones, date}) => {
     const milestoneList = milestones?milestones:[]
-    const navigation = useNavigation();
-    const [isLiked, setIsLiked] = useState(liked?liked:false);
+    const navigation = useNavigation()
+    const route = useRoute()
+    const month = new Date().toLocaleString("en-US", { month: "short" })
+    const day = new Date().getDate()
+    const postdate = month + ' ' + day
+    const [isLiked, setIsLiked] = useState(liked?liked:false)
+    const [postDate, setPostDate] = useState(date?date:postdate)
     const handlePress = () => {
         setIsLiked(!isLiked)
         liked = isLiked
-        console.log(liked)
+        console.log(route.name)
+        console.log(image)
     }
     const data = {
         postId:postId,
@@ -37,10 +44,20 @@ const PostItem = ({username, caption, src, postId, liked, isLast, milestones}) =
             </View>
             <View style={[styles.postUserHeader]}>
                 <Text style={[styles.postOwnerName]}> {username} </Text>
-                <Text style={[styles.postOwnerTime]}> Today at Jan 02</Text>
+                <Text style={[styles.postOwnerTime]}>{(date)?(date === postdate)?`Today at ` + date:date:`Today at Jan 02`}</Text>
             </View>
         </View>
-        <View style={[styles.postWrapper]}>
+        <View style={[styles.postWrapper, 
+            {backgroundColor:(route.name === 'MilestonePage')?'rgba(108, 162, 183,1)':"rgba(10,10,10,1)",
+            height:(route.name === 'MilestonePage')?windowH*(246/windowH):windowH*(266/windowH)
+            }]}>
+            {(route.name === 'MilestonePage' || image !=='defaultpost')?
+            <Image
+                source={(image === 'defaultpost')?Icons[image]:{uri:image}}
+                resizeMode={'cover'}
+                style={{height:"100%", width:"100%",alignSelf:"center", bottom:0}}
+            />:null
+            }
         </View>
         <View style={[styles.actionbarContainer]}>
             <View style={[styles.actionIcon, styles.actionThumbsUp]}>
@@ -75,9 +92,10 @@ const PostItem = ({username, caption, src, postId, liked, isLast, milestones}) =
                 </View>
             </Pressable>
         </View>
-        <View style={[styles.commentsContainer]}>
+        <View style={[styles.commentsContainer, {minHeight:(route.name === 'MilestonePage')?50:80}]}>
             <Text style={[styles.commentsContent]}>{caption}</Text>
-            <Text style={[styles.viewPostLink]}>View Milestones {'&'} Groups</Text>
+            {(route.name === "MilestonePage")?null:
+            <Text style={[styles.viewPostLink]}>View Milestones {'&'} Groups</Text>}
         </View>
         {isLast?<View style={{marginBottom:48}}/>:null}
      </View>
@@ -136,7 +154,7 @@ const styles = StyleSheet.create({
         minWidth:"100%"
     },
     postHeader: {
-        maxHeight:58,
+        maxHeight:60,
         justifyContent:"center",
         flex:1,
         flexDirection:"row",
@@ -175,7 +193,7 @@ const styles = StyleSheet.create({
     },
     postOwnerTime: {
         fontFamily:"InterSemiLight",
-        left:8,
+        left:11,
         color:"white",
         bottom:-1,
         fontSize:11

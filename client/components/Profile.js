@@ -48,11 +48,12 @@ const Profile = () => {
     const milestoneData = require('../data/Milestones.json')
     const user = useContext(userContext)
     const navigation = useNavigation()
-
+    
     const renderMilestone = ({ item }) => {
         return (
             (item.id == 1) ?
-            <MilestoneTag title={item.title} streak={item.streak} img={item.img} id={item.id} isLast={false}/>: null
+            <MilestoneTag title={item.title} streak={item.streak} img={item.img} id={item.id} isLast={false}/>
+            : null
         )
     }
     function handlePress() {
@@ -61,7 +62,6 @@ const Profile = () => {
 
     return (
         <View style={[styles.profilePage]}>
-            
             <View style={[styles.userInfoContainer]}>
                 <View styles={styles.profileIcon}>
                     <Image
@@ -87,7 +87,6 @@ const Profile = () => {
                 </View>
             </View>
             <ProfileInfo name="Aaron Jiang" milestones={4} groups={3} friends={13} />
-            {/* replace with flatlist */}
             <View style={[styles.profileTagContainer]}>
                 <View style={[styles.milestoneHeaderContainer]}>
                     <Text style={[styles.milestoneHeader]}>
@@ -95,6 +94,7 @@ const Profile = () => {
                     </Text>
                 </View>
                 <FlatList 
+                    scrollEnabled={false}
                     style={[styles.milestoneList]} 
                     data={milestoneData} 
                     renderItem={renderMilestone} 
@@ -130,7 +130,13 @@ const styles = StyleSheet.create({
         borderRadius:15,
         top:windowH*0.205-8,
         position:"absolute",
-
+        shadowColor: '#000',
+        shadowOffset: {
+        width: 0,
+        height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
         alignSelf:"center",
         backgroundColor:"rgba(10, 10, 10, 1)"
     },
