@@ -27,7 +27,7 @@ const TakePost = ({route}) => {
     const [microphonePermission, setMicrophonePermission] = useState()
     const [mediaPermission, setMediaPermission] = useState()
     const [photo, setPhoto] = useState()
-    const [video, setVideo] = useState() 
+    const [video, setVideo] = useState(undefined) 
     const [ready, setReady] = useState(false);
     const [image, setImage] = useState(null);
     const [isActive, setIsActive] = useState(false)
@@ -54,8 +54,7 @@ const TakePost = ({route}) => {
         if (!result.canceled) {
             setImage(result.assets[0].uri)
             setPhotoUri(result.assets[0].uri)
-            setVideo(result.assets[0].uri) // check for asset type
-            setVideoUri(result.assets[0].uri)   // check for asset type
+          
             setType(current => (current === CameraType.front ? CameraType.back : CameraType.back));
         }
     }
@@ -77,6 +76,7 @@ const TakePost = ({route}) => {
         cameraRef.current.stopRecording()
     }
     function handleSelection() {
+        setIsRecording(false)
         setIsActive(true)
         pickImage()
     }
@@ -148,21 +148,20 @@ const TakePost = ({route}) => {
             }
         }
         let savePhoto = () => {
-            if (video) {
+            if (video !== undefined) {
                 MediaLibrary.saveToLibraryAsync(video.uri)
             } else {
                 MediaLibrary.saveToLibraryAsync(photo.uri)
             }
         }
         let postPhoto = () => {
-            if (video) {
-                var fileExt = video.uri.split('.').pop();
+            if (video !== undefined) {
+                var fileExt = video.toString().split('.').pop();
                 console.log(fileExt)
                 navigation.navigate("CreatePost", {uri: video.uri, type:type})
             }
             else {
-                var fileExt = photo.uri.split('.').pop();
-                console.log(fileExt)
+
                 navigation.navigate("CreatePost", {uri: photoUri, type:type})
             }
         }
@@ -173,12 +172,12 @@ const TakePost = ({route}) => {
         }
         return (
             <View style={styles.takePostPage}>
-                {(video)? <Video 
+                {(video !== undefined) ? <Video 
                 style={styles.videoPreview} videoStyle={{minHeight:windowH}} source={{uri:video.uri}} resizeMode="cover" isLooping
                 shouldPlay
                 /> 
                 : <Image style={(type==="front")?
-                [styles.preview, {transform:[{rotateY:'180deg'}]}]:styles.preview} source={{uri: photoUri}} resizeMode="cover"/>}
+                [styles.preview, {transform:[{rotateY:'180deg'}]}]:styles.preview} source={{uri: photoUri}} resizeMode="contain"/>}
               
                 <View style={styles.mediaContainer}>
                     <View>
