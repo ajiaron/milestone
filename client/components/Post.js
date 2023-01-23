@@ -30,6 +30,7 @@ const Post = ({navigation, route}) => {
         axios.get('http://10.0.0.160:19001/api/getmilestones')
         .then((response) => {
             setMilestoneList(response.data.filter((item)=>linkedMilestones.indexOf(item.idmilestones) >= 0))
+         
         }).catch(error=>console.log(error))
     }, [linkedMilestones])
     
@@ -39,7 +40,7 @@ const Post = ({navigation, route}) => {
                 title={item.title} 
                 streak={item.streak} 
                 img={(item.img === undefined)?item.src:item.img} 
-                id={item.id} 
+                id={item.idmilestones} 
                 isLast={milestoneList.indexOf(item)=== milestoneList.length-1}
             />
         )

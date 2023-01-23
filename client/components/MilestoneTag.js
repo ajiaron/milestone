@@ -3,7 +3,7 @@ import { Text, StyleSheet, View, Animated, Image, Pressable, PixelRatio, Touchab
 import Icons from '../data/Icons.js'
 import { Icon } from 'react-native-elements'
 import AppLoading from 'expo-app-loading'
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, NavigationActions } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
 
 const windowW= Dimensions.get('window').width
@@ -45,6 +45,11 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, onSelectMile
                 onRemoveMilestone(milestoneData)
             }
         } else if (route.name === "Profile" || route.name === 'MilestoneList' || route.name === 'Post') {
+            console.log(milestoneData)
+            navigation.reset({
+                index: 0,
+                routes: [{name: 'MilestonePage'}],
+              });
             navigation.navigate("MilestonePage", {milestone:milestoneData})
         }
         

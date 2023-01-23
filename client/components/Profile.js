@@ -2,7 +2,7 @@ import  React, {useState, useEffect, useContext} from "react";
 import { Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, ScrollView, Dimensions } from "react-native";
 import { Icon } from 'react-native-elements'
 import AppLoading from 'expo-app-loading'
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import Footer from './Footer'
 import MilestoneTag from "./MilestoneTag";
 import GroupTag from "./GroupTag";
@@ -48,6 +48,7 @@ const Profile = () => {
     const milestoneData = require('../data/Milestones.json')
     const user = useContext(userContext)
     const navigation = useNavigation()
+    const route = useRoute()
     
     const renderMilestone = ({ item }) => {
         return (
@@ -60,7 +61,6 @@ const Profile = () => {
         console.log(user)
         navigation.navigate("Settings")
     }
-
     return (
         <View style={[styles.profilePage]}>
             <View style={[styles.userInfoContainer]}>

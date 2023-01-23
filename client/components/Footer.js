@@ -26,6 +26,7 @@ const Footer = ({disable}) => {
         navigation.navigate((route.name == "Feed")?"Landing":"Feed")
     }
     function navigateProfile() {
+        navigation.popToTop();
         navigation.navigate("Profile")
     }
     return (
