@@ -1,23 +1,32 @@
-import  React, {useState} from "react";
+import  React, {useState, useContext} from "react";
 import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView , Dimensions} from "react-native";
 import { Icon } from 'react-native-elements'
 import AppLoading from 'expo-app-loading'
-import { useNavigation } from "@react-navigation/native";
+import Icons from '../data/Icons.js'
+import { useNavigation, useRoute } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
+import userContext from '../contexts/userContext'
+
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
+
 const Footer = ({disable}) => {
+    const route = useRoute();
     const preventNavigation = disable?disable:false
     const navigation = useNavigation()
     const routes = navigation.getState()?.routes;
     const prevRoute = routes[routes.length - 2]
+    const user = useContext(userContext)
     function handlePress() {
         if (preventNavigation !== "CreatePost"){
             navigation.navigate("CreatePost", {uri:false})
         }
     }
     function returnPage() {
-        navigation.navigate((routes[routes.length-1].name == "Feed")?"Landing":"Feed")
+        navigation.navigate((route.name == "Feed")?"Landing":"Feed")
+    }
+    function navigateProfile() {
+        navigation.navigate("Profile")
     }
     return (
         <View style={[styles.footerContainer]}>
@@ -65,13 +74,13 @@ const Footer = ({disable}) => {
                     </View>
                 </Pressable>
                 <Pressable styles={styles.profileButton}
-                    onPress={() => navigation.navigate("Profile")}> 
+                    onPress={navigateProfile}> 
                 
                 <View styles={styles.profileIcon}>
                     <Image
-                    style={styles.profilePic}
+                    style={[styles.profilePic]}
                     resizeMode="contain"
-                    source={require("../assets/profile-pic-empty.png")}/>
+                    source={Icons['defaultpic']}/>
                 </View>
                 </Pressable>
             </View>

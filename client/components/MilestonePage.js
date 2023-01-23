@@ -47,13 +47,14 @@ const MilestonePage = ({route}) => {
     const postdate = month + ' ' + day
     const user = useContext(userContext)
     const navigation = useNavigation()
+    const [postIdList, setPostIdList] = useState([])
+    const [postList, setPostList] = useState([])
     const [milestoneId, setMilestoneId] = useState(0)
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('New start, new milestone! 👋') // add description to milestone object
     const [image, setImage] = useState('calender')
     const [streak, setStreak] = useState(0)
     function handlePress() {
-        console.log(postdate)
         console.log(title, image, streak, milestoneId)
     }
     useEffect(()=> {
@@ -63,7 +64,35 @@ const MilestonePage = ({route}) => {
             setImage(route.params.milestone.img)
             setStreak(route.params.milestone.streak)
         }
+        axios.get('http://10.0.0.160:19001/api/getlinkedmilestones')  // if this throws an error, replace 10.0.0.160 with localhost
+        .then((response)=> {
+            setPostIdList(response.data.filter((item)=>item.milestoneid === route.params.milestone.id).map((item)=>item.postid))
+        }).catch(error => console.log(error))
     }, [])
+    useEffect(()=> {
+        axios.get('http://10.0.0.160:19001/api/getposts')
+        .then((response)=> {
+            setPostList(response.data.filter((item)=> postIdList.indexOf(item.idposts)>= 0))
+        })
+    }, [postIdList])
+    const renderPost = ({item}) => {
+        return (
+            <Pressable onPress={()=>console.log(postList.indexOf(item))}>
+            <View style={{maxWidth:windowW}}>
+                <PostItem
+                key={item.idposts}
+                username={item.username}
+                caption={item.caption}
+                src={item.profilepic}
+                image={item.src}
+                postId={item.idposts}
+                index = {postList.indexOf(item)}
+                count = {postList.length}
+                />
+            </View>
+            </Pressable>
+        )
+    }
     return (
         <View style={styles.milestonePage}>
             <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
@@ -73,9 +102,9 @@ const MilestonePage = ({route}) => {
                             <Image
                                 style={styles.milestoneIcon}
                                 resizeMode="cover"
-                                source={Icons['music']}/>
+                                source={Icons[image]}/>
                         </View>
-                        <Text style={styles.milestoneTitle}>Learning Piano</Text>
+                        <Text style={styles.milestoneTitle}>{title}</Text>
                         <Pressable onPress={handlePress}>
                             <Icon 
                                 style={{transform:[{rotate:"-45deg"}], top:-0.5, alignSelf:"center"}}
@@ -87,7 +116,7 @@ const MilestonePage = ({route}) => {
                     </View>
                     <View style={styles.descriptionContainer}>
                         <Text style={styles.descriptionText}>
-                            {`Re-learning piano.\nCurrently trying to learn: Fantasie Impromptu\n\n🔥Follow me on my journey!`}
+                            {`Re-learning piano.\nCurrently trying to learn: Fantasie Impromptu\n\n🔥 Follow me on my journey!`}
                         </Text>
                     </View>
                 </View>
@@ -97,9 +126,23 @@ const MilestonePage = ({route}) => {
                     </Text>
                    
                 </View>
-                <View style={styles.postContainer}>
+                <View style={[(postList.length > 0)?styles.postContainerScroll:styles.postContainer,]}>
+                    {(postList.length > 0)?
+                     <FlatList horizontal 
+                     decelerationRate={"fast"}
+                     snapToInterval={windowW}
+                     initialNumToRender={3}
+                     maxToRenderPerBatch={3}
+                     snapToAlignment="start"
+                     showsHorizontalScrollIndicator={false}
+                     data={postList}
+                     style={[styles.postListView, {minWidth:375}]}
+                     renderItem={renderPost}
+                     keyExtractor={(item, index)=>index}/>
+                    : 
                     <PostItem username={user.username?user.username:'ajiaron'} caption={'This triplet melody is getting hard to play..'} 
-                    src={'defaultpic'} image={'defaultpost'} postId={0} liked={false} isLast={false} date={postdate}/>
+                    src={'defaultpic'} image={'defaultpost'} postId={0} liked={false} isLast={false} date={postdate}/>}
+
                 </View>
 
                 <View style={styles.milestoneDatesContainer}>
@@ -129,7 +172,7 @@ const styles = StyleSheet.create({
         paddingBottom:300,
     },
     headerContent: {
-        marginTop: windowH * (80/windowH),
+        marginTop: windowH * (76/windowH),
     },
     headerContentWrapper: {
         width: windowW * .8,
@@ -220,6 +263,13 @@ const styles = StyleSheet.create({
         alignItems:"center",
         alignSelf:"center",
     },
+    postContainerScroll: {
+   
+        flex:1,
+        maxWidth:375
+
+
+    },
     milestoneDatesContainer: {
         width: windowW * .8,
         alignSelf:"center",
@@ -283,6 +333,21 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 4,
+    },
+    postIndicator: {
+        backgroundColor:"rgba(238, 64, 64, 1)",
+        width:8.5,
+        height:8.5,
+        borderRadius:4,
+        right:-16,
+        top:9,
+        zIndex:1
+    },
+    postListView: {
+        minHeight: windowH * (392/windowH),
+        width:windowW,
+        flex:1,
+        overflow:"scroll",
     }
 })
 export default MilestonePage

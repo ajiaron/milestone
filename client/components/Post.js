@@ -1,10 +1,11 @@
-import  React, {useState} from "react";
-import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView, FlatList, Dimensions } from "react-native";
+import  React, {useState, useEffect} from "react";
+import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView, FlatList, Dimensions, RefreshControl } from "react-native";
 import { Icon } from 'react-native-elements'
 import AppLoading from 'expo-app-loading'
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
 import Footer from './Footer'
+import axios from 'axios'
 import PostItem from "./PostItem";
 import MilestoneTag from "./MilestoneTag";
 
@@ -12,48 +13,86 @@ const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 const Post = ({navigation, route}) => {
     const milestoneData = require('../data/Milestones.json')
+    const [postId, setPostId] = useState(route.params.item.postId?route.params.item.postId:0)
+    const [linkedMilestones, setLinkedMilestones] = useState([])
+    const [milestoneList, setMilestoneList] = useState([])
     const [hasMilestones, setHasMilestones] = useState(route.params.item.milestones.length > 0)
+    const currentRoute = useRoute()
+
+    useEffect(()=> {
+        axios.get('http://10.0.0.160:19001/api/getlinkedmilestones')  // if this throws an error, replace 10.0.0.160 with localhost
+        .then((response)=> {
+            setLinkedMilestones(response.data.filter((item)=>item.postid === postId).map((item)=>item.milestoneid))
+        }).catch(error => console.log(error))
+    }, [])
+
+    useEffect(()=> {
+        axios.get('http://10.0.0.160:19001/api/getmilestones')
+        .then((response) => {
+            setMilestoneList(response.data.filter((item)=>linkedMilestones.indexOf(item.idmilestones) >= 0))
+        }).catch(error=>console.log(error))
+    }, [linkedMilestones])
+    
     const renderMilestone = ({ item }) => {
         return (
             <MilestoneTag 
                 title={item.title} 
                 streak={item.streak} 
-                img={item.img} 
+                img={(item.img === undefined)?item.src:item.img} 
                 id={item.id} 
-                isLast={item.id == milestoneData.length}
+                isLast={milestoneList.indexOf(item)=== milestoneList.length-1}
             />
         )
     }
     return (
         <View style={[styles.postPage]}>
+            <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
+
+
             <View style={[styles.feedSpace]}/>
             <View style={[styles.postContainer]}>
                 <PostItem username={route.params.item.username} caption={route.params.item.caption} 
-                src={route.params.item.src} postId={route.params.item.postId} liked={route.params.item.liked} isLast={false}/>
+                src={route.params.item.src} image={route.params.item.image} postId={route.params.item.postId} 
+                liked={route.params.item.liked} isLast={false}/>
             </View>
-            {hasMilestones?
+            {milestoneList.length > 0?
             <View>
+                <View style={[(windowH>900)?styles.milestoneHeaderContainerLarge:styles.milestoneHeaderContainer]}>
                  <Text style={(windowH>900)?styles.milestoneHeaderLarge:styles.milestoneHeader}>
                      Posted Milestones
+                
                 </Text>
+                <Icon 
+                        name='navigate-next' 
+                        size={30} 
+                        color="rgba(53, 174, 146, 1)" 
+                        style={{bottom: 1.75, left:1}}/>
+                    
+                    </View>
                 <View style={(windowH>900)?styles.PostTagContainerLarge:styles.PostTagContainer}>
-                    <FlatList 
-                        snapToAlignment="start"
-                        decelerationRate={"fast"}
-                        snapToInterval={(windowH*0.0756)+16}
-                        showsVerticalScrollIndicator={false}
-                        style={[styles.milestoneList]} 
-                        data={milestoneData} // replace with route.params.item.milestones
-                        renderItem={renderMilestone} 
-                        keyExtractor={(item)=>item.id.toString()}>
-                    </FlatList>
+                    <ScrollView horizontal scrollEnabled={false}>
+                        <FlatList 
+                            snapToAlignment="start"
+                            decelerationRate={"fast"}
+                            snapToInterval={(windowH*0.0756)+16}
+                            showsVerticalScrollIndicator={false}
+                            style={[styles.milestoneList]} 
+                            data={milestoneList} // replace with route.params.item.milestones
+                            renderItem={renderMilestone} 
+                            keyExtractor={(item, index)=>index}>
+                        </FlatList>
+                    </ScrollView>
                 </View>
             </View> : null}
-            <View style={[styles.footerSpace]}/>
-            <View style={[styles.footerPosition]}>
+
+                
+            </ScrollView>
+
                 <Footer/>
-            </View>
-     
+   
+        
+
+      
         </View>
     )
 }
@@ -61,10 +100,14 @@ const Post = ({navigation, route}) => {
 const styles = StyleSheet.create({
     postPage: {
         backgroundColor:"rgba(28, 28, 28, 1)",
-        flex: 1,
-        minWidth: "100%",
-        minHeight: "100%",
-        overflow: "hidden",
+
+        width:windowW,
+        height: windowH + 300,
+        overflow: "scroll",
+        paddingBottom:300
+
+   
+     
     },
     postContainer: {
         justifyContent:"center",
@@ -86,41 +129,54 @@ const styles = StyleSheet.create({
     PostTagContainer: {
         minWidth:windowW * 0.8,
         maxHeight:windowH * 0.175,     
-        bottom:windowH*(128/812),
-        position:"absolute",
+        top:windowH*(18/812),
+        marginBottom:windowH*(56/windowH),
+   
         alignSelf:"center"
+    },
+    milestoneHeaderContainer: {
+        alignSelf:"center",
+        minWidth:windowW*0.8,
+        flexDirection:"row",
+        left:4,
+        maxHeight:22,
+        top:windowH*(0/812),
+    },
+
+    milestoneHeaderContainerLarge: {
+        alignSelf:"center",
+        minWidth:windowW*0.8,
+        flexDirection:"row",
+        left:4,
+        maxHeight:22,
+        top:windowH*(0/926),
+
     },
     PostTagContainerLarge: {
         minWidth:windowW * 0.8,
         maxHeight:windowH * 0.275,     
-        bottom:windowH*(122/926),
-        position:"absolute",
+        marginBottom:windowH*(56/windowH),
+        top: windowH*(20/926),
         alignSelf:"center"
     },
     milestoneHeader: {
         fontFamily:"Inter",
         fontSize: 20,
         color:"white",
-
-        bottom:windowH*(284/812),
-        left:windowW*(40/375),
-        position:"absolute"
     },
     milestoneHeaderLarge: {
         fontFamily:"Inter",
         fontSize: 20,
         color:"white",
-        left:windowW*(40/375),
-        bottom:windowH*(392/926),
-        position:"absolute"
     },
     footerPosition: {
         position:"absolute",
         bottom:0
     },
     footerSpace: {
-        marginTop:10,
-        backgroundColor:"rgba(28, 28, 28, 1)"
+        position:"absolute",
+        bottom:0,
+ 
     },
     
 })

@@ -57,6 +57,7 @@ const Profile = () => {
         )
     }
     function handlePress() {
+        console.log(user)
         navigation.navigate("Settings")
     }
 
@@ -92,6 +93,13 @@ const Profile = () => {
                     <Text style={[styles.milestoneHeader]}>
                         Personal Milestones
                     </Text>
+                    <Pressable onPress={()=> {navigation.navigate("MilestoneList")}}>
+                        <Icon 
+                        name='navigate-next' 
+                        size={30} 
+                        color="rgba(53, 174, 146, 1)" 
+                        style={{bottom:4.5, left:4}}/>
+                    </Pressable>
                 </View>
                 <FlatList 
                     scrollEnabled={false}

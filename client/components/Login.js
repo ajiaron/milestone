@@ -5,30 +5,25 @@ import { useFonts, Inter_400Black } from '@expo-google-fonts/inter';
 import { useNavigation } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
 import { CheckBox } from "react-native-elements";
+import axios from 'axios'
 import userContext from '../contexts/userContext'
-
-const LoginButton = () => {
-  const navigation = useNavigation();
-  return (
-    <Pressable
-      style={[styles.loginButton, styles.boxLayout]}
-      onPress={()=> navigation.navigate("Feed")}>
-      <View style={[styles.createAnAccountBox, styles.boxLayout]} />
-      <Text style={[styles.createAnAccountText1, styles.loginText]}>
-        Login
-      </Text>
-  </Pressable>
-  )
-}
 
 const Login = () => {
   const navigation = useNavigation();
-  const [usernameText, onChangeUsernameText] = useState("")
+  const [userData, setUserData] = useState()
   const [passwordText, onChangePasswordText] = useState("")
   const user = useContext(userContext)
 
   function handlePress() {
-    console.log(user.username)
+    axios.get('http://10.0.0.160:19001/api/getusers')  // if this throws an error, replace 10.0.0.160 with localhost
+    .then((response)=> {
+        if (user.username !== undefined && user.username.length > 0) {
+          user.setUserId(response.data.filter((item)=> item.name === user.username)[0].id)
+        }
+    })
+    .catch(error => console.log(error))
+    navigation.navigate("Feed")
+    // authenticate here
   }
 
   return (
@@ -47,15 +42,12 @@ const Login = () => {
                 placeholder={"Type your name here"}
                 placeholderTextColor={'rgba(130, 130, 130, 1)'}
                 value={user.username}/>
-
               <Text style={[styles.fullNameHeader, styles.headerTypo]}>
                 Username
               </Text>
-
             </View>
             <View style={[styles.password, styles.mt13]}>
               <View style={[styles.boxLayout, styles.textPosition]} />
-  
                 <TextInput  style={[
                   styles.passwordInput,
                   styles.fillerTypo,
@@ -66,23 +58,26 @@ const Login = () => {
                 placeholder={"*************"}
                 placeholderTextColor={'rgba(130, 130, 130, 1)'}
                 value={passwordText}/>
-           
               <Text style={[styles.passwordHeader, styles.headerTypo]}>
                 Password
               </Text>
-
             </View>
           </View>
           <View style={styles.rememberMyAccountBox}>
             <Text style={styles.rememberAccountText}>remember my account</Text>
-
-            <Pressable onPress={handlePress}>
+            <Pressable>
               <View style={styles.rememberMyAccountBoxChild} /> 
             </Pressable>
-
           </View>
-           
-          <LoginButton/>
+
+          <Pressable
+              style={[styles.loginButton, styles.boxLayout]}
+              onPress={handlePress}>
+              <View style={[styles.createAnAccountBox, styles.boxLayout]} />
+              <Text style={[styles.createAnAccountText1, styles.loginText]}>
+                Login
+              </Text>
+          </Pressable>
 
           <Text style={styles.newAccountText}>don't have an account? 
           <Pressable
@@ -97,14 +92,12 @@ const Login = () => {
    );
 }
 
-
 const styles = StyleSheet.create({
   mt13: {
     marginTop: GlobalStyles.Margin.margin_md,
   },
   loginText: {
     textAlign: "left",
-   
     color: GlobalStyles.Color.white,
     fontFamily: "InterBold",
     position: "absolute",
@@ -119,7 +112,6 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize:12,
     maxWidth:"100%",
-
     position: "absolute",
   },
   passwordInput: {
@@ -167,7 +159,6 @@ const styles = StyleSheet.create({
     minWidth: 321,
     minHeight: 238,
     paddingTop:10,
-   
     alignSelf:"center",
     position: "relative",
   },
@@ -178,7 +169,6 @@ const styles = StyleSheet.create({
     color: GlobalStyles.Color.white,
     fontFamily: "Inter",
     top:11,
-
   },
   rememberMyAccountBoxChild: {
     borderRadius: GlobalStyles.Border.br_xs,
@@ -258,13 +248,10 @@ const styles = StyleSheet.create({
   newAccountTextButton: {
     fontFamily: "InterBold",
     color:"white",
- 
-  
   },
   loginButton: {
     alignSelf:"center",
     marginTop:16
- 
   },
   backArrowIcon: {
     top: 49,
@@ -284,10 +271,7 @@ const styles = StyleSheet.create({
     fontFamily: "InterBold",
     color:"white",
     fontSize:12.5,
-    top:3.25,
-
-  
-      
+    top:3.25,  
   },
   alrdyHaveAnAccText: {
     top: 570,

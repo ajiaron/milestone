@@ -44,7 +44,7 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, onSelectMile
             else {
                 onRemoveMilestone(milestoneData)
             }
-        } else if (route.name === "Profile") {
+        } else if (route.name === "Profile" || route.name === 'MilestoneList' || route.name === 'Post') {
             navigation.navigate("MilestonePage", {milestone:milestoneData})
         }
         

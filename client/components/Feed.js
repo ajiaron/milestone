@@ -1,5 +1,5 @@
 import  React, {useState, useEffect, useContext, useCallback} from "react";
-import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView, FlatList, Dimensions, RefreshControl} from "react-native";
+import { Text, StyleSheet, View, Image, Pressable, ScrollView, FlatList, Dimensions, RefreshControl} from "react-native";
 import { Icon } from 'react-native-elements'
 import AppLoading from 'expo-app-loading'
 import { useNavigation } from "@react-navigation/native";
@@ -25,6 +25,7 @@ const Feed = ({route}) => {
     const currentDate = month + ' ' + day
 
     const onRefresh = useCallback(() => {
+        console.log(user)
         setRefreshing(true);
         setTimeout(() => {
         setRefreshing(false);
@@ -32,14 +33,14 @@ const Feed = ({route}) => {
     }, []);
 
     useEffect(()=> {
-        axios.get('http://10.10.110.94:19001/api/getposts')  // if this throws an error, replace 10.0.0.160 with localhost
+        axios.get('http://10.0.0.160:19001/api/getposts')  // if this throws an error, replace 10.0.0.160 with localhost
         .then((response)=> {
             setPostFeed(response.data)
         }).catch(error => console.log(error))
     }, [route])
+
     const renderPost = ({ item }) => {
       return (
-        
           <PostItem 
               key={item.idposts}
               username={item.username}
@@ -60,6 +61,9 @@ const Feed = ({route}) => {
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                   }
+                removeClippedSubviews
+                initialNumToRender={5}
+                maxToRenderPerBatch={5}
                 style={{paddingTop:48}}
                 snapToAlignment="start"
                 showsVerticalScrollIndicator={false}
@@ -68,7 +72,6 @@ const Feed = ({route}) => {
                 keyExtractor={(item, index)=>index}>
             </FlatList> 
             </View>
-     
         <Footer/>
       </View>
     );

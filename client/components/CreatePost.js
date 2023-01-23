@@ -29,6 +29,15 @@ const CreatePost = ({route}) => {
     const [milestones, setMilestones] = useState([])
     const navigation = useNavigation()
     const user = useContext(userContext)
+    const [postId, setPostId] = useState(0)
+
+    useEffect(()=> {
+        axios.get('http://10.0.0.160:19001/api/getposts')
+        .then((response)=> {
+            setPostId(Math.max(...response.data.map((item)=>item.idposts))+1)})
+        .catch((error)=> console.log(error))
+    })
+    
     const postData = {
         id:0,
         img:require('../assets/samplepost.png'),
@@ -38,14 +47,16 @@ const CreatePost = ({route}) => {
         src:'defaultpost'
     }
     function handlePress() {
-        axios.post('http://10.10.110.94:19001/api/pushposts', 
-        {username:user.username?user.username:'ajiaron', caption:caption, profilepic:'defaultpic', src:img, date: date})
-        .then(() => {console.log('new user posted')})
+        axios.post('http://10.0.0.160:19001/api/pushposts', 
+        {idposts: postId,username:user.username?user.username:'ajiaron', caption:caption, profilepic:'defaultpic', src:img, date: date})
+        .then(() => {console.log('new post saved')})
         .catch((error)=> console.log(error))
-    }
-    function sendPost() {
-        postData.img = route.params.uri?{uri:img}:'defaultpost'
-        postData.caption = caption
+        milestones.map((item)=>{
+            axios.post('http://10.0.0.160:19001/api/linkmilestones', 
+            {postid:postId,milestoneid:item.id})
+            .then(() => {console.log('milestones linked')})
+            .catch((error)=> console.log(error))
+        })
     }
     function submitPost() {
         handlePress()
@@ -145,7 +156,7 @@ const CreatePost = ({route}) => {
                     </View>
                 </View>
                 <View style={[styles.buttonContainer]}>
-                    <Pressable>
+                    <Pressable onPress={()=>console.log(milestones)}>
                         <View style={styles.savePostButtonContainer}>
                             <Text style={styles.savePostButtonText}>Archive</Text>
                         </View>

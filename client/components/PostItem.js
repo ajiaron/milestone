@@ -4,17 +4,18 @@ import { Icon } from 'react-native-elements'
 import AppLoading from 'expo-app-loading'
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Icons from '../data/Icons.js'
-import GlobalStyles from "../styles/GlobalStyles";
 import axios from 'axios'
 import Footer from './Footer'
 import { Video } from 'expo-av'
+import { FlatList } from "react-native-gesture-handler";
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const PostItem = ({username, caption, src, image, postId, liked, isLast, milestones, date}) => {
+const PostItem = ({username, caption, src, image, postId, liked, isLast, milestones, date, index, count}) => {
     const milestoneList = milestones?milestones:[]
     const navigation = useNavigation()
     const route = useRoute()
+    const [isActive, setIsActive] = useState(true)
     var fileExt = (image !== undefined)?image.toString().split('.').pop():'png'
     const month = new Date().toLocaleString("en-US", { month: "short" })
     const day = new Date().getDate()
@@ -25,12 +26,16 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         setIsLiked(!isLiked)
         liked = isLiked
         console.log(route.name)
-        console.log(image)
+        console.log(src)
+    }
+    const handleSelect = () => {
+        setIsActive(!isActive)
     }
     const data = {
         postId:postId,
         username:username,
         src:src,
+        image:image,
         caption:caption, 
         liked:isLiked,
         milestones:milestoneList
@@ -49,23 +54,26 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                 <Text style={[styles.postOwnerTime]}>{(date)?(date === postdate)?`Today at ` + date:date:`Today at Jan 02`}</Text>
             </View>
         </View>
-        <View style={[styles.postWrapper, 
-            {backgroundColor:(route.name === 'MilestonePage')?'rgba(108, 162, 183,1)':"rgba(10,10,10,1)",
-            height:(route.name === 'MilestonePage')?windowH*(246/windowH):(fileExt === 'mov' || fileExt === 'mp4')?windowH*(526/windowH):windowH*(266/windowH)
-            }]}>
-            {(route.name === 'MilestonePage' || image !=='defaultpost')?
-            (fileExt === 'mov' || fileExt === 'mp4')? 
-            <Video isLooping shouldPlay={true}
-                source={{uri:image}}
-                resizeMode={'cover'}
-                style={{height:"100%", width:"100%",alignSelf:"center"}}/>:
-            <Image
-                source={(image === 'defaultpost')?Icons[image]:{uri:image}}
-                resizeMode={'cover'}
-                style={{height:"100%", width:"100%",alignSelf:"center", bottom:0}}
-            />:null
-            }
-        </View>
+        <Pressable onPress={handleSelect}>
+            <View style={[styles.postWrapper, 
+                    {backgroundColor:(route.name === 'MilestonePage')?'rgba(108, 162, 183,1)':"rgba(10,10,10,1)",
+                    height:(route.name === 'MilestonePage')?windowH*(246/windowH):(fileExt === 'mov' || fileExt === 'mp4')?windowH*(526/windowH):windowH*(266/windowH)
+                    }]}>
+              
+                    {(route.name === 'MilestonePage' || image !=='defaultpost')?
+                    (fileExt === 'mov' || fileExt === 'mp4')? 
+                    <Video isLooping shouldPlay={isActive}
+                        source={{uri:image}}
+                        resizeMode={'cover'}
+                        style={{height:"100%", width:"100%",alignSelf:"center", zIndex:1}}/>:
+                    <Image
+                        source={(image === 'defaultpost')?Icons[image]:{uri:image}}
+                        resizeMode={'cover'}
+                        style={{height:"100%", width:"100%",alignSelf:"center", bottom:0, zIndex:1}}
+                    />:null
+                    } 
+            </View>
+        </Pressable>
         <View style={[styles.actionbarContainer]}>
             <View style={[styles.actionIcon, styles.actionThumbsUp]}>
                 <Pressable onPress={handlePress}>
@@ -89,6 +97,20 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                     color='white'
                 />
             </View>
+            {(route.name === 'MilestonePage')?
+                (index !== undefined)?
+                <View style={{flexDirection:"row", 
+                alignSelf:"center", justifyContent:"space-around",
+                 minWidth:windowW*(43/windowW), marginLeft:(windowW > 400)?windowW*0.1875:windowW*0.145}}> 
+                    {(count > 1)&&
+                    <View style={[styles.postIndex, {backgroundColor:(index == 0)?"rgba(53, 174, 146, 1)":"#D9D9D9"}]}/>}
+                 
+                    {(count > 1)&&
+                    <View style={[styles.postIndex, {backgroundColor:(index == 1)?"rgba(53, 174, 146, 1)":"#D9D9D9"}]}/>}
+                    {(count > 2)&&
+                    <View style={[styles.postIndex, {backgroundColor:(index >= 2)?"rgba(53, 174, 146, 1)":"#D9D9D9"}]}/>}
+                </View>:null
+            :
             <Pressable onPress={()=> navigation.navigate("Post", {item:data})}>
                 <View style={[styles.actionIcon]}>
                     <Image
@@ -98,6 +120,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                     />
                 </View>
             </Pressable>
+            }
         </View>
         <View style={[styles.commentsContainer, {minHeight:(route.name === 'MilestonePage')?50:80}]}>
             <Text style={[styles.commentsContent]}>{caption}</Text>
@@ -223,7 +246,14 @@ const styles = StyleSheet.create({
         color:"white",
         alignSelf:"center",
         fontSize:22,
-        
-    }
+    },
+    postIndex: {
+        backgroundColor:"#D9D9D9",
+        width:6,
+   
+        height:6,
+        borderRadius:4,
+        zIndex:1
+    },
 })
 export default PostItem
