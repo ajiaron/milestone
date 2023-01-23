@@ -84,4 +84,8 @@ That image (or whichever component is wrapped) is now the link to your new page.
 
 There are other some small components that may be device specific, but since we're mainly focused on developing for iOS, the only significant feature that requires your phone is the camera and video recording, which is unsupported on the iOS simulator. However, the photo gallery and image picker is still available via simulator.
 
+At this point, a couple of the core components (posts, milestones, etc..) depend on running `server.js` to fetch the needed data from mwSQL. Without the backend, the app can still be viewed with local assets included in the `/assets` folder, however things can't be posted or saved without directly adding assets. So if things aren't working as intended, make sure to run `nodemon server.js` along with `npm start` whenever you're starting up the app.
+
+While you won't have access to milestoneDB, GET and POST requests are implemented for creating and retrieving posts, so if you would like to create a new database and name it milestoneDB on your machine, the app should work as intended and should allow you to save your own posts to your version of the database. 
+
 Don't sweat the small stuff, there's a lot of small stuff!
