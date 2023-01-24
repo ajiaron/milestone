@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@coffeebeanslabs/react-native-inviewport": "^0.2.0",
     "concurrently": "^7.6.0",
     "cors": "^2.8.5",
     "expo": "~47.0.9",

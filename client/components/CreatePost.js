@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     PostTagContainer: {
         flex: 1,
         minWidth:windowW * 0.8,
-        maxHeight:windowH * 0.365,
+        maxHeight:windowH * 0.367,
         alignSelf:"center",
         bottom:28
     },

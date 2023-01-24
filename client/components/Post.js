@@ -54,7 +54,7 @@ const Post = ({navigation, route}) => {
             <View style={[styles.postContainer]}>
                 <PostItem username={route.params.item.username} caption={route.params.item.caption} 
                 src={route.params.item.src} image={route.params.item.image} postId={route.params.item.postId} 
-                liked={route.params.item.liked} isLast={false}/>
+                liked={route.params.item.liked} isLast={false} isViewable={true}/>
             </View>
             {milestoneList.length > 0?
             <View>

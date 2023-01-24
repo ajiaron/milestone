@@ -23,6 +23,7 @@ const Footer = ({disable}) => {
         }
     }
     function returnPage() {
+        navigation.popToTop();
         navigation.navigate((route.name == "Feed")?"Landing":"Feed")
     }
     function navigateProfile() {

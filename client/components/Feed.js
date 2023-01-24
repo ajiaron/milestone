@@ -1,25 +1,21 @@
-import  React, {useState, useEffect, useContext, useCallback} from "react";
+import  React, {useState, useEffect, useContext, useCallback, useRef} from "react";
 import { Text, StyleSheet, View, Image, Pressable, ScrollView, FlatList, Dimensions, RefreshControl} from "react-native";
 import { Icon } from 'react-native-elements'
-import AppLoading from 'expo-app-loading'
 import { useNavigation } from "@react-navigation/native";
-import GlobalStyles from "../styles/GlobalStyles";
 import Footer from './Footer'
 import PostItem from './PostItem'
 import axios from 'axios'
 import userContext from '../contexts/userContext'
 
-
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
+
 const Feed = ({route}) => {
     const user = useContext(userContext)
     const postData = require('../data/PostData.json')
     const [postFeed, setPostFeed]= useState(postData)
-    const [newPost, setNewPost] = useState(null)
-    const [milestones, setMilestones] = useState([])
-    const [postList, setPostList] = useState([])
     const [refreshing, setRefreshing] = React.useState(false);
+    const [isViewable, setIsViewable] = useState([0])
     const month = new Date().toLocaleString("en-US", { month: "short" })
     const day = new Date().getDate()
     const currentDate = month + ' ' + day
@@ -32,6 +28,17 @@ const Feed = ({route}) => {
         }, 800);
     }, []);
 
+    const viewabilityConfig = {
+        itemVisiblePercentThreshold:1
+    }
+    const onViewableItemsChanged = ({
+        viewableItems, changed
+      }) => {
+        if (viewableItems.length > 0) {
+            setIsViewable(viewableItems.map((item)=>item.index))
+        }
+      };
+    const viewabilityConfigCallbackPairs = useRef([{ viewabilityConfig, onViewableItemsChanged }])
     useEffect(()=> {
         axios.get('http://10.0.0.160:19001/api/getposts')  // if this throws an error, replace 10.0.0.160 with localhost
         .then((response)=> {
@@ -50,7 +57,9 @@ const Feed = ({route}) => {
               postId={item.idposts}
               isLast={item.idposts == 1}
               milestones={[]}
+      
               date={new Date(item.date).toLocaleString("en-US", {month:"short"})+' '+new Date().toLocaleString("en-US", { day : '2-digit'})}
+              isViewable={isViewable.indexOf([...postFeed].reverse().indexOf(item))>=0}
           />
       )
   }
@@ -60,7 +69,9 @@ const Feed = ({route}) => {
                <FlatList 
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                  }
+                }
+            
+                viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
                 removeClippedSubviews
                 initialNumToRender={5}
                 maxToRenderPerBatch={5}

@@ -1,5 +1,5 @@
-import  React, {useState} from "react";
-import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView, Dimensions } from "react-native";
+import  React, {useState, useRef, useEffect} from "react";
+import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView, Dimensions, TouchableOpacity } from "react-native";
 import { Icon } from 'react-native-elements'
 import AppLoading from 'expo-app-loading'
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -7,11 +7,11 @@ import Icons from '../data/Icons.js'
 import axios from 'axios'
 import Footer from './Footer'
 import { Video } from 'expo-av'
-import { FlatList } from "react-native-gesture-handler";
+
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const PostItem = ({username, caption, src, image, postId, liked, isLast, milestones, date, index, count}) => {
+const PostItem = ({username, caption, src, image, postId, liked, isLast, milestones, date, index, count, isViewable}) => {
     const milestoneList = milestones?milestones:[]
     const navigation = useNavigation()
     const route = useRoute()
@@ -20,16 +20,25 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     const month = new Date().toLocaleString("en-US", { month: "short" })
     const day = new Date().getDate()
     const postdate = month + ' ' + day
+    const [isMuted, setIsMuted] = useState(true)
     const [isLiked, setIsLiked] = useState(liked?liked:false)
     const [postDate, setPostDate] = useState(date?date:postdate)
+    const [viewable, setViewable] = useState(true)
+    useEffect(()=> {
+        setViewable(isViewable)
+    }, [isViewable])
     const handlePress = () => {
         setIsLiked(!isLiked)
         liked = isLiked
-        console.log(route.name)
-        console.log(src)
     }
     const handleSelect = () => {
         setIsActive(!isActive)
+    }
+    const toggleMute = () => {
+        if (isViewable !== undefined) {
+            console.log(isActive)
+        }
+        setIsMuted(!isMuted)
     }
     const data = {
         postId:postId,
@@ -59,13 +68,25 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                     {backgroundColor:(route.name === 'MilestonePage')?'rgba(108, 162, 183,1)':"rgba(10,10,10,1)",
                     height:(route.name === 'MilestonePage')?windowH*(246/windowH):(fileExt === 'mov' || fileExt === 'mp4')?windowH*(526/windowH):windowH*(266/windowH)
                     }]}>
-              
                     {(route.name === 'MilestonePage' || image !=='defaultpost')?
                     (fileExt === 'mov' || fileExt === 'mp4')? 
-                    <Video isLooping shouldPlay={isActive}
-                        source={{uri:image}}
-                        resizeMode={'cover'}
-                        style={{height:"100%", width:"100%",alignSelf:"center", zIndex:1}}/>:
+                        <Video isLooping shouldPlay={isActive && viewable}
+                            isMuted={isMuted} 
+                            source={{uri:image}}
+                            resizeMode={'cover'}
+       
+                            style={{height:"100%", width:"100%",alignSelf:"center"}}>
+                            <View style={{minWidth:20, minHeight:20, zIndex:999, alignSelf:"flex-end", bottom:10, right:13, position:"absolute"}}>
+                                <TouchableOpacity onPress={toggleMute}>
+                                    <Icon
+                                    name={(isMuted)?'volume-off':'volume-up'}
+                                    color='white'
+                                    size={20}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                        </Video>
+                    :
                     <Image
                         source={(image === 'defaultpost')?Icons[image]:{uri:image}}
                         resizeMode={'cover'}
@@ -88,7 +109,6 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                         color='white' />
                     }
                 </Pressable>
-              
             </View>
             <View style={[styles.actionIcon, styles.actionComment]}>
                 <Icon 
@@ -104,7 +124,6 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                  minWidth:windowW*(43/windowW), marginLeft:(windowW > 400)?windowW*0.1875:windowW*0.145}}> 
                     {(count > 1)&&
                     <View style={[styles.postIndex, {backgroundColor:(index == 0)?"rgba(53, 174, 146, 1)":"#D9D9D9"}]}/>}
-                 
                     {(count > 1)&&
                     <View style={[styles.postIndex, {backgroundColor:(index == 1)?"rgba(53, 174, 146, 1)":"#D9D9D9"}]}/>}
                     {(count > 2)&&

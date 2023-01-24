@@ -54,6 +54,21 @@ const MilestonePage = ({route}) => {
     const [description, setDescription] = useState('New start, new milestone! 👋') // add description to milestone object
     const [image, setImage] = useState('calender')
     const [streak, setStreak] = useState(0)
+    const [isViewable, setIsViewable] = useState(0)
+
+    const viewabilityConfig = {
+        itemVisiblePercentThreshold:30
+    }
+    const onViewableItemsChanged = ({
+        viewableItems
+      }) => {
+        if (viewableItems.length > 0) {
+            setIsViewable(viewableItems[0].index)
+        }
+        
+      };
+    const viewabilityConfigCallbackPairs = useRef([{ viewabilityConfig, onViewableItemsChanged }])
+
     function handlePress() {
         console.log(title, image, streak, milestoneId)
     }
@@ -88,6 +103,7 @@ const MilestonePage = ({route}) => {
                 postId={item.idposts}
                 index = {postList.indexOf(item)}
                 count = {postList.length}
+                isViewable= {postList.indexOf(item)===isViewable}
                 />
             </View>
             </Pressable>
@@ -129,6 +145,8 @@ const MilestonePage = ({route}) => {
                 <View style={[(postList.length > 0)?styles.postContainerScroll:styles.postContainer,]}>
                     {(postList.length > 0)?
                      <FlatList horizontal 
+                     viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
+                     viewabilityConfig={viewabilityConfig}
                      decelerationRate={"fast"}
                      snapToInterval={windowW}
                      initialNumToRender={3}
