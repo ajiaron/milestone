@@ -218,7 +218,7 @@ const TakePost = ({route}) => {
 
     return (
         <View style={styles.takePostPage}>
-              <Camera style={styles.camera} type={type} ref={cameraRef}>
+              <Camera style={styles.camera} type={type} ref={cameraRef} >
                 <View style={styles.switchContainer}>
                     <Pressable onPress={backPress}>
                         <Icon 

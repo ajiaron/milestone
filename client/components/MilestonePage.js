@@ -55,7 +55,7 @@ const MilestonePage = ({route}) => {
     const [image, setImage] = useState('calender')
     const [streak, setStreak] = useState(0)
     const [isViewable, setIsViewable] = useState(0)
-
+    
     const viewabilityConfig = {
         itemVisiblePercentThreshold:30
     }
@@ -65,20 +65,24 @@ const MilestonePage = ({route}) => {
         if (viewableItems.length > 0) {
             setIsViewable(viewableItems[0].index)
         }
-        
       };
     const viewabilityConfigCallbackPairs = useRef([{ viewabilityConfig, onViewableItemsChanged }])
-
     function handlePress() {
-        console.log(title, image, streak, milestoneId)
+        console.log(title, image, streak, milestoneId, description,fileExt)
     }
     useEffect(()=> {
         if (route) {
             setMilestoneId(route.params.milestone.id)
-            setTitle(route.params.milestone.title)
-            setImage(route.params.milestone.img)
-            setStreak(route.params.milestone.streak)
         }
+        axios.get('http://10.0.0.160:19001/api/getmilestones')  // if this throws an error, replace 10.0.0.160 with localhost
+        .then((response)=> {
+            setTitle(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].title)
+            setImage(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].src)
+            setStreak(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].streak)
+            setDescription(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].description)
+        }).catch(error => console.log(error))
+    }, [])
+    useEffect(()=> {
         axios.get('http://10.0.0.160:19001/api/getlinkedmilestones')  // if this throws an error, replace 10.0.0.160 with localhost
         .then((response)=> {
             setPostIdList(response.data.filter((item)=>item.milestoneid === route.params.milestone.id).map((item)=>item.postid))
@@ -90,35 +94,36 @@ const MilestonePage = ({route}) => {
             setPostList(response.data.filter((item)=> postIdList.indexOf(item.idposts)>= 0))
         })
     }, [postIdList])
+    var fileExt = (image !== undefined)?image.toString().split('.').pop():'calender'
     const renderPost = ({item}) => {
         return (
             <Pressable onPress={()=>console.log(postList.indexOf(item))}>
-            <View style={{maxWidth:windowW}}>
-                <PostItem
-                key={item.idposts}
-                username={item.username}
-                caption={item.caption}
-                src={item.profilepic}
-                image={item.src}
-                postId={item.idposts}
-                index = {postList.indexOf(item)}
-                count = {postList.length}
-                isViewable= {postList.indexOf(item)===isViewable}
-                />
-            </View>
+                <View style={{maxWidth:windowW}}>
+                    <PostItem
+                    key={item.idposts}
+                    username={item.username}
+                    caption={item.caption}
+                    src={item.profilepic}
+                    image={item.src}
+                    postId={item.idposts}
+                    index = {postList.indexOf(item)}
+                    count = {postList.length}
+                    isViewable= {postList.indexOf(item)===isViewable}
+                    />
+                </View>
             </Pressable>
         )
     }
     return (
         <View style={styles.milestonePage}>
             <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
-                <View style={styles.headerContent}>
+                <View style={[styles.headerContent, {marginTop:windowH*((windowH>900?70:76)/windowH)}]}>
                     <View style={styles.headerContentWrapper}>
                         <View style={[styles.milestoneIconContainer, {alignSelf:"center"}]}>
                             <Image
                                 style={styles.milestoneIcon}
                                 resizeMode="cover"
-                                source={Icons[image]}/>
+                                source={(fileExt==='jpg' || fileExt==='png')?{uri:image}:Icons[image]}/>
                         </View>
                         <Text style={styles.milestoneTitle}>{title}</Text>
                         <Pressable onPress={handlePress}>
@@ -131,8 +136,9 @@ const MilestonePage = ({route}) => {
                         </Pressable>
                     </View>
                     <View style={styles.descriptionContainer}>
-                        <Text style={styles.descriptionText}>
-                            {`Re-learning piano.\nCurrently trying to learn: Fantasie Impromptu\n\n🔥 Follow me on my journey!`}
+                        <Text style={[styles.descriptionText, {fontSize:(windowH>900)?13:12.5}]}>
+                            {(description)?description:
+                            `Re-learning piano.\nCurrently trying to learn: Fantasie Impromptu\n\n🔥 Follow me on my journey!`}
                         </Text>
                     </View>
                 </View>
@@ -140,7 +146,6 @@ const MilestonePage = ({route}) => {
                     <Text style={styles.todaysMilestoneHeader}>
                         {`🌟 Today’s Milestone`}
                     </Text>
-                   
                 </View>
                 <View style={[(postList.length > 0)?styles.postContainerScroll:styles.postContainer,]}>
                     {(postList.length > 0)?
@@ -160,19 +165,15 @@ const MilestonePage = ({route}) => {
                     : 
                     <PostItem username={user.username?user.username:'ajiaron'} caption={'This triplet melody is getting hard to play..'} 
                     src={'defaultpic'} image={'defaultpost'} postId={0} liked={false} isLast={false} date={postdate}/>}
-
                 </View>
-
                 <View style={styles.milestoneDatesContainer}>
                     <View style={styles.milestoneDatesHeader}>
                         <Text style={styles.todaysMilestoneHeader}>
-                            {`⚡ Milestone Progress`}
-                            
+                            {`⚡ Milestone Progress`}   
                         </Text>
                         <Text style={(windowW>400)?styles.milestoneDateLarge:styles.milestoneDate}>
                                 {month}, {year}
                         </Text>
-                       
                     </View>
                 </View>
                 <ProgressView/>
@@ -200,16 +201,13 @@ const styles = StyleSheet.create({
         alignItems:"center",
         marginBottom: windowH * (18/windowH),
         marginLeft:6
-
     },
     milestoneIconContainer: {
         width:(windowW*0.082),
         height:(windowH*0.0378),
-
         backgroundColor: "rgba(214, 214, 214, 1)",
         borderRadius:5,
         justifyContent:"center",
-
     },
     milestoneIcon: {
         width:"100%",
@@ -243,10 +241,10 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         flexDirection:"row",
         borderRadius:10,
-        paddingTop:24,
-        paddingLeft:20,
+        paddingTop:22,
+        paddingLeft:22,
         paddingBottom:18,
-        paddingRight:20,
+        paddingRight:22,
         textAlign:"left",
         alignItems:"left"   
     },
@@ -254,7 +252,6 @@ const styles = StyleSheet.create({
         fontFamily:"Inter",
         fontSize:12,
         lineHeight:16,
-        
         color:"white",
         textAlign:"left"
     },
@@ -282,11 +279,8 @@ const styles = StyleSheet.create({
         alignSelf:"center",
     },
     postContainerScroll: {
-   
         flex:1,
         maxWidth:375
-
-
     },
     milestoneDatesContainer: {
         width: windowW * .8,
@@ -304,7 +298,6 @@ const styles = StyleSheet.create({
         fontFamily: "Inter",
         fontSize: 16.5, 
         top:1.25,
-     
         color:"white",
         alignSelf:"center",
     },

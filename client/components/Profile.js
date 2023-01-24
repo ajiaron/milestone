@@ -52,7 +52,7 @@ const Profile = () => {
     
     const renderMilestone = ({ item }) => {
         return (
-            (item.id == 1) ?
+            (item.id == 9) ?
             <MilestoneTag title={item.title} streak={item.streak} img={item.img} id={item.id} isLast={false}/>
             : null
         )
@@ -72,7 +72,7 @@ const Profile = () => {
                 </View>
                 <View style={styles.userDetails}>
                     <Text style={styles.usernameText}>@{user.username?user.username:"ajiaron"}</Text>
-                    <Text style={styles.userFullName}>Aaron Jiang</Text>
+                    <Text style={styles.userFullName}>{user.fullname?user.fullname:"Johnny Appleseed"}</Text>
                     <Text style={styles.userBlurb}>I'm about writing apps and running laps</Text>
                 </View>
                 <View style={styles.settingsIcon}>
@@ -87,7 +87,7 @@ const Profile = () => {
                     </Pressable>
                 </View>
             </View>
-            <ProfileInfo name="Aaron Jiang" milestones={4} groups={3} friends={13} />
+            <ProfileInfo name={user.fullname?user.fullname:"Johnny Appleseed"} milestones={4} groups={3} friends={13} />
             <View style={[styles.profileTagContainer]}>
                 <View style={[styles.milestoneHeaderContainer]}>
                     <Text style={[styles.milestoneHeader]}>

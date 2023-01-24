@@ -25,6 +25,7 @@ const CreatePost = ({route}) => {
     const [sharingEnabled, setSharingEnabled] = useState(true)
     const toggleSharing = () => setSharingEnabled(previousState => !previousState)
     const [caption, setCaption] = useState('')
+    const [milestoneList, setMilestoneList] = useState([])
     const milestoneData = require('../data/Milestones.json')
     const [milestones, setMilestones] = useState([])
     const navigation = useNavigation()
@@ -37,7 +38,12 @@ const CreatePost = ({route}) => {
             setPostId(Math.max(...response.data.map((item)=>item.idposts))+1)})
         .catch((error)=> console.log(error))
     })
-    
+    useEffect(()=> {
+        axios.get('http://10.0.0.160:19001/api/getmilestones')
+        .then((response)=> {
+            setMilestoneList(response.data)})
+        .catch((error)=> console.log(error))
+    })
     const postData = {
         id:0,
         img:require('../assets/samplepost.png'),
@@ -67,11 +73,11 @@ const CreatePost = ({route}) => {
             <MilestoneTag 
                 title={item.title} 
                 streak={item.streak} 
-                img={item.img} 
-                id={item.id} 
+                img={milestoneList.length>0?item.src:item.img} 
+                id={milestoneList.length>0?item.idmilestones:item.id} 
                 isLast={item.id == milestoneData.length}
                 onSelectMilestone={(selected) => setMilestones([...milestones,selected])}
-                onRemoveMilestone={(selected) => setMilestones(milestones.filter((item) => item.id !== selected.id))}
+                onRemoveMilestone={(selected) => setMilestones(milestones.filter((item) => item.id !== selected.id || item.idmilestones !== selected.id))}
             />
         )
     }
@@ -112,12 +118,14 @@ const CreatePost = ({route}) => {
                     <FlatList 
                         snapToAlignment="start"
                         decelerationRate={"fast"}
+                        initialNumToRender={4}
+                        maxToRenderPerBatch={4}
                         snapToInterval={(windowH*0.0756)+16}
                         showsVerticalScrollIndicator={false}
                         style={[styles.milestoneList]} 
-                        data={milestoneData} 
+                        data={milestoneList.length>0?milestoneList:milestoneData} 
                         renderItem={renderMilestone} 
-                        keyExtractor={(item)=>item.id.toString()}>
+                        keyExtractor={(item)=>(milestoneList.length>0)?item.idmilestones.toString():item.id.toString()}>
                     </FlatList> 
                 </View>   
                 <View style={styles.switchContainer}>

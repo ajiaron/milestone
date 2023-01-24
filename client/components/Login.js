@@ -19,6 +19,7 @@ const Login = () => {
     .then((response)=> {
         if (user.username !== undefined && user.username.length > 0) {
           user.setUserId(response.data.filter((item)=> item.name === user.username)[0].id)
+          user.setFullname(response.data.filter((item)=> item.name === user.username)[0].fullname)
         }
     })
     .catch(error => console.log(error))

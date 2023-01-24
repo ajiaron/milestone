@@ -33,6 +33,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     }
     const handleSelect = () => {
         setIsActive(!isActive)
+        console.log(fileExt)
     }
     const toggleMute = () => {
         if (isViewable !== undefined) {
@@ -74,7 +75,6 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                             isMuted={isMuted} 
                             source={{uri:image}}
                             resizeMode={'cover'}
-       
                             style={{height:"100%", width:"100%",alignSelf:"center"}}>
                             <View style={{minWidth:20, minHeight:20, zIndex:999, alignSelf:"flex-end", bottom:10, right:13, position:"absolute"}}>
                                 <TouchableOpacity onPress={toggleMute}>

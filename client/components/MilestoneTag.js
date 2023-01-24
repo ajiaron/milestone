@@ -23,20 +23,22 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, onSelectMile
     const navigation = useNavigation();
     const [isSelected, setIsSelected] = useState(false)
     const route = useRoute();
+    var fileExt = (img !== undefined)?img.toString().split('.').pop():'money'
     const milestoneData = {
         id:0,
         title:"",
         streak:0,
         img:"",
     }
-    function sendMilestone() {
+
+    function sendPost() {
         milestoneData.id = id
         milestoneData.title = title
         milestoneData.streak = streak
         milestoneData.img = img
     }
     function handlePress(){  
-        sendMilestone()
+        sendPost()
         if (route.name === "CreatePost") {
             if (!isSelected) {
                 onSelectMilestone(milestoneData)
@@ -52,7 +54,6 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, onSelectMile
               });
             navigation.navigate("MilestonePage", {milestone:milestoneData})
         }
-        
         setIsSelected(!isSelected)
     }
     useEffect(()=> {        /* clear selected milestones if screen changes */
@@ -77,7 +78,7 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, onSelectMile
                 <Image
                         style={styles.milestoneIcon}
                         resizeMode="cover"
-                        source={Icons[img]}/>
+                        source={(fileExt ==='jpg'||fileExt ==='png')?{uri:img}:Icons[img]}/>
             </View>
                 <View style={[styles.milestoneContext]}>
                     <Text style={[styles.milestoneTitle]}>

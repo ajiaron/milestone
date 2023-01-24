@@ -15,6 +15,7 @@ const windowH = Dimensions.get('window').height
 const MilestoneList = () => {
     const milestoneData = require('../data/Milestones.json')
     const user = useContext(userContext)
+    const [milestoneList, setMilestoneList] = useState([])
     {/* 
          useEffect(()=> {
             milestoneData.map((item)=> {
@@ -25,14 +26,20 @@ const MilestoneList = () => {
             .catch((error)=> {console.log(error)})
         })
     */}
+    useEffect(()=> {
+        axios.get('http://10.0.0.160:19001/api/getmilestones')
+        .then((response)=> {
+            setMilestoneList(response.data)})
+        .catch((error)=> console.log(error))
+    })
    
     const renderMilestone = ({ item }) => {
         return (
             <MilestoneTag 
                 title={item.title} 
                 streak={item.streak} 
-                img={item.img} 
-                id={item.id} 
+                img={milestoneList.length>0?item.src:item.img} 
+                id={milestoneList.length>0?item.idmilestones:item.id} 
                 isLast={item.id == milestoneData.length}
             />
         )
@@ -59,9 +66,9 @@ const MilestoneList = () => {
                         snapToInterval={(windowH*0.0755)+16}
                         showsVerticalScrollIndicator={false}
                         style={[styles.milestoneList]} 
-                        data={milestoneData} 
+                        data={milestoneList.length>0?milestoneList:milestoneData} 
                         renderItem={renderMilestone} 
-                        keyExtractor={(item)=>item.id.toString()}>
+                        keyExtractor={(item)=>(milestoneList.length>0)?item.idmilestones.toString():item.id.toString()}>
                     </FlatList> 
                 </View>   
                 <View style={{position:"absolute", bottom:0}}>

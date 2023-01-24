@@ -10,6 +10,7 @@ import axios from 'axios'
 import { ScrollView } from "react-native-gesture-handler";
 import * as ImagePicker from 'expo-image-picker'
 
+
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
@@ -22,7 +23,6 @@ const DropdownPermission = ({permission, setPermission, permisisonList}) => {
             toValue:windowH*(88/windowH),
             duration:300,
             useNativeDriver:false,
-            
         }).start()
     }
     const slideup = () => {
@@ -94,6 +94,8 @@ const CreateMilestone = () => {
     const permissionList = ['Everyone', 'Friends', 'Groups', 'Only You']
     const durationListLarge = ['Until Tomorrow', 'Next Month', 'Indefinitely', 'Custom']
     const durationList = ['Next Day', '1 Month', 'Indefinitely', 'Custom']
+    const user = useContext(userContext)
+    const navigation = useNavigation();
     const [image, setImage] = useState(null)
     const [photoUri, setPhotoUri] = useState()
     const [title, setTitle] = useState('')
@@ -110,6 +112,10 @@ const CreateMilestone = () => {
     function handlePress() {
         console.log('Device: ', Device.deviceName)
         console.log("Width:", windowW, "Height:", windowH)
+        console.log(user)
+        console.log("Title:", title, "| Description:",description, "| Image:",(image)?image:'defaultmilestone')
+        console.log("Posts:", postPermission, "| Views:", viewPermission, "| Duration:", duration)
+        console.log("Likes:", likesEnabled, "| Comments:", commmentsEnabled, "| Sharing:", sharingEnabled)
     }
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -126,9 +132,12 @@ const CreateMilestone = () => {
         pickImage()
     }
     function submitMilestone() {
-        console.log("Title:", title, "| Description:",description, "| Image:",(image)?image:'defaultmilestone')
-        console.log("Posts:", postPermission, "| Views:", viewPermission, "| Duration:", duration)
-        console.log("Likes:", likesEnabled, "| Comments:", commmentsEnabled, "| Sharing:", sharingEnabled)
+        console.log('yes')
+        axios.post('http://10.0.0.160:19001/api/postmilestones', 
+        {title: title,src:image?image:'defaultmilestone', streak:0, description:description, ownerid:user.userId})
+        .then(() => {console.log('new milestone saved')})
+        .catch((error)=> console.log(error))
+        navigation.navigate("Feed")
     }
     return (
         <View style={styles.createMilestonePage}>
