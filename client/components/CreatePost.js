@@ -43,7 +43,7 @@ const CreatePost = ({route}) => {
         .then((response)=> {
             setMilestoneList(response.data)})
         .catch((error)=> console.log(error))
-    })
+    },[])
     const postData = {
         id:0,
         img:require('../assets/samplepost.png'),

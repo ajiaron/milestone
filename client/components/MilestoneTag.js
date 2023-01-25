@@ -38,6 +38,7 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, onSelectMile
         milestoneData.img = img
     }
     function handlePress(){  
+        console.log(title)
         sendPost()
         if (route.name === "CreatePost") {
             if (!isSelected) {
