@@ -1,4 +1,4 @@
-import  React, {useState, useEffect} from "react";
+import  React, {useState, useEffect, useContext} from "react";
 import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView, FlatList, Dimensions, RefreshControl } from "react-native";
 import { Icon } from 'react-native-elements'
 import AppLoading from 'expo-app-loading'
@@ -7,11 +7,13 @@ import GlobalStyles from "../styles/GlobalStyles";
 import Footer from './Footer'
 import axios from 'axios'
 import PostItem from "./PostItem";
+import userContext from '../contexts/userContext'
 import MilestoneTag from "./MilestoneTag";
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 const Post = ({navigation, route}) => {
+    const user = useContext(userContext)
     const milestoneData = require('../data/Milestones.json')
     const [postId, setPostId] = useState(route.params.item.postId?route.params.item.postId:0)
     const [linkedMilestones, setLinkedMilestones] = useState([])
@@ -20,20 +22,24 @@ const Post = ({navigation, route}) => {
     const currentRoute = useRoute()
 
     useEffect(()=> {
-        axios.get('http://10.0.0.160:19001/api/getlinkedmilestones')  // if this throws an error, replace 10.0.0.160 with localhost
+        axios.get('http://10.10.63.146:19001/api/getlinkedmilestones')  // if this throws an error, replace 10.0.0.160 with localhost
         .then((response)=> {
             setLinkedMilestones(response.data.filter((item)=>item.postid === postId).map((item)=>item.milestoneid))
+
         }).catch(error => console.log(error))
     }, [])
 
     useEffect(()=> {
-        axios.get('http://10.0.0.160:19001/api/getmilestones')
+        axios.get('http://10.10.63.146:19001/api/getmilestones')
         .then((response) => {
             setMilestoneList(response.data.filter((item)=>linkedMilestones.indexOf(item.idmilestones) >= 0))
          
         }).catch(error=>console.log(error))
     }, [linkedMilestones])
-    
+    function handlePress() {
+        console.log('owner:',route.params.item.ownerId)
+        console.log('user:',user.userId)
+    }
     const renderMilestone = ({ item }) => {
         return (
             <MilestoneTag 
@@ -48,27 +54,26 @@ const Post = ({navigation, route}) => {
     return (
         <View style={[styles.postPage]}>
             <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
-
-
             <View style={[styles.feedSpace]}/>
             <View style={[styles.postContainer]}>
                 <PostItem username={route.params.item.username} caption={route.params.item.caption} 
                 src={route.params.item.src} image={route.params.item.image} postId={route.params.item.postId} 
+                ownerId={route.params.item.ownerId}
                 liked={route.params.item.liked} isLast={false} isViewable={true}/>
             </View>
             {milestoneList.length > 0?
             <View>
                 <View style={[(windowH>900)?styles.milestoneHeaderContainerLarge:styles.milestoneHeaderContainer]}>
                  <Text style={(windowH>900)?styles.milestoneHeaderLarge:styles.milestoneHeader}>
-                     Posted Milestones
-                
+                     Posted Milestones             
                 </Text>
-                <Icon 
-                        name='navigate-next' 
-                        size={30} 
-                        color="rgba(53, 174, 146, 1)" 
-                        style={{bottom: 1.75, left:1}}/>
-                    
+                     <Pressable onPress={handlePress}>
+                            <Icon 
+                            name='navigate-next' 
+                            size={30} 
+                            color="rgba(53, 174, 146, 1)" 
+                            style={{bottom: 1.75, left:1}}/>
+                       </Pressable>
                     </View>
                 <View style={(windowH>900)?styles.PostTagContainerLarge:styles.PostTagContainer}>
                     <ScrollView horizontal scrollEnabled={false}>
@@ -85,15 +90,9 @@ const Post = ({navigation, route}) => {
                     </ScrollView>
                 </View>
             </View> : null}
-
-                
+            {/* implement delete/edit post button here; check if ownerid = userid first */}
             </ScrollView>
-
-                <Footer/>
-   
-        
-
-      
+            <Footer/>
         </View>
     )
 }

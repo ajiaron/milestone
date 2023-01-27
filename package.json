@@ -13,7 +13,8 @@
     "mysql": "^2.18.1",
     "react": "18.1.0",
     "react-native": "0.70.5",
-    "react-native-device-info": "^10.3.0"
+    "react-native-device-info": "^10.3.0",
+    "expo-network": "~5.0.0"
   },
   "name": "milestonenative",
   "version": "1.0.0",

@@ -27,7 +27,7 @@ const MilestoneList = () => {
         })
     */}
     useEffect(()=> {
-        axios.get('http://10.0.0.160:19001/api/getmilestones')
+        axios.get('http://10.10.63.146:19001/api/getmilestones')
         .then((response)=> {
             setMilestoneList(response.data)})
         .catch((error)=> console.log(error))

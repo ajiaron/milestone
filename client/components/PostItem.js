@@ -11,11 +11,12 @@ import { Video } from 'expo-av'
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const PostItem = ({username, caption, src, image, postId, liked, isLast, milestones, date, index, count, isViewable}) => {
+const PostItem = ({username, caption, src, image, postId, liked, isLast, milestones, ownerId, date, index, count, isViewable}) => {
     const milestoneList = milestones?milestones:[]
     const navigation = useNavigation()
     const route = useRoute()
     const [isActive, setIsActive] = useState(true)
+    const [ownerid, setOwnerid] = useState(ownerId?ownerId:0)
     var fileExt = (image !== undefined)?image.toString().split('.').pop():'png'
     const month = new Date().toLocaleString("en-US", { month: "short" })
     const day = new Date().getDate()
@@ -25,6 +26,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     const [postDate, setPostDate] = useState(date?date:postdate)
     const [viewable, setViewable] = useState(true)
     useEffect(()=> {
+       
         setViewable(isViewable)
     }, [isViewable])
     const handlePress = () => {
@@ -48,7 +50,8 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         image:image,
         caption:caption, 
         liked:isLiked,
-        milestones:milestoneList
+        milestones:milestoneList,
+        ownerId:ownerid
     }
     return (
      <View style={[styles.postContainer]}>

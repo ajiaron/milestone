@@ -9,6 +9,7 @@ const db = mysql.createConnection({
     user:'root',
     host:'localhost',
     password:'password',
+    charset:'utf8mb4',
     database:'milestoneDB',
  }
 )
@@ -60,8 +61,9 @@ app.post('/api/pushposts', (req, res)=> {
     const profilepic = req.body.profilepic
     const src = req.body.src
     const date = req.body.date
-    db.query('INSERT INTO userposts (idposts, username, caption, profilepic, src, date) VALUES (?,?,?,?,?,?)', 
-    [idposts, username, caption, profilepic, src, date], (err, result) => {
+    const ownerid = req.body.ownerid
+    db.query('INSERT INTO userposts (idposts, username, caption, profilepic, src, date, ownerid) VALUES (?,?,?,?,?,?,?)', 
+    [idposts, username, caption, profilepic, src, date, ownerid], (err, result) => {
         if(err) {
             console.log(err)
         } else {

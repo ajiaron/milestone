@@ -33,13 +33,13 @@ const CreatePost = ({route}) => {
     const [postId, setPostId] = useState(0)
 
     useEffect(()=> {
-        axios.get('http://10.0.0.160:19001/api/getposts')
+        axios.get('http://10.10.63.146:19001/api/getposts')
         .then((response)=> {
             setPostId(Math.max(...response.data.map((item)=>item.idposts))+1)})
         .catch((error)=> console.log(error))
     })
     useEffect(()=> {
-        axios.get('http://10.0.0.160:19001/api/getmilestones')
+        axios.get('http://10.10.63.146:19001/api/getmilestones')
         .then((response)=> {
             setMilestoneList(response.data)})
         .catch((error)=> console.log(error))
@@ -53,12 +53,12 @@ const CreatePost = ({route}) => {
         src:'defaultpost'
     }
     function handlePress() {
-        axios.post('http://10.0.0.160:19001/api/pushposts', 
-        {idposts: postId,username:user.username?user.username:'ajiaron', caption:caption, profilepic:'defaultpic', src:img, date: date})
+        axios.post('http://10.10.63.146:19001/api/pushposts', 
+        {idposts: postId,username:user.username?user.username:'ajiaron', caption:caption, profilepic:'defaultpic', src:img, date: date, ownerid:user.userId})
         .then(() => {console.log('new post saved')})
         .catch((error)=> console.log(error))
         milestones.map((item)=>{
-            axios.post('http://10.0.0.160:19001/api/linkmilestones', 
+            axios.post('http://10.10.63.146:19001/api/linkmilestones', 
             {postid:postId,milestoneid:item.id})
             .then(() => {console.log('milestones linked')})
             .catch((error)=> console.log(error))

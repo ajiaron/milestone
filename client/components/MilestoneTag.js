@@ -1,5 +1,5 @@
 import  React, {useState, useEffect, useRef} from "react";
-import { Text, StyleSheet, View, Animated, Image, Pressable, PixelRatio, TouchableOpacity, Dimensions, Easing } from "react-native";
+import { Text, StyleSheet, View, Image, Pressable, PixelRatio, TouchableOpacity, Dimensions, Animated } from "react-native";
 import Icons from '../data/Icons.js'
 import { Icon } from 'react-native-elements'
 import AppLoading from 'expo-app-loading'
@@ -21,6 +21,7 @@ function normalize(size) {           /* normalizes font size to screen size */
 
 const MilestoneTag = ({title, streak, img, id, isLast, description, onSelectMilestone, onRemoveMilestone}) => {
     const navigation = useNavigation();
+    const animatedvalue = useRef(new Animated.Value(0)).current;
     const [isSelected, setIsSelected] = useState(false)
     const route = useRoute();
     var fileExt = (img !== undefined)?img.toString().split('.').pop():'money'
@@ -30,7 +31,23 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, onSelectMile
         streak:0,
         img:"",
     }
-
+    const toggleSelect = () => {
+        setIsSelected(!isSelected)
+        if (!isSelected) {
+            Animated.timing(animatedvalue,{
+                toValue:100,
+                duration:250,
+                useNativeDriver:false,
+            }).start()
+        } else {
+            Animated.timing(animatedvalue,{
+                toValue:0,
+                duration:200,
+                useNativeDriver:false,
+            }).start()
+        }
+        
+    }
     function sendPost() {
         milestoneData.id = id
         milestoneData.title = title
@@ -38,7 +55,6 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, onSelectMile
         milestoneData.img = img
     }
     function handlePress(){  
-        console.log(title)
         sendPost()
         if (route.name === "CreatePost") {
             if (!isSelected) {
@@ -47,6 +63,7 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, onSelectMile
             else {
                 onRemoveMilestone(milestoneData)
             }
+            toggleSelect()
         } else if (route.name === "Profile" || route.name === 'MilestoneList' || route.name === 'Post') {
             console.log(milestoneData)
             navigation.reset({
@@ -55,7 +72,8 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, onSelectMile
               });
             navigation.navigate("MilestonePage", {milestone:milestoneData})
         }
-        setIsSelected(!isSelected)
+        
+        
     }
     useEffect(()=> {        /* clear selected milestones if screen changes */
         const deselect = navigation.addListener('focus', ()=> {
@@ -68,12 +86,17 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, onSelectMile
     }, [navigation])
     return (
         <Pressable onPress={handlePress} 
-        activeOpacity={0.2}
-        style={({pressed}) =>
-        [(isSelected && route.name=="CreatePost")?
-            ((isLast)?styles.selectedContainerLast:styles.selectedContainer):
-            (isLast)?styles.milestoneContainerLast:styles.milestoneContainer
-        ]}>
+        activeOpacity={0.2}>
+       
+       <Animated.View style={[(isSelected && route.name=="CreatePost")?
+            ((isLast)?styles.highlightContainerLast:styles.highlightContainer):
+            (isLast)?styles.milestoneContainerLast:styles.milestoneContainer, 
+            {backgroundColor:animatedvalue.interpolate({inputRange: [0,100], outputRange: ["rgba(10, 10, 10, 1)", "#35AE92"]})},
+            {borderColor:animatedvalue.interpolate({inputRange: [0,100], outputRange: ["rgba(10, 10, 10, 1)", "#00523F"]})},
+            {borderWidth:animatedvalue.interpolate({inputRange: [0,100], outputRange: [0,4]})},
+            {paddingTop:animatedvalue.interpolate({inputRange: [0,100], outputRange: [(windowH*0.0185),(windowH*0.0185)-4]})}
+            ]}>
+                
             <View style={[styles.milestoneContentContainer]}>  
             <View style={[styles.milestoneIconContainer]}>
                 <Image
@@ -85,11 +108,18 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, onSelectMile
                     <Text style={[styles.milestoneTitle]}>
                         {title}
                     </Text>
-                    <Text style={[(isSelected)?styles.milestoneStreak:styles.milestoneStreak]}>
-                        {streak}{' '}days<Text style={[(isSelected)?styles.milestoneStreakContext:styles.milestoneStreakContext]}> in a row</Text>
-                    </Text>
+  
+                    <Animated.Text style={[styles.milestoneStreak,
+                        {color:animatedvalue.interpolate({inputRange: [0,100], outputRange: ["rgba(53, 174, 146, 1)", "rgb(248, 210, 57)"]})}]}>
+                        {streak}{' '}days{' '}
+                        <Animated.Text style={[styles.milestoneStreakContext,
+                        {color:animatedvalue.interpolate({inputRange: [0,100], outputRange: ["rgba(180, 180, 180, 1)", "#FFF"]})}]}>
+                            in a row
+                        </Animated.Text>
+                    </Animated.Text>
                 </View>
             </View>
+        </Animated.View>
         </Pressable>
 
     )
@@ -108,14 +138,57 @@ const styles = StyleSheet.create({
         width: 0,
         height: 2,
         },
+  
         shadowOpacity: 0.25,
         shadowRadius: 4,
+        alignSelf:"center"
+    },
+    highlightContainer: {
+        alignItems:"center",
+        shadowColor: '#000',
+        shadowOffset: {
+        width: 0,
+        height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+    
+        padding:(windowH*0.0185)-4,
+        backgroudColor: "rgba(10, 10, 10, 1)",
+        width:(windowW*0.800),
+        height: (windowH*0.0756),
+        borderRadius: 8,
+        marginBottom:16,
+        alignSelf:"center"
+    },
+    highlightContainerLast: {
+        alignItems:"center",
+        shadowColor: '#000',
+        shadowOffset: {
+        width: 0,
+        height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        paddingTop:(windowH*0.0185)-4,
+        backgroundColor: "rgba(28, 28, 28, 1)",
+        borderWidth:4,
+        width:(windowW*0.800),
+        height: (windowH*0.0756),
+        borderRadius: 8,
         alignSelf:"center"
     },
     selectedContainer: {
         alignItems:"center",
         paddingTop:(windowH*0.0185)-2,
-        backgroudColor: "rgba(10, 10, 10, 1)",
+        shadowColor: '#000',
+        shadowOffset: {
+        width: 0,
+        height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        backgroundColor: "rgba(10, 10, 10, 1)",
         borderColor:"rgba(53, 174, 146, 1)",
         borderStyle:"dashed",
         borderWidth:2,
@@ -128,6 +201,13 @@ const styles = StyleSheet.create({
     selectedContainerLast: {
         alignItems:"center",
         paddingTop:(windowH*0.0185)-2,
+        shadowColor: '#000',
+        shadowOffset: {
+        width: 0,
+        height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
         backgroundColor: "rgba(28, 28, 28, 1)",
         borderColor: "rgba(53, 174, 146, 1)",
         borderWidth:2,

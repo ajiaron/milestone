@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import Footer from './Footer'
 import PostItem from './PostItem'
 import axios from 'axios'
+import * as Network from 'expo-network'
 import userContext from '../contexts/userContext'
 
 const windowW = Dimensions.get('window').width
@@ -13,6 +14,7 @@ const windowH = Dimensions.get('window').height
 const Feed = ({route}) => {
     const user = useContext(userContext)
     const postData = require('../data/PostData.json')
+    const [connection, setConnection] = useState()
     const [postFeed, setPostFeed]= useState(postData)
     const [refreshing, setRefreshing] = React.useState(false);
     const [isViewable, setIsViewable] = useState([0])
@@ -39,8 +41,9 @@ const Feed = ({route}) => {
         }
       };
     const viewabilityConfigCallbackPairs = useRef([{ viewabilityConfig, onViewableItemsChanged }])
+
     useEffect(()=> {
-        axios.get('http://10.0.0.160:19001/api/getposts')  // if this throws an error, replace 10.0.0.160 with localhost
+        axios.get(`http://10.10.63.146:19001/api/getposts`)  // if this throws an error, replace 10.0.0.160 with localhost
         .then((response)=> {
             setPostFeed(response.data)
         }).catch(error => console.log(error))
@@ -57,7 +60,7 @@ const Feed = ({route}) => {
               postId={item.idposts}
               isLast={item.idposts == 1}
               milestones={[]}
-      
+              ownerId={item.ownerid}
               date={new Date(item.date).toLocaleString("en-US", {month:"short"})+' '+new Date().toLocaleString("en-US", { day : '2-digit'})}
               isViewable={isViewable.indexOf([...postFeed].reverse().indexOf(item))>=0}
           />
