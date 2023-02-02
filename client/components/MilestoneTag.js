@@ -19,10 +19,10 @@ function normalize(size) {           /* normalizes font size to screen size */
       }
 }
 
-const MilestoneTag = ({title, streak, img, id, isLast, description, onSelectMilestone, onRemoveMilestone}) => {
+const MilestoneTag = ({title, streak, img, id, isLast, description, selected, onSelectMilestone, onRemoveMilestone}) => {
     const navigation = useNavigation();
     const animatedvalue = useRef(new Animated.Value(0)).current;
-    const [isSelected, setIsSelected] = useState(false)
+    const [isSelected, setIsSelected] = useState(selected===undefined?false:selected)
     const route = useRoute();
     var fileExt = (img !== undefined)?img.toString().split('.').pop():'money'
     const milestoneData = {
@@ -46,7 +46,6 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, onSelectMile
                 useNativeDriver:false,
             }).start()
         }
-        
     }
     function sendPost() {
         milestoneData.id = id
@@ -56,7 +55,7 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, onSelectMile
     }
     function handlePress(){  
         sendPost()
-        if (route.name === "CreatePost") {
+        if (route.name === "CreatePost" || route.name === 'EditPost') {
             if (!isSelected) {
                 onSelectMilestone(milestoneData)
             }
@@ -65,20 +64,23 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, onSelectMile
             }
             toggleSelect()
         } else if (route.name === "Profile" || route.name === 'MilestoneList' || route.name === 'Post') {
-            console.log(milestoneData)
             navigation.reset({
                 index: 0,
                 routes: [{name: 'MilestonePage'}],
               });
             navigation.navigate("MilestonePage", {milestone:milestoneData})
         }
-        
-        
     }
+    useEffect(()=> {
+        if (route.name === 'EditPost' && selected) {
+            sendPost()
+            onSelectMilestone(milestoneData)
+        }
+    }, [selected])
     useEffect(()=> {        /* clear selected milestones if screen changes */
         const deselect = navigation.addListener('focus', ()=> {
             setIsSelected(false)
-            if (route.name === "CreatePost") {
+            if (route.name === "CreatePost" || route.name === "EditPost") {
                 onRemoveMilestone(milestoneData)
             }
         })
@@ -88,13 +90,16 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, onSelectMile
         <Pressable onPress={handlePress} 
         activeOpacity={0.2}>
        
-       <Animated.View style={[(isSelected && route.name=="CreatePost")?
+       <Animated.View style={[((isSelected)&& (route.name=="CreatePost" || route.name=='EditPost'))?
             ((isLast)?styles.highlightContainerLast:styles.highlightContainer):
             (isLast)?styles.milestoneContainerLast:styles.milestoneContainer, 
-            {backgroundColor:animatedvalue.interpolate({inputRange: [0,100], outputRange: ["rgba(10, 10, 10, 1)", "#35AE92"]})},
-            {borderColor:animatedvalue.interpolate({inputRange: [0,100], outputRange: ["rgba(10, 10, 10, 1)", "#00523F"]})},
-            {borderWidth:animatedvalue.interpolate({inputRange: [0,100], outputRange: [0,4]})},
-            {paddingTop:animatedvalue.interpolate({inputRange: [0,100], outputRange: [(windowH*0.0185),(windowH*0.0185)-4]})}
+            {backgroundColor:animatedvalue.interpolate({inputRange: [0,100], outputRange:selected?
+                 ["#35AE92","rgba(10, 10, 10, 1)"]:["rgba(10, 10, 10, 1)","#35AE92"]})},
+            {borderColor:animatedvalue.interpolate({inputRange: [0,100], outputRange: selected?
+                ["#00523F","rgba(10, 10, 10, 1)"]:["rgba(10, 10, 10, 1)", "#00523F"]})},
+            {borderWidth:animatedvalue.interpolate({inputRange: [0,100], outputRange: selected?[4,0]:[0,4]})},
+            {paddingTop:animatedvalue.interpolate({inputRange: [0,100], outputRange: selected?
+                [(windowH*0.0185)-4,(windowH*0.0185)]:[(windowH*0.0185),(windowH*0.0185)-4]})}
             ]}>
                 
             <View style={[styles.milestoneContentContainer]}>  
@@ -110,10 +115,13 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, onSelectMile
                     </Text>
   
                     <Animated.Text style={[styles.milestoneStreak,
-                        {color:animatedvalue.interpolate({inputRange: [0,100], outputRange: ["rgba(53, 174, 146, 1)", "rgb(248, 210, 57)"]})}]}>
+                        {color:animatedvalue.interpolate({inputRange: [0,100], outputRange: selected?
+                        ["rgb(248, 210, 57)","rgba(53, 174, 146, 1)"]
+                        :["rgba(53, 174, 146, 1)", "rgb(248, 210, 57)"]})}]}>
                         {streak}{' '}days{' '}
                         <Animated.Text style={[styles.milestoneStreakContext,
-                        {color:animatedvalue.interpolate({inputRange: [0,100], outputRange: ["rgba(180, 180, 180, 1)", "#FFF"]})}]}>
+                        {color:animatedvalue.interpolate({inputRange: [0,100], outputRange: selected?
+                            ["#FFF","rgba(180, 180, 180, 1)"]:["rgba(180, 180, 180, 1)", "#FFF"]})}]}>
                             in a row
                         </Animated.Text>
                     </Animated.Text>
@@ -152,11 +160,12 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 4,
-    
         padding:(windowH*0.0185)-4,
-        backgroudColor: "rgba(10, 10, 10, 1)",
+        backgroudColor: "#35AE92",
         width:(windowW*0.800),
         height: (windowH*0.0756),
+        borderColor:"#00523F",
+        borderWidth:4,
         borderRadius: 8,
         marginBottom:16,
         alignSelf:"center"

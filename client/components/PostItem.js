@@ -1,9 +1,10 @@
-import  React, {useState, useRef, useEffect} from "react";
+import  React, {useState, useRef, useEffect, useContext} from "react";
 import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView, Dimensions, TouchableOpacity } from "react-native";
 import { Icon } from 'react-native-elements'
 import AppLoading from 'expo-app-loading'
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Icons from '../data/Icons.js'
+import userContext from '../contexts/userContext'
 import axios from 'axios'
 import Footer from './Footer'
 import { Video } from 'expo-av'
@@ -13,23 +14,28 @@ const windowH = Dimensions.get('window').height
 
 const PostItem = ({username, caption, src, image, postId, liked, isLast, milestones, ownerId, date, index, count, isViewable}) => {
     const milestoneList = milestones?milestones:[]
+    const user = useContext(userContext)
     const navigation = useNavigation()
     const route = useRoute()
     const [isActive, setIsActive] = useState(true)
     const [ownerid, setOwnerid] = useState(ownerId?ownerId:0)
     var fileExt = (image !== undefined)?image.toString().split('.').pop():'png'
-    const month = new Date().toLocaleString("en-US", { month: "short" })
-    const day = new Date().getDate()
-    const postdate = month + ' ' + day
+    const currentDate = new Date().toLocaleString("en-US", { month: "long", day:"numeric", year:"numeric" })
+    const dateparts = new Date(date).toLocaleString("en-US") + ' UTC'
+    const postDate = new Date(dateparts).toLocaleDateString("en-US",{month:"long", day:"numeric",year:"numeric"})
+    const postTime = new Date(dateparts).toLocaleTimeString([],{hour12:true, hour:'numeric', minute:'2-digit'})
     const [isMuted, setIsMuted] = useState(true)
     const [isLiked, setIsLiked] = useState(liked?liked:false)
-    const [postDate, setPostDate] = useState(date?date:postdate)
     const [viewable, setViewable] = useState(true)
+
     useEffect(()=> {
-       
         setViewable(isViewable)
     }, [isViewable])
+    const handleEdit = () => {
+        navigation.navigate("EditPost", {uri:image, postId:postId, caption:caption})
+    }
     const handlePress = () => {
+        console.log(route.name)
         setIsLiked(!isLiked)
         liked = isLiked
     }
@@ -62,10 +68,24 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                 resizeMode="contain"
                 source={Icons[src]}/>
             </View>
+           
             <View style={[styles.postUserHeader]}>
                 <Text style={[styles.postOwnerName]}> {username} </Text>
-                <Text style={[styles.postOwnerTime]}>{(date)?(date === postdate)?`Today at ` + date:date:`Today at Jan 02`}</Text>
+                <Text style={[styles.postOwnerTime]}>
+                    {(date !== undefined)?
+                    (postDate === currentDate)?`Today at ` + postTime:postDate + ' at ' + postTime
+                    :`Today at ${currentDate}`}</Text>
             </View>
+            {(route.name==="Post" && ownerId === user.userId)?
+            <Pressable onPress={handleEdit}>
+                 <Icon 
+                 name='tune' 
+                 size={28} 
+                 color="rgba(140,140,140,1)" 
+                 style={{marginRight:(windowW>400)?windowW*(22/windowW):windowW*(18/windowW), alignSelf:"center",top:windowH*(1.5/windowH)}}/>
+            </Pressable>
+                 :null
+            }
         </View>
         <Pressable onPress={handleSelect}>
             <View style={[styles.postWrapper, 
@@ -246,7 +266,7 @@ const styles = StyleSheet.create({
     postOwnerTime: {
         fontFamily:"InterSemiLight",
         left:11,
-        color:"white",
+        color:"rgba(222,222,222,1)",
         bottom:-1,
         fontSize:11
     },

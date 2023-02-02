@@ -132,7 +132,7 @@ const CreateMilestone = () => {
         pickImage()
     }
     function submitMilestone() {
-        axios.post('http://10.10.63.146:19001/api/postmilestones', 
+        axios.post(`http://${user.network}:19001/api/postmilestones`, 
         {title: title,src:image?image:'defaultmilestone', streak:0, description:description, ownerid:user.userId})
         .then(() => {console.log('new milestone saved')})
         .catch((error)=> console.log(error))

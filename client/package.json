@@ -39,7 +39,8 @@
     "react-native-radial-gradient": "^1.1.2",
     "react-native-safe-area-context": "^4.4.1",
     "react-native-screens": "~3.18.0",
-    "expo-network": "~5.0.0"
+    "expo-network": "~5.0.0",
+    "expo-constants": "~14.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

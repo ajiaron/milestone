@@ -15,7 +15,7 @@ const Login = () => {
   const user = useContext(userContext)
 
   function handlePress() {
-    axios.get('http://10.10.63.146:19001/api/getusers')  // if this throws an error, replace 10.0.0.160 with localhost
+    axios.get(`http://${user.network}:19001/api/getusers`)  // if this throws an error, replace 10.0.0.160 with localhost
     .then((response)=> {
         if (user.username !== undefined && user.username.length > 0) {
           user.setUserId(response.data.filter((item)=> item.name === user.username)[0].id)

@@ -13,7 +13,7 @@ import { Video } from 'expo-av'
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const CreatePost = ({route}) => {
+const EditPost = ({route}) => {
     const img = (route.params.uri !== undefined)?route.params.uri:require('../assets/samplepostwide.png')
     const imgType = (route.params.type !== undefined)?route.params.type:"back"
     var fileExt = (route.params.uri !== undefined)?route.params.uri.toString().split('.').pop():'png';
@@ -28,16 +28,17 @@ const CreatePost = ({route}) => {
     const [milestoneList, setMilestoneList] = useState([])
     const milestoneData = require('../data/Milestones.json')
     const [milestones, setMilestones] = useState([])
+    const [linkedMilestones, setLinkedMilestones] = useState([])
     const navigation = useNavigation()
     const user = useContext(userContext)
-    const [postId, setPostId] = useState(0)
+    const [postId, setPostId] = useState(route.params.postId)
 
     useEffect(()=> {
-        axios.get(`http://${user.network}:19001/api/getposts`)
+        axios.get(`http://${user.network}:19001/api/getlinkedmilestones`)  
         .then((response)=> {
-            setPostId(Math.max(...response.data.map((item)=>item.idposts))+1)})
-        .catch((error)=> console.log(error))
-    })
+            setLinkedMilestones(response.data.filter((item)=>item.postid === postId).map((item)=>item.milestoneid))
+        }).catch(error => console.log(error))
+    }, [])
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response)=> {
@@ -53,17 +54,10 @@ const CreatePost = ({route}) => {
         src:'defaultpost'
     }
     function handlePress() {
-        axios.post(`http://${user.network}:19001/api/pushposts`, 
-        {idposts: postId,username:user.username?user.username:'ajiaron', caption:caption, profilepic:'defaultpic', src:img, date: date, ownerid:user.userId})
-        .then(() => {console.log('new post saved')})
-        .catch((error)=> console.log(error))
-        milestones.map((item)=>{
-            axios.post(`http://${user.network}:19001/api/linkmilestones`, 
-            {postid:postId,milestoneid:item.id})
-            .then(() => {console.log('milestones linked')})
-            .catch((error)=> console.log(error))
-        })
+        console.log(linkedMilestones)
+        console.log(milestones)
     }
+
     function submitPost() {
         handlePress()
         navigation.navigate("Feed", {post: postData, milestones:milestones})
@@ -76,6 +70,7 @@ const CreatePost = ({route}) => {
                 img={milestoneList.length>0?item.src:item.img} 
                 id={milestoneList.length>0?item.idmilestones:item.id} 
                 isLast={item.id == milestoneData.length}
+                selected={linkedMilestones.indexOf(item.idmilestones) > -1}
                 onSelectMilestone={(selected) => setMilestones([...milestones,selected])}
                 onRemoveMilestone={(selected) => setMilestones(milestones.filter((item) => item.id !== selected.id))}
             />
@@ -94,7 +89,7 @@ const CreatePost = ({route}) => {
                             onChangeText={text=>setCaption(text)}
                             multiline
                             blurOnSubmit
-                            value={caption}
+                            value={route.params.caption?route.params.caption:caption}
                             />
                     </View>           
                     {(fileExt === 'mov' || fileExt === 'mp4')?
@@ -164,9 +159,9 @@ const CreatePost = ({route}) => {
                     </View>
                 </View>
                 <View style={[styles.buttonContainer]}>
-                    <Pressable onPress={()=>console.log(milestones)}>
-                        <View style={styles.savePostButtonContainer}>
-                            <Text style={styles.savePostButtonText}>Archive</Text>
+                    <Pressable onPress={handlePress}>
+                        <View style={styles.deletePostButtonContainer}>
+                            <Text style={styles.deletePostButtonText}>Delete</Text>
                         </View>
                     </Pressable>
                     <Pressable onPress={submitPost}>
@@ -293,25 +288,27 @@ const styles = StyleSheet.create({
         minWidth: windowW*0.8,
         marginTop:windowH*0.034
     },
-    savePostButtonContainer: {
-        minWidth:windowW * 0.804,
-        minHeight: windowH * 0.0375,
-        backgroundColor:"rgba(10, 10, 10, 1)",
+    deletePostButtonContainer: {
+        minWidth:windowW * 0.78,
+        minHeight: windowH * 0.035,
+        backgroundColor:"rgba(180, 55, 87,1)",
         borderRadius:4,
-        justifyContent:"center"
+        justifyContent:"center",
+        alignSelf:"center",
     },
-    savePostButtonText: {
+    deletePostButtonText: {
         fontFamily:"InterBold",
         fontSize:14,
         color:"white",
         alignSelf:"center"
     },
     publishPostButtonContainer: {
-        minWidth:windowW * 0.8,
-        minHeight: windowH * 0.035,
+        minWidth:windowW * 0.785,
+        minHeight: windowH * 0.036,
         backgroundColor:"rgba(0, 82, 63, 1)",
         borderRadius:4,
-        justifyContent:"center"
+        justifyContent:"center",
+        alignSelf:"center",
     },
     publishPostButtonText: {
         fontFamily:"InterBold",
@@ -325,4 +322,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default CreatePost
+export default EditPost

@@ -14,9 +14,8 @@ const windowH = Dimensions.get('window').height
 
 const ResetButton = ({user}) => {
     function handlePress(){
-        console.clear()
         console.log('User: ', user.username)
-        axios.get('http://10.10.63.146:19001/api/getposts')  // if this throws an error, replace 10.0.0.160 with localhost
+        axios.get(`http://${user.network}:19001/api/getposts`)  // if this throws an error, replace 10.0.0.160 with localhost
         .then((response)=> {
             console.log(response.data.map((val,k)=>val.text))
         }).catch(error => console.log(error))

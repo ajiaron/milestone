@@ -74,7 +74,7 @@ const MilestonePage = ({route}) => {
         if (route) {
             setMilestoneId(route.params.milestone.id)
         }
-        axios.get('http://10.10.63.146:19001/api/getmilestones')  // if this throws an error, replace 10.0.0.160 with localhost
+        axios.get(`http://${user.network}:19001/api/getmilestones`)  // if this throws an error, replace 10.0.0.160 with localhost
         .then((response)=> {
             setTitle(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].title)
             setImage(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].src)
@@ -83,13 +83,13 @@ const MilestonePage = ({route}) => {
         }).catch(error => console.log(error))
     }, [])
     useEffect(()=> {
-        axios.get('http://10.10.63.146:19001/api/getlinkedmilestones')  // if this throws an error, replace 10.0.0.160 with localhost
+        axios.get(`http://${user.network}:19001/api/getlinkedmilestones`)  // if this throws an error, replace 10.0.0.160 with localhost
         .then((response)=> {
             setPostIdList(response.data.filter((item)=>item.milestoneid === route.params.milestone.id).map((item)=>item.postid))
         }).catch(error => console.log(error))
     }, [])
     useEffect(()=> {
-        axios.get('http://10.10.63.146:19001/api/getposts')
+        axios.get(`http://${user.network}:19001/api/getposts`)
         .then((response)=> {
             setPostList(response.data.filter((item)=> postIdList.indexOf(item.idposts)>= 0))
         })
@@ -106,9 +106,11 @@ const MilestonePage = ({route}) => {
                     src={item.profilepic}
                     image={item.src}
                     postId={item.idposts}
-                    index = {postList.indexOf(item)}
+                    ownerId={item.ownerid}
+                    date={item.date}
+                    index = {[...postList].reverse().indexOf(item)}
                     count = {postList.length}
-                    isViewable= {postList.indexOf(item)===isViewable}
+                    isViewable= {[...postList].reverse().indexOf(item)===isViewable}
                     />
                 </View>
             </Pressable>
@@ -158,7 +160,7 @@ const MilestonePage = ({route}) => {
                      maxToRenderPerBatch={3}
                      snapToAlignment="start"
                      showsHorizontalScrollIndicator={false}
-                     data={postList}
+                     data={[...postList].reverse()}
                      style={[styles.postListView, {minWidth:375}]}
                      renderItem={renderPost}
                      keyExtractor={(item, index)=>index}/>

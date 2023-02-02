@@ -1,10 +1,14 @@
-import * as React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { StyleSheet, View, Text, Pressable, Image, Dimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import userContext from '../contexts/userContext'
 import GlobalStyles from "../styles/GlobalStyles";
 import RadialGradient from 'react-native-radial-gradient';
 import { useFonts, Inter_400Black } from '@expo-google-fonts/inter';
 import AppLoading from 'expo-app-loading'
+import * as Network from 'expo-network'
+import Constants from 'expo-constants';
+
 
 const windowW= Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
@@ -21,12 +25,22 @@ const LogoGradient = () => {
         resizeMode="cover"
         source={require("../assets/milestone-logo.png")}
       />
-    </View>
-    
+    </View> 
   )
 }
 const Landing = () => {
   const navigation = useNavigation();
+  const user = useContext(userContext);
+
+  useEffect(()=> {
+    var connection = Constants.expoConfig.hostUri.substring(0,12)
+    user.setNetwork(connection)
+
+  }, [])
+  function handlePress() {
+    console.log(user.network)
+    navigation.navigate('Register')
+  }
   return (
     <View style={styles.landingPage}>
       <View style={[styles.headerBorder, styles.backgroundIconPosition]} />
@@ -35,7 +49,7 @@ const Landing = () => {
         <View style={styles.frameForButtons}>
         <View style={styles.createLayout}>
         <Pressable
-          onPress={() => navigation.navigate("Register")}
+          onPress={handlePress}
         >
           <View style={[styles.createAnAccountBox, styles.createLayout]} />
           <Text

@@ -22,7 +22,7 @@ const Post = ({navigation, route}) => {
     const currentRoute = useRoute()
 
     useEffect(()=> {
-        axios.get('http://10.10.63.146:19001/api/getlinkedmilestones')  // if this throws an error, replace 10.0.0.160 with localhost
+        axios.get(`http://${user.network}:19001/api/getlinkedmilestones`)  // if this throws an error, replace 10.0.0.160 with localhost
         .then((response)=> {
             setLinkedMilestones(response.data.filter((item)=>item.postid === postId).map((item)=>item.milestoneid))
 
@@ -30,7 +30,7 @@ const Post = ({navigation, route}) => {
     }, [])
 
     useEffect(()=> {
-        axios.get('http://10.10.63.146:19001/api/getmilestones')
+        axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response) => {
             setMilestoneList(response.data.filter((item)=>linkedMilestones.indexOf(item.idmilestones) >= 0))
          
@@ -100,14 +100,10 @@ const Post = ({navigation, route}) => {
 const styles = StyleSheet.create({
     postPage: {
         backgroundColor:"rgba(28, 28, 28, 1)",
-
         width:windowW,
         height: windowH + 300,
         overflow: "scroll",
-        paddingBottom:300
-
-   
-     
+        paddingBottom:300  
     },
     postContainer: {
         justifyContent:"center",
@@ -123,7 +119,6 @@ const styles = StyleSheet.create({
     },
     milestoneList: {
         minWidth:windowW*0.8,
-
         borderRadius: 8,
     },
     PostTagContainer: {
@@ -131,7 +126,6 @@ const styles = StyleSheet.create({
         maxHeight:windowH * 0.175,     
         top:windowH*(18/812),
         marginBottom:windowH*(56/windowH),
-   
         alignSelf:"center"
     },
     milestoneHeaderContainer: {
@@ -142,21 +136,19 @@ const styles = StyleSheet.create({
         maxHeight:22,
         top:windowH*(0/812),
     },
-
     milestoneHeaderContainerLarge: {
         alignSelf:"center",
         minWidth:windowW*0.8,
         flexDirection:"row",
         left:4,
         maxHeight:22,
-        top:windowH*(0/926),
-
+        top:windowH*(2/926),
     },
     PostTagContainerLarge: {
         minWidth:windowW * 0.8,
         maxHeight:windowH * 0.275,     
         marginBottom:windowH*(56/windowH),
-        top: windowH*(20/926),
+        top: windowH*(22/926),
         alignSelf:"center"
     },
     milestoneHeader: {
@@ -176,8 +168,6 @@ const styles = StyleSheet.create({
     footerSpace: {
         position:"absolute",
         bottom:0,
- 
     },
-    
 })
 export default Post

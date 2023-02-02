@@ -82,10 +82,10 @@ const TakePost = ({route}) => {
     }
     function backPress() {
         console.log(prevroute)
-        if (prevroute === "CreatePost") {
+        if (prevroute === "CreatePost" || prevroute === "EditPost") {
             navigation.navigate("Feed")
         }
-        navigation.navigate(prevroute=="Post"||prevroute=="CreatePost"?"Feed":prevroute)
+        navigation.navigate(prevroute=="Post"||prevroute=="CreatePost"||prevroute=="EditPost"?"Feed":prevroute)
     }
     function handlePress() {
         console.log("Device: ", Device.isDevice ? Device.modelName:"Simulator")
