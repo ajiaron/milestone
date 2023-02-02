@@ -10,6 +10,7 @@ import userContext from '../contexts/userContext'
 import axios from 'axios'
 import { Video } from 'expo-av'
 
+
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
@@ -24,7 +25,7 @@ const EditPost = ({route}) => {
     const toggleLikes = () => setLikesEnabled(previousState => !previousState)
     const [sharingEnabled, setSharingEnabled] = useState(true)
     const toggleSharing = () => setSharingEnabled(previousState => !previousState)
-    const [caption, setCaption] = useState('')
+    const [caption, setCaption] = useState(route.params.caption?route.params.caption:'')
     const [milestoneList, setMilestoneList] = useState([])
     const milestoneData = require('../data/Milestones.json')
     const [milestones, setMilestones] = useState([])
@@ -45,6 +46,7 @@ const EditPost = ({route}) => {
             setMilestoneList(response.data)})
         .catch((error)=> console.log(error))
     },[])
+
     const postData = {
         id:0,
         img:require('../assets/samplepost.png'),
@@ -53,13 +55,29 @@ const EditPost = ({route}) => {
         username:user.username?user.username:'ajiaron',
         src:'defaultpost'
     }
-    function handlePress() {
-        console.log(linkedMilestones)
-        console.log(milestones)
+    function deletePost() {
+        axios.delete(`http://${user.network}:19001/api/deletepost`, {data: {postid:postId}})
+        .then((response)=> console.log("post deleted")).catch(error=>console.log(error))
+        axios.delete(`http://${user.network}:19001/api/removelinked`, {data: {postid:postId}})
+        .then((response)=>console.log("links removed")).catch(error=>console.log(error))
     }
 
+    function handlePress() {
+        deletePost()
+        navigation.navigate("Feed", {post:postData})
+    }
     function submitPost() {
-        handlePress()
+        milestones.filter(item=>linkedMilestones.indexOf(item.id)<0).map(item=>{
+            axios.post(`http://${user.network}:19001/api/linkmilestones`, {postid:postId, milestoneid:item.id})
+            .then(()=>console.log('milestones added'))
+        })
+        linkedMilestones.filter(item=>milestones.map(item=>item.id).indexOf(item)<0).map(item=>{
+            axios.delete(`http://${user.network}:19001/api/removelinktag`, {data: {postid:postId, milestoneid:item}})
+            .then(()=>console.log("milestones removed"))
+        })
+        axios.put(`http://${user.network}:19001/api/updatepost`, 
+        {postid:postId, caption:caption})
+        .then(console.log('post caption updated'))
         navigation.navigate("Feed", {post: postData, milestones:milestones})
     }
     const renderMilestone = ({ item }) => {
@@ -84,12 +102,12 @@ const EditPost = ({route}) => {
                     <View style={styles.newPostCaption}>
                         <TextInput 
                             style={styles.newPostCaptionText}
-                            placeholder={"Add a description..."}
-                            placeholderTextColor={'rgba(130, 130, 130, 1)'}
+                            placeholder={caption}
+                            placeholderTextColor={'rgba(255, 255, 255, 1)'}
                             onChangeText={text=>setCaption(text)}
                             multiline
                             blurOnSubmit
-                            value={route.params.caption?route.params.caption:caption}
+                            value={caption}
                             />
                     </View>           
                     {(fileExt === 'mov' || fileExt === 'mp4')?

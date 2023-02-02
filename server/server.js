@@ -101,6 +101,50 @@ app.post('/api/linkmilestones', (req, res) => {
     })
 })
 
+app.put('/api/updatepost', (req, res) => {
+    const postid = req.body.postid
+    const caption = req.body.caption
+    db.query('UPDATE userposts SET caption = ? WHERE idposts = ?', [caption, postid],
+    (err, result)=> {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+
+app.delete('/api/deletepost', (req, res) => {
+    const postid = req.body.postid
+    db.query("DELETE FROM userposts WHERE idposts = ?", [postid], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send('deleted post')
+        }
+    })
+})
+app.delete('/api/removelinked', (req, res) => {
+    const postid = req.body.postid
+    db.query("DELETE FROM postmilestones WHERE postid = ?", [postid], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send('linked milestones removed')
+        }
+    })
+})
+app.delete('/api/removelinktag', (req, res) => {
+    const postid = req.body.postid
+    const milestoneid = req.body.milestoneid
+    db.query("DELETE FROM postmilestones WHERE postid = ? AND milestoneid = ?", [postid, milestoneid], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send('linked milestones removed')
+        }
+    })
+})
 
 app.listen(19001, () => {
     console.log("ayo server running on port 19001")

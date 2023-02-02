@@ -22,7 +22,7 @@ function normalize(size) {           /* normalizes font size to screen size */
 const MilestoneTag = ({title, streak, img, id, isLast, description, selected, onSelectMilestone, onRemoveMilestone}) => {
     const navigation = useNavigation();
     const animatedvalue = useRef(new Animated.Value(0)).current;
-    const [isSelected, setIsSelected] = useState(selected===undefined?false:selected)
+    const [isSelected, setIsSelected] = useState(selected===undefined||!selected?false:selected)
     const route = useRoute();
     var fileExt = (img !== undefined)?img.toString().split('.').pop():'money'
     const milestoneData = {
@@ -33,18 +33,38 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, selected, on
     }
     const toggleSelect = () => {
         setIsSelected(!isSelected)
-        if (!isSelected) {
-            Animated.timing(animatedvalue,{
-                toValue:100,
-                duration:250,
-                useNativeDriver:false,
-            }).start()
-        } else {
-            Animated.timing(animatedvalue,{
-                toValue:0,
-                duration:200,
-                useNativeDriver:false,
-            }).start()
+        if (selected) {
+            if (isSelected) {
+                Animated.timing(animatedvalue,{
+                    toValue:100,
+                    duration:250,
+                    useNativeDriver:false,
+                }).start()
+            } else {
+                console.log(title)
+                Animated.timing(animatedvalue,{
+                    toValue:0,
+                    duration:200,
+                    useNativeDriver:false,
+                }).start()
+            }
+        }
+        else {
+            if (!isSelected) {
+                
+                Animated.timing(animatedvalue,{
+                    toValue:100,
+                    duration:250,
+                    useNativeDriver:false,
+                }).start()
+            } else {
+                console.log(title)
+                Animated.timing(animatedvalue,{
+                    toValue:0,
+                    duration:200,
+                    useNativeDriver:false,
+                }).start()
+            }
         }
     }
     function sendPost() {
@@ -54,6 +74,7 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, selected, on
         milestoneData.img = img
     }
     function handlePress(){  
+        
         sendPost()
         if (route.name === "CreatePost" || route.name === 'EditPost') {
             if (!isSelected) {
@@ -63,6 +84,7 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, selected, on
                 onRemoveMilestone(milestoneData)
             }
             toggleSelect()
+       
         } else if (route.name === "Profile" || route.name === 'MilestoneList' || route.name === 'Post') {
             navigation.reset({
                 index: 0,
@@ -70,9 +92,11 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, selected, on
               });
             navigation.navigate("MilestonePage", {milestone:milestoneData})
         }
+       
     }
     useEffect(()=> {
         if (route.name === 'EditPost' && selected) {
+            setIsSelected(selected)
             sendPost()
             onSelectMilestone(milestoneData)
         }
@@ -161,11 +185,11 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         padding:(windowH*0.0185)-4,
-        backgroudColor: "#35AE92",
+
         width:(windowW*0.800),
         height: (windowH*0.0756),
-        borderColor:"#00523F",
-        borderWidth:4,
+      
+
         borderRadius: 8,
         marginBottom:16,
         alignSelf:"center"
@@ -180,8 +204,8 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         paddingTop:(windowH*0.0185)-4,
-        backgroundColor: "rgba(28, 28, 28, 1)",
-        borderWidth:4,
+  
+   
         width:(windowW*0.800),
         height: (windowH*0.0756),
         borderRadius: 8,

@@ -39,6 +39,7 @@ const Post = ({navigation, route}) => {
     function handlePress() {
         console.log('owner:',route.params.item.ownerId)
         console.log('user:',user.userId)
+        console.log(route.params)
     }
     const renderMilestone = ({ item }) => {
         return (
@@ -58,7 +59,7 @@ const Post = ({navigation, route}) => {
             <View style={[styles.postContainer]}>
                 <PostItem username={route.params.item.username} caption={route.params.item.caption} 
                 src={route.params.item.src} image={route.params.item.image} postId={route.params.item.postId} 
-                ownerId={route.params.item.ownerId}
+                ownerId={route.params.item.ownerId} date={route.params.item.date}
                 liked={route.params.item.liked} isLast={false} isViewable={true}/>
             </View>
             {milestoneList.length > 0?

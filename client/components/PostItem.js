@@ -41,7 +41,6 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     }
     const handleSelect = () => {
         setIsActive(!isActive)
-        console.log(fileExt)
     }
     const toggleMute = () => {
         if (isViewable !== undefined) {
@@ -57,7 +56,8 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         caption:caption, 
         liked:isLiked,
         milestones:milestoneList,
-        ownerId:ownerid
+        ownerId:ownerid,
+        date:date
     }
     return (
      <View style={[styles.postContainer]}>
