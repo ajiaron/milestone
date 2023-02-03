@@ -46,7 +46,7 @@ const Feed = ({route}) => {
         .then((response)=> {
             setPostFeed(response.data)
         }).catch(error => console.log(error))
-    }, [route])
+    }, [route, refreshing])
 
     const renderPost = ({ item }) => {
       return (

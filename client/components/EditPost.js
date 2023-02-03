@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import { Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, Switch, Dimensions } from "react-native";
+import { Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, Switch, Dimensions, Alert } from "react-native";
 import * as Device from 'expo-device'
 import { Icon } from 'react-native-elements'
 import AppLoading from 'expo-app-loading'
@@ -33,6 +33,7 @@ const EditPost = ({route}) => {
     const navigation = useNavigation()
     const user = useContext(userContext)
     const [postId, setPostId] = useState(route.params.postId)
+    const [confirmation, setConfirmation] = useState(false)
 
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getlinkedmilestones`)  
@@ -46,7 +47,21 @@ const EditPost = ({route}) => {
             setMilestoneList(response.data)})
         .catch((error)=> console.log(error))
     },[])
-
+    const DeleteAlert = () => {
+        return new Promise((resolve, reject) => {
+            Alert.alert('Delete Post?', 'You won\'t be able to restore this post after it is deleted.', [{
+                text:'Cancel',
+                onPress: () => resolve(false),
+                style: 'cancel'
+            },
+            {
+                text:"Delete",
+                onPress: () => resolve(true),
+                style:{fontFamily:"Inter", color:"red"}
+            }
+            ], {cancelable:false})
+        })
+    }
     const postData = {
         id:0,
         img:require('../assets/samplepost.png'),
@@ -60,11 +75,15 @@ const EditPost = ({route}) => {
         .then((response)=> console.log("post deleted")).catch(error=>console.log(error))
         axios.delete(`http://${user.network}:19001/api/removelinked`, {data: {postid:postId}})
         .then((response)=>console.log("links removed")).catch(error=>console.log(error))
-    }
-
-    function handlePress() {
-        deletePost()
         navigation.navigate("Feed", {post:postData})
+    }
+    function handlePress() {
+        DeleteAlert().then((resolve)=> {
+            if (resolve) {
+                  deletePost()
+                  navigation.navigate("Feed", {post:postData})
+            }}
+        )
     }
     function submitPost() {
         milestones.filter(item=>linkedMilestones.indexOf(item.id)<0).map(item=>{

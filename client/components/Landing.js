@@ -33,13 +33,15 @@ const Landing = () => {
   const user = useContext(userContext);
 
   useEffect(()=> {
-    var connection = Constants.expoConfig.hostUri.substring(0,12)
+    var connection = Constants.expoConfig.hostUri.substring(0,Constants.expoConfig.hostUri.indexOf(':'))
+ 
     user.setNetwork(connection)
 
   }, [])
   function handlePress() {
+    console.log(Constants.expoConfig)
     console.log(user.network)
-    navigation.navigate('Register')
+  //  navigation.navigate('Register')
   }
   return (
     <View style={styles.landingPage}>
