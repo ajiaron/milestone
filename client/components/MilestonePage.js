@@ -34,7 +34,7 @@ const ProgressView = ({count, postlist}) => {
         var days = [];
         var counter = 0
         while (date.getMonth() == month && counter < 7) {
-          days.push('January' + ' ' + date.getDate()+', ' + year);
+          days.push(monthname + ' ' + date.getDate()+', ' + year);
           date.setDate(date.getDate() + 1);
           counter = counter + 1
         }
@@ -43,7 +43,7 @@ const ProgressView = ({count, postlist}) => {
     const renderItem = ({item}) => {
         return (
             <View style={(windowH>900)?styles.gridRowLarge:styles.gridRow}>
-                {getDaysInWeek(parseInt(monthnumber)-2, year, item).map((val, i) => 
+                {getDaysInWeek(parseInt(monthnumber)-1, year, item).map((val, i) => 
                  <TouchableOpacity key={i} onPress={()=>pressDate(val)}
                  style={[(windowH>900)?styles.gridItemLarge:styles.gridItem, {backgroundColor:
                     (getActivity(val)===0)?"#696969":"rgb(37, 124, 103)"}]}>
@@ -201,7 +201,7 @@ const MilestonePage = ({route}) => {
                             {`⚡ Milestone Progress`}   
                         </Text>
                         <Text style={(windowW>400)?styles.milestoneDateLarge:styles.milestoneDate}>
-                            {'Jan'}, {year}
+                            {month}, {year}
                         </Text>
                     </View>
                 </View>
