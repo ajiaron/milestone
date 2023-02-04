@@ -13,17 +13,43 @@ import { ScrollView } from "react-native-gesture-handler";
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const ProgressView = () => {
+const ProgressView = ({count, postlist}) => {
+    const monthname = new Date().toLocaleString("en-US", { month: "long" })
+    const year = new Date().getFullYear()
+    const monthnumber = new Date().toLocaleString("en-US", { month: "numeric" })
+    function pressDate(val) {
+        console.log(postlist.filter(item=>
+            new Date(item.date).toLocaleDateString("en-US",{month:"long", day:"numeric",year:"numeric"}) === val
+        ).length)
+    }
+    function getActivity(val) {
+        return (
+            postlist.filter(item=>
+                new Date(item.date).toLocaleDateString("en-US",{month:"long", day:"numeric",year:"numeric"}) === val
+            ).length
+        )
+    }
+    function getDaysInWeek(month, year, day) {
+        var date = new Date(year, month, (day*7)+1);
+        var days = [];
+        var counter = 0
+        while (date.getMonth() == month && counter < 7) {
+          days.push('January' + ' ' + date.getDate()+', ' + year);
+          date.setDate(date.getDate() + 1);
+          counter = counter + 1
+        }
+        return days;
+    }
     const renderItem = ({item}) => {
         return (
-            <View style={styles.gridRow}>
-                <TouchableOpacity style={[styles.gridItem, {backgroundColor:(item === 1)?"#696969":(item === 2)?"rgba(53, 174, 146, 1)":"rgb(37, 124, 103)"}]}/>
-                <TouchableOpacity style={[styles.gridItem, {backgroundColor:(item === 1)?"#696969":(item === 3)?"rgba(53, 174, 146, 1)":"rgb(37, 124, 103)"}]}/>
-                <TouchableOpacity style={[styles.gridItem, {backgroundColor:(item === 2)?"#rgba(53, 174, 146, 1)":"rgb(37, 124, 103)"}]}/>
-                <TouchableOpacity style={[styles.gridItem, {backgroundColor:(item === 1)?"rgba(53, 174, 146, 1)":"rgb(37, 124, 103)"}]}/>
-                <TouchableOpacity style={[styles.gridItem, {backgroundColor:(item === 3)?"#696969":(item === 4)?"rgba(53, 174, 146, 1)":"rgb(37, 124, 103)"}]}/>
-                <TouchableOpacity style={[styles.gridItem,  {backgroundColor:(item === 2)?"rgba(53, 174, 146, 1)":"rgb(37, 124, 103)"}]}/>
-                <TouchableOpacity style={[styles.gridItem, {backgroundColor:(item === 4)?"rgba(53, 174, 146, 1)":(item === 2)?"#696969":"rgb(37, 124, 103)"}]}/>
+            <View style={(windowH>900)?styles.gridRowLarge:styles.gridRow}>
+                {getDaysInWeek(parseInt(monthnumber)-2, year, item).map((val, i) => 
+                 <TouchableOpacity key={i} onPress={()=>pressDate(val)}
+                 style={[(windowH>900)?styles.gridItemLarge:styles.gridItem, {backgroundColor:
+                    (getActivity(val)===0)?"#696969":"rgb(37, 124, 103)"}]}>
+                 <Text style={{color:"white", fontFamily:"InterBold", alignSelf:"flex-end",fontSize:(windowH>900)?12:11}}>{7*(item)+i+1}</Text>
+                </TouchableOpacity>
+                )}
             </View>
         )
     }
@@ -33,7 +59,7 @@ const ProgressView = () => {
                 <FlatList
                 scrollEnabled={false}
                 renderItem={renderItem}
-                data={[1,2,3,4]}
+                data={(count % 7 === 0)?[0,1,2,3]:[0,1,2,3,4]}
                 />
             </View>
         </ScrollView>
@@ -41,12 +67,14 @@ const ProgressView = () => {
 }
 
 const MilestonePage = ({route}) => {
+    const now = new Date()
     const year = new Date().getFullYear()
     const month = new Date().toLocaleString("en-US", { month: "short" })
     const day = new Date().getDate()
     const postdate = month + ' ' + day
     const user = useContext(userContext)
     const navigation = useNavigation()
+    const [gridCount, setGridCount] = useState(new Date(now.getFullYear(), now.getMonth()+3, 0).getDate())
     const [postIdList, setPostIdList] = useState([])
     const [postList, setPostList] = useState([])
     const [milestoneId, setMilestoneId] = useState(0)
@@ -55,7 +83,7 @@ const MilestonePage = ({route}) => {
     const [image, setImage] = useState('calender')
     const [streak, setStreak] = useState(0)
     const [isViewable, setIsViewable] = useState(0)
-    
+    var fileExt = (image !== undefined)?image.toString().split('.').pop():'calender'
     const viewabilityConfig = {
         itemVisiblePercentThreshold:30
     }
@@ -68,7 +96,7 @@ const MilestonePage = ({route}) => {
       };
     const viewabilityConfigCallbackPairs = useRef([{ viewabilityConfig, onViewableItemsChanged }])
     function handlePress() {
-        console.log(title, image, streak, milestoneId, description,fileExt)
+        console.log(title, image, streak, milestoneId, description, fileExt)
     }
     useEffect(()=> {
         if (route) {
@@ -94,7 +122,6 @@ const MilestonePage = ({route}) => {
             setPostList(response.data.filter((item)=> postIdList.indexOf(item.idposts)>= 0))
         })
     }, [postIdList])
-    var fileExt = (image !== undefined)?image.toString().split('.').pop():'calender'
     const renderPost = ({item}) => {
         return (
             <Pressable onPress={()=>console.log(postList.indexOf(item))}>
@@ -117,7 +144,7 @@ const MilestonePage = ({route}) => {
         )
     }
     return (
-        <View style={styles.milestonePage}>
+        <View style={[styles.milestonePage]}>
             <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
                 <View style={[styles.headerContent, {marginTop:windowH*((windowH>900?70:76)/windowH)}]}>
                     <View style={styles.headerContentWrapper}>
@@ -174,11 +201,11 @@ const MilestonePage = ({route}) => {
                             {`⚡ Milestone Progress`}   
                         </Text>
                         <Text style={(windowW>400)?styles.milestoneDateLarge:styles.milestoneDate}>
-                                {month}, {year}
+                            {'Jan'}, {year}
                         </Text>
                     </View>
                 </View>
-                <ProgressView/>
+                <ProgressView count={gridCount} postlist={postList}/>
             </ScrollView>
             <Footer/>
         </View>
@@ -319,7 +346,7 @@ const styles = StyleSheet.create({
         width: windowW * 0.85,
         height: windowH * 0.044,
         flexDirection:"row",
-        justifyContent:"space-evenly",
+        justifyContent:"flex-start",
         alignSelf:"center",
         marginTop:windowH * (5/windowH),
         marginBottom:windowH * (5/windowH),
@@ -328,24 +355,45 @@ const styles = StyleSheet.create({
         width: windowW * 0.85,
         height: windowH * 0.043,
         flexDirection:"row",
-        justifyContent:"space-evenly",
+        justifyContent:"flex-start",
+
         alignSelf:"center",
         marginTop:windowH * (5/windowH),
         marginBottom:windowH * (5/windowH),
+    },
+    gridItemLarge: {
+        width: (windowW * 0.093)+2,
+        height: (windowH * 0.044)+2,
+        backgroundColor:"rgb(37, 124, 103)",
+        borderRadius:4,
+        alignSelf:"flex-start",
+        shadowColor: '#000',
+        shadowOffset: {
+        width: 0,
+        height: 2,
+        },
+        paddingTop:26,
+        paddingRight:5,
+        marginLeft:windowW*(9/windowW),
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
     },
     gridItem: {
         width: (windowW * 0.093)+2,
         height: (windowH * 0.044)+2,
         backgroundColor:"rgb(37, 124, 103)",
         borderRadius:4,
-        alignSelf:"center",
+        alignSelf:"flex-start",
         shadowColor: '#000',
         shadowOffset: {
         width: 0,
         height: 2,
         },
+        marginLeft:windowW*(8/windowW),
         shadowOpacity: 0.25,
         shadowRadius: 4,
+        paddingTop:windowH*(23/windowH),
+        paddingRight:windowW*(5/windowW),
     },
     postIndicator: {
         backgroundColor:"rgba(238, 64, 64, 1)",

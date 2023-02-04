@@ -35,7 +35,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         navigation.navigate("EditPost", {uri:image, postId:postId, caption:caption})
     }
     const handlePress = () => {
-        console.log(route.name)
+        console.log(dateparts)
         setIsLiked(!isLiked)
         liked = isLiked
     }
