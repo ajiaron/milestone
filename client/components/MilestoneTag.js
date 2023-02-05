@@ -8,16 +8,6 @@ import GlobalStyles from "../styles/GlobalStyles";
 
 const windowW= Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
-const scale = windowW / 375
-
-function normalize(size) {           /* normalizes font size to screen size */
-    const newSize = size * scale
-    if (Platform.OS === 'ios') {
-        return Math.round(PixelRatio.roundToNearestPixel(newSize))
-      } else {
-        return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 2
-      }
-}
 
 const MilestoneTag = ({title, streak, img, id, isLast, description, selected, onSelectMilestone, onRemoveMilestone}) => {
     const navigation = useNavigation();
@@ -41,7 +31,6 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, selected, on
                     useNativeDriver:false,
                 }).start()
             } else {
-                console.log(title)
                 Animated.timing(animatedvalue,{
                     toValue:0,
                     duration:200,
@@ -51,7 +40,6 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, selected, on
         }
         else {
             if (!isSelected) {
-                
                 Animated.timing(animatedvalue,{
                     toValue:100,
                     duration:250,
@@ -74,7 +62,6 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, selected, on
         milestoneData.img = img
     }
     function handlePress(){  
-        
         sendPost()
         if (route.name === "CreatePost" || route.name === 'EditPost') {
             if (!isSelected) {
@@ -92,7 +79,6 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, selected, on
               });
             navigation.navigate("MilestonePage", {milestone:milestoneData})
         }
-       
     }
     useEffect(()=> {
         if (route.name === 'EditPost' && selected) {
@@ -111,9 +97,7 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, selected, on
         return deselect
     }, [navigation])
     return (
-        <Pressable onPress={handlePress} 
-        activeOpacity={0.2}>
-       
+    <Pressable onPress={handlePress} activeOpacity={0.2}>
        <Animated.View style={[((isSelected)&& (route.name=="CreatePost" || route.name=='EditPost'))?
             ((isLast)?styles.highlightContainerLast:styles.highlightContainer):
             (isLast)?styles.milestoneContainerLast:styles.milestoneContainer, 
@@ -124,20 +108,18 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, selected, on
             {borderWidth:animatedvalue.interpolate({inputRange: [0,100], outputRange: selected?[4,0]:[0,4]})},
             {paddingTop:animatedvalue.interpolate({inputRange: [0,100], outputRange: selected?
                 [(windowH*0.0185)-4,(windowH*0.0185)]:[(windowH*0.0185),(windowH*0.0185)-4]})}
-            ]}>
-                
+            ]}>    
             <View style={[styles.milestoneContentContainer]}>  
             <View style={[styles.milestoneIconContainer]}>
                 <Image
-                        style={styles.milestoneIcon}
-                        resizeMode="cover"
-                        source={(fileExt ==='jpg'||fileExt ==='png')?{uri:img}:Icons[img]}/>
+                    style={styles.milestoneIcon}
+                    resizeMode="cover"
+                    source={(fileExt ==='jpg'||fileExt ==='png')?{uri:img}:Icons[img]}/>
             </View>
                 <View style={[styles.milestoneContext]}>
                     <Text style={[styles.milestoneTitle]}>
                         {title}
                     </Text>
-  
                     <Animated.Text style={[styles.milestoneStreak,
                         {color:animatedvalue.interpolate({inputRange: [0,100], outputRange: selected?
                         ["rgb(248, 210, 57)","rgba(53, 174, 146, 1)"]
@@ -152,8 +134,7 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, selected, on
                 </View>
             </View>
         </Animated.View>
-        </Pressable>
-
+    </Pressable>
     )
 }
 const styles = StyleSheet.create({  
@@ -185,11 +166,8 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         padding:(windowH*0.0185)-4,
-
         width:(windowW*0.800),
         height: (windowH*0.0756),
-      
-
         borderRadius: 8,
         marginBottom:16,
         alignSelf:"center"
@@ -204,8 +182,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         paddingTop:(windowH*0.0185)-4,
-  
-   
         width:(windowW*0.800),
         height: (windowH*0.0756),
         borderRadius: 8,

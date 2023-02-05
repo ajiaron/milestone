@@ -13,23 +13,27 @@ import { ScrollView } from "react-native-gesture-handler";
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const ProgressView = ({count, postlist}) => {
-    const monthname = new Date().toLocaleString("en-US", { month: "long" })
-    const year = new Date().getFullYear()
-    const monthnumber = new Date().toLocaleString("en-US", { month: "numeric" })
-    function pressDate(val) {
+const ProgressView = ({count, postlist, month, monthname, monthnumber, year}) => {
+    const [selected, setSelected] = useState(false)
+    function pressDate(val) {     // print associated posts
+        if (selected === val) {
+            setSelected(false)
+        }
+        else {
+            setSelected(val)
+        }
         console.log(postlist.filter(item=>
             new Date(item.date).toLocaleDateString("en-US",{month:"long", day:"numeric",year:"numeric"}) === val
         ).length)
     }
-    function getActivity(val) {
+    function getActivity(val) {   // determines color of square
         return (
             postlist.filter(item=>
                 new Date(item.date).toLocaleDateString("en-US",{month:"long", day:"numeric",year:"numeric"}) === val
             ).length
         )
     }
-    function getDaysInWeek(month, year, day) {
+    function getDaysInWeek(month, year, day) {      // generates squares
         var date = new Date(year, month, (day*7)+1);
         var days = [];
         var counter = 0
@@ -44,17 +48,27 @@ const ProgressView = ({count, postlist}) => {
         return (
             <View style={(windowH>900)?styles.gridRowLarge:styles.gridRow}>
                 {getDaysInWeek(parseInt(monthnumber)-1, year, item).map((val, i) => 
-                 <TouchableOpacity key={i} onPress={()=>pressDate(val)}
-                 style={[(windowH>900)?styles.gridItemLarge:styles.gridItem, {backgroundColor:
-                    (getActivity(val)===0)?"#696969":"rgb(37, 124, 103)"}]}>
-                 <Text style={{color:"white", fontFamily:"InterBold", alignSelf:"flex-end",fontSize:(windowH>900)?12:11}}>{7*(item)+i+1}</Text>
-                </TouchableOpacity>
+                 <Pressable key={i} onPress={()=>pressDate(val)}
+                    style={[(windowH>900)?styles.gridItemLarge:styles.gridItem, 
+                    {backgroundColor:(getActivity(val)===0)?"#696969":"rgb(37, 124, 103)", opacity:(selected===val)?0.5:1}]}>
+                    <Text style={{color:"white",fontFamily:"InterBold", alignSelf:"flex-end",fontSize:(windowH>900)?12:11}}>
+                        {7*(item)+i+1}
+                    </Text>   
+                </Pressable>
                 )}
             </View>
         )
     }
     return (
-        <ScrollView horizontal={true} scrollEnabled={false} style={{alignSelf:"center"}}>
+        <View style={{flex:1, paddingLeft:windowW*0.075, paddingRight:windowW*0.075}}>
+            <View style={styles.milestoneDatesHeader}>
+                    <Text style={styles.todaysMilestoneHeader}>
+                        {`⚡ Milestone Progress`}   
+                    </Text>
+                    <Text style={(windowW>400)?styles.milestoneDateLarge:styles.milestoneDate}>
+                        {month}, {year}
+                    </Text>
+                </View>
             <View style={styles.gridView}>
                 <FlatList
                 scrollEnabled={false}
@@ -62,7 +76,7 @@ const ProgressView = ({count, postlist}) => {
                 data={(count % 7 === 0)?[0,1,2,3]:[0,1,2,3,4]}
                 />
             </View>
-        </ScrollView>
+        </View>
     )
 }
 
@@ -74,7 +88,7 @@ const MilestonePage = ({route}) => {
     const postdate = month + ' ' + day
     const user = useContext(userContext)
     const navigation = useNavigation()
-    const [gridCount, setGridCount] = useState(new Date(now.getFullYear(), now.getMonth()+3, 0).getDate())
+    const [gridCount, setGridCount] = useState(new Date(now.getFullYear(), now.getMonth()+1, 0).getDate())
     const [postIdList, setPostIdList] = useState([])
     const [postList, setPostList] = useState([])
     const [milestoneId, setMilestoneId] = useState(0)
@@ -95,8 +109,25 @@ const MilestonePage = ({route}) => {
         }
       };
     const viewabilityConfigCallbackPairs = useRef([{ viewabilityConfig, onViewableItemsChanged }])
+    function getMonths() {
+        let months = []
+        var current = new Date(year, 0)
+        while (current.getFullYear() === year) {
+            let temp = {
+                monthnumber:current.getMonth(), 
+                short:new Date(year, current.getMonth()).toLocaleString("en-US", {month: "short"}),
+                long:new Date(year, current.getMonth()).toLocaleString("en-US", {month: "long"}),
+                count:new Date(current.getFullYear(), current.getMonth()+1, 0).getDate(),
+            }
+            months.push(temp)
+            current.setMonth(current.getMonth()+1)
+        }
+        return months
+    }
+    const [monthList, setMonthList] = useState(getMonths())
     function handlePress() {
-        console.log(title, image, streak, milestoneId, description, fileExt)
+        console.log(now.getMonth())
+       // console.log(title, image, streak, milestoneId, description, fileExt)
     }
     useEffect(()=> {
         if (route) {
@@ -122,6 +153,17 @@ const MilestonePage = ({route}) => {
             setPostList(response.data.filter((item)=> postIdList.indexOf(item.idposts)>= 0))
         })
     }, [postIdList])
+    const renderGrid = ({item}) => {
+        return (
+            <ProgressView count={item.count} 
+                postlist={postList}
+                month={item.short}
+                monthnumber={item.monthnumber+1}
+                monthname={item.long}
+                year={year}
+                />
+        )
+    }
     const renderPost = ({item}) => {
         return (
             <Pressable onPress={()=>console.log(postList.indexOf(item))}>
@@ -195,17 +237,22 @@ const MilestonePage = ({route}) => {
                     <PostItem username={user.username?user.username:'ajiaron'} caption={'This triplet melody is getting hard to play..'} 
                     src={'defaultpic'} image={'defaultpost'} postId={0} liked={false} isLast={false} date={postdate}/>}
                 </View>
-                <View style={styles.milestoneDatesContainer}>
-                    <View style={styles.milestoneDatesHeader}>
-                        <Text style={styles.todaysMilestoneHeader}>
-                            {`⚡ Milestone Progress`}   
-                        </Text>
-                        <Text style={(windowW>400)?styles.milestoneDateLarge:styles.milestoneDate}>
-                            {month}, {year}
-                        </Text>
-                    </View>
-                </View>
-                <ProgressView count={gridCount} postlist={postList}/>
+                 <FlatList horizontal 
+                     initialNumToRender={3}
+                     maxToRenderPerBatch={3}
+                     initialScrollIndex={now.getMonth()}
+                     decelerationRate={"fast"}
+                     snapToInterval={windowW}
+                     showsHorizontalScrollIndicator={false}
+                     data={monthList}
+                     style={{ flexGrow: 1, flexDirection:"row", alignSelf:"center",marginTop:(windowH>900)?6:8}}
+                     renderItem={renderGrid}
+                     getItemLayout={(_,index) => ({
+                        length: (windowW*0.85) + ((windowW*0.075)*2),
+                        offset: ((windowW*0.85) + ((windowW*0.075)*2)) * index,
+                        index:index
+                     })}
+                     keyExtractor={(item, index)=>index}/>
             </ScrollView>
             <Footer/>
         </View>
@@ -320,20 +367,21 @@ const styles = StyleSheet.create({
         width:windowW*0.8,
         marginBottom: windowH * (14/926),
         flexDirection:"row",
+        alignSelf:"center",
         position:"relative",
-        right:4
+        right:6.5
     },
     milestoneDate: {
         fontFamily: "Inter",
         fontSize: 16.5, 
-        top:1.25,
+        top:1.5,
         color:"white",
         alignSelf:"center",
     },
     milestoneDateLarge: {
         fontFamily: "Inter",
         fontSize: 18.5, 
-        top:1.25,
+        top:1.5,
         color:"white",
         alignSelf:"center",
     },
@@ -377,6 +425,7 @@ const styles = StyleSheet.create({
         marginLeft:windowW*(9/windowW),
         shadowOpacity: 0.25,
         shadowRadius: 4,
+  
     },
     gridItem: {
         width: (windowW * 0.093)+2,
@@ -392,8 +441,9 @@ const styles = StyleSheet.create({
         marginLeft:windowW*(8/windowW),
         shadowOpacity: 0.25,
         shadowRadius: 4,
-        paddingTop:windowH*(23/windowH),
-        paddingRight:windowW*(5/windowW),
+        paddingTop:windowH*(22/windowH),
+        paddingRight:windowW*(5.5/windowW),
+    
     },
     postIndicator: {
         backgroundColor:"rgba(238, 64, 64, 1)",
