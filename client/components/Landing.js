@@ -41,7 +41,7 @@ const Landing = () => {
   function handlePress() {
     console.log(Constants.expoConfig)
     console.log(user.network)
-  //  navigation.navigate('Register')
+    navigation.navigate('Register')
   }
   return (
     <View style={styles.landingPage}>

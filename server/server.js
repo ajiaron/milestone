@@ -114,6 +114,41 @@ app.put('/api/updatepost', (req, res) => {
     })
 })
 
+app.put('/api/updatemilestone', (req, res) => {
+    const milestoneid = req.body.milestoneid
+    const title = req.body.title
+    const description = req.body.description
+    const src = req.body.src
+    db.query('UPDATE milestones SET title = ?, description = ?, src = ? WHERE idmilestones = ?', [title, description, src, milestoneid],
+    (err, result)=> {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.delete('/api/deletemilestone', (req, res) => {
+    const milestoneid = req.body.milestoneid
+    db.query("DELETE FROM milestones WHERE idmilestones = ?", [milestoneid], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send('deleted post')
+        }
+    })
+})
+app.delete('/api/removelinkedposts', (req, res) => {
+    const milestoneid = req.body.milestoneid
+    db.query("DELETE FROM postmilestones WHERE milestoneid = ?", [milestoneid], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send('linked milestones removed')
+        }
+    })
+})
+
 app.delete('/api/deletepost', (req, res) => {
     const postid = req.body.postid
     db.query("DELETE FROM userposts WHERE idposts = ?", [postid], (err, result) => {

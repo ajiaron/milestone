@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
     },
     groupTagIcon: {
         left:8,
+        top:2,
         alignItems:"center",
     },
     groupIcon: {

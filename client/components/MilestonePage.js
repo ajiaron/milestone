@@ -125,9 +125,13 @@ const MilestonePage = ({route}) => {
         return months
     }
     const [monthList, setMonthList] = useState(getMonths())
-    function handlePress() {
+    function pressShare() {
         console.log(now.getMonth())
+        console.log(route.params)
        // console.log(title, image, streak, milestoneId, description, fileExt)
+    }
+    function handlePress() {
+        navigation.navigate("EditMilestone", {id:route.params.milestone.id, title:title, description:description, src:image})
     }
     useEffect(()=> {
         if (route) {
@@ -197,7 +201,7 @@ const MilestonePage = ({route}) => {
                                 source={(fileExt==='jpg' || fileExt==='png')?{uri:image}:Icons[image]}/>
                         </View>
                         <Text style={styles.milestoneTitle}>{title}</Text>
-                        <Pressable onPress={handlePress}>
+                        <Pressable onPress={pressShare}>
                             <Icon 
                                 style={{transform:[{rotate:"-45deg"}], top:-0.5, alignSelf:"center"}}
                                 name='insert-link'
@@ -253,7 +257,13 @@ const MilestonePage = ({route}) => {
                         index:index
                      })}
                      keyExtractor={(item, index)=>index}/>
+                <Pressable onPress={handlePress} style={[styles.buttonContainer]}>
+                    <View style={[styles.deletePostButtonContainer, {minHeight:(windowH>900)?windowH*0.035: windowH * 0.0375}]}>
+                        <Text style={[styles.deletePostButtonText, {fontSize:(windowW > 400)?14.5:13.5}]}>Edit Milestone</Text>
+                    </View>
+                </Pressable>
             </ScrollView>
+                    
             <Footer/>
         </View>
     )
@@ -387,7 +397,7 @@ const styles = StyleSheet.create({
     },
     gridView: {
         width:windowW*0.85,
-        marginBottom:windowH*0.04,
+        marginBottom:windowH*0.035,
         alignSelf:"center",
     },
     gridRow: {
@@ -459,6 +469,33 @@ const styles = StyleSheet.create({
         width:windowW,
         flex:1,
         overflow:"scroll",
-    }
+    },
+    buttonContainer: {
+        alignItems:"center",
+        alignSelf:"center",
+        justifyContent:"space-between",
+        minHeight:windowH*0.075,
+        minWidth: windowW*0.85,
+    },
+    deletePostButtonContainer: {
+        shadowColor: '#000',
+        shadowOffset: {
+        width: 0,
+        height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        minWidth:windowW * 0.8,
+        backgroundColor:"#1c6654",
+        borderRadius:4,
+        justifyContent:"center",
+        alignSelf:"center",
+    },
+    deletePostButtonText: {
+        fontFamily:"InterBold",
+        top:.5,
+        color:"white",
+        alignSelf:"center"
+    },
 })
 export default MilestonePage

@@ -18,6 +18,7 @@ import CreatePost from './components/CreatePost'
 import EditPost from './components/EditPost'
 import TakePost from './components/TakePost'
 import CreateMilestone from './components/CreateMilestone'
+import EditMilestone from './components/EditMilestone'
 import MilestonePage from './components/MilestonePage'
 import MilestoneList from './components/MilestoneList'
 import UserProvider from "./contexts/UserProvider";
@@ -51,6 +52,7 @@ function App() {
               <Stack.Screen name="CreatePost" component={CreatePost} />
               <Stack.Screen name="EditPost" component={EditPost} />
               <Stack.Screen name="CreateMilestone" component={CreateMilestone} />
+              <Stack.Screen name="EditMilestone" component={EditMilestone} />
               <Stack.Screen name="MilestonePage" component={MilestonePage} />
             </Stack.Navigator>
           </NavigationContainer>

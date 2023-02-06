@@ -10,7 +10,6 @@ import userContext from '../contexts/userContext'
 import axios from 'axios'
 import { Video } from 'expo-av'
 
-
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
@@ -75,7 +74,6 @@ const EditPost = ({route}) => {
         .then((response)=> console.log("post deleted")).catch(error=>console.log(error))
         axios.delete(`http://${user.network}:19001/api/removelinked`, {data: {postid:postId}})
         .then((response)=>console.log("links removed")).catch(error=>console.log(error))
-        navigation.navigate("Feed", {post:postData})
     }
     function handlePress() {
         DeleteAlert().then((resolve)=> {
@@ -328,7 +326,7 @@ const styles = StyleSheet.create({
     deletePostButtonContainer: {
         minWidth:windowW * 0.78,
         minHeight: windowH * 0.035,
-        backgroundColor:"rgba(180, 55, 87,1)",
+        backgroundColor:"#9c3a53",
         borderRadius:4,
         justifyContent:"center",
         alignSelf:"center",

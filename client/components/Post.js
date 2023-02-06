@@ -20,20 +20,16 @@ const Post = ({navigation, route}) => {
     const [milestoneList, setMilestoneList] = useState([])
     const [hasMilestones, setHasMilestones] = useState(route.params.item.milestones.length > 0)
     const currentRoute = useRoute()
-
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getlinkedmilestones`)  // if this throws an error, replace 10.0.0.160 with localhost
         .then((response)=> {
             setLinkedMilestones(response.data.filter((item)=>item.postid === postId).map((item)=>item.milestoneid))
-
         }).catch(error => console.log(error))
     }, [])
-
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response) => {
             setMilestoneList(response.data.filter((item)=>linkedMilestones.indexOf(item.idmilestones) >= 0))
-         
         }).catch(error=>console.log(error))
     }, [linkedMilestones])
     function handlePress() {
@@ -84,14 +80,13 @@ const Post = ({navigation, route}) => {
                             snapToInterval={(windowH*0.0756)+16}
                             showsVerticalScrollIndicator={false}
                             style={[styles.milestoneList]} 
-                            data={milestoneList} // replace with route.params.item.milestones
+                            data={milestoneList} 
                             renderItem={renderMilestone} 
                             keyExtractor={(item, index)=>index}>
                         </FlatList>
                     </ScrollView>
                 </View>
             </View> : null}
-            {/* implement delete/edit post button here; check if ownerid = userid first */}
             </ScrollView>
             <Footer/>
         </View>
