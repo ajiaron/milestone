@@ -49,6 +49,12 @@ const Profile = () => {
     const user = useContext(userContext)
     const navigation = useNavigation()
     const route = useRoute()
+    useEffect(()=> {
+        axios.get(`http://${user.network}:19001/api/getmilestones`)
+        .then((response)=> {
+            setMilestones(response.data.filter((item)=> item.ownerId === user.userId))
+        })
+    }, [])
     
     const renderMilestone = ({ item }) => {
         return (
@@ -58,7 +64,6 @@ const Profile = () => {
         )
     }
     function handlePress() {
-        console.log(user)
         navigation.navigate("Settings")
     }
     return (
@@ -87,7 +92,7 @@ const Profile = () => {
                     </Pressable>
                 </View>
             </View>
-            <ProfileInfo name={user.fullname?user.fullname:"Johnny Appleseed"} milestones={4} groups={3} friends={13} />
+            <ProfileInfo name={user.fullname?user.fullname:"Johnny Appleseed"} milestones={milestones.length} groups={3} friends={13} />
             <View style={[styles.profileTagContainer]}>
                 <View style={[styles.milestoneHeaderContainer]}>
                     <Text style={[styles.milestoneHeader]}>

@@ -42,7 +42,6 @@ const DropdownPermission = ({permission, setPermission, permisisonList}) => {
     }
     function handleSelect(e, id) {
         setPermission(e)
-
     }
     const renderOption = ({item,id}) => {
         return (

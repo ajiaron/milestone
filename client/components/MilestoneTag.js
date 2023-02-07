@@ -1,10 +1,12 @@
-import  React, {useState, useEffect, useRef} from "react";
+import  React, {useState, useEffect, useRef, useContext} from "react";
 import { Text, StyleSheet, View, Image, Pressable, PixelRatio, TouchableOpacity, Dimensions, Animated } from "react-native";
 import Icons from '../data/Icons.js'
 import { Icon } from 'react-native-elements'
 import AppLoading from 'expo-app-loading'
 import { useNavigation, useRoute, NavigationActions } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
+import userContext from '../contexts/userContext'
+import axios from 'axios'
 
 const windowW= Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
@@ -14,7 +16,10 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, selected, on
     const animatedvalue = useRef(new Animated.Value(0)).current;
     const [isSelected, setIsSelected] = useState(selected===undefined||!selected?false:selected)
     const route = useRoute();
+    const [posts, setPosts] = useState()
+    const [startDate, setStartDate] = useState()
     var fileExt = (img !== undefined)?img.toString().split('.').pop():'money'
+    const user = useContext(userContext)
     const milestoneData = {
         id:0,
         title:"",
@@ -80,6 +85,20 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, selected, on
             navigation.navigate("MilestonePage", {milestone:milestoneData})
         }
     }
+
+    useEffect(()=> {
+        axios.get(`http://${user.network}:19001/api/getlinkedmilestones`)
+        .then((response)=> {
+            setPosts(response.data.filter((item)=> item.milestoneid === id).length)
+        })
+        axios.get(`http://${user.network}:19001/api/getmilestones`)
+        .then((response)=> {
+            setStartDate(new Date(response.data.filter((item)=> item.idmilestones === id).map((item)=>
+            item.date)[0]).toLocaleDateString("en-US", {month:"short", day:"numeric"}))
+        })
+        .catch((error)=> console.log(error))
+    },[])
+
     useEffect(()=> {
         if (route.name === 'EditPost' && selected) {
             setIsSelected(selected)
@@ -124,11 +143,11 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, selected, on
                         {color:animatedvalue.interpolate({inputRange: [0,100], outputRange: selected?
                         ["rgb(248, 210, 57)","rgba(53, 174, 146, 1)"]
                         :["rgba(53, 174, 146, 1)", "rgb(248, 210, 57)"]})}]}>
-                        {streak}{' '}days{' '}
+                        {posts}{' '}posts{' '}
                         <Animated.Text style={[styles.milestoneStreakContext,
                         {color:animatedvalue.interpolate({inputRange: [0,100], outputRange: selected?
                             ["#FFF","rgba(180, 180, 180, 1)"]:["rgba(180, 180, 180, 1)", "#FFF"]})}]}>
-                            in a row
+                            since{' '}{startDate}
                         </Animated.Text>
                     </Animated.Text>
                 </View>
