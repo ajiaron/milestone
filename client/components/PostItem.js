@@ -31,6 +31,9 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     useEffect(()=> {
         setViewable(isViewable)
     }, [isViewable])
+    function navigateProfile() {
+        navigation.navigate("Profile", {id:ownerId})
+    }
     const handleEdit = () => {
         navigation.navigate("EditPost", {uri:image, postId:postId, caption:caption})
     }
@@ -61,28 +64,31 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     }
     return (
      <View style={[styles.postContainer]}>
-        <View style={[styles.postHeader]}>
-            <View style={[styles.profilePicContainer]}>
-            <Image
-                style={styles.profilePic}
-                resizeMode="contain"
-                source={Icons[src]}/>
-            </View>
-           
-            <View style={[styles.postUserHeader]}>
-                <Text style={[styles.postOwnerName]}> {username} </Text>
-                <Text style={[styles.postOwnerTime]}>
-                    {(date !== undefined)?
-                    (postDate === currentDate)?`Today at ` + postTime:postDate + ' at ' + postTime
-                    :`Today at ${currentDate}`}</Text>
-            </View>
+        <View style={{flexDirection:"row",flex:1, alignItems:"center"}}>
+        <Pressable style={[styles.postHeader]} onPress={navigateProfile}>
+                <View style={[styles.profilePicContainer]}>
+                    <Image
+                        style={styles.profilePic}
+                        resizeMode="contain"
+                        source={Icons[src]}/>
+                </View>
+      
+                <View style={[styles.postUserHeader]}>
+                    <Text style={[styles.postOwnerName]}> {username} </Text>
+                    <Text style={[styles.postOwnerTime]}>
+                        {(date !== undefined)?
+                        (postDate === currentDate)?`Today at ` + postTime:postDate + ' at ' + postTime
+                        :`Today at ${currentDate}`}</Text>
+                </View>
+                </Pressable>
+       
             {(route.name==="Post" && ownerId === user.userId)?
             <Pressable onPress={handleEdit}>
                  <Icon 
                  name='tune' 
                  size={28} 
                  color="rgba(140,140,140,1)" 
-                 style={{marginRight:(windowW>400)?windowW*(22/windowW):windowW*(18/windowW), alignSelf:"center",top:windowH*(1.5/windowH)}}/>
+                 style={{marginRight:(windowW>400)?windowW*(22/windowW):windowW*(18/windowW), alignSelf:"center", bottom:1.75}}/>
             </Pressable>
                  :null
             }
@@ -140,7 +146,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                     color='white'
                 />
             </View>
-            {(route.name === 'MilestonePage')?
+            {(route.name === 'MilestonePage')?      // scroll slider on milestone page
                 (index !== undefined)?
                 <View style={{flexDirection:"row", 
                 alignSelf:"center", justifyContent:"space-around",
@@ -166,8 +172,8 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         </View>
         <View style={[styles.commentsContainer, {minHeight:(route.name === 'MilestonePage')?50:80}]}>
             <Text style={[styles.commentsContent]}>{caption}</Text>
-            {(route.name === "MilestonePage")?null:
-            <Text style={[styles.viewPostLink]}>View Milestones {'&'} Groups</Text>}
+            {(route.name === "Feed")?
+            <Text style={[styles.viewPostLink]}>View Milestones {'&'} Groups</Text>:null}
         </View>
         {isLast?<View style={{marginBottom:48}}/>:null}
      </View>
@@ -236,6 +242,7 @@ const styles = StyleSheet.create({
     commentsContent: {
         fontFamily:"InterSemiLight",
         fontSize:14,
+       
         color:"white"
     },
     viewPostLink: {
@@ -246,6 +253,7 @@ const styles = StyleSheet.create({
     },
     commentsContainer: {
         paddingLeft:20,
+        paddingRight:20,
         paddingTop:10,
         minHeight:windowH*(80/windowH),
         flex:1,

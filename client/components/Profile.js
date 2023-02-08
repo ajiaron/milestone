@@ -42,19 +42,30 @@ const ProfileInfo = ({name, milestones, groups, friends}) => {
     )
 }
 
-const Profile = () => {
+const Profile = ({route}) => {
+    const user = useContext(userContext)
+    const [userid, setUserid] = useState(route.params.id)
+    const [owner, setOwner] = useState(route.params.id === user.userId)
+    const [userData, setUserData] = useState()
     const [loading, setLoading] = useState(true)
     const [milestones, setMilestones] = useState([])
     const milestoneData = require('../data/Milestones.json')
-    const user = useContext(userContext)
     const navigation = useNavigation()
-    const route = useRoute()
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response)=> {
-            setMilestones(response.data.filter((item)=> item.ownerId === user.userId))
+            setMilestones(response.data.filter((item)=> item.ownerId === userid))
         })
     }, [])
+
+    useEffect(()=> {
+  
+        axios.get(`http://${user.network}:19001/api/getusers`)
+        .then((response)=> {
+            setUserData(response.data.filter((item)=> item.id === userid)[0])
+        })
+ 
+     }, [])
     
     const renderMilestone = ({ item }) => {
         return (
@@ -63,6 +74,10 @@ const Profile = () => {
             : null
         )
     }
+    function handleTest() {
+        console.log(route.params.id, owner)
+        console.log(userData)
+    }
     function handlePress() {
         navigation.navigate("Settings")
     }
@@ -70,15 +85,18 @@ const Profile = () => {
         <View style={[styles.profilePage]}>
             <View style={[styles.userInfoContainer]}>
                 <View styles={styles.profileIcon}>
+                    <Pressable onPress={handleTest}>
                     <Image
                     style={styles.profilePic}
                     resizeMode="contain"
                     source={require("../assets/profile-pic-empty.png")}/>
+                     </Pressable>
                 </View>
                 <View style={styles.userDetails}>
-                    <Text style={styles.usernameText}>@{user.username?user.username:"ajiaron"}</Text>
-                    <Text style={styles.userFullName}>{user.fullname?user.fullname:"Johnny Appleseed"}</Text>
-                    <Text style={styles.userBlurb}>I'm about writing apps and running laps</Text>
+                    <Text style={styles.usernameText}>@{(!owner && userData !== undefined)?userData.name:
+                    user.username?user.username:"ajiaron"}</Text>
+                    <Text style={styles.userFullName}>{(!owner && userData !== undefined)?userData.fullname:user.fullname?user.fullname:"Johnny Appleseed"}</Text>
+                    <Text style={styles.userBlurb}>{(!owner && userData !== undefined)?userData.blurb:'Im about writing apps and running laps'}</Text>
                 </View>
                 <View style={styles.settingsIcon}>
                     <Pressable onPress={handlePress}>
@@ -92,7 +110,8 @@ const Profile = () => {
                     </Pressable>
                 </View>
             </View>
-            <ProfileInfo name={user.fullname?user.fullname:"Johnny Appleseed"} milestones={milestones.length} groups={3} friends={13} />
+            <ProfileInfo name={(!owner && userData !== undefined)?userData.fullname:
+                user.fullname?user.fullname:"Johnny Appleseed"} milestones={milestones.length} groups={3} friends={13} />
             <View style={[styles.profileTagContainer]}>
                 <View style={[styles.milestoneHeaderContainer]}>
                     <Text style={[styles.milestoneHeader]}>
@@ -124,7 +143,6 @@ const Profile = () => {
                     <GroupTag title={"Guitar Gang"} users={['jdason', 'hzenry']} img={require("../assets/guitar.png")}/>
                 </View>
             </View>
-
             <Footer/>
         </View>
     )
@@ -154,7 +172,6 @@ const styles = StyleSheet.create({
         backgroundColor:"rgba(10, 10, 10, 1)"
     },
     profileNameWrapper: {
-     
         alignItems:"left",
         textAlign:"left",
         borderRadius:15,
@@ -171,7 +188,6 @@ const styles = StyleSheet.create({
     },
     profileInsights: {
         width:windowW*0.6785,
-
         justifyContent:"space-around",
         height:windowH*0.076,
         borderRadius:10,
@@ -182,7 +198,6 @@ const styles = StyleSheet.create({
     milestoneHeaderContainer: {
         alignSelf:"center",
         minWidth:windowW*0.8,
-   
         flexDirection:"row",
         position:"relative",
         maxHeight:22,
@@ -190,12 +205,10 @@ const styles = StyleSheet.create({
     groupHeaderContainer: {
         alignSelf:"center",
         minWidth:windowW*0.8,
-     
         flexDirection:"row",
         position:"relative",
         maxHeight:22,
         marginTop:windowH*(18/windowH)
-     
     },
     milestoneInsightsHeader: {
         flex:1,
@@ -206,7 +219,6 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "column",
         alignItems:"center",
-  
         justifyContent:"center"
     },
     milestoneInsightText: {
@@ -275,7 +287,6 @@ const styles = StyleSheet.create({
         maxWidth:windowW*0.8275,
         flex:1,
         flexDirection:"row",
-  
     },
     userDetails: {
         flex:1,
@@ -314,6 +325,5 @@ const styles = StyleSheet.create({
         top:9,
         zIndex:1
     },
-    
 })
 export default Profile

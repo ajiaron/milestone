@@ -85,7 +85,6 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, selected, on
             navigation.navigate("MilestonePage", {milestone:milestoneData})
         }
     }
-
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getlinkedmilestones`)
         .then((response)=> {
@@ -98,7 +97,6 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, selected, on
         })
         .catch((error)=> console.log(error))
     },[])
-
     useEffect(()=> {
         if (route.name === 'EditPost' && selected) {
             setIsSelected(selected)
@@ -170,7 +168,6 @@ const styles = StyleSheet.create({
         width: 0,
         height: 2,
         },
-  
         shadowOpacity: 0.25,
         shadowRadius: 4,
         alignSelf:"center"
@@ -264,11 +261,9 @@ const styles = StyleSheet.create({
     milestoneIconContainer: {
         width:(windowW*0.082),
         height:(windowH*0.0378),
-
         backgroundColor: "rgba(214, 214, 214, 1)",
         borderRadius:5,
         justifyContent:"center",
-
     },
     milestoneIcon: {
         width:"100%",
@@ -281,7 +276,7 @@ const styles = StyleSheet.create({
     milestoneContext: {
         textAlign:"left",
         width:windowW*0.52,
-        paddingTop:4,
+        paddingTop:3,
   
         justifyContent:"center",
         height:(windowH*0.0756)*0.4285,
@@ -294,6 +289,7 @@ const styles = StyleSheet.create({
     },
     milestoneStreak: {
         fontFamily:"InterBold",
+        top:0.5,
         fontSize:11,
         left:windowW*0.0385,
         color:"rgba(53, 174, 146, 1)",

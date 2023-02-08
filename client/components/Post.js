@@ -59,7 +59,7 @@ const Post = ({navigation, route}) => {
                 liked={route.params.item.liked} isLast={false} isViewable={true}/>
             </View>
             {milestoneList.length > 0?
-            <View>
+            <View style={{marginTop:(windowH>900)?0:0}}>
                 <View style={[(windowH>900)?styles.milestoneHeaderContainerLarge:styles.milestoneHeaderContainer]}>
                  <Text style={(windowH>900)?styles.milestoneHeaderLarge:styles.milestoneHeader}>
                      Posted Milestones             
@@ -67,9 +67,9 @@ const Post = ({navigation, route}) => {
                      <Pressable onPress={handlePress}>
                             <Icon 
                             name='navigate-next' 
-                            size={30} 
+                            size={29} 
                             color="rgba(53, 174, 146, 1)" 
-                            style={{bottom: 1.75, left:1}}/>
+                            style={{bottom: 1}}/>
                        </Pressable>
                     </View>
                 <View style={(windowH>900)?styles.PostTagContainerLarge:styles.PostTagContainer}>
