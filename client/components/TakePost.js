@@ -85,7 +85,7 @@ const TakePost = ({route}) => {
         if (prevroute === "CreatePost" || prevroute === "EditPost") {
             navigation.navigate("Feed")
         }
-        navigation.navigate(prevroute=="Post"||prevroute=="CreatePost"||prevroute=="EditPost"?"Feed":prevroute)
+        navigation.navigate(prevroute=="Post"||prevroute=="CreatePost"||prevroute=="EditPost"||prevroute=="Profile"?"Feed":prevroute)
     }
     function handlePress() {
         console.log("Device: ", Device.isDevice ? Device.modelName:"Simulator")

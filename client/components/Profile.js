@@ -1,5 +1,5 @@
-import  React, {useState, useEffect, useContext} from "react";
-import { Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, ScrollView, Dimensions } from "react-native";
+import  React, {useState, useEffect, useContext, useRef} from "react";
+import { Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, ScrollView, Dimensions, Animated} from "react-native";
 import { Icon } from 'react-native-elements'
 import AppLoading from 'expo-app-loading'
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -48,31 +48,45 @@ const Profile = ({route}) => {
     const [owner, setOwner] = useState(route.params.id === user.userId)
     const [userData, setUserData] = useState()
     const [loading, setLoading] = useState(true)
+    const [requested, setRequested] = useState(false)
     const [milestones, setMilestones] = useState([])
     const milestoneData = require('../data/Milestones.json')
     const navigation = useNavigation()
+    const animatedvalue = useRef(new Animated.Value(0)).current;
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response)=> {
             setMilestones(response.data.filter((item)=> item.ownerId === userid))
         })
     }, [])
-
     useEffect(()=> {
-  
         axios.get(`http://${user.network}:19001/api/getusers`)
         .then((response)=> {
             setUserData(response.data.filter((item)=> item.id === userid)[0])
         })
- 
      }, [])
-    
     const renderMilestone = ({ item }) => {
         return (
             (item.id == 9) ?
             <MilestoneTag title={item.title} streak={item.streak} img={item.img} id={item.id} isLast={false}/>
             : null
         )
+    }
+    function handleRequest() {
+        setRequested(!requested)
+        if (!requested) {
+            Animated.timing(animatedvalue,{
+                toValue:100,
+                duration:150,
+                useNativeDriver:false,
+            }).start()
+        } else {
+            Animated.timing(animatedvalue,{
+                toValue:0,
+                duration:150,
+                useNativeDriver:false,
+            }).start()
+        }
     }
     function handleTest() {
         console.log(route.params.id, owner)
@@ -96,8 +110,9 @@ const Profile = ({route}) => {
                     <Text style={styles.usernameText}>@{(!owner && userData !== undefined)?userData.name:
                     user.username?user.username:"ajiaron"}</Text>
                     <Text style={styles.userFullName}>{(!owner && userData !== undefined)?userData.fullname:user.fullname?user.fullname:"Johnny Appleseed"}</Text>
-                    <Text style={styles.userBlurb}>{(!owner && userData !== undefined)?userData.blurb:'Im about writing apps and running laps'}</Text>
+                    <Text style={[styles.userBlurb, {minWidth:windowW*0.8, marginTop:(!owner&&windowW<400)?6.5:4}]}>{(!owner && userData !== undefined)?userData.blurb:'Im about writing apps and running laps'}</Text>
                 </View>
+                {(owner)?
                 <View style={styles.settingsIcon}>
                     <Pressable onPress={handlePress}>
                         <View style={styles.settingsNotification}/>
@@ -108,8 +123,24 @@ const Profile = ({route}) => {
                             size={26}
                         />
                     </Pressable>
-                </View>
+                </View>:
+                    <Pressable 
+                        style={{marginRight:(windowW>400)?14.5:11.5, marginTop:(windowW>400)?5.5:3.5, height:windowH*(26/windowH)}}
+                        onPress={handleRequest}>
+                        <Animated.View style={[styles.addFriendContainer, 
+                            {backgroundColor:animatedvalue.interpolate({inputRange:[0,100], outputRange:["rgba(0, 82, 63, 1)","#565454"]})
+                               /* backgroundColor:(requested)?"#565454":"rgba(0, 82, 63, 1)"*/}]}>
+                            <Animated.Text style={[styles.addFriendText, 
+                                {fontSize:(windowW>400)?12.5:12.5, 
+                                 color:animatedvalue.interpolate({inputRange:[0,100], outputRange:["white","rgba(10,10,10,1)"]})
+                                /*color:(requested)?"rgba(10,10,10,1)":"white"*/}]}>
+                                {(requested)?"Requested":'Request'}
+                            </Animated.Text>
+                        </Animated.View>
+                    </Pressable>
+                }
             </View>
+
             <ProfileInfo name={(!owner && userData !== undefined)?userData.fullname:
                 user.fullname?user.fullname:"Johnny Appleseed"} milestones={milestones.length} groups={3} friends={13} />
             <View style={[styles.profileTagContainer]}>
@@ -324,6 +355,16 @@ const styles = StyleSheet.create({
         right:-16,
         top:9,
         zIndex:1
+    },
+    addFriendContainer: {
+        minWidth:windowW * (98/windowW),
+        height: windowH * (26/windowH),
+        borderRadius:4,
+        justifyContent:"center"
+    },
+    addFriendText: {
+        fontFamily:"InterBold",
+        alignSelf:"center"
     },
 })
 export default Profile

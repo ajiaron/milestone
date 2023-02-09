@@ -96,7 +96,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         <Pressable onPress={handleSelect}>
             <View style={[styles.postWrapper, 
                     {backgroundColor:(route.name === 'MilestonePage')?'rgba(108, 162, 183,1)':"rgba(10,10,10,1)",
-                    height:(route.name === 'MilestonePage')?windowH*(246/windowH):(fileExt === 'mov' || fileExt === 'mp4')?windowH*(526/windowH):windowH*(266/windowH)
+                    height:(route.name === 'MilestonePage')?windowH*(246/windowH):(fileExt === 'mov' || fileExt === 'mp4')?windowH*(526/windowH):windowH*(296/windowH)
                     }]}>
                     {(route.name === 'MilestonePage' || image !=='defaultpost')?
                     (fileExt === 'mov' || fileExt === 'mp4')? 
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
         backgroundColor:"rgba(28, 28, 28, 1)"
     },
     postWrapper: {
-        height:windowH*(266/windowH),
+        height:windowH*(296/windowH),
         maxWidth:"100%",
         backgroundColor:"rgba(10,10,10,1)",
         position:"relative",
