@@ -50,9 +50,11 @@ const Profile = ({route}) => {
     const [loading, setLoading] = useState(true)
     const [requested, setRequested] = useState(false)
     const [milestones, setMilestones] = useState([])
+    const [favorite, setFavorite] = useState(1)
     const milestoneData = require('../data/Milestones.json')
     const navigation = useNavigation()
     const animatedvalue = useRef(new Animated.Value(0)).current;
+
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response)=> {
@@ -63,12 +65,13 @@ const Profile = ({route}) => {
         axios.get(`http://${user.network}:19001/api/getusers`)
         .then((response)=> {
             setUserData(response.data.filter((item)=> item.id === userid)[0])
+            setFavorite(response.data.filter((item)=> item.id === userid)[0].favoriteid)
         })
      }, [])
     const renderMilestone = ({ item }) => {
         return (
-            (item.id == 9) ?
-            <MilestoneTag title={item.title} streak={item.streak} img={item.img} id={item.id} isLast={false}/>
+            (item.idmilestones == favorite) ?
+            <MilestoneTag title={item.title} streak={item.streak} img={item.src} id={item.idmilestones} isLast={false}/>
             : null
         )
     }
@@ -89,8 +92,9 @@ const Profile = ({route}) => {
         }
     }
     function handleTest() {
-        console.log(route.params.id, owner)
-        console.log(userData)
+     //   console.log(route.params.id, owner)
+    //    console.log(userData)
+        console.log(milestones)
     }
     function handlePress() {
         navigation.navigate("Settings")
@@ -159,9 +163,9 @@ const Profile = ({route}) => {
                 <FlatList 
                     scrollEnabled={false}
                     style={[styles.milestoneList]} 
-                    data={milestoneData} 
+                    data={milestones} 
                     renderItem={renderMilestone} 
-                    keyExtractor={(item)=>item.id.toString()}>
+                    keyExtractor={(item)=>item.idmilestones.toString()}>
                 </FlatList>  
                 <View style={[styles.groupHeaderContainer]}>
                     <Text style={[styles.groupHeader]}>

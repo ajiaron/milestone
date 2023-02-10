@@ -51,7 +51,6 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, selected, on
                     useNativeDriver:false,
                 }).start()
             } else {
-                console.log(title)
                 Animated.timing(animatedvalue,{
                     toValue:0,
                     duration:200,

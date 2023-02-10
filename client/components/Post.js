@@ -59,7 +59,7 @@ const Post = ({navigation, route}) => {
                 liked={route.params.item.liked} isLast={false} isViewable={true}/>
             </View>
             {milestoneList.length > 0?
-            <View style={{marginTop:(windowH>900)?0:0}}>
+            <View >
                 <View style={[(windowH>900)?styles.milestoneHeaderContainerLarge:styles.milestoneHeaderContainer]}>
                  <Text style={(windowH>900)?styles.milestoneHeaderLarge:styles.milestoneHeader}>
                      Posted Milestones             
@@ -130,7 +130,6 @@ const styles = StyleSheet.create({
         flexDirection:"row",
         left:4,
         maxHeight:22,
-        top:windowH*(0/812),
     },
     milestoneHeaderContainerLarge: {
         alignSelf:"center",

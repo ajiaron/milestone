@@ -50,8 +50,12 @@ const ProgressView = ({count, postlist, month, monthname, monthnumber, year}) =>
                 {getDaysInWeek(parseInt(monthnumber)-1, year, item).map((val, i) => 
                  <Pressable key={i} onPress={()=>pressDate(val)}
                     style={[(windowH>900)?styles.gridItemLarge:styles.gridItem, 
-                    {backgroundColor:(getActivity(val)===0)?"#696969":"rgb(37, 124, 103)", opacity:(selected===val)?0.5:1}]}>
-                    <Text style={{color:"white",fontFamily:"InterBold", alignSelf:"flex-end",fontSize:(windowH>900)?12:11}}>
+                    {   
+                        backgroundColor:(getActivity(val)===0)?"#696969":"rgb(37, 124, 103)", opacity:(selected===val)?0.5:1}]}>
+                    <Text style={{
+                        color:(new Date().toLocaleDateString("en-US",{month:"long", day:"numeric",year:"numeric"}) === val)?
+                        "rgb(248, 210, 57)":"white",
+                        fontFamily:"InterBold", alignSelf:"flex-end",fontSize:(windowH>900)?12:11}}>
                         {7*(item)+i+1}
                     </Text>   
                 </Pressable>
@@ -91,12 +95,14 @@ const MilestonePage = ({route}) => {
     const [gridCount, setGridCount] = useState(new Date(now.getFullYear(), now.getMonth()+1, 0).getDate())
     const [postIdList, setPostIdList] = useState([])
     const [postList, setPostList] = useState([])
+    const [ownerId, setOwnerId] = useState(0)
     const [milestoneId, setMilestoneId] = useState(0)
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('New start, new milestone! 👋') // add description to milestone object
     const [image, setImage] = useState('calender')
     const [streak, setStreak] = useState(0)
     const [isViewable, setIsViewable] = useState(0)
+    const [favorite, setFavorite] = useState(false)
     var fileExt = (image !== undefined)?image.toString().split('.').pop():'calender'
     const viewabilityConfig = {
         itemVisiblePercentThreshold:30
@@ -126,12 +132,20 @@ const MilestonePage = ({route}) => {
     }
     const [monthList, setMonthList] = useState(getMonths())
     function pressShare() {
-        console.log(now.getMonth())
-        console.log(route.params)
        // console.log(title, image, streak, milestoneId, description, fileExt)
+       console.log(ownerId)
     }
     function handlePress() {
         navigation.navigate("EditMilestone", {id:route.params.milestone.id, title:title, description:description, src:image})
+    }
+    function handleFavorite() {
+        setFavorite(!favorite)
+        if (!favorite) {
+            axios.put(`http://${user.network}:19001/api/favoritemilestone`, 
+            {milestoneid: milestoneId, userid:user.userId})
+            .then(() => {console.log('favorite updated')})
+            .catch((error)=> console.log(error))
+        }
     }
     useEffect(()=> {
         if (route) {
@@ -143,6 +157,7 @@ const MilestonePage = ({route}) => {
             setImage(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].src)
             setStreak(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].streak)
             setDescription(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].description)
+            setOwnerId(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].ownerId)
         }).catch(error => console.log(error))
     }, [])
     useEffect(()=> {
@@ -157,6 +172,12 @@ const MilestonePage = ({route}) => {
             setPostList(response.data.filter((item)=> postIdList.indexOf(item.idposts)>= 0))
         })
     }, [postIdList])
+    useEffect(()=> {
+        axios.get(`http://${user.network}:19001/api/getusers`)
+        .then((response)=> {
+            setFavorite(response.data.filter((item)=> item.id === user.userId)[0].favoriteid === route.params.milestone.id)
+        })
+     }, [])
     const renderGrid = ({item}) => {
         return (
             <ProgressView count={item.count} 
@@ -193,22 +214,33 @@ const MilestonePage = ({route}) => {
         <View style={[styles.milestonePage]}>
             <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
                 <View style={[styles.headerContent, {marginTop:windowH*((windowH>900?70:76)/windowH)}]}>
-                    <View style={styles.headerContentWrapper}>
-                        <View style={[styles.milestoneIconContainer, {alignSelf:"center"}]}>
-                            <Image
-                                style={styles.milestoneIcon}
-                                resizeMode="cover"
-                                source={(fileExt==='jpg' || fileExt==='png')?{uri:image}:Icons[image]}/>
-                        </View>
-                        <Text style={styles.milestoneTitle}>{title}</Text>
-                        <Pressable onPress={pressShare}>
+            
+                        <View style={styles.headerContentWrapper}>
+                            <View style={[styles.milestoneIconContainer, {alignSelf:"center"}]}>
+                                <Image
+                                    style={styles.milestoneIcon}
+                                    resizeMode="cover"
+                                    source={(fileExt==='jpg' || fileExt==='png')?{uri:image}:Icons[image]}/>
+                            </View>
+                            <Text style={styles.milestoneTitle}>{title}</Text>
+                            <Pressable onPress={pressShare}>
+                                <Icon 
+                                    style={{transform:[{rotate:"-45deg"}], top:-0.5, alignSelf:"center", marginRight:10}}
+                                    name='insert-link'
+                                    type='material'
+                                    color='rgba(178, 178, 178, 1)'
+                                    size={21}/>
+                            </Pressable>
+                        {(ownerId===user.userId)?
+                        <TouchableOpacity onPress={handleFavorite}>
                             <Icon 
-                                style={{transform:[{rotate:"-45deg"}], top:-0.5, alignSelf:"center"}}
-                                name='insert-link'
+                                style={{top:-0.75}}
+                                name='auto-awesome'
                                 type='material'
-                                color='rgba(178, 178, 178, 1)'
-                                size={21}/>
-                        </Pressable>
+                                color={(favorite)?"rgb(248, 210, 57)":'rgba(178, 178, 178, 1)'}
+                                size={23}/>
+                        </TouchableOpacity>:null
+                        }
                     </View>
                     <View style={styles.descriptionContainer}>
                         <Text style={[styles.descriptionText, {fontSize:(windowH>900)?13:12.5}]}>
@@ -280,13 +312,15 @@ const styles = StyleSheet.create({
         marginTop: windowH * (76/windowH),
     },
     headerContentWrapper: {
-        width: windowW * .8,
+        maxWidth: windowW * .8,
         height: windowH * (30/windowH),
-        alignSelf:"center",
+        alignSelf:"flex-start",
+        flex:1,
+ 
         flexDirection:"row",
         alignItems:"center",
         marginBottom: windowH * (18/windowH),
-        marginLeft:6
+        marginLeft:windowW * .11
     },
     milestoneIconContainer: {
         width:(windowW*0.082),

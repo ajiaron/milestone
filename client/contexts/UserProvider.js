@@ -13,7 +13,7 @@ const UserProvider = ({children}) => {
         setUsername:setUsername, userId:userId, 
         setUserId:setUserId, image:image, setImage:setImage,
         fullname:fullname, setFullname:setFullname,
-        network:network, setNetwork:setNetwork
+        network:network, setNetwork:setNetwork,
         }}>
           {children}
         </userContext.Provider>

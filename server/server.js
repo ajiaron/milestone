@@ -128,6 +128,19 @@ app.put('/api/updatemilestone', (req, res) => {
         }
     })
 })
+
+app.put('/api/favoritemilestone', (req, res) => {
+    const userid = req.body.userid
+    const milestoneid = req.body.milestoneid
+    db.query('UPDATE users SET favoriteid = ? WHERE id = ?', [milestoneid, userid],
+    (err, result)=> {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
 app.delete('/api/deletemilestone', (req, res) => {
     const milestoneid = req.body.milestoneid
     db.query("DELETE FROM milestones WHERE idmilestones = ?", [milestoneid], (err, result) => {

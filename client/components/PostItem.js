@@ -170,7 +170,8 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
             </Pressable>
             }
         </View>
-        <View style={[styles.commentsContainer, {minHeight:(route.name === 'MilestonePage')?50:80}]}>
+        <View style={[styles.commentsContainer, {minHeight:(route.name === 'MilestonePage')?50:(route.name === "Post")?
+        (windowH>900)?75:60:80}]}>
             <Text style={[styles.commentsContent]}>{caption}</Text>
             {(route.name === "Feed")?
             <Text style={[styles.viewPostLink]}>View Milestones {'&'} Groups</Text>:null}
