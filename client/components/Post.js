@@ -17,11 +17,12 @@ const CommentBox = ({postId, userId, commentList, onSubmitComment}) => {
     const [toggled, setToggled] = useState(false)
     const [comment, setComment] = useState('')
     const animatedvalue = useRef(new Animated.Value(0)).current;
-
+    const [scrollable, setScrollable] = useState(true)
+    const scrollRef = useRef(null)
     const slideup = () => {
         setToggled(true)
         Animated.timing(animatedvalue,{
-            toValue:(windowW>400)?windowH*.62:windowH*.58,
+            toValue:(windowH > 900)?windowH*.62:windowH*.58,
             duration:300,
             useNativeDriver:false,
         }).start()
@@ -36,84 +37,87 @@ const CommentBox = ({postId, userId, commentList, onSubmitComment}) => {
     function handleToggle() { 
         if (!toggled) {
             slideup()
-        } else {
+        } 
+        else {
             slidedown()
         }
     }
-    
     function handleSubmit(comment) {
         if (comment.length > 0) {
             onSubmitComment(comment)
-            slidedown()
             setComment('')
         } 
+        slidedown()
+    }
+    const handleScroll = (event) => {
+        const currentY = event.nativeEvent.contentOffset.y
+        console.log(currentY)
+        if (currentY < -5) {
+            slidedown()
+        }
+ 
     }
     const renderComments = ({item}) => {
-        var fileExt = (item.img !== undefined)?item.img.toString().split('.').pop():'png'
         return (
-            <View style={{marginTop:12}}>
+            <View style={{paddingTop:(commentList.indexOf(item) === 0)?0:8, 
+            paddingBottom:(commentList.indexOf(item) === commentList.length - 1)?22:8}}>
                 <View style={{flexDirection:"row", backgroundColor:"rgba(21,21,21,1)"}}>
-                <View>
-                    <Image
-                        style={styles.profilePic}
-                        resizeMode="contain"
-                        source={{uri:item.img}}/>
+                    <Pressable onPress={()=> console.log(commentList.indexOf(item))}>
+                        <View style={{flexDirection:"row"}}>
+                            <Text style={{fontFamily:"InterBold", fontSize:13, color:"white"}}>{item.name}{'  '}</Text>
+                            <Text style={{color:"white", fontFamily:"InterLight", fontSize:13}}>
+                                {item.comment}
+                            </Text>
+                        </View>
+                    </Pressable>
                 </View>
-                <Text style={{color:"white", fontFamily:"Inter", fontSize:13}}>
-                    <Text style={{fontFamily:"InterBold", fontSize:13}}>{item.name}{'  '}</Text>
-                    {item.comment}
-                </Text>
             </View>
-            </View>
-            
         )
     }
     return (
-        <Animated.ScrollView
-         style={[styles.commentContent]} 
+        <ScrollView
+         contentConainerStyle={[styles.commentContent]} 
+         ref = {scrollRef}
          showsVerticalScrollIndicator={false}
-         onScroll={(event)=>{
-            const currentY = event.nativeEvent.contentOffset.y
-            if (currentY < -8) {
-                slidedown()
-            } 
-         }}
+         onScroll={handleScroll}
          keyboardDismissMode={'on-drag'}
          scrollEventThrottle={0}
-         removeClippedSubviews
-         scrollEnabled={toggled}
+         scrollEnabled={toggled && scrollable}
          >
-            <View style={{flexDirection:"row", alignItems:"center", flex:"1"}}>
-                <TextInput style={[styles.commentText,{flex:1, top:(!toggled)?0.5:(windowH>900)?2:2.25}]} 
-                scrollEnabled={true}
-                readOnly={toggled}
-                onPressIn={(animatedvalue === 0 || !toggled)?handleToggle:null}
-                onChangeText={(e)=>setComment(e)}
-                placeholder={'Add a comment...'}
-                placeholderTextColor={'rgba(130, 130, 130, 1)'}
-                value={comment}
+            <View style={{flexDirection:"row", alignItems:"center", flex:"1", paddingLeft:20, paddingRight:20, backgroundColor:"rgba(21,21,21,1)"}}>
+            <TextInput style={[styles.commentText,{flex:1, top:(!toggled)?0.5:(windowH>900)?2:2.25}]} 
+            scrollEnabled={true}
+            readOnly={toggled}
+            onPressIn={(animatedvalue === 0 || !toggled)?handleToggle:null}
+            onChangeText={(e)=>setComment(e)}
+            placeholder={'Add a comment...'}
+            placeholderTextColor={'rgba(130, 130, 130, 1)'}
+            value={comment}
+            />
+            <Pressable onPress={()=>handleSubmit(comment)}>  
+                <Icon 
+                    style={{alignSelf:"center", right:0, top:(!toggled)?0:(windowH>900)?1:1.25}}
+                    name={(comment.length>0)?'send':'clear'}
+                    color='rgba(130, 130, 130, 1)'
+                    size={(windowH>900)?22:22}
                 />
-                <Pressable onPress={()=>handleSubmit(comment)}>  
-                    <Icon 
-                        style={{alignSelf:"center", right:0, top:(!toggled)?0:(windowH>900)?1:1.25}}
-                        name={(comment.length>0)?'send':'clear'}
-                        color='rgba(130, 130, 130, 1)'
-                        size={(windowH>900)?22:22}
-                    />
-                </Pressable>
-            </View>
+            </Pressable>
+        </View>
             <Animated.View style={[{height:animatedvalue, borderColor:'rgba(100, 100, 100, 1)',backgroundColor:"rgba(21,21,21,1)"}]}>
                 <ScrollView horizontal={true} scrollEnabled={false}>
                     <FlatList 
-                        snapToAlignment="start"
+                        scrollEnabled={true}
+                        style={{paddingBottom:8,paddingTop:8,
+                        width:windowW, paddingLeft:20, paddingRight:20, height:(windowH > 900)?windowH*(313/windowH):windowH*(261/windowH),
+                         zIndex:1}}
                         decelerationRate={"fast"}
                         showsVerticalScrollIndicator={false}
-                        data={commentList} 
+                        data={commentList}
                         renderItem={renderComments} 
                         />
                 </ScrollView>
             </Animated.View>
-        </Animated.ScrollView>
+        </ScrollView>
     )
 }
 const Post = ({navigation, route}) => {
@@ -129,7 +133,7 @@ const Post = ({navigation, route}) => {
     const [userList, setUserList] = useState([])
     const currentRoute = useRoute()
     function submitComment(comment) {
-        console.log(user.username, comment)
+        setNewComment(comment)
         axios.post(`http://${user.network}:19001/api/postcomment`, 
             {postid:postId,userid:user.userId, comment:comment})
             .then(() => {console.log('comment posted')})
@@ -140,12 +144,12 @@ const Post = ({navigation, route}) => {
         .then((response)=> {
             setCommentList(response.data.filter((item)=>item.postid === postId))
         }).catch(error => console.log(error))
-    }, [])
+    }, [newComment])
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getusers`)  
         .then((response)=> {
            response.data.filter((item)=>commentList.map((val)=>val.userid).indexOf(item.id) > -1).map((item)=>
-                { commentList.forEach((e) => {
+                { commentList.forEach((e) => {      // map usernames to comments
                     if (e.userid === item.id) {
                         e.name=item.name
                         e.img=item.src
@@ -169,6 +173,7 @@ const Post = ({navigation, route}) => {
     }, [linkedMilestones])
     function handlePress() {
         console.log(commentList)
+        console.log(windowH)
     }
     const renderMilestone = ({ item }) => {
         return (
@@ -235,7 +240,7 @@ const styles = StyleSheet.create({
         backgroundColor:"rgba(28, 28, 28, 1)",
         width:windowW,
         height: windowH + 300,
-        overflow: "hidden",
+        overflow: "scroll",
         paddingBottom:300  
     },
     postContainer: {
@@ -302,7 +307,7 @@ const styles = StyleSheet.create({
     },
     commentContentToggled: {
         width:windowW,
-        height:windowH*(226/windowH),
+
         paddingLeft:20,
         paddingRight:20,
         backgroundColor:"rgba(21,21,21,1)",
