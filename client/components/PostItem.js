@@ -12,7 +12,7 @@ import { Video } from 'expo-av'
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const PostItem = ({username, caption, src, image, postId, liked, isLast, milestones, ownerId, date, index, count, isViewable}) => {
+const PostItem = ({username, caption, src, image, postId, liked, isLast, milestones, ownerId, date, index, count, isViewable, onToggleComment}) => {
     const milestoneList = milestones?milestones:[]
     const user = useContext(userContext)
     const navigation = useNavigation()
@@ -34,9 +34,17 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     function navigateProfile() {
         navigation.navigate("Profile", {id:ownerId})
     }
+    function handleComment() {
+        if (route.name ==="Post") {
+            onToggleComment()
+        } else {
+            navigation.navigate("Post", {item:data, comments:true})
+        }
+    }
     const handleEdit = () => {
         navigation.navigate("EditPost", {uri:image, postId:postId, caption:caption})
     }
+    
     const handlePress = () => {
         console.log(dateparts)
         setIsLiked(!isLiked)
@@ -72,7 +80,6 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                         resizeMode="contain"
                         source={Icons[src]}/>
                 </View>
-      
                 <View style={[styles.postUserHeader]}>
                     <Text style={[styles.postOwnerName]}> {username} </Text>
                     <Text style={[styles.postOwnerTime]}>
@@ -81,7 +88,6 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                         :`Today at ${currentDate}`}</Text>
                 </View>
                 </Pressable>
-       
             {(route.name==="Post" && ownerId === user.userId)?
             <Pressable onPress={handleEdit}>
                  <Icon 
@@ -139,13 +145,15 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                     }
                 </Pressable>
             </View>
-            <View style={[styles.actionIcon, styles.actionComment]}>
-                <Icon 
-                    size={25.5}
-                    name='question-answer'
-                    color='white'
-                />
-            </View>
+            <Pressable onPress={handleComment}>
+                <View style={[styles.actionIcon, styles.actionComment]}>
+                    <Icon 
+                        size={25.5}
+                        name='question-answer'
+                        color='white'
+                    />
+                </View>
+            </Pressable>
             {(route.name === 'MilestonePage')?      // scroll slider on milestone page
                 (index !== undefined)?
                 <View style={{flexDirection:"row", 
@@ -159,7 +167,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                     <View style={[styles.postIndex, {backgroundColor:(index >= 2)?"rgba(53, 174, 146, 1)":"#D9D9D9"}]}/>}
                 </View>:null
             :
-            <Pressable onPress={()=> navigation.navigate("Post", {item:data})}>
+            <Pressable onPress={()=> navigation.navigate("Post", {item:data, comments:false})}>
                 <View style={[styles.actionIcon]}>
                     <Image
                         style={styles.milebookImage}

@@ -54,6 +54,16 @@ app.get('/api/getlinkedmilestones', (req, res) => {
     })
 })
 
+app.get('/api/getcomments', (req, res) => {
+    db.query('SELECT * FROM postcomments', (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+
 app.post('/api/pushposts', (req, res)=> {
     const idposts = req.body.idposts
     const username = req.body.username
@@ -97,6 +107,20 @@ app.post('/api/linkmilestones', (req, res) => {
             console.log(err)
         } else {
             res.send("post all good sir")
+        }
+    })
+})
+
+app.post('/api/postcomment', (req, res) => {
+    const postid = req.body.postid
+    const userid = req.body.userid
+    const comment = req.body.comment
+    db.query('INSERT INTO postcomments (postid, userid, comment) VALUES (?,?,?)',
+    [postid, userid, comment], (err, result) => {
+        if(err) {
+            console.log(err)
+        } else {
+            res.send("posted comment")
         }
     })
 })

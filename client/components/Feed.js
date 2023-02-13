@@ -72,7 +72,6 @@ const Feed = ({route}) => {
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 }
-            
                 viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
                 removeClippedSubviews
                 initialNumToRender={5}

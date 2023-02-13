@@ -58,6 +58,7 @@ const Profile = ({route}) => {
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response)=> {
+            // use this to display how many milestones the user owns in their insights
             setMilestones(response.data.filter((item)=> item.ownerId === userid))
         })
     }, [])
@@ -70,6 +71,7 @@ const Profile = ({route}) => {
      }, [])
     const renderMilestone = ({ item }) => {
         return (
+     
             (item.idmilestones == favorite) ?
             <MilestoneTag title={item.title} streak={item.streak} img={item.src} id={item.idmilestones} isLast={false}/>
             : null
@@ -95,6 +97,7 @@ const Profile = ({route}) => {
      //   console.log(route.params.id, owner)
     //    console.log(userData)
         console.log(milestones)
+        console.log(favorite)
     }
     function handlePress() {
         navigation.navigate("Settings")
