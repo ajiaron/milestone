@@ -51,17 +51,20 @@ const Profile = ({route}) => {
     const [requested, setRequested] = useState(false)
     const [milestones, setMilestones] = useState([])
     const [favorite, setFavorite] = useState(1)
+    const [milestoneCount, setMilestoneCount] = useState(0)
     const milestoneData = require('../data/Milestones.json')
     const navigation = useNavigation()
+
     const animatedvalue = useRef(new Animated.Value(0)).current;
 
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response)=> {
             // use this to display how many milestones the user owns in their insights
-            setMilestones(response.data.filter((item)=> item.ownerId === userid))
+            setMilestones(response.data.filter((item)=> item.idmilestones === favorite))
+            setMilestoneCount(response.data.filter((item)=>item.ownerId === userid).map((item)=>item).length)
         })
-    }, [])
+    }, [favorite])
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getusers`)
         .then((response)=> {
@@ -71,10 +74,7 @@ const Profile = ({route}) => {
      }, [])
     const renderMilestone = ({ item }) => {
         return (
-     
-            (item.idmilestones == favorite) ?
             <MilestoneTag title={item.title} streak={item.streak} img={item.src} id={item.idmilestones} isLast={false}/>
-            : null
         )
     }
     function handleRequest() {
@@ -96,8 +96,9 @@ const Profile = ({route}) => {
     function handleTest() {
      //   console.log(route.params.id, owner)
     //    console.log(userData)
-        console.log(milestones)
-        console.log(favorite)
+        console.log(userid)
+        //console.log(milestones)
+        //console.log(favorite)
     }
     function handlePress() {
         navigation.navigate("Settings")
@@ -149,7 +150,7 @@ const Profile = ({route}) => {
             </View>
 
             <ProfileInfo name={(!owner && userData !== undefined)?userData.fullname:
-                user.fullname?user.fullname:"Johnny Appleseed"} milestones={milestones.length} groups={3} friends={13} />
+                user.fullname?user.fullname:"Johnny Appleseed"} milestones={milestoneCount} groups={3} friends={13} />
             <View style={[styles.profileTagContainer]}>
                 <View style={[styles.milestoneHeaderContainer]}>
                     <Text style={[styles.milestoneHeader]}>
