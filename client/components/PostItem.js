@@ -25,9 +25,24 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     const postDate = new Date(dateparts).toLocaleDateString("en-US",{month:"long", day:"numeric",year:"numeric"})
     const postTime = new Date(dateparts).toLocaleTimeString([],{hour12:true, hour:'numeric', minute:'2-digit'})
     const [isMuted, setIsMuted] = useState(true)
-    const [isLiked, setIsLiked] = useState(liked?liked:false)
     const [viewable, setViewable] = useState(true)
+    const [commentCount, setCommentCount] = useState(0)
+    const [isLiked, setIsLiked] = useState(liked?liked:false)
+    const [likes, setLikes] = useState([])
 
+    useEffect(()=> {
+        axios.get(`http://${user.network}:19001/api/getlikes`)  
+        .then((response)=> {
+            setLikes(response.data.filter((item)=>item.postid === postId))
+            setIsLiked(response.data.filter((item)=>item.postid === postId).map((val)=> val.userid).indexOf(user.userId) > -1)
+        }).catch(error => console.log(error))
+    }, [])
+    useEffect(()=> {
+        axios.get(`http://${user.network}:19001/api/getcomments`)  
+        .then((response)=> {
+            setCommentCount(response.data.filter((item)=>item.postid === postId).length)
+        }).catch(error => console.log(error))
+    }, [])
     useEffect(()=> {
         setViewable(isViewable)
     }, [isViewable])
@@ -44,11 +59,19 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     const handleEdit = () => {
         navigation.navigate("EditPost", {uri:image, postId:postId, caption:caption})
     }
-    
-    const handlePress = () => {
-        console.log(dateparts)
+    const handleLike = () => {
         setIsLiked(!isLiked)
         liked = isLiked
+        if (!isLiked) {
+            axios.post(`http://${user.network}:19001/api/likepost`, 
+            {postid:postId,userid:user.userId})
+            .then(() => {console.log('post likes')})
+            .catch((error)=> console.log(error))
+        }
+        else {
+            axios.delete(`http://${user.network}:19001/api/unlikepost`, {data: {postid:postId, userid:user.userId}})
+            .then((response)=> console.log("post unliked")).catch(error=>console.log(error))
+        } 
     }
     const handleSelect = () => {
         setIsActive(!isActive)
@@ -132,17 +155,11 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         </Pressable>
         <View style={[styles.actionbarContainer]}>
             <View style={[styles.actionIcon, styles.actionThumbsUp]}>
-                <Pressable onPress={handlePress}>
-                    {isLiked ?
-                        <Icon 
-                        size={27}
-                        name='thumb-up-off-alt'
-                        color='rgba(53, 174, 146, 1)' />:
-                        <Icon 
-                        size={27}
-                        name='thumb-up-off-alt'
-                        color='white' />
-                    }
+                <Pressable onPress={handleLike}>
+                    <Icon 
+                    size={28}
+                    name='thumb-up-off-alt'
+                    color={(isLiked)?'rgba(53, 174, 146, 1)':'white'}/>
                 </Pressable>
             </View>
             <Pressable onPress={handleComment}>
@@ -182,7 +199,19 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         (windowH>900)?75:60:80}]}>
             <Text style={[styles.commentsContent]}>{caption}</Text>
             {(route.name === "Feed")?
-            <Text style={[styles.viewPostLink]}>View Milestones {'&'} Groups</Text>:null}
+            <Text style={[styles.viewPostLink]}>
+                {(commentCount>0)?
+                `View ${commentCount}${(commentCount>1)?" comments":" comment"}${(likes.length>0)?` & ${likes.length}${likes.length>1?" likes":" like"}` :''}`
+                :
+                (likes.length>0)?`View ${likes.length}${(likes.length>1)?" likes":" like"}`:
+                `View Milestones & Groups`}
+            </Text>
+            :
+            (commentCount>0)?
+            <Text style={[styles.viewPostLink, {fontSize:11.5}]}>
+                View {commentCount}{(commentCount>1)?" comments":" comment "}{(likes.length>0)?`& ${likes.length}${likes.length>1?" likes":" like"}` :''}
+                </Text>:null
+        }
         </View>
         {isLast?<View style={{marginBottom:48}}/>:null}
      </View>
@@ -200,13 +229,13 @@ const styles = StyleSheet.create({
         marginLeft:32,
     },
     actionThumbsUp: {
-        marginTop:1,
+        marginTop:.75,
         marginRight:2,
         marginLeft:20
     },
     actionComment: {
         marginTop:3,
-        marginRight:4
+        marginRight:4.5
     },
     milebookImage: {
         maxHeight:26,

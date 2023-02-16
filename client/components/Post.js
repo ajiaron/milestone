@@ -1,6 +1,7 @@
 import  React, {useState, useEffect, useContext, useRef} from "react";
 import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView, FlatList, Dimensions, Animated } from "react-native";
 import { Icon } from 'react-native-elements'
+import Icons from '../data/Icons.js'
 import AppLoading from 'expo-app-loading'
 import { useNavigation, useRoute } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
@@ -13,12 +14,14 @@ import MilestoneTag from "./MilestoneTag";
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const CommentBox = ({postId, userId, commentList, onSubmitComment}) => {
+const CommentBox = ({postId, userId, startToggle, commentList, onSubmitComment}) => {
     const [toggled, setToggled] = useState(false)
+    const navigation = useNavigation()
     const [comment, setComment] = useState('')
     const animatedvalue = useRef(new Animated.Value(0)).current;
     const [scrollable, setScrollable] = useState(true)
     const scrollRef = useRef(null)
+   
     const slideup = () => {
         setToggled(true)
         Animated.timing(animatedvalue,{
@@ -57,19 +60,33 @@ const CommentBox = ({postId, userId, commentList, onSubmitComment}) => {
         }
  
     }
+    useEffect(()=> {
+        if (startToggle) {
+            slideup()
+        }
+    }, [])
     const renderComments = ({item}) => {
         return (
             <View style={{paddingTop:(commentList.indexOf(item) === 0)?0:8, 
             paddingBottom:(commentList.indexOf(item) === commentList.length - 1)?22:8}}>
                 <View style={{flexDirection:"row", backgroundColor:"rgba(21,21,21,1)"}}>
-                    <Pressable onPress={()=> console.log(commentList.indexOf(item))}>
-                        <View style={{flexDirection:"row"}}>
-                            <Text style={{fontFamily:"InterBold", fontSize:13, color:"white"}}>{item.name}{'  '}</Text>
-                            <Text style={{color:"white", fontFamily:"InterLight", fontSize:13}}>
+                 
+       
+                        <View style={{flexDirection:"row", alignItems:"center"}}>
+                            <Pressable style={{flexDirection:"row", alignItems:"center"}} onPress={()=>{navigation.navigate("Profile", {id:item.userid})}}>
+                                <Image
+                                    style={{maxHeight:23, maxWidth:23, marginRight:9}}
+                                    resizeMode="contain"
+                                    source={Icons['defaultpic']}
+                                    //source={{uri:item.img}}
+                                />
+                                <Text style={{fontFamily:"InterBold", fontSize:13, color:"white", paddingBottom:3.5}}>{item.name}{'  '}</Text>
+                            </Pressable>
+                            <Text style={{color:"white", fontFamily:"InterLight", fontSize:13, paddingBottom:3.5}}>
                                 {item.comment}
                             </Text>
                         </View>
-                    </Pressable>
+              
                 </View>
             </View>
         )
@@ -197,11 +214,11 @@ const Post = ({navigation, route}) => {
                 liked={route.params.item.liked} isLast={false} isViewable={true} onToggleComment={()=>setCommentToggle(!commentToggle)}/>
             </View>
             {milestoneList.length > 0?
-            <View >
+            <View style={{marginTop:14}}>
                 <View style={[(windowH>900)?styles.milestoneHeaderContainerLarge:styles.milestoneHeaderContainer]}>
-                 <Text style={(windowH>900)?styles.milestoneHeaderLarge:styles.milestoneHeader}>
-                     Posted Milestones             
-                </Text>
+                    <Text style={(windowH>900)?styles.milestoneHeaderLarge:styles.milestoneHeader}>
+                        Posted Milestones             
+                    </Text>
                      <Pressable onPress={handlePress}>
                             <Icon 
                             name='navigate-next' 
@@ -209,7 +226,7 @@ const Post = ({navigation, route}) => {
                             color="rgba(53, 174, 146, 1)" 
                             style={{bottom: 1}}/>
                        </Pressable>
-                    </View>
+                </View>
                 <View style={(windowH>900)?styles.PostTagContainerLarge:styles.PostTagContainer}>
                     <ScrollView horizontal scrollEnabled={false}>
                         <FlatList 
@@ -227,7 +244,7 @@ const Post = ({navigation, route}) => {
             </View> : null}
             </ScrollView>
                 {(commentToggle)?
-                     <CommentBox postId={route.params.item.postId} userId={user.userId} commentList={commentList} 
+                     <CommentBox postId={route.params.item.postId} userId={user.userId} startToggle={commentToggle} commentList={commentList} 
                      onSubmitComment={(comment)=>submitComment(comment)}/>:null
                 }
             <Footer/>

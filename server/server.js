@@ -32,7 +32,6 @@ app.get('/api/getmilestones', (req, res)=> {
         }
     })
 })
-
 app.get('/api/getposts', (req, res) => {
     db.query('SELECT * FROM userposts', (err, result)=> {
         if (err) {
@@ -41,8 +40,7 @@ app.get('/api/getposts', (req, res) => {
             res.send(result)
         }
     })
-})
-
+}) 
 app.get('/api/getlinkedmilestones', (req, res) => {
     const postid = req.body.postid
     db.query('SELECT * FROM postmilestones', (err, result) => {
@@ -53,9 +51,17 @@ app.get('/api/getlinkedmilestones', (req, res) => {
         }
     })
 })
-
 app.get('/api/getcomments', (req, res) => {
     db.query('SELECT * FROM postcomments', (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.get('/api/getlikes', (req, res) => {
+    db.query('SELECT * FROM postlikes', (err, result) => {
         if (err) {
             console.log(err)
         } else {
@@ -81,7 +87,6 @@ app.post('/api/pushposts', (req, res)=> {
         }
     })
 })
-
 app.post('/api/postmilestones', (req, res) => {
     const title = req.body.title
     const src = req.body.src
@@ -97,7 +102,6 @@ app.post('/api/postmilestones', (req, res) => {
         }
     })
 })
-
 app.post('/api/linkmilestones', (req, res) => {
     const postid = req.body.postid
     const milestoneid = req.body.milestoneid
@@ -110,7 +114,6 @@ app.post('/api/linkmilestones', (req, res) => {
         }
     })
 })
-
 app.post('/api/postcomment', (req, res) => {
     const postid = req.body.postid
     const userid = req.body.userid
@@ -121,6 +124,18 @@ app.post('/api/postcomment', (req, res) => {
             console.log(err)
         } else {
             res.send("posted comment")
+        }
+    })
+})
+app.post('/api/likepost', (req, res) => {
+    const postid = req.body.postid
+    const userid = req.body.userid
+    db.query('INSERT INTO postlikes (postid, userid) VALUES (?,?)',
+    [postid, userid], (err, result) => {
+        if(err) {
+            console.log(err)
+        } else {
+            res.send("post all good sir")
         }
     })
 })
@@ -137,7 +152,6 @@ app.put('/api/updatepost', (req, res) => {
         }
     })
 })
-
 app.put('/api/updatemilestone', (req, res) => {
     const milestoneid = req.body.milestoneid
     const title = req.body.title
@@ -152,7 +166,6 @@ app.put('/api/updatemilestone', (req, res) => {
         }
     })
 })
-
 app.put('/api/favoritemilestone', (req, res) => {
     const userid = req.body.userid
     const milestoneid = req.body.milestoneid
@@ -165,6 +178,7 @@ app.put('/api/favoritemilestone', (req, res) => {
         }
     })
 })
+
 app.delete('/api/deletemilestone', (req, res) => {
     const milestoneid = req.body.milestoneid
     db.query("DELETE FROM milestones WHERE idmilestones = ?", [milestoneid], (err, result) => {
@@ -185,7 +199,6 @@ app.delete('/api/removelinkedposts', (req, res) => {
         }
     })
 })
-
 app.delete('/api/deletepost', (req, res) => {
     const postid = req.body.postid
     db.query("DELETE FROM userposts WHERE idposts = ?", [postid], (err, result) => {
@@ -199,6 +212,17 @@ app.delete('/api/deletepost', (req, res) => {
 app.delete('/api/removelinked', (req, res) => {
     const postid = req.body.postid
     db.query("DELETE FROM postmilestones WHERE postid = ?", [postid], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send('linked milestones removed')
+        }
+    })
+})
+app.delete('/api/unlikepost', (req, res) => {
+    const postid = req.body.postid
+    const userid = req.body.userid
+    db.query("DELETE FROM postlikes WHERE postid = ? AND userid = ?", [postid, userid], (err, result) => {
         if (err) {
             console.log(err)
         } else {

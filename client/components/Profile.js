@@ -62,7 +62,7 @@ const Profile = ({route}) => {
         .then((response)=> {
             // use this to display how many milestones the user owns in their insights
             setMilestones(response.data.filter((item)=> item.idmilestones === favorite))
-            setMilestoneCount(response.data.filter((item)=>item.ownerId === userid).map((item)=>item).length)
+            setMilestoneCount(response.data.filter((item)=>item.ownerId === userid).length)
         })
     }, [favorite])
     useEffect(()=> {
