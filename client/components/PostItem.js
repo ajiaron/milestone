@@ -207,10 +207,17 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                 `View Milestones & Groups`}
             </Text>
             :
+            
             (commentCount>0)?
             <Text style={[styles.viewPostLink, {fontSize:11.5}]}>
+                
                 View {commentCount}{(commentCount>1)?" comments":" comment "}{(likes.length>0)?`& ${likes.length}${likes.length>1?" likes":" like"}` :''}
-                </Text>:null
+                </Text>:
+                (likes.length>0)?
+                <Text style={[styles.viewPostLink, {fontSize:11.5}]}>
+                    View {likes.length}{(likes.length>1)?" likes":" like"}
+                </Text>:
+            null
         }
         </View>
         {isLast?<View style={{marginBottom:48}}/>:null}
