@@ -1,143 +1,179 @@
 import React, {useState, useEffect, useContext} from "react";
-import { Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, Switch, Dimensions } from "react-native";
+import { Text, StyleSheet, View, Image, ScrollView, Pressable, TextInput, Switch, Dimensions, KeyboardAvoidingView } from "react-native";
 import * as Device from 'expo-device'
 import { Icon } from 'react-native-elements'
+import * as ImagePicker from 'expo-image-picker'
 import AppLoading from 'expo-app-loading'
 import { useNavigation } from "@react-navigation/native";
 import Footer from './Footer'
+import Icons from '../data/Icons.js'
 import MilestoneTag from "./MilestoneTag";
 import userContext from '../contexts/userContext'
 import axios from 'axios'
 
+
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const ResetButton = ({user}) => {
-    function handlePress(){
-        console.log('User: ', user.username)
-        axios.get(`http://${user.network}:19001/api/getposts`)  // if this throws an error, replace 10.0.0.160 with localhost
-        .then((response)=> {
-            console.log(response.data.map((val,k)=>val.text))
-        }).catch(error => console.log(error))
-    }
-    return (
-        <Pressable
-            style={styles.resetPasswordButton}
-            onPress={handlePress}>
-            <View style={styles.resetButtonContent} > 
-                <Text style={[styles.resetPasswordText]}>
-                    Reset Password
-                </Text>
-            </View>
-        </Pressable>
-    )
-}
 const Settings = () => {
     const user = useContext(userContext)
+    var fileExt = (user.image !== undefined)?user.image.toString().split('.').pop():'png';
     const [isPublic, setIsPublic] = useState(true)
     const togglePublic = () => setIsPublic(previousState => !previousState)
-    const [newUsername, setNewUsername] = useState(user?user.username:"ajiaron")
-    const [newName, setNewName] = useState("Aaron Jiang")
-    const [newDescription, setNewDescription] = useState("I'm about writing apps and running laps")
-    const [newEmail, setNewEmail] = useState("aaronjiang2001@gmail.com")
+    const [newUsername, setNewUsername] = useState(user?user.username:'')
+    const [newName, setNewName] = useState(user?user.fullname:'')
+    const [oldDescription, setOldDescription] = useState('')
+    const [newDescription, setNewDescription] = useState('')
+    const [oldEmail, setOldEmail] = useState('')
+    const [newEmail, setNewEmail] = useState('')
+    const [preview, setPreview] = useState(false)
+    const [image, setImage] = useState(user?user.image:'defaultpic')
+    const navigation = useNavigation()
+    
+    function handleChanges() {
+        axios.put(`http://${user.network}:19001/api/updateuser`, 
+        {username: newUsername, description: newDescription, email:newEmail, fullname: newName, src:image, userid:user.userId})
+        .then(() => {console.log('user info updated')})
+        .catch((error)=> console.log(error))
+        navigation.navigate("Profile", {id:user.userId})
+    }
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing:true,
+            quality:1,
+        })
+        if (!result.canceled) {
+            setImage(result.assets[0].uri)
+        }
+    }
+    useEffect(()=> {
+        axios.get(`http://${user.network}:19001/api/getusers`)
+        .then((response)=> {
+            setNewDescription(response.data.filter((item)=> item.id === user.userId)[0].blurb)
+            setNewEmail(response.data.filter((item)=> item.id === user.userId)[0].email)
+        })
+    }, [])
+    useEffect(()=> {
+        setPreview(image)
+    }, [image])
     return (
         <View style={styles.settingsPage}>
-            <View style={styles.settingsContainer}>
-                <View styles={styles.profilePicContainer}>
-                    <Icon
-                        style={{bottom:-8}}
-                        name='face'
-                        color='white'
-                        size={100} 
-                    />
-                
-                    <Text style={styles.changePicText}>Change Profile Picture</Text>
-                </View>
-                <View style={styles.userInfo}>
-                    <View style={styles.userInfoContainer}>
-                        <View style={styles.userInfoHeader}>
-                            <Text style={styles.userInfoHeaderText}>
-                                USERNAME
-                            </Text>
+            <KeyboardAvoidingView
+                style={{flex:1}}
+                behavior={Platform.OS === "ios" ? "padding" : null}
+                keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    <View style={styles.settingsContainer}>
+                        <View styles={styles.profilePicContainer}>
+                            {(!preview)&&(fileExt !== 'jpg'|| fileExt !== 'png' || fileExt !== 'jpeg' || user.image === undefined)?
+                            <Icon
+                                style={{bottom:-8}}
+                                name='face'
+                                color='white'
+                                size={100} 
+                            />:
+                            <Image
+                                style={{width:windowW*(94/windowW), height:windowH*(94/windowH), alignSelf:"center", borderRadius:94}}
+                                resizeMode="contain"
+                                defaultSource={require("../assets/profile-pic-empty.png")}
+                                source={{uri:image}}
+                            />
+                            }
+                            <Pressable onPress={pickImage}>
+                                <Text style={styles.changePicText}>Change Profile Picture</Text>
+                            </Pressable>
                         </View>
-                        <TextInput 
-                            style={styles.userInfoInput}
-                            onChangeText={(e)=>user.setUsername(e)}
-                            placeholder={"ajiaron"}
-                            placeholderTextColor={'white'}
-                            value={user.username}/>
-                    </View>
-                    <View style={[styles.userInfoContainer, {marginTop:2}]}>
-                        <View style={styles.userInfoHeader}>
-                            <Text style={styles.userInfoHeaderText}>
-                                NAME
-                            </Text>
+                        <View style={styles.userInfo}>
+                            <View style={styles.userInfoContainer}>
+                                <View style={styles.userInfoHeader}>
+                                    <Text style={styles.userInfoHeaderText}>
+                                        USERNAME
+                                    </Text>
+                                </View>
+                                <TextInput 
+                                    style={styles.userInfoInput}
+                                    onChangeText={(e)=>setNewUsername(e)}
+                                    placeholder={user.username}
+                                    placeholderTextColor={'rgba(221, 221, 221, 1)'}
+                                    value={newUsername}/>
+                            </View>
+                            <View style={[styles.userInfoContainer, {marginTop:2}]}>
+                                <View style={styles.userInfoHeader}>
+                                    <Text style={styles.userInfoHeaderText}>
+                                        NAME
+                                    </Text>
+                                </View>
+                                <TextInput 
+                                    style={styles.userInfoInput}
+                                    onChangeText={(e)=>setNewName(e)}
+                                    placeholder={user.fullname}
+                                    placeholderTextColor={'rgba(221, 221, 221, 1)'}
+                                    value={newName}/>
+                            </View>
+                            <View style={[styles.userInfoContainer, {marginTop:2}]}>
+                                <View style={styles.userInfoHeader}>
+                                    <Text style={styles.userInfoHeaderText}>
+                                        DESCRIPTION
+                                    </Text>
+                                </View>
+                                <TextInput 
+                                    style={styles.userInfoInput}
+                                    onChangeText={(e)=>setNewDescription(e)}
+                                    placeholder={oldDescription}
+                                    placeholderTextColor={'rgba(221, 221, 221, 1)'}
+                                    value={newDescription}/>
+                            </View>
+                            <View style={[styles.userInfoContainer, {marginTop:2}]}>
+                                <View style={styles.userInfoHeader}>
+                                    <Text style={styles.userInfoHeaderText}>
+                                        EMAIL ADDRESS
+                                    </Text>
+                                </View>
+                                <TextInput 
+                                    style={styles.userInfoInput}
+                                    onChangeText={(e)=>setNewEmail(e)}
+                                    placeholder={oldEmail}
+                                    placeholderTextColor={'rgba(221, 221, 221, 1)'}
+                                    value={newEmail}/>
+                            </View>
+                            <View style={styles.publicAccountContainer}>
+                                <Text style={styles.userInfoHeaderText}>
+                                    PUBLIC ACCOUNT
+                                </Text>
+                                <Switch
+                                    style={{ transform: [{ scaleX: .6 }, { scaleY: .6}], top:-1, marginLeft:windowW*(4/windowW)}}
+                                    trackColor={{ false: "#bbb", true: "#35AE92" }}
+                                    thumbColor={isPublic ? "#1f1e1e" : "1f1e1e"}
+                                    ios_backgroundColor="#eee"
+                                    onValueChange={togglePublic}
+                                    value={isPublic}
+                                />
+                            </View>
+                            <Pressable onPress={handleChanges}
+                                style={styles.saveChangesButton}
+                                >
+                                <View style={styles.resetButtonContent} > 
+                                    <Text style={[styles.saveChangesText]}>
+                                        Save Changes
+                                    </Text>
+                                </View>
+                            </Pressable>
+                            <View style={styles.userProfileLinkContainer}>
+                                <Icon 
+                                    style={{transform:[{rotate:"-45deg"}], top:-0.5}}
+                                    name='insert-link'
+                                    type='material'
+                                    color='rgba(178, 178, 178, 1)'
+                                    size={23}
+                                />
+                                <Text style={styles.userProfileLink}> {`milestone.com/${user.username}`}</Text>
+                            </View>
                         </View>
-                        <TextInput 
-                            style={styles.userInfoInput}
-                            onChangeText={(e)=>setNewName(e)}
-                            placeholder={"Aaron Jiang"}
-                            placeholderTextColor={'white'}
-                            value={newName}/>
                     </View>
-                    <View style={[styles.userInfoContainer, {marginTop:2}]}>
-                        <View style={styles.userInfoHeader}>
-                            <Text style={styles.userInfoHeaderText}>
-                                DESCRIPTION
-                            </Text>
-                        </View>
-                        <TextInput 
-                            style={styles.userInfoInput}
-                            onChangeText={(e)=>setNewDescription(e)}
-                            placeholder={"I'm about writing apps and running laps"}
-                            placeholderTextColor={'white'}
-                            value={newDescription}/>
-                    </View>
-                    <View style={[styles.userInfoContainer, {marginTop:2}]}>
-                        <View style={styles.userInfoHeader}>
-                            <Text style={styles.userInfoHeaderText}>
-                                EMAIL ADDRESS
-                            </Text>
-                        </View>
-                        <TextInput 
-                            style={styles.userInfoInput}
-                            onChangeText={(e)=>setNewEmail(e)}
-                            placeholder={"aaronjiang2001@gmail.com"}
-                            placeholderTextColor={'white'}
-                            value={newEmail}/>
-                    </View>
-                    <View style={styles.publicAccountContainer}>
-                        <Text style={styles.userInfoHeaderText}>
-                            PUBLIC ACCOUNT
-                        </Text>
-                        <Switch
-                            style={{ transform: [{ scaleX: .6 }, { scaleY: .6}], top:-1, marginLeft:windowW*(4/windowW)}}
-                            trackColor={{ false: "#bbb", true: "#35AE92" }}
-                            thumbColor={isPublic ? "#1f1e1e" : "1f1e1e"}
-                            ios_backgroundColor="#eee"
-                            onValueChange={togglePublic}
-                            value={isPublic}
-                        />
-                    </View>
-                    <ResetButton user={user}/>
-                    <View style={styles.userProfileLinkContainer}>
-                    <Icon 
-                        style={{transform:[{rotate:"-45deg"}], top:-0.5}}
-                        name='insert-link'
-                        type='material'
-                        color='rgba(178, 178, 178, 1)'
-                        size={23}
-                    />
-                    <Text style={styles.userProfileLink}> milestone.com/aaronjiang2001</Text>
-                </View>
-                </View>
-             
-            </View>
-
-            <View style={{position:"absolute", bottom:0}}>
-                <Footer/>
-            </View>
-
+                    </ScrollView>
+                </KeyboardAvoidingView>
+            <Footer/>
         </View>
     )
 }
@@ -150,9 +186,15 @@ const styles = StyleSheet.create({
         minHeight:windowH,
         overflow:"scroll",
     },
+    settingsContent: {
+        backgroundColor: "rgba(28, 28, 28, 1)",
+        minWidth:windowW,
+        minHeight:windowH-76,
+        overflow:"scroll",
+    },
     settingsContainer: {
         alignSelf:"center",
-        marginTop:windowH*0.125-16
+        marginTop:windowH*0.125-10
     },
     profilePicContainer: {
         alignSelf:"center",
@@ -223,7 +265,7 @@ const styles = StyleSheet.create({
     publicAccountToggle: {
         marginLeft:windowW * (18/windowW)
     },
-    resetPasswordButton: {
+    saveChangesButton: {
         alignSelf:"center",
         width: windowW*(288/windowW),
         height: windowH*(28/windowH),
@@ -233,7 +275,7 @@ const styles = StyleSheet.create({
         justifyContent:"center",
         backgroundColor:"rgba(0, 82, 63, 1)"
     },
-    resetPasswordText: {
+    saveChangesText: {
         color:"white",
         fontFamily:"InterBold",
         alignSelf:"center",
@@ -244,20 +286,14 @@ const styles = StyleSheet.create({
         width: windowW*(288/windowW),
         alignItems:"center",
         textAlign:"left",
-        marginTop:windowH*(18/windowH),
-        
+        marginTop:windowH*(18/windowH),  
     },
     userProfileLink: {
         fontFamily:"InterBold",
         color:"white",
         fontSize:12,
         marginLeft:windowW * (2/windowW)
-    
     },
-    userProfileLinkIcon: {
-        
-    }
-
     
 })
 export default Settings

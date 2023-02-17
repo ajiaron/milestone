@@ -4,7 +4,7 @@ import userContext from './userContext'
 const UserProvider = ({children}) => {
     const [username, setUsername] = useState("")
     const [userId, setUserId] = useState(0)
-    const [image, setImage] = useState("defaultpic")
+    const [image, setImage] = useState()
     const [fullname, setFullname] = useState('Johnny Appleseed')
     const [network, setNetwork] = useState()
 

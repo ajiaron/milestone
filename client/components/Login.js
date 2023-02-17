@@ -20,6 +20,7 @@ const Login = () => {
         if (user.username !== undefined && user.username.length > 0) {
           user.setUserId(response.data.filter((item)=> item.name === user.username)[0].id)
           user.setFullname(response.data.filter((item)=> item.name === user.username)[0].fullname)
+          user.setImage(response.data.filter((item)=> item.name === user.username)[0].src)
         }
     })
     .catch(error => console.log(error))

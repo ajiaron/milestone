@@ -152,6 +152,22 @@ app.put('/api/updatepost', (req, res) => {
         }
     })
 })
+app.put('/api/updateuser', (req, res) => {
+    const userid = req.body.userid
+    const username = req.body.username
+    const fullname = req.body.fullname
+    const email = req.body.email
+    const description = req.body.description
+    const src = req.body.src
+    db.query('UPDATE users SET name = ?, blurb = ?, email = ?, fullname = ?, src = ? WHERE id = ?', [username, description, email, fullname, src, userid],
+    (err, result)=> {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
 app.put('/api/updatemilestone', (req, res) => {
     const milestoneid = req.body.milestoneid
     const title = req.body.title

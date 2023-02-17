@@ -44,6 +44,7 @@ const ProfileInfo = ({name, milestones, groups, friends}) => {
 
 const Profile = ({route}) => {
     const user = useContext(userContext)
+    const [profilePic, setProfilePic] = useState()
     const [userid, setUserid] = useState(route.params.id)
     const [owner, setOwner] = useState(route.params.id === user.userId)
     const [userData, setUserData] = useState()
@@ -54,7 +55,7 @@ const Profile = ({route}) => {
     const [milestoneCount, setMilestoneCount] = useState(0)
     const milestoneData = require('../data/Milestones.json')
     const navigation = useNavigation()
-
+    var fileExt = (user.image !== undefined)?user.image.toString().split('.').pop():'png';
     const animatedvalue = useRef(new Animated.Value(0)).current;
 
     useEffect(()=> {
@@ -68,10 +69,11 @@ const Profile = ({route}) => {
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getusers`)
         .then((response)=> {
+            setProfilePic(response.data.filter((item)=>item.id === userid)[0].src)
             setUserData(response.data.filter((item)=> item.id === userid)[0])
             setFavorite(response.data.filter((item)=> item.id === userid)[0].favoriteid)
         })
-     }, [])
+     }, [route])
     const renderMilestone = ({ item }) => {
         return (
             <MilestoneTag title={item.title} streak={item.streak} img={item.src} id={item.idmilestones} isLast={false}/>
@@ -94,11 +96,9 @@ const Profile = ({route}) => {
         }
     }
     function handleTest() {
-     //   console.log(route.params.id, owner)
-    //    console.log(userData)
         console.log(userid)
-        //console.log(milestones)
-        //console.log(favorite)
+        console.log(userData)
+        console.log(fileExt)
     }
     function handlePress() {
         navigation.navigate("Settings")
@@ -106,19 +106,22 @@ const Profile = ({route}) => {
     return (
         <View style={[styles.profilePage]}>
             <View style={[styles.userInfoContainer]}>
-                <View styles={styles.profileIcon}>
+    
                     <Pressable onPress={handleTest}>
-                    <Image
-                    style={styles.profilePic}
-                    resizeMode="contain"
-                    source={require("../assets/profile-pic-empty.png")}/>
+                        <Image
+                        style={{width:windowW*(60/windowW), height:windowH*(60/windowH), alignSelf:"center", borderRadius:60}}
+                        resizeMode="contain"
+                        defaultSource={require("../assets/profile-pic-empty.png")}
+                        source={(!owner)?
+                        {uri:profilePic}:{uri:user.image}}
+                        />
                      </Pressable>
-                </View>
+            
                 <View style={styles.userDetails}>
                     <Text style={styles.usernameText}>@{(!owner && userData !== undefined)?userData.name:
                     user.username?user.username:"ajiaron"}</Text>
                     <Text style={styles.userFullName}>{(!owner && userData !== undefined)?userData.fullname:user.fullname?user.fullname:"Johnny Appleseed"}</Text>
-                    <Text style={[styles.userBlurb, {minWidth:windowW*0.8, marginTop:(!owner&&windowW<400)?6.5:4}]}>{(!owner && userData !== undefined)?userData.blurb:'Im about writing apps and running laps'}</Text>
+                    <Text style={[styles.userBlurb, {minWidth:windowW*0.8, marginTop:(!owner&&windowW<400)?6.5:4}]}>{(userData !== undefined)?userData.blurb:'Im about writing apps and running laps'}</Text>
                 </View>
                 {(owner)?
                 <View style={styles.settingsIcon}>

@@ -17,6 +17,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     const user = useContext(userContext)
     const navigation = useNavigation()
     const route = useRoute()
+    const [profilePic, setProfilePic] = useState()
     const [isActive, setIsActive] = useState(true)
     const [ownerid, setOwnerid] = useState(ownerId?ownerId:0)
     var fileExt = (image !== undefined)?image.toString().split('.').pop():'png'
@@ -29,7 +30,6 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     const [commentCount, setCommentCount] = useState(0)
     const [isLiked, setIsLiked] = useState(liked?liked:false)
     const [likes, setLikes] = useState([])
-
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getlikes`)  
         .then((response)=> {
@@ -43,6 +43,14 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
             setCommentCount(response.data.filter((item)=>item.postid === postId).length)
         }).catch(error => console.log(error))
     }, [])
+    useEffect(()=> {
+        axios.get(`http://${user.network}:19001/api/getusers`)  
+        .then((response)=> {
+            if (ownerId !== undefined) {
+                setProfilePic(response.data.filter((item)=>item.id === ownerId)[0].src)
+            }
+        }).catch(error => console.log(error))
+    }, [ownerId])
     useEffect(()=> {
         setViewable(isViewable)
     }, [isViewable])
@@ -97,12 +105,19 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
      <View style={[styles.postContainer]}>
         <View style={{flexDirection:"row",flex:1, alignItems:"center"}}>
         <Pressable style={[styles.postHeader]} onPress={navigateProfile}>
+                {(profilePic !== src)?
+                <View style={[{minHeight:60,marginLeft:12}]}>
+                 <Image
+                 style={{height:34, width:34, borderRadius:34, alignSelf:"center"}}
+                 resizeMode="contain"
+                 source={{uri:profilePic}}/>
+                 </View>:
                 <View style={[styles.profilePicContainer]}>
                     <Image
                         style={styles.profilePic}
                         resizeMode="contain"
-                        source={Icons[src]}/>
-                </View>
+                        source={Icons['defaultpic']}/>
+                </View>}
                 <View style={[styles.postUserHeader]}>
                     <Text style={[styles.postOwnerName]}> {username} </Text>
                     <Text style={[styles.postOwnerTime]}>

@@ -18,13 +18,9 @@ const CommentBox = ({postId, userId, startToggle, likesList, commentList, onSubm
     const [toggled, setToggled] = useState(false)
     const navigation = useNavigation()
     const [comment, setComment] = useState('')
-    
     const animatedvalue = useRef(new Animated.Value(0)).current;
-    
     const [scrollable, setScrollable] = useState(true)
     const scrollRef = useRef(null)
-    
-   
     const slideup = () => {
         setToggled(true)
         Animated.timing(animatedvalue,{
@@ -110,16 +106,14 @@ const CommentBox = ({postId, userId, startToggle, likesList, commentList, onSubm
                         <View style={{flexDirection:"row", alignItems:"center"}}>
                             <Pressable style={{flexDirection:"row", alignItems:"center"}} onPress={()=>{navigation.navigate("Profile", {id:item.userid})}}>
                                 <Image
-                                    style={{maxHeight:23, maxWidth:23, marginRight:9}}
+                                    style={{borderRadius:23,height:23, width:23, marginRight:9}}
                                     resizeMode="contain"
-                                    source={Icons['defaultpic']}
-                                    //source={{uri:item.img}}
+                                    //source={Icons['defaultpic']}
+                                    source={{uri:item.img}}
                                 />
                                 <Text style={{fontFamily:"InterBold", fontSize:13, color:"white", paddingBottom:3.5}}>{item.name}{'  '}</Text>
-                            </Pressable>
-                           
+                            </Pressable>    
                         </View>
-                        
                          <RequestButton/>
                     </View>
                 </View>
@@ -133,10 +127,10 @@ const CommentBox = ({postId, userId, startToggle, likesList, commentList, onSubm
                     <View style={{flexDirection:"row", alignItems:"center"}}>
                         <Pressable style={{flexDirection:"row", alignItems:"center"}} onPress={()=>{navigation.navigate("Profile", {id:item.userid})}}>
                             <Image
-                                style={{maxHeight:23, maxWidth:23, marginRight:9}}
+                                 style={{borderRadius:23,height:23, width:23, marginRight:9}}
                                 resizeMode="contain"
-                                source={Icons['defaultpic']}
-                                //source={{uri:item.img}}
+                                //source={Icons['defaultpic']}
+                                source={{uri:item.img}}
                             />
                             <Text style={{fontFamily:"InterBold", fontSize:13, color:"white", paddingBottom:3.5}}>{item.name}{'  '}</Text>
                         </Pressable>

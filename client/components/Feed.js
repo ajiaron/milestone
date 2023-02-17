@@ -54,7 +54,7 @@ const Feed = ({route}) => {
               key={item.idposts}
               username={item.username}
               caption={item.caption}
-              src={item.profilepic}
+              src={item.profilepic} // take this out later; always defaultpost and we fetch in postitem
               image={item.src}
               postId={item.idposts}
               isLast={item.idposts == 1}

@@ -27,10 +27,8 @@ const Footer = ({disable}) => {
         navigation.navigate((route.name == "Feed")?"Landing":"Feed")
     }
     function navigateProfile() {
-
         navigation.popToTop();
         navigation.navigate("Profile", {id:user.userId})
-   
     }
     return (
         <View style={[styles.footerContainer]}>
@@ -79,13 +77,11 @@ const Footer = ({disable}) => {
                 </Pressable>
                 <Pressable styles={styles.profileButton}
                     onPress={navigateProfile}> 
-                
-                <View styles={styles.profileIcon}>
                     <Image
-                    style={[styles.profilePic]}
+                    style={{width:26, height:26, borderRadius:26,top:.5}}
                     resizeMode="contain"
-                    source={Icons['defaultpic']}/>
-                </View>
+                    defaultSource={Icons['defaultpic']}
+                    source={(user)?{uri:user.image}:Icons['defaultpic']}/>
                 </Pressable>
             </View>
         </View>
