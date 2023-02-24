@@ -64,7 +64,7 @@ const ProgressView = ({count, postlist, month, monthname, monthnumber, year}) =>
         )
     }
     return (
-        <View style={{flex:1, paddingLeft:windowW*0.075, paddingRight:windowW*0.075}}>
+        <View style={{flex:1, paddingLeft:windowW*0.075, paddingRight:windowW*0.075, marginTop:6}}>
             <View style={styles.milestoneDatesHeader}>
                     <Text style={styles.todaysMilestoneHeader}>
                         {`⚡ Milestone Progress`}   

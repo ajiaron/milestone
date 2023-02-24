@@ -9,7 +9,6 @@ import AppLoading from 'expo-app-loading'
 import * as Network from 'expo-network'
 import Constants from 'expo-constants';
 
-
 const windowW= Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 

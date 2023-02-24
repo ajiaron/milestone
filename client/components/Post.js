@@ -14,7 +14,7 @@ import MilestoneTag from "./MilestoneTag";
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const CommentBox = ({postId, userId, startToggle, likesList, commentList, onSubmitComment}) => {
+const CommentBox = ({postId, userId, startToggle, likesList, commentList, onSubmitComment, onToggle}) => {
     const [toggled, setToggled] = useState(false)
     const navigation = useNavigation()
     const [comment, setComment] = useState('')
@@ -48,7 +48,9 @@ const CommentBox = ({postId, userId, startToggle, likesList, commentList, onSubm
         if (comment.length > 0) {
             onSubmitComment(comment)
             setComment('')
-        } 
+        } else if (!toggled) {
+            onToggle()
+        }
         slidedown()
     }
     const handleScroll = (event) => {
@@ -144,7 +146,7 @@ const CommentBox = ({postId, userId, startToggle, likesList, commentList, onSubm
     }
     return (
         <ScrollView
-         contentConainerStyle={[styles.commentContent]} 
+         contentConainerStyle={[styles.commentContentContainer]} 
          ref = {scrollRef}
          showsVerticalScrollIndicator={false}
          onScroll={handleScroll}
@@ -367,7 +369,7 @@ const Post = ({navigation, route}) => {
             </ScrollView>
                 {(commentToggle)?
                      <CommentBox postId={route.params.item.postId} userId={user.userId} startToggle={commentToggle} likesList={likesList}
-                     commentList={commentList} onSubmitComment={(comment)=>submitComment(comment)}/>:null
+                     commentList={commentList} onSubmitComment={(comment)=>submitComment(comment)} onToggle={()=>setCommentToggle(false)}/>:null
                 }
             <Footer/>
         </View>
@@ -437,6 +439,13 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color:"white",
     },
+    commentContentContainer: {
+        width:windowW,
+        paddingLeft:20,
+        paddingRight:20,
+        backgroundColor:"rgba(21,21,21,0)",
+        zIndex:-1,
+    },
     commentContent: {
         width:windowW,
         paddingLeft:20,
@@ -446,7 +455,6 @@ const styles = StyleSheet.create({
     },
     commentContentToggled: {
         width:windowW,
-
         paddingLeft:20,
         paddingRight:20,
         backgroundColor:"rgba(21,21,21,1)",

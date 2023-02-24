@@ -78,7 +78,7 @@ const Footer = ({disable}) => {
                 <Pressable styles={styles.profileButton}
                     onPress={navigateProfile}> 
                     <Image
-                    style={{width:26, height:26, borderRadius:26,top:.5}}
+                    style={{width:26, height:26, borderRadius:26,top:0.25}}
                     resizeMode="contain"
                     defaultSource={Icons['defaultpic']}
                     source={(user)?{uri:user.image}:Icons['defaultpic']}/>

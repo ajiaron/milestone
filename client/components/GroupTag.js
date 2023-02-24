@@ -25,10 +25,6 @@ const GroupTag = ({title, users, img}) => {
                     </Text>
                     <View style={[styles.groupMemberContainer]}>
                         <Text style={[styles.groupMembers]} numberOfLines={1}>
-                            <View style={[styles.groupIconSmall]}>
-                             
-                            </View>
-                            
                             <Text style={[styles.groupMembersContext]}>
                                {''} {users[0]}, {users[1]}, and
                             </Text>
@@ -36,7 +32,7 @@ const GroupTag = ({title, users, img}) => {
                         </Text>
                     </View>
                 </View>
-                <View style={[styles.groupTagIcon]}>  
+                <View style={[styles.groupTagIcon, {top:(windowH>900)?2.5:0}]}>  
                     <Icon   
                         name='pending'
                         color="rgba(38, 38, 38, 1)"
@@ -81,7 +77,7 @@ const styles = StyleSheet.create({
     },
     groupTagIcon: {
         left:8,
-        top:2,
+
         alignItems:"center",
     },
     groupIcon: {

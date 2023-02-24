@@ -7,6 +7,7 @@ import Icons from '../data/Icons.js'
 import userContext from '../contexts/userContext'
 import axios from 'axios'
 import Footer from './Footer'
+import * as MediaLibrary from 'expo-media-library'
 import { Video } from 'expo-av'
 
 const windowW = Dimensions.get('window').width
@@ -16,6 +17,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     const milestoneList = milestones?milestones:[]
     const user = useContext(userContext)
     const navigation = useNavigation()
+
     const route = useRoute()
     const [profilePic, setProfilePic] = useState()
     const [isActive, setIsActive] = useState(true)
@@ -82,6 +84,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         } 
     }
     const handleSelect = () => {
+        console.log(image)
         setIsActive(!isActive)
     }
     const toggleMute = () => {
@@ -187,7 +190,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                 </View>
             </Pressable>
             {(route.name === 'MilestonePage')?      // scroll slider on milestone page
-                (index !== undefined)?
+                (index !== undefined && count < 4)?
                 <View style={{flexDirection:"row", 
                 alignSelf:"center", justifyContent:"space-around",
                  minWidth:windowW*(43/windowW), marginLeft:(windowW > 400)?windowW*0.1875:windowW*0.145}}> 
@@ -213,7 +216,8 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         <View style={[styles.commentsContainer, {minHeight:(route.name === 'MilestonePage')?50:(route.name === "Post")?
         (windowH>900)?75:60:80}]}>
             <Text style={[styles.commentsContent]}>{caption}</Text>
-            {(route.name === "Feed")?
+            {(route.name === "Feed" || route.name === "MilestonePage")?
+            <Pressable onPress={(commentCount>0 || likes.length>0)?handleComment:()=> navigation.navigate("Post", {item:data, comments:false})}>
             <Text style={[styles.viewPostLink]}>
                 {(commentCount>0)?
                 `View ${commentCount}${(commentCount>1)?" comments":" comment"}${(likes.length>0)?` & ${likes.length}${likes.length>1?" likes":" like"}` :''}`
@@ -221,17 +225,22 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                 (likes.length>0)?`View ${likes.length}${(likes.length>1)?" likes":" like"}`:
                 `View Milestones & Groups`}
             </Text>
+            </Pressable>
             :
-            
             (commentCount>0)?
-            <Text style={[styles.viewPostLink, {fontSize:11.5}]}>
-                
-                View {commentCount}{(commentCount>1)?" comments":" comment "}{(likes.length>0)?`& ${likes.length}${likes.length>1?" likes":" like"}` :''}
-                </Text>:
-                (likes.length>0)?
+            <Pressable onPress={handleComment}>
+                <Text style={[styles.viewPostLink, {fontSize:11.5}]}>
+                View {commentCount}{(commentCount>1)?" comments ":" comment "}{(likes.length>0)?`& ${likes.length}${likes.length>1?" likes":" like"}` :''}
+                </Text>
+            </Pressable>
+            :
+            (likes.length>0)?
+            <Pressable onPress={handleComment}>
                 <Text style={[styles.viewPostLink, {fontSize:11.5}]}>
                     View {likes.length}{(likes.length>1)?" likes":" like"}
-                </Text>:
+                </Text>
+            </Pressable>
+            :
             null
         }
         </View>

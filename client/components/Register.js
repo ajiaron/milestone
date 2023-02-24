@@ -4,13 +4,16 @@ import AppLoading from 'expo-app-loading'
 import { useFonts, Inter_400Black } from '@expo-google-fonts/inter';
 import { useNavigation } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
-
+import * as Network from 'expo-network'
+import Constants from 'expo-constants';
 const Register = () => {
   const navigation = useNavigation();
   const [usernameText, onChangeUsernameText] = useState("")
   const [emailText, onChnageEmailText] = useState("")
   const [passwordText, onChangePasswordText] = useState("")
-
+  function handlePress() {
+    navigation.navigate("Feed")
+  }
 
 
   return (
@@ -80,7 +83,7 @@ const Register = () => {
           </View>
           <Pressable
             style={[styles.registerButton, styles.boxLayout]}
-            onPress={() => navigation.navigate("Feed")}
+            onPress={handlePress}
           >
             <View style={[styles.createAnAccountBox, styles.boxLayout]} />
             <Text style={[styles.createAnAccountText1, styles.loginText]}>
