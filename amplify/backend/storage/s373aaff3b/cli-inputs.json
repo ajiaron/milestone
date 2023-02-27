@@ -1,0 +1,18 @@
+{
+  "resourceName": "s373aaff3b",
+  "policyUUID": "73aaff3b",
+  "bucketName": "milestonenativeb1eee371d58848c4ac8ea0b7c6ca82ed",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}

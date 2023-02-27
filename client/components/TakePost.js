@@ -11,7 +11,9 @@ import { shareAsync } from 'expo-sharing'
 import * as MediaLibrary from 'expo-media-library'
 import * as ImagePicker from 'expo-image-picker'
 import userContext from '../contexts/userContext'
-
+import { Amplify, Storage } from 'aws-amplify';
+import awsconfig from '../src/aws-exports';
+Amplify.configure(awsconfig);
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
@@ -21,18 +23,15 @@ const TakePost = ({route}) => {
     const routes = useRoute()
     const prevroute = route.params.previous_screen.name?route.params.previous_screen.name:"Feed"
     const [type, setType] = useState(CameraType.back);
-    const [photoUri, setPhotoUri] = useState()
-    const [videoUri, setVideoUri] = useState()
+    const [asset, setAsset] = useState()
     let cameraRef = useRef()
     const [cameraPermission, setCameraPermission] = useState()
     const [microphonePermission, setMicrophonePermission] = useState()
     const [mediaPermission, setMediaPermission] = useState()
     const [photo, setPhoto] = useState()
     const [video, setVideo] = useState(undefined) 
-    const [ready, setReady] = useState(false);
     const [image, setImage] = useState(null);
     const [isActive, setIsActive] = useState(false)
-    const [shouldPlay, setShouldPlay] = useState(true)
     const [isRecording, setIsRecording] = useState()
 
     useEffect(()=> {
@@ -45,7 +44,7 @@ const TakePost = ({route}) => {
             setMediaPermission(mediaPermissions.status === "granted")
         })() 
     }, [])
-
+    
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -54,9 +53,10 @@ const TakePost = ({route}) => {
         })
         if (!result.canceled) {
         //  const asset = await MediaLibrary.createAssetAsync(result.assets[0].uri)  // get local uri instead of cache uri
+            console.log(result)
             setImage(result.assets[0].uri)
             setPhoto(result.assets[0].uri)
-            setPhotoUri(result.assets[0].uri)
+            setAsset(result.assets[0].type)
             setType(current => (current === CameraType.front ? CameraType.back : CameraType.back));
         }
     }
@@ -69,7 +69,7 @@ const TakePost = ({route}) => {
         }
         cameraRef.current.recordAsync(options).then((recording)=> {
             setVideo(recording.uri)
-            setVideoUri(recording.uri)
+            setAsset('video')
             setIsRecording(false)
         })
     }
@@ -137,8 +137,7 @@ const TakePost = ({route}) => {
             exif:false,
         }
         let newPhoto = await cameraRef.current.takePictureAsync(options)
-     // const asset = await MediaLibrary.createAssetAsync(newPhoto.uri)     // get local uri instead of cache uri
-        setPhotoUri(newPhoto.uri)
+        setAsset('image')
         setPhoto(newPhoto.uri)
      };
     if (photo || image || video) {
@@ -158,10 +157,10 @@ const TakePost = ({route}) => {
         }
         let postPhoto = () => {
             if (video !== undefined) {
-                navigation.navigate("CreatePost", {uri: video, type:type})
+                navigation.navigate("CreatePost", {uri: video, type:type, asset:asset})
             }
             else {
-                navigation.navigate("CreatePost", {uri: photo, type:type})
+                navigation.navigate("CreatePost", {uri: photo, type:type, asset:asset})
             }
         }
         let deletePhoto = () => {

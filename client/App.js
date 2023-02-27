@@ -22,10 +22,11 @@ import EditMilestone from './components/EditMilestone'
 import MilestonePage from './components/MilestonePage'
 import MilestoneList from './components/MilestoneList'
 import UserProvider from "./contexts/UserProvider";
+import { Amplify, Storage } from 'aws-amplify';
+import awsconfig from './src/aws-exports';
+Amplify.configure(awsconfig);
 
 const Stack = createNativeStackNavigator()
-
-
 function App() {
   const [loaded] = useFonts({
     Inter: require('./assets/fonts/Inter-Medium.otf'),
@@ -36,39 +37,38 @@ function App() {
   if (!loaded) {
     return null
   }
-    return (
-      <UserProvider>
-          <NavigationContainer>
-            <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName="Landing">
-              <Stack.Screen name="Landing" component={Landing} />
-              <Stack.Screen name="Login" component={Login} />
-              <Stack.Screen name="Register" component={Register} />
-              <Stack.Screen name="Feed" component={Feed} />
-              <Stack.Screen name="Post" component={Post} />
-              <Stack.Screen name="Profile" component={Profile} />
-              <Stack.Screen name="Settings" component={Settings} />
-              <Stack.Screen name="MilestoneList" component={MilestoneList} />
-              <Stack.Screen name="TakePost" component={TakePost} />
-              <Stack.Screen name="CreatePost" component={CreatePost} />
-              <Stack.Screen name="EditPost" component={EditPost} />
-              <Stack.Screen name="CreateMilestone" component={CreateMilestone} />
-              <Stack.Screen name="EditMilestone" component={EditMilestone} />
-              <Stack.Screen name="MilestonePage" component={MilestonePage} />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </UserProvider>
-      );
-    }
+  return (
+    <UserProvider>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName="Landing">
+            <Stack.Screen name="Landing" component={Landing} />
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Register" component={Register} />
+            <Stack.Screen name="Feed" component={Feed} />
+            <Stack.Screen name="Post" component={Post} />
+            <Stack.Screen name="Profile" component={Profile} />
+            <Stack.Screen name="Settings" component={Settings} />
+            <Stack.Screen name="MilestoneList" component={MilestoneList} />
+            <Stack.Screen name="TakePost" component={TakePost} />
+            <Stack.Screen name="CreatePost" component={CreatePost} />
+            <Stack.Screen name="EditPost" component={EditPost} />
+            <Stack.Screen name="CreateMilestone" component={CreateMilestone} />
+            <Stack.Screen name="EditMilestone" component={EditMilestone} />
+            <Stack.Screen name="MilestonePage" component={MilestonePage} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </UserProvider>
+    );
+  }
 
-  const styles = StyleSheet.create({
-    container: {
-      flex:'1',
-      backgroundColor: '#1f1e1e',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontFamily:"Inter"
-    },
+const styles = StyleSheet.create({
+  container: {
+    flex:'1',
+    backgroundColor: '#1f1e1e',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontFamily:"Inter"
+  },
 });
-
 
 export default App;

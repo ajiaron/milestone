@@ -83,6 +83,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         } 
     }
     const handleSelect = () => {
+        console.log(profilePic, src)
         setIsActive(!isActive)
     }
     const toggleMute = () => {
@@ -106,7 +107,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
      <View style={[styles.postContainer]}>
         <View style={{flexDirection:"row",flex:1, alignItems:"center"}}>
         <Pressable style={[styles.postHeader]} onPress={navigateProfile}>
-                {(profilePic !== src)?
+                {(profilePic !== src || src !== 'defaultpic')?
                 <View style={[{minHeight:60,marginLeft:12}]}>
                  <Image
                  style={{height:34, width:34, borderRadius:34, alignSelf:"center"}}

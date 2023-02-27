@@ -42,7 +42,6 @@ app.get('/api/getposts', (req, res) => {
     })
 }) 
 app.get('/api/getlinkedmilestones', (req, res) => {
-    const postid = req.body.postid
     db.query('SELECT * FROM postmilestones', (err, result) => {
         if (err) {
             console.log(err)

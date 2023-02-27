@@ -1,0 +1,36 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-milestonenative-dev-121018-authRole",
+      "UnauthRoleArn": "arn:aws:iam::535974679162:role/amplify-milestonenative-dev-121018-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::535974679162:role/amplify-milestonenative-dev-121018-authRole",
+      "Region": "us-west-1",
+      "DeploymentBucketName": "amplify-milestonenative-dev-121018-deployment",
+      "UnauthRoleName": "amplify-milestonenative-dev-121018-unauthRole",
+      "StackName": "amplify-milestonenative-dev-121018",
+      "StackId": "arn:aws:cloudformation:us-west-1:535974679162:stack/amplify-milestonenative-dev-121018/c25a7fb0-b6da-11ed-b9cc-06ea18ac1305",
+      "AmplifyAppId": "d2haej11x6nigr"
+    }
+  },
+  "milestone": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-milestonenative-milestone-123029-authRole",
+      "UnauthRoleArn": "arn:aws:iam::535974679162:role/amplify-milestonenative-milestone-123029-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::535974679162:role/amplify-milestonenative-milestone-123029-authRole",
+      "Region": "us-west-1",
+      "DeploymentBucketName": "amplify-milestonenative-milestone-123029-deployment",
+      "UnauthRoleName": "amplify-milestonenative-milestone-123029-unauthRole",
+      "StackName": "amplify-milestonenative-milestone-123029",
+      "StackId": "arn:aws:cloudformation:us-west-1:535974679162:stack/amplify-milestonenative-milestone-123029/93c014a0-b6dd-11ed-b73d-020e42ca2885",
+      "AmplifyAppId": "d2haej11x6nigr"
+    },
+    "categories": {
+      "auth": {
+        "milestonenative378a75f2": {}
+      },
+      "storage": {
+        "s373aaff3b": {}
+      }
+    }
+  }
+}

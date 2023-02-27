@@ -9,6 +9,9 @@ import MilestoneTag from "./MilestoneTag";
 import userContext from '../contexts/userContext'
 import axios from 'axios'
 import { Video } from 'expo-av'
+import { Amplify, Storage } from 'aws-amplify';
+import awsconfig from '../src/aws-exports';
+Amplify.configure(awsconfig);
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
@@ -16,7 +19,7 @@ const windowH = Dimensions.get('window').height
 const CreatePost = ({route}) => {
     const img = (route.params.uri !== undefined)?route.params.uri:require('../assets/samplepostwide.png')
     const imgType = (route.params.type !== undefined)?route.params.type:"back"
-    const routes = useRoute()
+    const asset = (route.params.asset !== undefined)?route.params.asset:'image'
     var fileExt = (route.params.uri !== undefined)?route.params.uri.toString().split('.').pop():'png';
     const date = new Date().toISOString().slice(0, 19).replace('T', ' ')
     const [commmentsEnabled, setCommentsEnabled] = useState(true)
@@ -32,6 +35,7 @@ const CreatePost = ({route}) => {
     const navigation = useNavigation()
     const user = useContext(userContext)
     const [postId, setPostId] = useState(0)
+    const [file, setFile] = useState()
 
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getposts`)
@@ -53,11 +57,41 @@ const CreatePost = ({route}) => {
         username:user.username?user.username:'ajiaron',
         src:'defaultpost'
     }
+    const fetchContent = async (uri) => {
+        const response = await fetch(uri)
+        const blob = await response.blob()
+        return blob
+    }
+    const uploadContent = async (uri) => {
+        const content = await fetchContent(uri)
+        return Storage.put(`post-content-${Math.random()}.${fileExt}`, content, {
+            level:'public',
+            contentType: asset,
+            progressCallback(uploadProgress) {
+                console.log('progress --',uploadProgress.loaded+'/'+uploadProgress.total)
+            }
+        })
+        .then((res)=> {
+            Storage.get(res.key)
+            .then((result)=> {
+                setFile(result.substring(0, result.indexOf('?')))
+                console.log('result --- ', result.substring(0, result.indexOf('?')))
+                axios.post(`http://${user.network}:19001/api/pushposts`, 
+                {idposts: postId,username:user.username?user.username:'ajiaron', caption:caption, 
+                profilepic:(user.image !== undefined)?user.image:'defaultpic', 
+                src:result.substring(0, result.indexOf('?')), date: date, ownerid:user.userId})
+                .then(() => {console.log('new post saved')})
+                .catch((error)=> console.log(error))
+            })
+            .catch((e)=>console.log(e))
+        })
+        .catch((e)=>console.log(e))
+    }
+    function handleUpload() {
+        console.log(fileExt)
+    }
     function handlePress() {
-        axios.post(`http://${user.network}:19001/api/pushposts`, 
-        {idposts: postId,username:user.username?user.username:'ajiaron', caption:caption, profilepic:'defaultpic', src:img, date: date, ownerid:user.userId})
-        .then(() => {console.log('new post saved')})
-        .catch((error)=> console.log(error))
+        uploadContent(img)
         milestones.map((item)=>{
             axios.post(`http://${user.network}:19001/api/linkmilestones`, 
             {postid:postId,milestoneid:item.id})
@@ -165,7 +199,7 @@ const CreatePost = ({route}) => {
                     </View>
                 </View>
                 <View style={[styles.buttonContainer]}>
-                    <Pressable onPress={()=>console.log(routes.name)}>
+                    <Pressable onPress={handleUpload}>
                         <View style={styles.savePostButtonContainer}>
                             <Text style={styles.savePostButtonText}>Archive</Text>
                         </View>
