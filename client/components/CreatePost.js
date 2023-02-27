@@ -3,7 +3,7 @@ import { Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, Switch, 
 import * as Device from 'expo-device'
 import { Icon } from 'react-native-elements'
 import AppLoading from 'expo-app-loading'
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import Footer from './Footer'
 import MilestoneTag from "./MilestoneTag";
 import userContext from '../contexts/userContext'
@@ -16,6 +16,7 @@ const windowH = Dimensions.get('window').height
 const CreatePost = ({route}) => {
     const img = (route.params.uri !== undefined)?route.params.uri:require('../assets/samplepostwide.png')
     const imgType = (route.params.type !== undefined)?route.params.type:"back"
+    const routes = useRoute()
     var fileExt = (route.params.uri !== undefined)?route.params.uri.toString().split('.').pop():'png';
     const date = new Date().toISOString().slice(0, 19).replace('T', ' ')
     const [commmentsEnabled, setCommentsEnabled] = useState(true)
@@ -98,7 +99,7 @@ const CreatePost = ({route}) => {
                             />
                     </View>           
                     {(fileExt === 'mov' || fileExt === 'mp4')?
-                        <Video isLooping shouldPlay
+                        <Video isLooping shouldPlay isMuted={true}
                         style={(imgType==="front")?[styles.newPostImageContainer, {transform:[{rotateY:'180deg'}]}]:styles.newPostImageContainer}
                         resizeMode="cover"
                         source={{uri:img}}/>
@@ -164,7 +165,7 @@ const CreatePost = ({route}) => {
                     </View>
                 </View>
                 <View style={[styles.buttonContainer]}>
-                    <Pressable onPress={()=>console.log(milestones)}>
+                    <Pressable onPress={()=>console.log(routes.name)}>
                         <View style={styles.savePostButtonContainer}>
                             <Text style={styles.savePostButtonText}>Archive</Text>
                         </View>

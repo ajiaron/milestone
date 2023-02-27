@@ -3,7 +3,7 @@ import { Text, StyleSheet, View, Image, Pressable, SafeAreaView, Dimensions, Tou
 import * as Device from 'expo-device'
 import { Icon } from 'react-native-elements'
 import AppLoading from 'expo-app-loading'
-import { useNavigation } from "@react-navigation/native"
+import { useNavigation, useRoute } from "@react-navigation/native"
 import Footer from './Footer'
 import { Camera, CameraType } from 'expo-camera'
 import { Video } from 'expo-av'
@@ -18,6 +18,7 @@ const windowH = Dimensions.get('window').height
 
 const TakePost = ({route}) => {
     const navigation = useNavigation()
+    const routes = useRoute()
     const prevroute = route.params.previous_screen.name?route.params.previous_screen.name:"Feed"
     const [type, setType] = useState(CameraType.back);
     const [photoUri, setPhotoUri] = useState()
@@ -31,10 +32,10 @@ const TakePost = ({route}) => {
     const [ready, setReady] = useState(false);
     const [image, setImage] = useState(null);
     const [isActive, setIsActive] = useState(false)
+    const [shouldPlay, setShouldPlay] = useState(true)
     const [isRecording, setIsRecording] = useState()
 
     useEffect(()=> {
-        if (Device.isDevice) {
         (async () => {
             const cameraPermissions = await Camera.requestCameraPermissionsAsync();
             const microphonePermissions = await Camera.requestMicrophonePermissionsAsync();
@@ -42,7 +43,7 @@ const TakePost = ({route}) => {
             setCameraPermission(cameraPermissions.status === "granted")
             setMicrophonePermission(microphonePermissions.status === "granted")
             setMediaPermission(mediaPermissions.status === "granted")
-        })() } 
+        })() 
     }, [])
 
     const pickImage = async () => {
@@ -52,8 +53,9 @@ const TakePost = ({route}) => {
             quality:1,
         })
         if (!result.canceled) {
-            const asset = await MediaLibrary.createAssetAsync(result.assets[0].uri)  // get local uri instead of cache uri
-            setImage(asset.uri)
+        //  const asset = await MediaLibrary.createAssetAsync(result.assets[0].uri)  // get local uri instead of cache uri
+            setImage(result.assets[0].uri)
+            setPhoto(result.assets[0].uri)
             setPhotoUri(result.assets[0].uri)
             setType(current => (current === CameraType.front ? CameraType.back : CameraType.back));
         }
@@ -70,21 +72,6 @@ const TakePost = ({route}) => {
             setVideoUri(recording.uri)
             setIsRecording(false)
         })
-    }
-    let saveRecording = async () => {
-        setIsRecording(true)
-        let options = {
-            quality: "1080p",
-            maxDuration: 60,
-            mute: false,
-        }
-        let newRecoding = await cameraRef.current.recordAsync(options)
-        const asset = await MediaLibrary.createAssetAsync(newRecoding.uri)     // get local uri instead of cache uri
-        console.log(asset)  // asset.uri wont display video for some reason, only displays an image of first frame
-        setVideo(newRecoding.uri) 
-        setVideoUri(newRecoding.uri)
-        setIsRecording(false)
-
     }
     let stopRecording = () => {
         setIsRecording(false)
@@ -127,7 +114,6 @@ const TakePost = ({route}) => {
             <Text style={{zIndex:1,color:"white", fontFamily:"Inter", fontSize:20, alignSelf:"center", textAlign:"center"}}>
                 Can't take photos on a simulator,{'\n'} Use your phone!
             </Text>}
-            
             <Pressable style={(image)?styles.selectPhotoButtonContainer:styles.confirmPhotoButtonContainer} onPress={handleSelection}>
                 <Text style={styles.selectPhotoButtonText}>
                     {(image)?`Choose Different Photo`:`Choose From Photos`}
@@ -151,30 +137,27 @@ const TakePost = ({route}) => {
             exif:false,
         }
         let newPhoto = await cameraRef.current.takePictureAsync(options)
-        const asset = await MediaLibrary.createAssetAsync(newPhoto.uri)     // get local uri instead of cache uri
-        console.log(asset)
+     // const asset = await MediaLibrary.createAssetAsync(newPhoto.uri)     // get local uri instead of cache uri
         setPhotoUri(newPhoto.uri)
-        setPhoto(asset.uri)
+        setPhoto(newPhoto.uri)
      };
     if (photo || image || video) {
         let sharePhoto = () => {
             if (video) {
-                shareAsync(videoUri)
+                shareAsync(video)
             } else {
-                shareAsync(photoUri)
+                shareAsync(photo)
             }
         }
         let savePhoto = () => {
             if (video !== undefined) {
-                MediaLibrary.saveToLibraryAsync(video.uri)
+                MediaLibrary.saveToLibraryAsync(video)
             } else {
-                MediaLibrary.saveToLibraryAsync(photo.uri)
+                MediaLibrary.saveToLibraryAsync(photo)
             }
         }
         let postPhoto = () => {
             if (video !== undefined) {
-                var fileExt = video.toString().split('.').pop();
-               // console.log(fileExt)
                 navigation.navigate("CreatePost", {uri: video, type:type})
             }
             else {
@@ -186,15 +169,16 @@ const TakePost = ({route}) => {
             setImage(undefined)
             setVideo(undefined)
         }
+
         return (
             <View style={styles.takePostPage}>
-                {(video !== undefined) ? <Video 
-                style={styles.videoPreview} videoStyle={{minHeight:windowH}} source={{uri:video}} resizeMode="cover" isLooping
-                shouldPlay
-                /> 
+                {(video !== undefined) ? 
+                    <Video
+                    style={styles.videoPreview} videoStyle={{minHeight:windowH}} source={{uri:video}} resizeMode="cover" isLooping
+                    shouldPlay={routes.name === 'TakePost'}
+                    />   
                 : <Image style={(type==="front")?
                 [styles.preview, {transform:[{rotateY:'180deg'}]}]:styles.preview} source={{uri: photo}} resizeMode="contain"/>}
-              
                 <View style={styles.mediaContainer}>
                     <View>
                         <Pressable onPress={postPhoto}>
@@ -255,7 +239,7 @@ const TakePost = ({route}) => {
                     />
                 </Pressable>}
                 <View style={styles.cameraButtonContainer}>
-                    <Pressable onPress={handlePress} onLongPress={saveRecording} delayLongPress={150} onPressOut={stopRecording}>
+                    <Pressable onPress={handlePress} onLongPress={recordVideo} delayLongPress={150} onPressOut={stopRecording}>
                         <Icon 
                             style={styles.cameraButton}
                             name='circle'

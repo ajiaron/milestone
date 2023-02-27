@@ -33,13 +33,9 @@ const Landing = () => {
 
   useEffect(()=> {
     var connection = Constants.expoConfig.hostUri.substring(0,Constants.expoConfig.hostUri.indexOf(':'))
- 
     user.setNetwork(connection)
-
   }, [])
   function handlePress() {
-    console.log(Constants.expoConfig)
-    console.log(user.network)
     navigation.navigate('Register')
   }
   return (

@@ -14,7 +14,7 @@ import MilestoneTag from "./MilestoneTag";
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const CommentBox = ({postId, userId, startToggle, likesList, commentList, onSubmitComment, onToggle}) => {
+const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentList, onSubmitComment, onToggle}) => {
     const [toggled, setToggled] = useState(false)
     const navigation = useNavigation()
     const [comment, setComment] = useState('')
@@ -24,7 +24,7 @@ const CommentBox = ({postId, userId, startToggle, likesList, commentList, onSubm
     const slideup = () => {
         setToggled(true)
         Animated.timing(animatedvalue,{
-            toValue:(windowH > 900)?windowH*.62:windowH*.58,
+            toValue:(mediaType === 'mov')?(windowH > 900)?windowH*.83:windowH*.78:(windowH > 900)?windowH*.62:windowH*.58,
             duration:300,
             useNativeDriver:false,
         }).start()
@@ -89,11 +89,11 @@ const CommentBox = ({postId, userId, startToggle, likesList, commentList, onSubm
                 onPress={handleRequest}>
                 <Animated.View style={[styles.addFriendContainer, 
                     {backgroundColor:animatedcolor.interpolate({inputRange:[0,100], outputRange:["rgba(0, 82, 63, 1)","#565454"]})
-                    /* backgroundColor:(requested)?"#565454":"rgba(0, 82, 63, 1)"*/}]}>
+                }]}>
                     <Animated.Text style={[styles.addFriendText, 
                         {fontSize:12, 
                         color:animatedcolor.interpolate({inputRange:[0,100], outputRange:["white","rgba(10,10,10,1)"]})
-                        /*color:(requested)?"rgba(10,10,10,1)":"white"*/}]}>
+                    }]}>
                         {(requested)?"Requested":'Request'}
                     </Animated.Text>
                 </Animated.View>
@@ -110,13 +110,14 @@ const CommentBox = ({postId, userId, startToggle, likesList, commentList, onSubm
                                 <Image
                                     style={{borderRadius:23,height:23, width:23, marginRight:9}}
                                     resizeMode="contain"
-                                    //source={Icons['defaultpic']}
                                     source={{uri:item.img}}
                                 />
                                 <Text style={{fontFamily:"InterBold", fontSize:13, color:"white", paddingBottom:3.5}}>{item.name}{'  '}</Text>
                             </Pressable>    
                         </View>
-                         <RequestButton/>
+                        {(item.userid !== userId)?
+                            <RequestButton/>:null
+                        }
                     </View>
                 </View>
         )
@@ -168,7 +169,8 @@ const CommentBox = ({postId, userId, startToggle, likesList, commentList, onSubm
                 scrollEventThrottle={0}
                 scrollEnabled={toggled && scrollable}
             > 
-                <View style={{flexDirection:"row", alignItems:"center", flex:"1", paddingLeft:20, paddingRight:20, backgroundColor:"rgba(21,21,21,1)"}}>
+                <View style={{paddingBottom:(mediaType === 'mov')?14:0,
+                flexDirection:"row", alignItems:"center", flex:"1", paddingLeft:20, paddingRight:20, backgroundColor:"rgba(21,21,21,1)"}}>
                 <TextInput style={[styles.commentText,{flex:1, top:(!toggled)?0.5:(windowH>900)?2:2.25}]} 
                 scrollEnabled={true}
                 readOnly={toggled}
@@ -259,6 +261,7 @@ const Post = ({navigation, route}) => {
     const [commentList, setCommentList] = useState([])
     const [likesList, setLikesList] = useState([])
     const [userList, setUserList] = useState([])
+    const [mediaType, setMediaType] = useState(route.params.item.image.toString().split('.').pop())
     const currentRoute = useRoute()
     function submitComment(comment) {
         setNewComment(comment)
@@ -313,7 +316,8 @@ const Post = ({navigation, route}) => {
         }).catch(error=>console.log(error))
     }, [linkedMilestones])
     function handlePress() {
-        console.log(likesList)
+        //console.log(likesList)
+        console.log(route.params.item.image)
         console.log(windowH)
     }
     const renderMilestone = ({ item }) => {
@@ -337,19 +341,23 @@ const Post = ({navigation, route}) => {
                 ownerId={route.params.item.ownerId} date={route.params.item.date}
                 liked={route.params.item.liked} isLast={false} isViewable={true} onToggleComment={()=>setCommentToggle(!commentToggle)}/>
             </View>
-            {milestoneList.length > 0?
-            <View style={{marginTop:14}}>
+
+            <View style={{marginTop:windowH*(14/windowH)}}>
                 <View style={[(windowH>900)?styles.milestoneHeaderContainerLarge:styles.milestoneHeaderContainer]}>
-                    <Text style={(windowH>900)?styles.milestoneHeaderLarge:styles.milestoneHeader}>
-                        Posted Milestones             
-                    </Text>
-                     <Pressable onPress={handlePress}>
-                            <Icon 
-                            name='navigate-next' 
-                            size={29} 
-                            color="rgba(53, 174, 146, 1)" 
-                            style={{bottom: 1}}/>
-                       </Pressable>
+                {milestoneList.length > 0?
+                    <View style={{flexDirection:"row"}}>
+                        <Text style={(windowH>900)?styles.milestoneHeaderLarge:styles.milestoneHeader}>
+                            Posted Milestones             
+                        </Text>
+                        <Pressable onPress={handlePress}>
+                           <Icon 
+                           name='navigate-next' 
+                           size={29} 
+                           color="rgba(53, 174, 146, 1)" 
+                           style={{bottom: 1}}/>
+                      </Pressable>
+                    </View>
+                :null}
                 </View>
                 <View style={(windowH>900)?styles.PostTagContainerLarge:styles.PostTagContainer}>
                     <ScrollView horizontal scrollEnabled={false}>
@@ -365,11 +373,11 @@ const Post = ({navigation, route}) => {
                         </FlatList>
                     </ScrollView>
                 </View>
-            </View> : null}
+            </View>
             </ScrollView>
                 {(commentToggle)?
-                     <CommentBox postId={route.params.item.postId} userId={user.userId} startToggle={commentToggle} likesList={likesList}
-                     commentList={commentList} onSubmitComment={(comment)=>submitComment(comment)} onToggle={()=>setCommentToggle(false)}/>:null
+                     <CommentBox postId={route.params.item.postId} userId={user.userId} startToggle={commentToggle} mediaType={mediaType} 
+                     likesList={likesList} commentList={commentList} onSubmitComment={(comment)=>submitComment(comment)} onToggle={()=>setCommentToggle(false)}/>:null
                 }
             <Footer/>
         </View>
@@ -441,10 +449,12 @@ const styles = StyleSheet.create({
     },
     commentContentContainer: {
         width:windowW,
+        bottom:0,
         paddingLeft:20,
         paddingRight:20,
         backgroundColor:"rgba(21,21,21,0)",
         zIndex:-1,
+        
     },
     commentContent: {
         width:windowW,

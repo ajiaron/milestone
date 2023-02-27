@@ -52,7 +52,7 @@ const ProgressView = ({count, postlist, month, monthname, monthnumber, year}) =>
                     style={[(windowH>900)?styles.gridItemLarge:styles.gridItem, 
                     {   
                         backgroundColor:(getActivity(val)===0)?"#696969":"rgb(37, 124, 103)", opacity:(selected===val)?0.5:1}]}>
-                    <Text style={{
+                    <Text style={{  // color current day yellow
                         color:(new Date().toLocaleDateString("en-US",{month:"long", day:"numeric",year:"numeric"}) === val)?
                         "rgb(248, 210, 57)":"white",
                         fontFamily:"InterBold", alignSelf:"flex-end",fontSize:(windowH>900)?12:11}}>
@@ -289,13 +289,15 @@ const MilestonePage = ({route}) => {
                         index:index
                      })}
                      keyExtractor={(item, index)=>index}/>
-                <Pressable onPress={handlePress} style={[styles.buttonContainer]}>
-                    <View style={[styles.deletePostButtonContainer, {minHeight:(windowH>900)?windowH*0.035: windowH * 0.0375}]}>
-                        <Text style={[styles.deletePostButtonText, {fontSize:(windowW > 400)?14.5:13.5}]}>Edit Milestone</Text>
-                    </View>
-                </Pressable>
-            </ScrollView>
-                    
+                {
+                    (ownerId===user.userId)?    // put milestone edit permissions here when implemented
+                        <Pressable onPress={handlePress} style={[styles.buttonContainer]}>
+                        <View style={[styles.deletePostButtonContainer, {minHeight:(windowH>900)?windowH*0.035: windowH * 0.0375}]}>
+                            <Text style={[styles.deletePostButtonText, {fontSize:(windowW > 400)?14.5:13.5}]}>Edit Milestone</Text>
+                        </View>
+                    </Pressable>:null
+                }
+            </ScrollView>         
             <Footer/>
         </View>
     )

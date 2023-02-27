@@ -17,7 +17,6 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     const milestoneList = milestones?milestones:[]
     const user = useContext(userContext)
     const navigation = useNavigation()
-
     const route = useRoute()
     const [profilePic, setProfilePic] = useState()
     const [isActive, setIsActive] = useState(true)
@@ -84,7 +83,6 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         } 
     }
     const handleSelect = () => {
-        console.log(image)
         setIsActive(!isActive)
     }
     const toggleMute = () => {

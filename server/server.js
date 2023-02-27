@@ -69,7 +69,28 @@ app.get('/api/getlikes', (req, res) => {
         }
     })
 })
-
+app.post('/api/registeruser', (req, res)=> {
+    const name = req.body.username
+    const milestones = req.body.milestones
+    const blurb = req.body.blurb
+    const password = req.body.password
+    const friends = req.body.friends
+    const groupcount = req.body.groupcount
+    const email = req.body.email
+    const fullname = req.body.fullname
+    const src = req.body.src
+    const public = req.body.public
+    const favoriteid = req.body.favoriteid
+    db.query(
+    'INSERT INTO users (name, milestones, blurb, password, friends, groupcount, email, fullname, src, public, favoriteid) VALUES (?,?,?,?,?,?,?,?,?,?,?)', 
+    [name, milestones, blurb, password, friends, groupcount, email, fullname, src, public, favoriteid], (err, result) => {
+        if(err) {
+            console.log(err)
+        } else {
+            res.send("successfully registered")
+        }
+    })
+})
 app.post('/api/pushposts', (req, res)=> {
     const idposts = req.body.idposts
     const username = req.body.username

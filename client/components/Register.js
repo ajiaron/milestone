@@ -1,18 +1,85 @@
-import  React, {useState} from "react";
-import { Text, StyleSheet, View, Image, Pressable, TextInput} from "react-native";
+import  React, {useState, useEffect, useRef, useContext} from "react";
+import { Animated, Text, StyleSheet, View, Image, Pressable, TextInput, Dimensions} from "react-native";
 import AppLoading from 'expo-app-loading'
+import userContext from '../contexts/userContext'
 import { useFonts, Inter_400Black } from '@expo-google-fonts/inter';
 import { useNavigation } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
+import axios from 'axios'
 import * as Network from 'expo-network'
 import Constants from 'expo-constants';
+
+const windowW = Dimensions.get('window').width
+const windowH = Dimensions.get('window').height
+
 const Register = () => {
   const navigation = useNavigation();
-  const [usernameText, onChangeUsernameText] = useState("")
-  const [emailText, onChnageEmailText] = useState("")
-  const [passwordText, onChangePasswordText] = useState("")
+  const user = useContext(userContext)
+  const animatedvalue = useRef(new Animated.Value(0)).current;
+  const animatedfull = useRef(new Animated.Value(0)).current;
+  const animatedemail = useRef(new Animated.Value(0)).current;
+  const animatedpass = useRef(new Animated.Value(0)).current;
+  const [username, setUsername] = useState("")
+  const [fullname, setFullname] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const defaultData = {
+    name:username,
+    milestones:0,
+    blurb:'nothing just yet!',
+    password:password,
+    friends:0,
+    groupcount:0,
+    email:email,
+    fullname:fullname,
+    src:'https://firebasestorage.googleapis.com/v0/b/unify-bc2ad.appspot.com/o/dyozelg1xtu-153%3A115?alt=media&token=7c1ba9f6-1b0a-45cf-9aff-fa8854d671b8',
+    public:1,
+    favoriteid:1,
+  }
+  function shakeTextLeft(value) {
+    Animated.timing(value,{
+      toValue:100,
+      duration:200,
+      useNativeDriver:false,
+    }).start(()=> shakeTextRight(value))
+ 
+  }
+  function shakeTextRight(value) {
+    Animated.timing(value,{
+      toValue:0,
+      duration:200,
+      useNativeDriver:false,
+  }).start()
+}
   function handlePress() {
-    navigation.navigate("Feed")
+    console.log(username, fullname, email, password)
+    console.log(animatedvalue)
+    if (username.length <= 0) {
+      shakeTextLeft(animatedvalue)
+    }
+    if (fullname.length <= 0) {
+      shakeTextLeft(animatedfull)
+    }
+    if (email.length <= 0) {
+      shakeTextLeft(animatedemail)
+    }
+    if (password.length <= 0) {
+      shakeTextLeft(animatedpass)
+    }
+    if (username.length >0 && fullname.length >0 && email.length >0 && password.length >0) {
+      axios.post(`http://${user.network}:19001/api/registeruser`, 
+      {username:username, milestones:defaultData.milestones, blurb:defaultData.blurb, 
+      password:password, friends:0, groupcount:0, email:email, fullname:fullname, 
+      src:defaultData.src, public:1, favoriteid:1})
+      .then(() => {
+        user.setUsername(username)
+        user.setEmail(email)
+        user.setFullname(fullname)
+        user.setPassword(password)
+      })
+      .catch((error)=> console.log(error))
+      navigation.navigate("Login")
+    } // todo: if username already exists
   }
 
 
@@ -20,63 +87,74 @@ const Register = () => {
     <View style={styles.loginPage}>
       <View style={styles.loginFrame}>
       <Text style={[styles.loginHeader, styles.loginText]}>Create an account</Text>
-          
           <View style={styles.signUpCredentials}>
-
-            <View style={styles.fullName}>
+          <View style={[styles.fullName]}>
+            <Animated.Text style={[styles.fullNameHeader, styles.headerTypo, 
+            {left:animatedvalue.interpolate({inputRange:[0,33,66,100], outputRange:[0,-6,6,0]})}]}>
+                Username
+             </Animated.Text>
               <View style={[styles.fullNameTextBox, styles.textPosition]} />
                 <TextInput  style={[
                   styles.fullNameFiller,
                   styles.fillerTypo,
                   styles.fillerTypo1,
                 ]}
-                onChangeText={onChangeUsernameText}
+                onChangeText={(e)=>setUsername(e)}
                 placeholder={"Type your name here"}
                 placeholderTextColor={'rgba(120, 120, 120, 1)'}
-                value={usernameText}/>
+                value={username}/>
+            </View>
 
-              <Text style={[styles.fullNameHeader, styles.headerTypo]}>
+            <View style={[styles.fullName, {marginTop:13}]}>
+            <Animated.Text style={[styles.fullNameHeader, styles.headerTypo, 
+              {left:animatedfull.interpolate({inputRange:[0,33,66,100], outputRange:[0,-6,6,0]})}]}>
                 Full name
-              </Text>
+             </Animated.Text>
+              <View style={[styles.fullNameTextBox, styles.textPosition]} />
+                <TextInput  style={[
+                  styles.fullNameFiller,
+                  styles.fillerTypo,
+                  styles.fillerTypo1,
+                ]}
+                onChangeText={(e)=>setFullname(e)}
+                placeholder={"Type your name here"}
+                placeholderTextColor={'rgba(120, 120, 120, 1)'}
+                value={fullname}/>
             </View>
 
             <View style={styles.emailAddress}>
               <View style={[styles.fullNameTextBox, styles.textPosition]} />
+                <Animated.Text style={[styles.emailHeader, styles.headerTypo, {left:animatedemail.interpolate({inputRange:[0,33,66,100], outputRange:[0,-6,6,0]})}]}>
+                  Email Address
+                </Animated.Text>
                 <TextInput  style={[
                   styles.fullNameFiller,
                   styles.fillerTypo,
                   styles.fillerTypo1,
                 ]}
-                onChangeText={onChnageEmailText}
+                onChangeText={(e)=>setEmail(e)}
                 placeholder={"Johnny Appleseed"}
                 placeholderTextColor={'rgba(120, 120, 120, 1)'}
-                value={emailText}/>
-
-              <Text style={[styles.emailHeader, styles.headerTypo]}>
-                Email Address
-              </Text>
+                value={email}/>
             </View>
 
-            <View style={[styles.password, styles.mt13]}>
+            <View style={[styles.password]}>
               <View style={[styles.boxLayout, styles.textPosition]} />
+                <Animated.Text style={[styles.passwordHeader, styles.headerTypo, {left:animatedpass.interpolate({inputRange:[0,33,66,100], outputRange:[0,-6,6,0]})}]}>
+                  Password
+                </Animated.Text>
                 <TextInput  style={[
                   styles.passwordInput,
                   styles.fillerTypo,
                   styles.fillerTypo1,
                 ]}
                 secureTextEntry={true}
-                onChangeText={onChangePasswordText}
+                onChangeText={(e)=>setPassword(e)}
                 placeholder={"*************"}
                 placeholderTextColor={'rgba(120, 120, 120, 1)'}
-                value={passwordText}/>
-      
-              <Text style={[styles.passwordHeader, styles.headerTypo]}>
-                Password
-              </Text>
+                value={password}/>
             </View>
-
           </View>
-
           <View style={styles.rememberMyAccountBox}>
             <Text style={styles.rememberAccountText}>remember my account</Text>
             <View style={styles.rememberMyAccountBoxChild} /> 
@@ -97,7 +175,6 @@ const Register = () => {
           >
           <Text style={styles.loginTextBold}> log in</Text>
           </Pressable>
-         
         </Text>
         </View>
     </View>
@@ -110,16 +187,13 @@ const styles = StyleSheet.create({
     marginTop: GlobalStyles.Margin.margin_md,
   },
   loginText: {
-
     color: GlobalStyles.Color.white,
     fontFamily: "InterBold",
-
   },
   textPosition: {
     backgroundColor: GlobalStyles.Color.gray_200,
     top: 29,
     borderRadius: GlobalStyles.Border.br_sm,
-    left: 0,
   },
   fillerTypo: {
     color: "white",
@@ -129,18 +203,17 @@ const styles = StyleSheet.create({
   },
   passwordInput: {
     top:"65%",
+    width:"100%"
   },
   fillerTypo1: {
     color: "white",
     fontWeight: "500",
-
     left:10,
     fontFamily: "Inter",
   },
   headerTypo: {
     fontSize: GlobalStyles.FontSize.size_xl,
     top: 0,
-    textAlign: "left",
     color: GlobalStyles.Color.white,
     fontFamily: "InterBold",
     position: "absolute",
@@ -164,14 +237,12 @@ const styles = StyleSheet.create({
     left:4
   },
   loginFrame: {
-    top:"30%",
+    top:"27.5%",
     justifyContent:"center",
     borderRadius: GlobalStyles.Border.br_lg,
     backgroundColor: GlobalStyles.Color.gray_500,
     minWidth: 321,
     minHeight: 238,
-
-   
     alignSelf:"center",
     position: "relative",
   },
@@ -182,20 +253,19 @@ const styles = StyleSheet.create({
     color: GlobalStyles.Color.white,
     fontFamily: "Inter",
     top:11,
-
   },
   rememberMyAccountBoxChild: {
     borderRadius: GlobalStyles.Border.br_xs,
     backgroundColor: GlobalStyles.Color.gray_100,
     width: 9,
     height: 9,
-    left: 0,
+
   },
   rememberMyAccountBox: {
     minWidth: 124,
     minHeight: 12,
     left: 36,
-    top:6
+    top:4
   },
   emailTextBox: {
     minHeight: 30,
@@ -207,12 +277,12 @@ const styles = StyleSheet.create({
   },
   fullNameFiller: {
     top: 37, 
-    left: 0,
-    maxWidth: "100%",
-    textAlign:"left"
+
+    width: "100%",
+
   },
   fullNameHeader: {
-    left: 0,
+ 
   },
   emailHeader: {
     
@@ -225,10 +295,8 @@ const styles = StyleSheet.create({
     left: "90.87%",
   },
   fullName: {
-    height: 59,
+    height: 60,
     width: 252,
-    top:0
-  
   },
   emailAddress: {
     height: 59,
@@ -241,7 +309,7 @@ const styles = StyleSheet.create({
     width: 73,
   },
   passwordHeader: {
-    left: 1,
+
   },
   vectorIcon: {
     height: "21.82%",
@@ -251,18 +319,16 @@ const styles = StyleSheet.create({
     left: "92.06%",
   },
   password: {
-    height: 55,
+    height: 56,
     width: 252,
+    marginTop: GlobalStyles.Margin.margin_md,
 
   },
   signUpCredentials: {
     alignItems: "flex-end",
     alignSelf:"center",
+    bottom:4,
     position: "relative",
-    
-
-    
-   
   },
   createAnAccountBox: {
     backgroundColor: GlobalStyles.Color.teal,
