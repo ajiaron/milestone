@@ -93,7 +93,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     }
     const handleSelect = () => {
        // console.log(image.substring(image.indexOf('/')+2, image.indexOf('b')))
-        console.log(postId)
+        console.log(image)
         setIsActive(!isActive)
     }
     const toggleMute = () => {

@@ -277,6 +277,26 @@ app.delete('/api/removelinktag', (req, res) => {
         }
     })
 })
+app.delete('/api/deletecomments', (req, res) => {
+    const postid = req.body.postid
+    db.query("DELETE FROM postcomments WHERE postid = ?", [postid], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send('linked milestones removed')
+        }
+    })
+})
+app.delete('/api/deletelikes', (req, res) => {
+    const postid = req.body.postid
+    db.query("DELETE FROM postlikes WHERE postid = ?", [postid], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send('linked milestones removed')
+        }
+    })
+})
 
 app.listen(19001, () => {
     console.log("ayo server running on port 19001")

@@ -111,6 +111,7 @@ const CreateMilestone = () => {
     const [viewPermission, setViewPermission] = useState((windowW>400)?"Friends Only":"Friends")
     const [duration, setDuration] = useState((windowW>400)?'Until Tomorrow':'Next Day')
     function handlePress() {
+        console.log(image.substring(image.indexOf('.')+1))
         console.log('Device: ', Device.deviceName)
         console.log("Width:", windowW, "Height:", windowH)
         console.log(user)
@@ -132,11 +133,31 @@ const CreateMilestone = () => {
     function handleSelection() {
         pickImage()
     }
+    const fetchContent = async (uri) => {
+        const response = await fetch(uri)
+        const blob = await response.blob()
+        return blob
+    }
+    const uploadContent = async (uri) => {
+        const content = await fetchContent(uri)
+        return Storage.put(`milestone-content-${Math.random()}.${image.substring(image.indexOf('.')+1)}`, content, {
+            level:'public',
+            contentType: 'image',
+            progressCallback(uploadProgress) {
+                console.log('progress --',uploadProgress.loaded+'/'+uploadProgress.total)
+            }
+        })
+        .then((res)=> {
+            console.log('result ---',`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`)
+            axios.post(`http://${user.network}:19001/api/postmilestones`, 
+            {title: title,src:image?`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`:'defaultmilestone', streak:0, description:description, ownerid:user.userId})
+            .then(() => {console.log('new milestone saved')})
+            .catch((error)=> console.log(error))
+        })
+        .catch((e)=>console.log(e))
+    }
     function submitMilestone() {
-        axios.post(`http://${user.network}:19001/api/postmilestones`, 
-        {title: title,src:image?image:'defaultmilestone', streak:0, description:description, ownerid:user.userId})
-        .then(() => {console.log('new milestone saved')})
-        .catch((error)=> console.log(error))
+        uploadContent(image)
         navigation.navigate("Feed")
     }
     return (

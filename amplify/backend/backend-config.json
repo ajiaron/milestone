@@ -27,6 +27,12 @@
       "service": "Cognito"
     }
   },
+  "hosting": {
+    "S3AndCloudFront": {
+      "providerPlugin": "awscloudformation",
+      "service": "S3AndCloudFront"
+    }
+  },
   "storage": {
     "s373aaff3b": {
       "dependsOn": [],

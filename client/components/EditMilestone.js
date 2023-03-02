@@ -9,6 +9,9 @@ import userContext from '../contexts/userContext'
 import axios from 'axios'
 import { ScrollView } from "react-native-gesture-handler";
 import * as ImagePicker from 'expo-image-picker'
+import { Amplify, Storage } from 'aws-amplify';
+import awsconfig from '../src/aws-exports';
+Amplify.configure(awsconfig);
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
@@ -151,11 +154,33 @@ const EditMilestone = ({route}) => {
     function handleSelection() {
         pickImage()
     }
+
+    const fetchContent = async (uri) => {
+        const response = await fetch(uri)
+        const blob = await response.blob()
+        return blob
+    }
+    const uploadContent = async (uri) => {
+        const content = await fetchContent(uri)
+        return Storage.put(`milestone-content-${Math.random()}.${image.substring(image.indexOf('.')+1)}`, content, {
+            level:'public',
+            contentType: 'image',
+            progressCallback(uploadProgress) {
+                console.log('progress --',uploadProgress.loaded+'/'+uploadProgress.total)
+            }
+        })
+        .then((res)=> {
+            console.log('result ---',`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`)
+            axios.put(`http://${user.network}:19001/api/updatemilestone`, 
+            {milestoneid: route.params.id, title: title, description:description, src:`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`})
+            .then(() => {console.log('milestone updated')})
+            .catch((error)=> console.log(error))
+        })
+        .catch((e)=>console.log(e))
+    }
+
     function submitMilestone() {
-        axios.put(`http://${user.network}:19001/api/updatemilestone`, 
-        {milestoneid: route.params.id, title: title, description:description, src:image})
-        .then(() => {console.log('milestone updated')})
-        .catch((error)=> console.log(error))
+        uploadContent(image)
         navigation.navigate("Feed")
     }
     return (

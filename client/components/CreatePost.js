@@ -72,18 +72,14 @@ const CreatePost = ({route}) => {
             }
         })
         .then((res)=> {
-            Storage.get(res.key)
-            .then((result)=> {
-                setFile(result.substring(0, result.indexOf('?')))
-                console.log('result --- ', result.substring(0, result.indexOf('?')))
-                axios.post(`http://${user.network}:19001/api/pushposts`, 
-                {idposts: postId,username:user.username?user.username:'ajiaron', caption:caption, 
-                profilepic:(user.image !== undefined)?user.image:'defaultpic', 
-                src:result.substring(0, result.indexOf('?')), date: date, ownerid:user.userId})
-                .then(() => {console.log('new post saved')})
-                .catch((error)=> console.log(error))
-            })
-            .catch((e)=>console.log(e))
+            setFile(`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`)
+            console.log('result ---',`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`)
+            axios.post(`http://${user.network}:19001/api/pushposts`, 
+            {idposts: postId,username:user.username?user.username:'ajiaron', caption:caption, 
+            profilepic:(user.image !== undefined)?user.image:'defaultpic', 
+            src:`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`, date: date, ownerid:user.userId})
+            .then(() => {console.log('new post saved')})
+            .catch((error)=> console.log(error))
         })
         .catch((e)=>console.log(e))
     }

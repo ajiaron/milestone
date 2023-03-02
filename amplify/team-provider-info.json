@@ -30,6 +30,9 @@
       },
       "storage": {
         "s373aaff3b": {}
+      },
+      "hosting": {
+        "S3AndCloudFront": {}
       }
     }
   }

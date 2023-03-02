@@ -75,6 +75,10 @@ const EditPost = ({route}) => {
         .then((response)=> console.log("post deleted")).catch(error=>console.log(error))
         axios.delete(`http://${user.network}:19001/api/removelinked`, {data: {postid:postId}})
         .then((response)=>console.log("links removed")).catch(error=>console.log(error))
+        axios.delete(`http://${user.network}:19001/api/deletecomments`, {data: {postid:postId}})
+        .then((response)=>console.log("comments removed")).catch(error=>console.log(error))
+        axios.delete(`http://${user.network}:19001/api/deletelikes`, {data: {postid:postId}})
+        .then((response)=>console.log("likes removed")).catch(error=>console.log(error))
     }
     function handlePress() {
         DeleteAlert().then((resolve)=> {
