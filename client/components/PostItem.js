@@ -1,7 +1,6 @@
 import  React, {useState, useRef, useEffect, useContext} from "react";
-import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView, Dimensions, TouchableOpacity } from "react-native";
+import { Animated, Text, StyleSheet, ActivityIndicator, View, Image, Pressable, TextInput, ScrollView, Dimensions, TouchableOpacity } from "react-native";
 import { Icon } from 'react-native-elements'
-import AppLoading from 'expo-app-loading'
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Icons from '../data/Icons.js'
 import userContext from '../contexts/userContext'
@@ -31,6 +30,9 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     const [commentCount, setCommentCount] = useState(0)
     const [isLiked, setIsLiked] = useState(liked?liked:false)
     const [likes, setLikes] = useState([])
+    const [loading, setLoading] = useState(true)
+    const animatedvalue = useRef(new Animated.Value(0)).current;
+    
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getlikes`)  
         .then((response)=> {
@@ -55,6 +57,13 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     useEffect(()=> {
         setViewable(isViewable)
     }, [isViewable])
+    function blurIn() {
+        Animated.timing(animatedvalue,{
+            toValue:100,
+            duration:200,
+            useNativeDriver:false,
+        }).start()
+    }
     function navigateProfile() {
         navigation.navigate("Profile", {id:ownerId})
     }
@@ -83,7 +92,8 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         } 
     }
     const handleSelect = () => {
-        console.log(profilePic, src)
+       // console.log(image.substring(image.indexOf('/')+2, image.indexOf('b')))
+        console.log(postId)
         setIsActive(!isActive)
     }
     const toggleMute = () => {
@@ -142,14 +152,20 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         <Pressable onPress={handleSelect}>
             <View style={[styles.postWrapper, 
                     {backgroundColor:(route.name === 'MilestonePage')?'rgba(108, 162, 183,1)':"rgba(10,10,10,1)",
-                    height:(route.name === 'MilestonePage')?windowH*(246/windowH):(fileExt === 'mov' || fileExt === 'mp4')?windowH*(526/windowH):windowH*(296/windowH)
+                    height:(route.name === 'MilestonePage')?windowH*(246/windowH):
+                    (fileExt === 'mov' || fileExt === 'mp4')?windowH*(526/windowH):windowH*(296/windowH)
                     }]}>
+                    {(loading)&&
+                        <ActivityIndicator size="large" color="#ffffff" style={{top:"47%", position:"absolute", alignSelf:"center"}}/>
+                    }
                     {(route.name === 'MilestonePage' || image !=='defaultpost')?
                     (fileExt === 'mov' || fileExt === 'mp4')? 
                         <Video isLooping shouldPlay={isActive && viewable}
                             isMuted={isMuted} 
                             source={{uri:image}}
                             resizeMode={'cover'}
+                            onLoad={()=> {setLoading(false)}}
+                            onLoadStart={()=> {setLoading(true)}}
                             style={{height:"100%", width:"100%",alignSelf:"center"}}>
                             <View style={{minWidth:20, minHeight:20, zIndex:999, alignSelf:"flex-end", bottom:10, right:13, position:"absolute"}}>
                                 <TouchableOpacity onPress={toggleMute}>
@@ -162,10 +178,14 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                             </View>
                         </Video>
                     :
-                    <Image
+                    <Animated.Image
+                        onLoad={blurIn}
+                        onLoadEnd={()=> {setLoading(false)}}
+                        onLoadStart={()=> {setLoading(true)}}
                         source={(image === 'defaultpost')?Icons[image]:{uri:image}}
                         resizeMode={'cover'}
-                        style={{height:"100%", width:"100%",alignSelf:"center", bottom:0, zIndex:1}}
+                        style={{height:"100%", width:"100%",alignSelf:"center", bottom:0, zIndex:1,
+                         opacity:animatedvalue.interpolate({inputRange:[0,100], outputRange:[0,1]})}}
                     />:null
                     } 
             </View>
@@ -188,7 +208,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                     />
                 </View>
             </Pressable>
-            {(route.name === 'MilestonePage')?      // scroll slider on milestone page
+            {(route.name === 'MilestonePage')?      // scroll slider on milestone page; doesn't really work well
                 (index !== undefined && count < 4)?
                 <View style={{flexDirection:"row", 
                 alignSelf:"center", justifyContent:"space-around",
@@ -214,7 +234,9 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         </View>
         <View style={[styles.commentsContainer, {minHeight:(route.name === 'MilestonePage')?50:(route.name === "Post")?
         (windowH>900)?75:60:80}]}>
-            <Text style={[styles.commentsContent]}>{caption}</Text>
+            <Text numberOfLines={(route.name !== 'Post')?2:0} style={[styles.commentsContent]}>
+                {caption}
+            </Text>
             {(route.name === "Feed" || route.name === "MilestonePage")?
             <Pressable onPress={(commentCount>0 || likes.length>0)?handleComment:()=> navigation.navigate("Post", {item:data, comments:false})}>
             <Text style={[styles.viewPostLink]}>

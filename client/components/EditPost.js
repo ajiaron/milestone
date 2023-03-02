@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import { Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, Switch, Dimensions, Alert } from "react-native";
+import { Text, ActivityIndicator, StyleSheet, View, Image, FlatList, Pressable, TextInput, Switch, Dimensions, Alert } from "react-native";
 import * as Device from 'expo-device'
 import { Icon } from 'react-native-elements'
 import AppLoading from 'expo-app-loading'
@@ -33,6 +33,7 @@ const EditPost = ({route}) => {
     const user = useContext(userContext)
     const [postId, setPostId] = useState(route.params.postId)
     const [confirmation, setConfirmation] = useState(false)
+    const [loading, setLoading] = useState(true)
 
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getlinkedmilestones`)  
@@ -127,13 +128,18 @@ const EditPost = ({route}) => {
                             value={caption}
                             />
                     </View>           
+                    {(loading)&&
+                        <ActivityIndicator size="small" color="#ffffff" style={{left:windowW*(0.125), bottom:0.5, zIndex:99}}/>
+                    }
                     {(fileExt === 'mov' || fileExt === 'mp4')?
                         <Video isLooping shouldPlay
                         style={(imgType==="front")?[styles.newPostImageContainer, {transform:[{rotateY:'180deg'}]}]:styles.newPostImageContainer}
                         resizeMode="cover"
+                        onLoad={()=> {setLoading(false)}}
                         source={{uri:img}}/>
                     :
                         <Image 
+                        onLoadEnd={()=> {setLoading(false)}}
                         style={(imgType==="front")?[styles.newPostImageContainer, {transform:[{rotateY:'180deg'}]}]:styles.newPostImageContainer}
                         resizeMode="cover"
                         source={route.params.uri?{uri:img}:require('../assets/samplepost.png')}

@@ -54,7 +54,9 @@ const Footer = ({disable}) => {
                     />
                 </View>
                 </Pressable>
-                <Pressable onPress={handlePress}>
+                <Pressable onPress={()=>navigation.navigate("TakePost", {
+                    previous_screen: routes[routes.length - 1]
+                    })}>
                     <View styles={styles.createPostIcon}>
                         <Icon
                             name='add-circle-outline'
@@ -63,9 +65,7 @@ const Footer = ({disable}) => {
                         />
                     </View>
                 </Pressable>
-                <Pressable onPress={()=>navigation.navigate("TakePost", {
-                    previous_screen: routes[routes.length - 1]
-                    })}>
+                <Pressable onPress={()=>navigation.navigate("Settings")}>
                     <View styles={styles.friendsIcon}>
                         <Icon 
                             style={styles.friendsIcon}

@@ -342,7 +342,7 @@ const Post = ({navigation, route}) => {
                 liked={route.params.item.liked} isLast={false} isViewable={true} onToggleComment={()=>setCommentToggle(!commentToggle)}/>
             </View>
 
-            <View style={{marginTop:windowH*(14/windowH)}}>
+            <View style={{marginTop:windowH*0.02}}>
                 <View style={[(windowH>900)?styles.milestoneHeaderContainerLarge:styles.milestoneHeaderContainer]}>
                 {milestoneList.length > 0?
                     <View style={{flexDirection:"row"}}>

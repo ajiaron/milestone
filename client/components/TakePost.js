@@ -83,11 +83,8 @@ const TakePost = ({route}) => {
         pickImage()
     }
     function backPress() {
-        console.log(prevroute)
-        if (prevroute === "CreatePost" || prevroute === "EditPost") {
-            navigation.navigate("Feed")
-        }
-        navigation.navigate(prevroute=="Post"||prevroute=="CreatePost"||prevroute=="EditPost"||prevroute=="Profile"?"Feed":prevroute)
+        navigation.goBack()
+      //  navigation.navigate(prevroute=="Post"||prevroute=="CreatePost"||prevroute=="EditPost"?"Feed":prevroute)
     }
     function handlePress() {
         console.log("Device: ", Device.isDevice ? Device.modelName:"Simulator")

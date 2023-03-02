@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import { Animated, Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, Switch, Dimensions, TouchableOpacity } from "react-native";
+import { Animated, ActivityIndicator, Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, Switch, Dimensions, TouchableOpacity } from "react-native";
 import * as Device from 'expo-device'
 import { Icon } from 'react-native-elements'
 import { useNavigation } from "@react-navigation/native";
@@ -64,7 +64,7 @@ const ProgressView = ({count, postlist, month, monthname, monthnumber, year}) =>
         )
     }
     return (
-        <View style={{flex:1, paddingLeft:windowW*0.075, paddingRight:windowW*0.075, marginTop:6}}>
+        <View style={{flex:1, paddingLeft:windowW*0.075, paddingRight:windowW*0.075, marginTop:windowH*0.02}}>
             <View style={styles.milestoneDatesHeader}>
                     <Text style={styles.todaysMilestoneHeader}>
                         {`⚡ Milestone Progress`}   
@@ -103,6 +103,8 @@ const MilestonePage = ({route}) => {
     const [streak, setStreak] = useState(0)
     const [isViewable, setIsViewable] = useState(0)
     const [favorite, setFavorite] = useState(false)
+    const [loading, setLoading] = useState(true)
+    const animatedvalue = useRef(new Animated.Value(0)).current;
     var fileExt = (image !== undefined)?image.toString().split('.').pop():'calender'
     const viewabilityConfig = {
         itemVisiblePercentThreshold:30
@@ -132,7 +134,6 @@ const MilestonePage = ({route}) => {
     }
     const [monthList, setMonthList] = useState(getMonths())
     function pressShare() {
-       // console.log(title, image, streak, milestoneId, description, fileExt)
        console.log(ownerId)
     }
     function handlePress() {
@@ -147,6 +148,14 @@ const MilestonePage = ({route}) => {
             .catch((error)=> console.log(error))
         }
     }
+    const slideUp=() =>{
+        Animated.timing(animatedvalue,{
+            toValue:100,
+            duration:300,
+            delay:50,
+            useNativeDriver:false,
+        }).start(()=>setLoading(false))
+    }
     useEffect(()=> {
         if (route) {
             setMilestoneId(route.params.milestone.id)
@@ -158,7 +167,9 @@ const MilestonePage = ({route}) => {
             setStreak(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].streak)
             setDescription(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].description)
             setOwnerId(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].ownerId)
-        }).catch(error => console.log(error))
+        })
+        .then(()=>slideUp())
+        .catch(error => console.log(error))
     }, [])
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getlinkedmilestones`)  // if this throws an error, replace 10.0.0.160 with localhost
@@ -212,7 +223,13 @@ const MilestonePage = ({route}) => {
     }
     return (
         <View style={[styles.milestonePage]}>
-            <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
+            {(loading)&&
+            <Animated.View style={{width:"100%", height:animatedvalue.interpolate({inputRange:[0,100], outputRange:[windowH-94, 0]})}}>
+             <ActivityIndicator size="large" color="#FFFFFF" style={{top:"50%", position:"absolute", alignSelf:"center"}}/>
+            </Animated.View>
+            }            
+            <Animated.ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}
+             style={{ height:animatedvalue.interpolate({inputRange:[0,100], outputRange:[0, windowH-94]})}}>
                 <View style={[styles.headerContent, {marginTop:windowH*((windowH>900?70:76)/windowH)}]}>
             
                         <View style={styles.headerContentWrapper}>
@@ -297,7 +314,8 @@ const MilestonePage = ({route}) => {
                         </View>
                     </Pressable>:null
                 }
-            </ScrollView>         
+            </Animated.ScrollView>   
+     
             <Footer/>
         </View>
     )

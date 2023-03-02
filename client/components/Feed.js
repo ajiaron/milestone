@@ -1,5 +1,5 @@
 import  React, {useState, useEffect, useContext, useCallback, useRef} from "react";
-import { Text, StyleSheet, View, Image, Pressable, ScrollView, FlatList, Dimensions, RefreshControl} from "react-native";
+import {Animated, Text, ActivityIndicator, StyleSheet, View, Image, Pressable, ScrollView, FlatList, Dimensions, RefreshControl} from "react-native";
 import { Icon } from 'react-native-elements'
 import { useNavigation } from "@react-navigation/native";
 import Footer from './Footer'
@@ -17,20 +17,29 @@ const Feed = ({route}) => {
     const [postFeed, setPostFeed]= useState(postData)
     const [refreshing, setRefreshing] = React.useState(false);
     const [isViewable, setIsViewable] = useState([0])
+    const [loading, setLoading] = useState(true)
     const month = new Date().toLocaleString("en-US", { month: "short" })
     const day = new Date().getDate()
     const currentDate = month + ' ' + day
-
+    const animatedvalue = useRef(new Animated.Value(0)).current;
+    const slideUp=() =>{
+        Animated.timing(animatedvalue,{
+            toValue:100,
+            delay:50,
+            duration:300,
+            useNativeDriver:false,
+        }).start(()=>setLoading(false))
+    }
     const onRefresh = useCallback(() => {
         console.log(user)
         setRefreshing(true);
         setTimeout(() => {
         setRefreshing(false);
         }, 800);
-    }, []);
+    }, [user]);
 
     const viewabilityConfig = {
-        itemVisiblePercentThreshold:1
+        itemVisiblePercentThreshold:70 // lower this to make videos render sooner when on screen
     }
     const onViewableItemsChanged = ({
         viewableItems, changed
@@ -46,6 +55,7 @@ const Feed = ({route}) => {
         .then((response)=> {
             setPostFeed(response.data)
         }).catch(error => console.log(error))
+        .then(()=>slideUp())
     }, [route, refreshing])
 
     const renderPost = ({ item }) => {
@@ -67,8 +77,14 @@ const Feed = ({route}) => {
   }
     return (
       <View style={styles.feedPage}>
+        
           <View style={styles.feedContainer}>
-               <FlatList 
+          {(loading)&&
+            <Animated.View style={{zIndex:999,width:"100%", height:animatedvalue.interpolate({inputRange:[0,100], outputRange:[windowH, 0]})}}>
+             <ActivityIndicator size="large" color="#FFFFFF" style={{top:"50%", position:"absolute", alignSelf:"center"}}/>
+            </Animated.View>
+          }
+                <FlatList 
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 }
@@ -83,7 +99,7 @@ const Feed = ({route}) => {
                 renderItem={renderPost} 
                 keyExtractor={(item, index)=>index}>
             </FlatList> 
-            </View>
+        </View>
         <Footer/>
       </View>
     );

@@ -106,7 +106,6 @@ const Profile = ({route}) => {
     return (
         <View style={[styles.profilePage]}>
             <View style={[styles.userInfoContainer]}>
-    
                     <Pressable onPress={handleTest}>
                         <Image
                         style={{width:windowW*(60/windowW), height:windowH*(60/windowH), alignSelf:"center", borderRadius:60}}
@@ -116,7 +115,6 @@ const Profile = ({route}) => {
                         {uri:profilePic}:{uri:user.image}}
                         />
                      </Pressable>
-            
                 <View style={styles.userDetails}>
                     <Text style={styles.usernameText}>@{(!owner && userData !== undefined)?userData.name:
                     user.username?user.username:"ajiaron"}</Text>
@@ -140,11 +138,11 @@ const Profile = ({route}) => {
                         onPress={handleRequest}>
                         <Animated.View style={[styles.addFriendContainer, 
                             {backgroundColor:animatedvalue.interpolate({inputRange:[0,100], outputRange:["rgba(0, 82, 63, 1)","#565454"]})
-                               /* backgroundColor:(requested)?"#565454":"rgba(0, 82, 63, 1)"*/}]}>
+                            }]}>
                             <Animated.Text style={[styles.addFriendText, 
                                 {fontSize:(windowW>400)?12.5:12.5, 
                                  color:animatedvalue.interpolate({inputRange:[0,100], outputRange:["white","rgba(10,10,10,1)"]})
-                                /*color:(requested)?"rgba(10,10,10,1)":"white"*/}]}>
+                                }]}>
                                 {(requested)?"Requested":'Request'}
                             </Animated.Text>
                         </Animated.View>

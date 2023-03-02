@@ -13,7 +13,6 @@ import { Amplify, Storage } from 'aws-amplify';
 import awsconfig from '../src/aws-exports';
 Amplify.configure(awsconfig);
 
-
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
