@@ -10,10 +10,19 @@ const db = mysql.createConnection({
     host:'localhost',
     password:'password',
     charset:'utf8mb4',
-    database:'milestoneDB',
+    database:'milestone_db',
  }
 )
 
+app.get('/api/testconnect', (req, res)=> {
+    db.query('SELECT * FROM users', (err, result)=> {
+        if (err) {
+            res.send(false)
+        } else {
+            res.send(true)
+        }
+    })
+})
 app.get('/api/getusers', (req, res)=> {
     db.query('SELECT * FROM users', (err, result)=> {
         if (err) {

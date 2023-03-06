@@ -1,19 +1,25 @@
 import  React, {useState, useContext} from "react";
-import { Text, StyleSheet, View, Image, Pressable, TextInput} from "react-native";
-import AppLoading from 'expo-app-loading'
-import { useFonts, Inter_400Black } from '@expo-google-fonts/inter';
+import { Text, StyleSheet, View, Image, Pressable, TextInput, useColorScheme} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
 import { CheckBox } from "react-native-elements";
 import axios from 'axios'
 import userContext from '../contexts/userContext'
+import {
+  useAuthenticator,
+  Authenticator,
+  useTheme,
+  ThemeProvider, 
+  defaultDarkModeOverride
+} from '@aws-amplify/ui-react-native';
+import { SignIn } from "@aws-amplify/ui-react-native/dist/Authenticator/Defaults";
 
 const Login = () => {
   const navigation = useNavigation();
   const [userData, setUserData] = useState()
   const [passwordText, onChangePasswordText] = useState("")
   const user = useContext(userContext)
-
+  const colorMode = useColorScheme()
   function handlePress() {
     axios.get(`http://${user.network}:19001/api/getusers`)  // if this throws an error, replace 10.0.0.160 with localhost
     .then((response)=> {
@@ -28,8 +34,16 @@ const Login = () => {
     // authenticate here
   }
 
+  function SignOutButton() {
+    const { signOut } = useAuthenticator();
+    return <Pressable onPress={()=> signOut}></Pressable>
+  }
+  const {
+    tokens: { colors },
+  } = useTheme();
   return (
     <View style={styles.loginPage}>
+
       <View style={styles.loginFrame}>
       <Text style={[styles.loginHeader, styles.loginText]}>Login</Text>
           <View style={styles.signUpCredentials}>
@@ -65,7 +79,7 @@ const Login = () => {
               </Text>
             </View>
           </View>
-          <View style={styles.rememberMyAccountBox}>
+          <View style={[styles.rememberMyAccountBox,{ marginTop:2}]}>
             <Text style={styles.rememberAccountText}>remember my account</Text>
             <Pressable>
               <View style={styles.rememberMyAccountBoxChild} /> 
@@ -80,6 +94,22 @@ const Login = () => {
                 Login
               </Text>
           </Pressable>
+          
+
+          <Pressable
+              style={[styles.boxLayout,
+              {alignSelf:'center',backgroundColor:'#101010', minHeight:27,
+              justifyContent:"center", marginTop:16, borderRadius:4, borderColor:"#fff",
+              borderWidth:1, borderStyle:'dashed'
+            }]}
+             // onPress={handlePress}
+              >
+              <Text style={[{alignSelf:"center",color:"#FFF", fontFamily:"Inter", fontSize:12, textAlign:"center", top:0.25}]}>
+                Login with AWS
+              </Text>
+          </Pressable>
+   
+
 
           <Text style={styles.newAccountText}>don't have an account? 
           <Pressable
@@ -90,6 +120,7 @@ const Login = () => {
           </Pressable>
         </Text>
         </View>
+ 
     </View>
    );
 }
@@ -159,7 +190,7 @@ const styles = StyleSheet.create({
     borderRadius: GlobalStyles.Border.br_lg,
     backgroundColor: GlobalStyles.Color.gray_500,
     minWidth: 321,
-    minHeight: 238,
+    height: 280,
     paddingTop:10,
     alignSelf:"center",
     position: "relative",
@@ -253,7 +284,7 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     alignSelf:"center",
-    marginTop:16
+    marginTop:18
   },
   backArrowIcon: {
     top: 49,

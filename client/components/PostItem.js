@@ -153,7 +153,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
             <View style={[styles.postWrapper, 
                     {backgroundColor:(route.name === 'MilestonePage')?'rgba(108, 162, 183,1)':"rgba(10,10,10,1)",
                     height:(route.name === 'MilestonePage')?windowH*(246/windowH):
-                    (fileExt === 'mov' || fileExt === 'mp4')?windowH*(526/windowH):windowH*(296/windowH)
+                    (fileExt === 'mov' || fileExt === 'mp4')?windowH*(526/windowH):windowW
                     }]}>
                     {(loading)&&
                         <ActivityIndicator size="large" color="#ffffff" style={{top:"47%", position:"absolute", alignSelf:"center"}}/>
@@ -185,7 +185,8 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                         source={(image === 'defaultpost')?Icons[image]:{uri:image}}
                         resizeMode={'cover'}
                         style={{height:"100%", width:"100%",alignSelf:"center", bottom:0, zIndex:1,
-                         opacity:animatedvalue.interpolate({inputRange:[0,100], outputRange:[0,1]})}}
+                        borderRadius:(route.name !== 'MilestonePage')?9:0,
+                        opacity:animatedvalue.interpolate({inputRange:[0,100], outputRange:[0,1]})}}
                     />:null
                     } 
             </View>
@@ -234,7 +235,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         </View>
         <View style={[styles.commentsContainer, {minHeight:(route.name === 'MilestonePage')?50:(route.name === "Post")?
         (windowH>900)?75:60:80}]}>
-            <Text numberOfLines={(route.name !== 'Post')?2:0} style={[styles.commentsContent]}>
+            <Text numberOfLines={(route.name !== 'Post')?2:0} style={[styles.commentsContent, {width:windowW*0.89}]}>
                 {caption}
             </Text>
             {(route.name === "Feed" || route.name === "MilestonePage")?
@@ -262,7 +263,11 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                 </Text>
             </Pressable>
             :
-            null
+            <Pressable onPress={handleComment}>
+                <Text style={[styles.viewPostLink, {fontSize:11.5}]}>
+                    Be the {<Text style={[styles.viewPostLink, {fontFamily:'Inter'}]}>first</Text>} to comment on {username}'s post
+                </Text>
+            </Pressable>
         }
         </View>
         {isLast?<View style={{marginBottom:48}}/>:null}

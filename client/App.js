@@ -1,11 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react"
-import AppLoading from 'expo-app-loading'
-import * as Font from 'expo-font'
 import { FlatList, StyleSheet, Text, View, Button } from 'react-native';
 import 'react-native-gesture-handler'
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import * as SplashScreen from 'expo-splash-screen'
 import { useFonts } from 'expo-font'
 import Landing from './components/Landing'
 import Login from './components/Login'

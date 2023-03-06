@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "milestonenative",
-    "slug": "milestonenative",
+    "slug": "milestone",
     "version": "1.0.0",
     "sdkVersion": "47.0.0",
     "platforms": [],
@@ -10,6 +10,11 @@
     },
     "ios": {
       "bundleIdentifier": "com.ajiaron.milestonenative"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "41d2feac-8562-4d40-86e8-406693845507"
+      }
     }
   }
 }

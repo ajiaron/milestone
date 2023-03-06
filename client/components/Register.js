@@ -1,6 +1,5 @@
 import  React, {useState, useEffect, useRef, useContext} from "react";
 import { Animated, Text, StyleSheet, View, Image, Pressable, TextInput, Dimensions} from "react-native";
-import AppLoading from 'expo-app-loading'
 import userContext from '../contexts/userContext'
 import { useFonts, Inter_400Black } from '@expo-google-fonts/inter';
 import { useNavigation } from "@react-navigation/native";

@@ -2,7 +2,6 @@ import  React, {useState, useEffect, useContext, useRef} from "react";
 import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView, FlatList, Dimensions, Animated } from "react-native";
 import { Icon } from 'react-native-elements'
 import Icons from '../data/Icons.js'
-import AppLoading from 'expo-app-loading'
 import { useNavigation, useRoute } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
 import Footer from './Footer'
@@ -24,7 +23,7 @@ const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentL
     const slideup = () => {
         setToggled(true)
         Animated.timing(animatedvalue,{
-            toValue:(mediaType === 'mov')?(windowH > 900)?windowH*.83:windowH*.78:(windowH > 900)?windowH*.62:windowH*.58,
+            toValue:(mediaType === 'mov')?(windowH > 900)?windowH*.83:windowH*.78:(windowH > 900)?windowH*.8:windowH*.66,
             duration:300,
             useNativeDriver:false,
         }).start()
@@ -171,7 +170,7 @@ const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentL
             > 
                 <View style={{paddingBottom:(mediaType === 'mov')?14:0,
                 flexDirection:"row", alignItems:"center", flex:"1", paddingLeft:20, paddingRight:20, backgroundColor:"rgba(21,21,21,1)"}}>
-                <TextInput style={[styles.commentText,{flex:1, top:(!toggled)?0.5:(windowH>900)?2:2.25}]} 
+                <TextInput style={[styles.commentText,{flex:1, bottom:(!toggled)?2:(windowH>900)?-2:-2.25}]} 
                 scrollEnabled={true}
                 readOnly={toggled}
                 onPressIn={(animatedvalue === 0 || !toggled)?handleToggle:null}
@@ -182,7 +181,7 @@ const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentL
                 />
                 <Pressable onPress={()=>handleSubmit(comment)}>  
                     <Icon 
-                        style={{alignSelf:"center", right:0, top:(!toggled)?0:(windowH>900)?1:1.25}}
+                        style={{alignSelf:"center", right:0, bottom:(!toggled)?2:(windowH>900)?-1.75:-1.25}}
                         name={(comment.length>0)?'send':'clear'}
                         color='rgba(130, 130, 130, 1)'
                         size={(windowH>900)?22:22}
@@ -217,13 +216,13 @@ const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentL
                 <View style={{flexDirection:"row", alignItems:"center", flex:"1", paddingLeft:20, paddingRight:20, backgroundColor:"rgba(21,21,21,1)"}}>                 
                     <Pressable style={{height:windowH*(46/windowH),flexDirection:"row",flex:1}} 
                     onPressIn={(animatedvalue === 0 || !toggled)?handleToggle:null}>
-                        <Text style={{alignSelf:"center", fontSize:17.5,color:"white", fontFamily:"InterBold",top:(!toggled)?0:(windowH>900)?2:2.25 }}>
+                        <Text style={{alignSelf:"center", fontSize:17.5,color:"white", fontFamily:"InterBold",bottom:(!toggled)?2:(windowH>900)?-2:-2.25 }}>
                             Likes and Users
                         </Text>
                     </Pressable>
                     <Pressable onPressIn={(animatedvalue === 0 || !toggled)?handleToggle:slidedown}>
                         <Icon 
-                            style={{alignSelf:"center", right:0, top:(!toggled)?0:(windowH>900)?1:1.4}}
+                            style={{alignSelf:"center", right:0, bottom:(!toggled)?2:(windowH>900)?-1.2:-1.5}}
                             name={(toggled)?'clear':'keyboard-arrow-up'}
                             color='rgba(130, 130, 130, 1)'
                             size={(toggled)?(windowH>900)?22:22:(windowH>900)?28:28}

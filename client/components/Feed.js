@@ -13,7 +13,6 @@ const windowH = Dimensions.get('window').height
 const Feed = ({route}) => {
     const user = useContext(userContext)
     const postData = require('../data/PostData.json')
-    const [connection, setConnection] = useState()
     const [postFeed, setPostFeed]= useState(postData)
     const [refreshing, setRefreshing] = React.useState(false);
     const [isViewable, setIsViewable] = useState([0])
@@ -51,7 +50,7 @@ const Feed = ({route}) => {
     const viewabilityConfigCallbackPairs = useRef([{ viewabilityConfig, onViewableItemsChanged }])
 
     useEffect(()=> {
-        axios.get(`http://${user.network}:19001/api/getposts`)  // if this throws an error, replace 10.0.0.160 with localhost
+        axios.get(`http://ec2-13-52-215-193.us-west-1.compute.amazonaws.com:19001/api/getposts`)  // if this throws an error, replace 10.0.0.160 with localhost
         .then((response)=> {
             setPostFeed(response.data)
         }).catch(error => console.log(error))

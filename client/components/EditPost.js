@@ -2,7 +2,6 @@ import React, {useState, useEffect, useContext} from "react";
 import { Text, ActivityIndicator, StyleSheet, View, Image, FlatList, Pressable, TextInput, Switch, Dimensions, Alert } from "react-native";
 import * as Device from 'expo-device'
 import { Icon } from 'react-native-elements'
-import AppLoading from 'expo-app-loading'
 import { useNavigation } from "@react-navigation/native";
 import Footer from './Footer'
 import MilestoneTag from "./MilestoneTag";

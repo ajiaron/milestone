@@ -1,7 +1,6 @@
 import  React, {useState} from "react";
 import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView, Dimensions } from "react-native";
 import { Icon } from 'react-native-elements'
-import AppLoading from 'expo-app-loading'
 import { useNavigation } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
 

@@ -5,9 +5,9 @@ import userContext from '../contexts/userContext'
 import GlobalStyles from "../styles/GlobalStyles";
 import RadialGradient from 'react-native-radial-gradient';
 import { useFonts, Inter_400Black } from '@expo-google-fonts/inter';
-import AppLoading from 'expo-app-loading'
 import * as Network from 'expo-network'
 import Constants from 'expo-constants';
+import axios from 'axios'
 
 const windowW= Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
@@ -30,13 +30,18 @@ const LogoGradient = () => {
 const Landing = () => {
   const navigation = useNavigation();
   const user = useContext(userContext);
-
   useEffect(()=> {
-    var connection = Constants.expoConfig.hostUri.substring(0,Constants.expoConfig.hostUri.indexOf(':'))
-    user.setNetwork(connection)
+    axios.get(`http://ec2-13-52-215-193.us-west-1.compute.amazonaws.com:19001/api/testconnect`)
+    .then((response)=> {
+      if (response) {
+        user.setNetwork('ec2-13-52-215-193.us-west-1.compute.amazonaws.com')
+      }
+    }).catch(()=>
+     user.setNetwork(Constants.expoConfig.hostUri.substring(0,Constants.expoConfig.hostUri.indexOf(':'))))
   }, [])
+
   function handlePress() {
-    navigation.navigate('Register')
+    navigation.navigate("Register")
   }
   return (
     <View style={styles.landingPage}>

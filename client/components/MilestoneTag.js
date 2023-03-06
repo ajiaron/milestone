@@ -2,7 +2,6 @@ import  React, {useState, useEffect, useRef, useContext} from "react";
 import { Text, StyleSheet, View, Image, Pressable, PixelRatio, TouchableOpacity, Dimensions, Animated } from "react-native";
 import Icons from '../data/Icons.js'
 import { Icon } from 'react-native-elements'
-import AppLoading from 'expo-app-loading'
 import { useNavigation, useRoute, NavigationActions } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
 import userContext from '../contexts/userContext'

@@ -8,7 +8,6 @@ import PostItem from "./PostItem";
 import Icons from '../data/Icons.js'
 import userContext from '../contexts/userContext'
 import axios from 'axios'
-import { ScrollView } from "react-native-gesture-handler";
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height

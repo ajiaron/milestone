@@ -2,7 +2,6 @@ import React, {useState, useEffect, useContext, useRef} from "react";
 import { Text, StyleSheet, View, Image, Pressable, SafeAreaView, Dimensions, TouchableOpacity } from "react-native"
 import * as Device from 'expo-device'
 import { Icon } from 'react-native-elements'
-import AppLoading from 'expo-app-loading'
 import { useNavigation, useRoute } from "@react-navigation/native"
 import Footer from './Footer'
 import { Camera, CameraType } from 'expo-camera'
@@ -53,7 +52,7 @@ const TakePost = ({route}) => {
         })
         if (!result.canceled) {
         //  const asset = await MediaLibrary.createAssetAsync(result.assets[0].uri)  // get local uri instead of cache uri
-            console.log(result)
+            console.log(result.assets[0].height)
             setImage(result.assets[0].uri)
             setPhoto(result.assets[0].uri)
             setAsset(result.assets[0].type)
@@ -268,7 +267,6 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(28, 28, 28, 1)",
         minWidth:windowW,
         minHeight:windowH,
-        overflow:"scroll",
         flex:1,
         alignItems:"center",
         justifyContent:"center"

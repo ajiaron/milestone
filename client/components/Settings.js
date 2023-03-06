@@ -3,7 +3,6 @@ import { Text, StyleSheet, View, Image, ScrollView, Pressable, TextInput, Switch
 import * as Device from 'expo-device'
 import { Icon } from 'react-native-elements'
 import * as ImagePicker from 'expo-image-picker'
-import AppLoading from 'expo-app-loading'
 import { useNavigation } from "@react-navigation/native";
 import Footer from './Footer'
 import Icons from '../data/Icons.js'
