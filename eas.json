@@ -4,14 +4,14 @@
   },
   "build": {
     "development": {
-      "distribution": "internal",
-      "developmentClient":true,
+      "distribution": "store",
       "android": {
         "gradleCommand": ":app:assembleDebug"
       },
       "ios": {
-        "buildConfiguration": "Debug",
-        "image":"latest"
+        "buildConfiguration": "Release",
+        "image":"latest",
+        "provisioningProfilePath":"../milestonenative.mobileprovision"
       }
     },
     "preview": {
