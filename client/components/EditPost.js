@@ -289,21 +289,21 @@ const styles = StyleSheet.create({
     milestoneListHeader: {
         maxWidth:windowW * 0.8,
         height: windowH * 0.05,
-        alignSelf:"left",
+        left:0,
     },
     milestoneHeaderText: {
         fontFamily:"InterBold",
         left:2,
         fontSize:11,
         color:"rgba(195, 191, 191, 1)",
-        alignSelf:"left"
+        alignSelf:"flex-start"
     },
     postHeaderText: {
         fontFamily:"InterBold",
         left:0,
         fontSize:11,
         color:"rgba(195, 191, 191, 1)",
-        alignSelf:"left",
+        alignSelf:"flex-start",
     },
     switchContainer: {
         minWidth: windowW*0.8,

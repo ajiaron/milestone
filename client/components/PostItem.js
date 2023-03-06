@@ -70,9 +70,17 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     function handleComment() {
         if (route.name ==="Post") {
             onToggleComment()
-        } else {
+        } 
+        else {
+            navigation.popToTop();
             navigation.navigate("Post", {item:data, comments:true})
         }
+    }
+    function handleNavigate() {
+        if (route.name === "MilestonePage"){
+            navigation.popToTop()
+        }
+        navigation.navigate("Post", {item:data, comments:false})
     }
     const handleEdit = () => {
         navigation.navigate("EditPost", {uri:image, postId:postId, caption:caption})
@@ -239,7 +247,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                 {caption}
             </Text>
             {(route.name === "Feed" || route.name === "MilestonePage")?
-            <Pressable onPress={(commentCount>0 || likes.length>0)?handleComment:()=> navigation.navigate("Post", {item:data, comments:false})}>
+            <Pressable onPress={(commentCount>0 || likes.length>0)?handleComment:handleNavigate}>
             <Text style={[styles.viewPostLink]}>
                 {(commentCount>0)?
                 `View ${commentCount}${(commentCount>1)?" comments":" comment"}${(likes.length>0)?` & ${likes.length}${likes.length>1?" likes":" like"}` :''}`

@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
         height:(windowH*0.0756)*0.4285,
         flex:1,
         flexDirection:"row",
-        alignItems:"left",
+   
     },
     groupIconContainer: {
         width:(windowW*0.082),
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
         alignSelf:"center"
     },
     groupContext: {
-        textAlign:"left",
+        left:0,
         width:windowW*0.52,
         top:-1,
         justifyContent:"center",

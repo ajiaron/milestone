@@ -211,8 +211,7 @@ const styles = StyleSheet.create({
         backgroundColor:"rgba(10, 10, 10, 1)"
     },
     profileNameWrapper: {
-        alignItems:"left",
-        textAlign:"left",
+        alignItems:"flex-start",
         borderRadius:15,
         backgroundColor:"rgba(10, 10, 10, 1);",
         width:windowW*0.8,
@@ -329,8 +328,7 @@ const styles = StyleSheet.create({
     },
     userDetails: {
         flex:1,
-        textAlign:"left",
-        alignItems:"left",
+        alignItems:"flex-start",
         left:14,   
         top:1
     },

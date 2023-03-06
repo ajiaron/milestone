@@ -169,8 +169,8 @@ const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentL
                 scrollEnabled={toggled && scrollable}
             > 
                 <View style={{paddingBottom:(mediaType === 'mov')?14:0,
-                flexDirection:"row", alignItems:"center", flex:"1", paddingLeft:20, paddingRight:20, backgroundColor:"rgba(21,21,21,1)"}}>
-                <TextInput style={[styles.commentText,{flex:1, bottom:(!toggled)?2:(windowH>900)?-2:-2.25}]} 
+                flexDirection:"row", alignItems:"center", flex:1, paddingLeft:20, paddingRight:20, backgroundColor:"rgba(21,21,21,1)"}}>
+                <TextInput style={[styles.commentText,{flex:1, bottom:(!toggled)?2:(windowH>900)?-2:0}]} 
                 scrollEnabled={true}
                 readOnly={toggled}
                 onPressIn={(animatedvalue === 0 || !toggled)?handleToggle:null}
@@ -181,7 +181,7 @@ const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentL
                 />
                 <Pressable onPress={()=>handleSubmit(comment)}>  
                     <Icon 
-                        style={{alignSelf:"center", right:0, bottom:(!toggled)?2:(windowH>900)?-1.75:-1.25}}
+                        style={{alignSelf:"center", right:0, bottom:(!toggled)?2:(windowH>900)?-1.75:0}}
                         name={(comment.length>0)?'send':'clear'}
                         color='rgba(130, 130, 130, 1)'
                         size={(windowH>900)?22:22}
@@ -213,7 +213,7 @@ const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentL
              scrollEventThrottle={0}
              scrollEnabled={toggled && scrollable}
              > 
-                <View style={{flexDirection:"row", alignItems:"center", flex:"1", paddingLeft:20, paddingRight:20, backgroundColor:"rgba(21,21,21,1)"}}>                 
+                <View style={{flexDirection:"row", alignItems:"center", flex:1, paddingLeft:20, paddingRight:20, backgroundColor:"rgba(21,21,21,1)"}}>                 
                     <Pressable style={{height:windowH*(46/windowH),flexDirection:"row",flex:1}} 
                     onPressIn={(animatedvalue === 0 || !toggled)?handleToggle:null}>
                         <Text style={{alignSelf:"center", fontSize:17.5,color:"white", fontFamily:"InterBold",bottom:(!toggled)?2:(windowH>900)?-2:-2.25 }}>
@@ -222,7 +222,7 @@ const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentL
                     </Pressable>
                     <Pressable onPressIn={(animatedvalue === 0 || !toggled)?handleToggle:slidedown}>
                         <Icon 
-                            style={{alignSelf:"center", right:0, bottom:(!toggled)?2:(windowH>900)?-1.2:-1.5}}
+                            style={{alignSelf:"center", right:0, bottom:(!toggled)?2:(windowH>900)?-1.2:-2.5}}
                             name={(toggled)?'clear':'keyboard-arrow-up'}
                             color='rgba(130, 130, 130, 1)'
                             size={(toggled)?(windowH>900)?22:22:(windowH>900)?28:28}
@@ -475,7 +475,7 @@ const styles = StyleSheet.create({
         fontFamily:"Inter",
         fontSize:13,
         color:"#FFF",
-        height:windowH*(46/windowH),
+        height:windowH*(48/windowH),
     },
     footerPosition: {
         position:"absolute",

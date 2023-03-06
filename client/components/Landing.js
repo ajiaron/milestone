@@ -139,7 +139,6 @@ const styles = StyleSheet.create({
 
   descriptionLayout: {
     width: 254,
-    textAlign:'left',
     justifyContent:'center',
     alignContent:'center',
     alignSelf:'center',

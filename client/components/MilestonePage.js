@@ -384,15 +384,13 @@ const styles = StyleSheet.create({
         paddingLeft:22,
         paddingBottom:18,
         paddingRight:22,
-        textAlign:"left",
-        alignItems:"left"   
     },
     descriptionText: {
         fontFamily:"Inter",
         fontSize:12,
         lineHeight:16,
         color:"white",
-        textAlign:"left"
+        left:0
     },
     todaysHeaderContainer: {
         alignSelf:"center",

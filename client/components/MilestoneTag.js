@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
         height:(windowH*0.0756)*0.4285,
         flex:1,
         flexDirection:"row",
-        alignItems:"left",
+        alignItems:"flex-start",
     },
     milestoneIconContainer: {
         width:(windowW*0.082),
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
         alignSelf:"center"
     },
     milestoneContext: {
-        textAlign:"left",
+        left:0,
         width:windowW*0.52,
         paddingTop:3,
   
