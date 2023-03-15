@@ -4,6 +4,7 @@ import { Icon } from 'react-native-elements'
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Icons from '../data/Icons.js'
 import userContext from '../contexts/userContext'
+
 import axios from 'axios'
 import Footer from './Footer'
 import * as MediaLibrary from 'expo-media-library'
@@ -22,7 +23,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     const [ownerid, setOwnerid] = useState(ownerId?ownerId:0)
     var fileExt = (image !== undefined)?image.toString().split('.').pop():'png'
     const currentDate = new Date().toLocaleString("en-US", { month: "long", day:"numeric", year:"numeric" })
-    const dateparts = new Date(date).toLocaleString("en-US") + ' UTC'
+    const dateparts = new Date(date).toLocaleString("en-US") 
     const postDate = new Date(dateparts).toLocaleDateString("en-US",{month:"long", day:"numeric",year:"numeric"})
     const postTime = new Date(dateparts).toLocaleTimeString([],{hour12:true, hour:'numeric', minute:'2-digit'})
     const [isMuted, setIsMuted] = useState(true)
@@ -83,6 +84,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         navigation.navigate("Post", {item:data, comments:false})
     }
     const handleEdit = () => {
+        console.log(likes)
         navigation.navigate("EditPost", {uri:image, postId:postId, caption:caption})
     }
     const handleLike = () => {
@@ -101,7 +103,6 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     }
     const handleSelect = () => {
        // console.log(image.substring(image.indexOf('/')+2, image.indexOf('b')))
-        console.log(image)
         setIsActive(!isActive)
     }
     const toggleMute = () => {
@@ -123,6 +124,33 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     }
     return (
      <View style={[styles.postContainer]}>
+        {(route.name === 'MilestonePage') ?
+           <View style={{flexDirection:"row",flex:1, alignItems:"center", position:"absolute", zIndex:1}}>
+           <Pressable style={[styles.postHeader, { backgroundColor:'rgba(0,0,0,0)'}]} onPress={navigateProfile}>
+                   {(profilePic !== src || src !== 'defaultpic')?
+                   <View style={[{minHeight:60,marginLeft:12}]}>
+                    <Image
+                    style={{height:34, width:34, borderRadius:34, alignSelf:"center"}}
+                    resizeMode="contain"
+                    source={{uri:profilePic}}/>
+                    </View>:
+                   <View style={[styles.profilePicContainer]}>
+                       <Image
+                           style={styles.profilePic}
+                           resizeMode="contain"
+                           source={Icons['defaultpic']}/>
+                   </View>}
+                   <View style={[styles.postUserHeader]}>
+                       <Text style={[styles.postOwnerName]}> {username} </Text>
+                       <Text style={[styles.postOwnerTime]}>
+                           {(date !== undefined)?
+                           (postDate === currentDate)?`Today at ` + postTime:postDate + ' at ' + postTime
+                           :`Today at ${currentDate}`}</Text>
+                   </View>
+                   </Pressable>
+            </View>
+
+        :
         <View style={{flexDirection:"row",flex:1, alignItems:"center"}}>
         <Pressable style={[styles.postHeader]} onPress={navigateProfile}>
                 {(profilePic !== src || src !== 'defaultpic')?
@@ -157,10 +185,12 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                  :null
             }
         </View>
+}
+
         <Pressable onPress={handleSelect}>
             <View style={[styles.postWrapper, 
-                    {backgroundColor:(route.name === 'MilestonePage')?'rgba(108, 162, 183,1)':"rgba(10,10,10,1)",
-                    height:(route.name === 'MilestonePage')?windowH*(246/windowH):
+                    {backgroundColor:"rgba(10,10,10,1)",
+                    height:(route.name === 'MilestonePage')?windowW:
                     (fileExt === 'mov' || fileExt === 'mp4')?windowH*(526/windowH):windowW
                     }]}>
                     {(loading)&&
@@ -174,7 +204,13 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                             resizeMode={'cover'}
                             onLoad={()=> {setLoading(false)}}
                             onLoadStart={()=> {setLoading(true)}}
-                            style={{height:"100%", width:"100%",alignSelf:"center"}}>
+                            style={{height:"100%", width:"100%",alignSelf:"center", 
+                            borderRadius:(route.name !== 'MilestonePage')?9:0,
+                            borderBottomLeftRadius:(route.name === 'MilestonePage')?(index === 0)?9:0:0,
+                            borderTopLeftRadius:(route.name === 'MilestonePage')?(index === 0)?9:0:0,
+                            borderBottomRightRadius:(route.name === 'MilestonePage')?(index === count-1)?9:0:0,
+                            borderTopRightRadius:(route.name === 'MilestonePage')?(index === count-1)?9:0:0,
+                            }}>
                             <View style={{minWidth:20, minHeight:20, zIndex:999, alignSelf:"flex-end", bottom:10, right:13, position:"absolute"}}>
                                 <TouchableOpacity onPress={toggleMute}>
                                     <Icon
@@ -194,6 +230,10 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                         resizeMode={'cover'}
                         style={{height:"100%", width:"100%",alignSelf:"center", bottom:0, zIndex:1,
                         borderRadius:(route.name !== 'MilestonePage')?9:0,
+                        borderBottomLeftRadius:(route.name === 'MilestonePage')?(index === 0)?9:0:0,
+                        borderTopLeftRadius:(route.name === 'MilestonePage')?(index === 0)?9:0:0,
+                        borderBottomRightRadius:(route.name === 'MilestonePage')?(index === count-1)?9:0:0,
+                        borderTopRightRadius:(route.name === 'MilestonePage')?(index === count-1)?9:0:0,
                         opacity:animatedvalue.interpolate({inputRange:[0,100], outputRange:[0,1]})}}
                     />:null
                     } 
@@ -241,6 +281,46 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
             </Pressable>
             }
         </View>
+        {
+            (route.name === "MilestonePage")?
+            <View style={[styles.commentsContainer, {minHeight:(route.name === 'MilestonePage')?50:(route.name === "Post")?
+            (windowH>900)?75:60:80, position:"absolute", backgroundColor:"rgba(0,0,0,0)", zIndex:1, bottom:48}]}>
+                <Text numberOfLines={(route.name !== 'Post')?2:0} style={[styles.commentsContent, {width:windowW*0.89}]}>
+                    {caption}
+                </Text>
+                {(route.name === "Feed" || route.name === "MilestonePage")?
+                <Pressable onPress={(commentCount>0 || likes.length>0)?handleComment:handleNavigate}>
+                <Text style={[styles.viewPostLink]}>
+                    {(commentCount>0)?
+                    `View ${commentCount}${(commentCount>1)?" comments":" comment"}${(likes.length>0)?` & ${likes.length}${likes.length>1?" likes":" like"}` :''}`
+                    :
+                    (likes.length>0)?`View ${likes.length}${(likes.length>1)?" likes":" like"}`:
+                    `View Milestones & Groups`}
+                </Text>
+                </Pressable>
+                :
+                (commentCount>0)?
+                <Pressable onPress={handleComment}>
+                    <Text style={[styles.viewPostLink, {fontSize:11.5}]}>
+                    View {commentCount}{(commentCount>1)?" comments ":" comment "}{(likes.length>0)?`& ${likes.length}${likes.length>1?" likes":" like"}` :''}
+                    </Text>
+                </Pressable>
+                :
+                (likes.length>0)?
+                <Pressable onPress={handleComment}>
+                    <Text style={[styles.viewPostLink, {fontSize:11.5}]}>
+                        View {likes.length}{(likes.length>1)?" likes":" like"}
+                    </Text>
+                </Pressable>
+                :
+                <Pressable onPress={handleComment}>
+                    <Text style={[styles.viewPostLink, {fontSize:11.5}]}>
+                        Be the {<Text style={[styles.viewPostLink, {fontFamily:'Inter'}]}>first</Text>} to comment on {username}'s post
+                    </Text>
+                </Pressable>
+            }
+            </View>
+            :
         <View style={[styles.commentsContainer, {minHeight:(route.name === 'MilestonePage')?50:(route.name === "Post")?
         (windowH>900)?75:60:80}]}>
             <Text numberOfLines={(route.name !== 'Post')?2:0} style={[styles.commentsContent, {width:windowW*0.89}]}>
@@ -278,6 +358,8 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
             </Pressable>
         }
         </View>
+}
+
         {isLast?<View style={{marginBottom:48}}/>:null}
      </View>
     );

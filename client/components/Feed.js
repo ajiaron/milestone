@@ -20,6 +20,7 @@ const Feed = ({route}) => {
     const month = new Date().toLocaleString("en-US", { month: "short" })
     const day = new Date().getDate()
     const currentDate = month + ' ' + day
+    const scrollRef = useRef()
     const animatedvalue = useRef(new Animated.Value(0)).current;
     const slideUp=() =>{
         Animated.timing(animatedvalue,{
@@ -36,7 +37,12 @@ const Feed = ({route}) => {
         setRefreshing(false);
         }, 800);
     }, [user]);
-
+    const onPressTouch = () => {
+        scrollRef.current.scrollToIndex({
+            index: 0,
+            animated: true,
+        });
+    }
     const viewabilityConfig = {
         itemVisiblePercentThreshold:70 // lower this to make videos render sooner when on screen
     }
@@ -84,6 +90,7 @@ const Feed = ({route}) => {
             </Animated.View>
           }
                 <FlatList 
+                ref={scrollRef}
                 refreshControl={
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 }
@@ -99,7 +106,7 @@ const Feed = ({route}) => {
                 keyExtractor={(item, index)=>index}>
             </FlatList> 
         </View>
-        <Footer/>
+        <Footer onPressTouch={onPressTouch}/>
       </View>
     );
 }

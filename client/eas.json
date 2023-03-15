@@ -26,7 +26,8 @@
         "image": "latest",
         "buildConfiguration": "Debug",
         "resourceClass": "m1-medium"
-      }
+      },
+      "autoIncrement": true
     },
     "production": {
       "distribution": "store",
@@ -34,7 +35,8 @@
         "image": "latest",
         "buildConfiguration": "Release",
         "resourceClass": "m1-medium"
-      }
+      },
+      "autoIncrement":true
     }
   },
   "submit": {

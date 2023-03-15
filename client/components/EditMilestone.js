@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from "react";
 import { Animated, Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, Switch, Dimensions, TouchableOpacity, Alert } from "react-native";
 import * as Device from 'expo-device'
 import { Icon } from 'react-native-elements'
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import Footer from './Footer'
 import Icons from '../data/Icons.js'
 import userContext from '../contexts/userContext'
@@ -96,7 +96,9 @@ const EditMilestone = ({route}) => {
     const durationListLarge = ['Until Tomorrow', 'Next Month', 'Indefinitely', 'Custom']
     const durationList = ['Next Day', '1 Month', 'Indefinitely', 'Custom']
     const user = useContext(userContext)
+    const routes = useRoute()
     const navigation = useNavigation();
+    const [originalImage, setOriginalImage] = useState()
     const [image, setImage] = useState((route.params.src !== undefined)?route.params.src:null)
     const [photoUri, setPhotoUri] = useState()
     const [title, setTitle] = useState((route.params.title !== undefined)?route.params.title:'')
@@ -162,6 +164,7 @@ const EditMilestone = ({route}) => {
     }
     const uploadContent = async (uri) => {
         const content = await fetchContent(uri)
+   
         return Storage.put(`milestone-content-${Math.random()}.${image.substring(image.indexOf('.')+1)}`, content, {
             level:'public',
             contentType: 'image',
@@ -177,12 +180,24 @@ const EditMilestone = ({route}) => {
             .catch((error)=> console.log(error))
         })
         .catch((e)=>console.log(e))
+        
     }
 
     function submitMilestone() {
+       if (image !== originalImage) {
         uploadContent(image)
-        navigation.navigate("Feed")
+       }
+       else {
+        axios.put(`http://${user.network}:19001/api/updatemilestone`, 
+        {milestoneid: route.params.id, title: title, description:description, src:image})
+        .then(() => {console.log('milestone updated')})
+        .catch((error)=> console.log(error))
+       }
+       navigation.navigate("Feed")
     }
+    useEffect(()=> {
+        setOriginalImage((route.params.src !== undefined)?route.params.src:null)
+    }, [routes])
     return (
         <View style={styles.createMilestonePage}>
             <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>

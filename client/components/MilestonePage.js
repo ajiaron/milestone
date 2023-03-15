@@ -270,7 +270,7 @@ const MilestonePage = ({route}) => {
                         {`🌟 Today’s Milestone`}
                     </Text>
                 </View>
-                <View style={[(postList.length > 0)?styles.postContainerScroll:styles.postContainer,]}>
+                <View style={[(postList.length > 0)?styles.postContainerScroll:styles.postContainer,{marginTop:windowH*0.015}]}>
                     {(postList.length > 0)?
                      <FlatList horizontal 
                      viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}

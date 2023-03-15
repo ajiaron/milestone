@@ -9,7 +9,7 @@ import userContext from '../contexts/userContext'
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const Footer = ({disable}) => {
+const Footer = ({disable, onPressTouch}) => {
     const route = useRoute();
     const preventNavigation = disable?disable:false
     const navigation = useNavigation()
@@ -22,8 +22,14 @@ const Footer = ({disable}) => {
         }
     }
     function returnPage() {
-        navigation.popToTop();
-        navigation.navigate((route.name == "Feed")?"Landing":"Feed")
+        if (route.name === "Feed") {
+            onPressTouch()
+        }
+        else {
+            navigation.popToTop();
+            navigation.navigate("Feed")
+        }
+        
     }
     function navigateProfile() {
         navigation.popToTop();

@@ -5,6 +5,7 @@ import { useFonts, Inter_400Black } from '@expo-google-fonts/inter';
 import { useNavigation } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
 import axios from 'axios'
+import { Icon } from 'react-native-elements'
 import * as Network from 'expo-network'
 import Constants from 'expo-constants';
 
@@ -14,6 +15,7 @@ const windowH = Dimensions.get('window').height
 const Register = () => {
   const navigation = useNavigation();
   const user = useContext(userContext)
+  const [checked, setChecked] = useState(false)
   const animatedvalue = useRef(new Animated.Value(0)).current;
   const animatedfull = useRef(new Animated.Value(0)).current;
   const animatedemail = useRef(new Animated.Value(0)).current;
@@ -46,7 +48,7 @@ const Register = () => {
   function shakeTextRight(value) {
     Animated.timing(value,{
       toValue:0,
-      duration:200,
+      duration:0,
       useNativeDriver:false,
   }).start()
 }
@@ -84,6 +86,16 @@ const Register = () => {
 
   return (
     <View style={styles.loginPage}>
+        <View style={{flexDirection:"row", alignItems:"center"}}>
+        <Pressable style={{left:0.0841*windowW, top:0.0516*windowH}} onPress={()=>navigation.navigate("Landing")}>
+        <Icon 
+            style={styles.backButton}
+            name='arrow-back-ios'
+            color='white'
+            size={22}
+        />
+        </Pressable>
+      </View>
       <View style={styles.loginFrame}>
       <Text style={[styles.loginHeader, styles.loginText]}>Create an account</Text>
           <View style={styles.signUpCredentials}>
@@ -154,9 +166,28 @@ const Register = () => {
                 value={password}/>
             </View>
           </View>
-          <View style={styles.rememberMyAccountBox}>
-            <Text style={styles.rememberAccountText}>remember my account</Text>
-            <View style={styles.rememberMyAccountBoxChild} /> 
+          <View style={[styles.rememberMyAccountBox, {flexDirection:"row"}]}>
+
+
+            <Pressable onPress={()=>setChecked(!checked)}>
+                {(checked)?
+                    <Icon
+                    name={'check-box'}
+                    size={15}
+                    color={'rgba(53, 174, 146, 1)'}
+                    />
+                  :
+                    <Icon
+                    name={'check-box-outline-blank'}
+                    size={15}
+                    color={'#fff'}
+                    />}
+              </Pressable>
+    
+             <Text style={styles.rememberAccountText}>remember my account</Text>
+   
+
+
           </View>
           <Pressable
             style={[styles.registerButton, styles.boxLayout]}
@@ -170,7 +201,7 @@ const Register = () => {
           <Text style={styles.newAccountText}>already have an account?
           <Pressable
             style={[styles.loginTextButton]}
-            onPress={()=> navigation.navigate("Landing")}
+            onPress={()=> navigation.navigate("Login")}
           >
           <Text style={styles.loginTextBold}> log in</Text>
           </Pressable>
@@ -236,7 +267,7 @@ const styles = StyleSheet.create({
     left:4
   },
   loginFrame: {
-    top:"27.5%",
+    top:"25%",
     justifyContent:"center",
     borderRadius: GlobalStyles.Border.br_lg,
     backgroundColor: GlobalStyles.Color.gray_500,
@@ -246,12 +277,12 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   rememberAccountText: {
-    marginLeft:18,
+    marginLeft:10,
     fontSize: 11,
     textAlign: "left",
     color: GlobalStyles.Color.white,
     fontFamily: "Inter",
-    top:11,
+  
   },
   rememberMyAccountBoxChild: {
     borderRadius: GlobalStyles.Border.br_xs,
@@ -264,7 +295,8 @@ const styles = StyleSheet.create({
     minWidth: 124,
     minHeight: 12,
     left: 36,
-    top:4
+    alignItems:"center",
+    top:9
   },
   emailTextBox: {
     minHeight: 30,

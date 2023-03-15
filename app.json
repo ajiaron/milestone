@@ -2,7 +2,7 @@
   "expo": {
     "name": "milestonenative",
     "slug": "milestone",
-    "version": "1.0.1",
+    "version": "2.0.0",
     "sdkVersion": "47.0.0",
     "platforms": [],
     "android": {

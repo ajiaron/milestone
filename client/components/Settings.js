@@ -158,6 +158,17 @@ const Settings = () => {
                                     </Text>
                                 </View>
                             </Pressable>
+
+                            <Pressable onPress={()=>{navigation.navigate("Landing")}}
+                                style={styles.logoutButton}
+                                >
+                                <View style={styles.resetButtonContent} > 
+                                    <Text style={[styles.logoutText]}>
+                                        Logout
+                                    </Text>
+                                </View>
+                            </Pressable>
+
                             <View style={styles.userProfileLinkContainer}>
                                 <Icon 
                                     style={{transform:[{rotate:"-45deg"}], top:-0.5}}
@@ -274,7 +285,27 @@ const styles = StyleSheet.create({
         justifyContent:"center",
         backgroundColor:"rgba(0, 82, 63, 1)"
     },
+    logoutButton: {
+        marginTop:14,
+        alignSelf:"center",
+        width: windowW*(288/windowW),
+        height: windowH*(28/windowH),
+        alignItems:"center",
+        borderRadius:5,
+        borderStyle:"dashed",
+        textAlign:"center",
+        borderColor:"#eeeeee",
+        borderWidth:1,
+        justifyContent:"center",
+        backgroundColor:"rgba(16,16,16,1)"
+    },
     saveChangesText: {
+        color:"white",
+        fontFamily:"InterBold",
+        alignSelf:"center",
+        fontSize:12.5,
+    },
+    logoutText: {
         color:"white",
         fontFamily:"InterBold",
         alignSelf:"center",

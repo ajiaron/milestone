@@ -1,8 +1,9 @@
 import  React, {useState, useContext} from "react";
-import { Text, StyleSheet, View, Image, Pressable, TextInput, useColorScheme} from "react-native";
+import { Text, StyleSheet, View, Image, Pressable, TextInput, useColorScheme, Dimensions} from "react-native";
+import { CheckBox } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
-import { CheckBox } from "react-native-elements";
+import { Icon } from 'react-native-elements'
 import axios from 'axios'
 import userContext from '../contexts/userContext'
 import {
@@ -14,10 +15,14 @@ import {
 } from '@aws-amplify/ui-react-native';
 import { SignIn } from "@aws-amplify/ui-react-native/dist/Authenticator/Defaults";
 
+const windowW = Dimensions.get('window').width
+const windowH = Dimensions.get('window').height
+
 const Login = () => {
   const navigation = useNavigation();
   const [userData, setUserData] = useState()
   const [passwordText, onChangePasswordText] = useState("")
+  const [checked, setChecked] = useState(false)
   const user = useContext(userContext)
   const colorMode = useColorScheme()
   function handlePress() {
@@ -43,7 +48,16 @@ const Login = () => {
   } = useTheme();
   return (
     <View style={styles.loginPage}>
-
+      <View style={{flexDirection:"row", alignItems:"center"}}>
+        <Pressable style={{left:0.0841*windowW, top:0.0516*windowH}} onPress={()=>navigation.navigate("Landing")}>
+        <Icon 
+            style={styles.backButton}
+            name='arrow-back-ios'
+            color='white'
+            size={22}
+        />
+        </Pressable>
+      </View>
       <View style={styles.loginFrame}>
       <Text style={[styles.loginHeader, styles.loginText]}>Login</Text>
           <View style={styles.signUpCredentials}>
@@ -79,11 +93,27 @@ const Login = () => {
               </Text>
             </View>
           </View>
-          <View style={[styles.rememberMyAccountBox,{ marginTop:2}]}>
-            <Text style={styles.rememberAccountText}>remember my account</Text>
-            <Pressable>
-              <View style={styles.rememberMyAccountBoxChild} /> 
-            </Pressable>
+          <View style={[styles.rememberMyAccountBox,{ paddingTop:8, alignItems:"center", paddingBottom:2}]}>
+           
+              <Pressable onPress={()=>setChecked(!checked)}>
+                {(checked)?
+                    <Icon
+                    name={'check-box'}
+                    size={15}
+                    color={'rgba(53, 174, 146, 1)'}
+                    />
+                  :
+                    <Icon
+                    name={'check-box-outline-blank'}
+                    size={15}
+                    color={'#fff'}
+                    />}
+              </Pressable>
+    
+             <Text style={styles.rememberAccountText}>remember my account</Text>
+   
+
+ 
           </View>
 
           <Pressable
@@ -95,30 +125,39 @@ const Login = () => {
               </Text>
           </Pressable>
           
-
           <Pressable
               style={[styles.boxLayout,
               {alignSelf:'center',backgroundColor:'#101010', minHeight:27,
               justifyContent:"center", marginTop:16, borderRadius:4, borderColor:"#fff",
               borderWidth:1, borderStyle:'dashed'
             }]}
-             // onPress={handlePress}
+              onPress={()=>console.log(windowH, windowW)}
               >
               <Text style={[{alignSelf:"center",color:"#FFF", fontFamily:"Inter", fontSize:12, textAlign:"center", top:0.25}]}>
                 Login with AWS
               </Text>
           </Pressable>
-   
 
 
           <Text style={styles.newAccountText}>don't have an account? 
           <Pressable
             style={[styles.newAccountTextButton]}
-            onPress={()=> navigation.navigate("Landing")}
+            onPress={()=> navigation.navigate("Register")}
           >
           <Text style={styles.newAccountTextBold}> create an acount</Text>
           </Pressable>
         </Text>
+
+        <Pressable
+            style={[styles.newAccountTextButton, styles.forgotPassword]}
+            onPress={()=> navigation.navigate("Register")}
+          >
+          <Text style={styles.forgotPasswordText}> Forgot password?</Text>
+          </Pressable>
+
+
+      
+
         </View>
  
     </View>
@@ -185,23 +224,21 @@ const styles = StyleSheet.create({
     left:4
   },
   loginFrame: {
-    top:"35%",
+    top:"30%",
     justifyContent:"center",
     borderRadius: GlobalStyles.Border.br_lg,
     backgroundColor: GlobalStyles.Color.gray_500,
     minWidth: 321,
-    height: 280,
-    paddingTop:10,
+    height: 290,
+    paddingTop:22,
     alignSelf:"center",
     position: "relative",
   },
   rememberAccountText: {
-    marginLeft:18,
+    marginLeft:10,
     fontSize: 11,
-    textAlign: "left",
     color: GlobalStyles.Color.white,
     fontFamily: "Inter",
-    top:11,
   },
   rememberMyAccountBoxChild: {
     borderRadius: GlobalStyles.Border.br_xs,
@@ -213,8 +250,9 @@ const styles = StyleSheet.create({
   rememberMyAccountBox: {
     minWidth: 124,
     minHeight: 12,
-    left: 36,
-    top:2
+    left: 34,
+    top:6,
+    flexDirection:"row"
   },
   fullNameTextBox: {
     minHeight: 30,
@@ -297,8 +335,21 @@ const styles = StyleSheet.create({
     fontFamily: "Inter",
     color:"white",
     alignSelf:"center",
-    bottom:-36,
+    bottom:-44,
     fontSize:12
+  },
+  forgotPassword: {
+    fontFamily: "Inter",
+    color:"white",
+    alignSelf:"center",
+    bottom:-48,
+    fontSize:12
+  },
+  forgotPasswordText: {
+    fontFamily: "InterBold",
+    color:"gray",
+    fontSize:12.5,
+    top:3.25,  
   },
   newAccountTextBold: {
     fontFamily: "InterBold",
