@@ -19,6 +19,7 @@ const Settings = () => {
     var fileExt = (user.image !== undefined)?user.image.toString().split('.').pop():'png';
     const [isPublic, setIsPublic] = useState(true)
     const togglePublic = () => setIsPublic(previousState => !previousState)
+    const toggleQuality = () => user.setQuality(!user.quality)
     const [newUsername, setNewUsername] = useState(user?user.username:'')
     const [newName, setNewName] = useState(user?user.fullname:'')
     const [oldDescription, setOldDescription] = useState('')
@@ -143,11 +144,26 @@ const Settings = () => {
                                 <Switch
                                     style={{ transform: [{ scaleX: .6 }, { scaleY: .6}], top:-1, marginLeft:windowW*(4/windowW)}}
                                     trackColor={{ false: "#bbb", true: "#35AE92" }}
-                                    thumbColor={isPublic ? "#1f1e1e" : "1f1e1e"}
+                                    thumbColor={isPublic ? "#1f1e1e" : "#1f1e1e"}
                                     ios_backgroundColor="#eee"
                                     onValueChange={togglePublic}
                                     value={isPublic}
                                 />
+                               
+                            </View>
+                            <View style={[styles.qualityContainer]}>
+                                <Text style={styles.userInfoHeaderText}>
+                                    REDUCED RENDERING
+                                </Text>
+                                <Switch
+                                    style={{ transform: [{ scaleX: .6 }, { scaleY: .6}], top:-1, marginLeft:windowW*(4/windowW)}}
+                                    trackColor={{ false: "#bbb", true: "#35AE92" }}
+                                    thumbColor={!user.quality ? "#1f1e1e" : "#1f1e1e"}
+                                    ios_backgroundColor="#eee"
+                                    onValueChange={toggleQuality}
+                                    value={!user.quality}
+                                />
+                               
                             </View>
                             <Pressable onPress={handleChanges}
                                 style={styles.saveChangesButton}
@@ -268,9 +284,18 @@ const styles = StyleSheet.create({
         alignItems:"center",
         left:0,
         maxWidth:windowW * (288/windowW),
-        height: windowH * (24/windowH),
+        height: windowH * (20/windowH),
         marginTop:windowH*(4/windowH),
-        marginBottom:windowH*(18/windowH),
+        marginBottom:windowH*(16/windowH),
+    },
+    qualityContainer: {
+        flexDirection:"row",
+        alignItems:"center",
+        left:0,
+        maxWidth:windowW * (288/windowW),
+        height: windowH * (20/windowH),
+ 
+        marginBottom:windowH*(20/windowH),
     },
     publicAccountToggle: {
         marginLeft:windowW * (18/windowW)

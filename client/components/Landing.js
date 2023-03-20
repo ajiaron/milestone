@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import { StyleSheet, View, Text, Pressable, Image, Dimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { NativeModules } from "react-native";
 import userContext from '../contexts/userContext'
 import GlobalStyles from "../styles/GlobalStyles";
 import RadialGradient from 'react-native-radial-gradient';
 import { useFonts, Inter_400Black } from '@expo-google-fonts/inter';
 import * as Network from 'expo-network'
-import Constants from 'expo-constants';
+import Constants, {ExecutionEnvironment} from 'expo-constants';
 import axios from 'axios'
 
 const windowW= Dimensions.get('window').width
@@ -27,6 +28,7 @@ const LogoGradient = () => {
     </View> 
   )
 }
+
 const Landing = () => {
   const navigation = useNavigation();
   const user = useContext(userContext);
@@ -39,7 +41,13 @@ const Landing = () => {
     }).catch(()=>
      user.setNetwork(Constants.expoConfig.hostUri.substring(0,Constants.expoConfig.hostUri.indexOf(':'))))
   }, [])
-
+  useEffect(()=> {
+    if (Constants.appOwnership === 'expo' || Constants.executionEnvironment === ExecutionEnvironment.StoreClient) {
+      user.setIsExpo(true)
+    } else {
+      user.setIsExpo(false)
+    }
+  }, [])
   function handlePress() {
     navigation.navigate("Register")
   }
@@ -47,7 +55,6 @@ const Landing = () => {
     <View style={styles.landingPage}>
       <View style={[styles.headerBorder, styles.backgroundIconPosition]} />
       <View style={styles.landingContent}>
-        
         <View style={styles.frameForButtons}>
         <View style={styles.createLayout}>
         <Pressable

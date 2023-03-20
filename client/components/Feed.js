@@ -96,8 +96,8 @@ const Feed = ({route}) => {
                 }
                 viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
                 removeClippedSubviews
-                initialNumToRender={5}
-                maxToRenderPerBatch={5}
+                initialNumToRender={3}
+                maxToRenderPerBatch={3}
                 style={{paddingTop:48}}
                 snapToAlignment="start"
                 showsVerticalScrollIndicator={false}

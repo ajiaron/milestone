@@ -87,7 +87,7 @@ const Register = () => {
   return (
     <View style={styles.loginPage}>
         <View style={{flexDirection:"row", alignItems:"center"}}>
-        <Pressable style={{left:0.0841*windowW, top:0.0516*windowH}} onPress={()=>navigation.navigate("Landing")}>
+        <Pressable style={{left:0.085*windowW, top:0.0675*windowH}} onPress={()=>navigation.navigate("Landing")}>
         <Icon 
             style={styles.backButton}
             name='arrow-back-ios'

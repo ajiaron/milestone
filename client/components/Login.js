@@ -38,7 +38,6 @@ const Login = () => {
     navigation.navigate("Feed")
     // authenticate here
   }
-
   function SignOutButton() {
     const { signOut } = useAuthenticator();
     return <Pressable onPress={()=> signOut}></Pressable>
@@ -49,12 +48,12 @@ const Login = () => {
   return (
     <View style={styles.loginPage}>
       <View style={{flexDirection:"row", alignItems:"center"}}>
-        <Pressable style={{left:0.0841*windowW, top:0.0516*windowH}} onPress={()=>navigation.navigate("Landing")}>
+        <Pressable style={{left:0.085*windowW, top:0.0675*windowH}} onPress={()=>navigation.navigate("Landing")}>
         <Icon 
-            style={styles.backButton}
+            style={[styles.backButton ]}
             name='arrow-back-ios'
             color='white'
-            size={22}
+            size={22.5}
         />
         </Pressable>
       </View>
@@ -94,7 +93,6 @@ const Login = () => {
             </View>
           </View>
           <View style={[styles.rememberMyAccountBox,{ paddingTop:8, alignItems:"center", paddingBottom:2}]}>
-           
               <Pressable onPress={()=>setChecked(!checked)}>
                 {(checked)?
                     <Icon
@@ -109,13 +107,8 @@ const Login = () => {
                     color={'#fff'}
                     />}
               </Pressable>
-    
              <Text style={styles.rememberAccountText}>remember my account</Text>
-   
-
- 
           </View>
-
           <Pressable
               style={[styles.loginButton, styles.boxLayout]}
               onPress={handlePress}>
@@ -124,42 +117,33 @@ const Login = () => {
                 Login
               </Text>
           </Pressable>
-          
           <Pressable
               style={[styles.boxLayout,
               {alignSelf:'center',backgroundColor:'#101010', minHeight:27,
               justifyContent:"center", marginTop:16, borderRadius:4, borderColor:"#fff",
               borderWidth:1, borderStyle:'dashed'
             }]}
-              onPress={()=>console.log(windowH, windowW)}
-              >
+              onPress={()=>console.log(user.isExpo)}
+          >
               <Text style={[{alignSelf:"center",color:"#FFF", fontFamily:"Inter", fontSize:12, textAlign:"center", top:0.25}]}>
                 Login with AWS
               </Text>
           </Pressable>
-
-
           <Text style={styles.newAccountText}>don't have an account? 
           <Pressable
             style={[styles.newAccountTextButton]}
             onPress={()=> navigation.navigate("Register")}
           >
-          <Text style={styles.newAccountTextBold}> create an acount</Text>
+            <Text style={styles.newAccountTextBold}> create an acount</Text>
           </Pressable>
         </Text>
-
         <Pressable
             style={[styles.newAccountTextButton, styles.forgotPassword]}
             onPress={()=> navigation.navigate("Register")}
-          >
+        >
           <Text style={styles.forgotPasswordText}> Forgot password?</Text>
-          </Pressable>
-
-
-      
-
+        </Pressable>
         </View>
- 
     </View>
    );
 }

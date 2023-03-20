@@ -8,6 +8,7 @@
       "distribution": "internal",
       "ios": {
         "image": "latest",
+        "buildConfiguration": "Debug",
         "resourceClass": "m1-medium"
       }
     },

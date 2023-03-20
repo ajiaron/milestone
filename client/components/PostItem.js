@@ -4,7 +4,7 @@ import { Icon } from 'react-native-elements'
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Icons from '../data/Icons.js'
 import userContext from '../contexts/userContext'
-
+import ImageColors from 'react-native-image-colors'
 import axios from 'axios'
 import Footer from './Footer'
 import * as MediaLibrary from 'expo-media-library'
@@ -32,8 +32,26 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     const [isLiked, setIsLiked] = useState(liked?liked:false)
     const [likes, setLikes] = useState([])
     const [loading, setLoading] = useState(true)
+    const [colors, setColors] = useState('#1c1c1c')
     const animatedvalue = useRef(new Animated.Value(0)).current;
-    
+    const getColors = async (uri) => {
+        const result = await ImageColors.getColors(uri, {
+            fallback: '#228B22',
+            quality:'lowest',
+            cache:true,
+            key: postId,
+          })
+        setColors(result.primary)
+    }
+    useEffect(()=> {
+        if (!user.isExpo && (fileExt !== 'mov' || fileExt === 'jpg') && !loading && user.quality && image.substring(0,4)!=='file' && route.name==='Post') {
+            getColors(image)
+        }
+        else {
+            setColors('#1c1c1c')
+        }
+    }, [image, loading])
+
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getlikes`)  
         .then((response)=> {
@@ -102,7 +120,8 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         } 
     }
     const handleSelect = () => {
-       // console.log(image.substring(image.indexOf('/')+2, image.indexOf('b')))
+        console.log(colors)
+        console.log(image)
         setIsActive(!isActive)
     }
     const toggleMute = () => {
@@ -149,10 +168,11 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                    </View>
                    </Pressable>
             </View>
-
         :
         <View style={{flexDirection:"row",flex:1, alignItems:"center"}}>
-        <Pressable style={[styles.postHeader]} onPress={navigateProfile}>
+        <Pressable style={[styles.postHeader, {backgroundColor:colors, 
+        borderTopLeftRadius:(route.name)==='Post'?12:0}]} 
+        onPress={navigateProfile}>
                 {(profilePic !== src || src !== 'defaultpic')?
                 <View style={[{minHeight:60,marginLeft:12}]}>
                  <Image
@@ -175,12 +195,14 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                 </View>
                 </Pressable>
             {(route.name==="Post" && ownerId === user.userId)?
-            <Pressable onPress={handleEdit}>
+            <Pressable onPress={handleEdit} style={{backgroundColor:colors, height:60, justifyContent:'center',
+            borderTopRightRadius:(route.name)==='Post'?12:0}}>
                  <Icon 
                  name='tune' 
                  size={28} 
-                 color="rgba(140,140,140,1)" 
-                 style={{marginRight:(windowW>400)?windowW*(22/windowW):windowW*(18/windowW), alignSelf:"center", bottom:1.75}}/>
+                 color="rgba(220,220,220,1)" 
+                 style={{marginRight:(windowW>400)?windowW*(22/windowW):windowW*(18/windowW), 
+                 alignSelf:"center", bottom:1.5}}/>
             </Pressable>
                  :null
             }
