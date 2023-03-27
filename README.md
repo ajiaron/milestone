@@ -4,7 +4,7 @@ There are a lot of files that should be ignored, but most of them are config fil
 
 Actual pages and components should be in the **client** folder, which contains `App.js` as the top-level component. Everything that's actually visible on the app itself *should* be in the **components** folder, along with some sub-components. There should also be a contexts folder, which provides the user's information as well as details about the current device's connection. This data can be accessed through importing the `userContext.js` file.
 
-This project was started using **Expo CLI** (`npx create-expo-app`) as opposed to React Native CLI, so use `expo publish` in terminal to deploy an actual build of milestone to a public URL (not the same as `npm start`/`expo start`).  
+This project was started using **Expo CLI** (`npx create-expo-app`) as opposed to React Native CLI.
 
 Currently, the project has integrations with a couple AWS services, including S3, EC2, and RDS. As a result, the `server.js` file in this repo is unused as the actual file is running on an EC2 instance. Additionally, Cloudfront is being used for distribution, however the app still renders assets much slower without access to a proper wifi connection. Finally, Amplify is used to connect these services to our app, and I plan to use Amplify to handle authentication with Cognito in a future release.
 
