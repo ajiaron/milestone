@@ -41,6 +41,9 @@ function ConfirmAccount() {
             try {
                 const response = await Auth.confirmSignUp(username, confirmCode)
                 console.log(response)
+                axios.put(`http://${user.network}:19001/api/confirmuser`, 
+                {confirmed:true, username:username})
+                .then(console.log('user confirmed'))
                 navigation.navigate("Login")
             } catch (e) {
                 Alert.alert("Please try again.", e.message)
