@@ -1,50 +1,62 @@
 import  React, {useState, useContext} from "react";
-import { Text, StyleSheet, View, Image, Pressable, TextInput, useColorScheme, Dimensions} from "react-native";
+import { Text, StyleSheet, View, Image, Pressable, TextInput, useColorScheme, Dimensions, Alert} from "react-native";
 import { CheckBox } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
-import { Icon } from 'react-native-elements'
-import axios from 'axios'
-import userContext from '../contexts/userContext'
-import {
-  useAuthenticator,
-  Authenticator,
-  useTheme,
-  ThemeProvider, 
-  defaultDarkModeOverride
-} from '@aws-amplify/ui-react-native';
-import { SignIn } from "@aws-amplify/ui-react-native/dist/Authenticator/Defaults";
+import { Icon } from 'react-native-elements';
+import axios from 'axios';
+import userContext from '../contexts/userContext';
+import { Amplify, Auth } from 'aws-amplify';
+import awsconfig from '../src/aws-exports';
+Amplify.configure(awsconfig);
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
 const Login = () => {
   const navigation = useNavigation();
-  const [userData, setUserData] = useState()
-  const [passwordText, onChangePasswordText] = useState("")
+  const [userData, setUserData] = useState({username:'', password:''})
+  const [loading, setLoading] = useState(false)
   const [checked, setChecked] = useState(false)
   const user = useContext(userContext)
-  const colorMode = useColorScheme()
-  function handlePress() {
-    axios.get(`http://${user.network}:19001/api/getusers`)  // if this throws an error, replace 10.0.0.160 with localhost
+  function handlePress() { 
+    axios.get(`http://${user.network}:19001/api/getusers`)  // for testing without auth
     .then((response)=> {
-        if (user.username !== undefined && user.username.length > 0) {
-          user.setUserId(response.data.filter((item)=> item.name === user.username)[0].id)
-          user.setFullname(response.data.filter((item)=> item.name === user.username)[0].fullname)
-          user.setImage(response.data.filter((item)=> item.name === user.username)[0].src)
+        if (userData.username !== undefined && userData.username.length > 0) {
+          user.setUsername(userData.username)
+          user.setUserId(response.data.filter((item)=> item.name === userData.username)[0].id)
+          user.setFullname(response.data.filter((item)=> item.name === userData.username)[0].fullname)
+          user.setImage(response.data.filter((item)=> item.name === userData.username)[0].src)
         }
     })
     .catch(error => console.log(error))
     navigation.navigate("Feed")
     // authenticate here
   }
-  function SignOutButton() {
-    const { signOut } = useAuthenticator();
-    return <Pressable onPress={()=> signOut}></Pressable>
+  const onSignIn = async () => {
+    if (loading) { 
+      return
+    }
+    setLoading(true)
+    try {
+      const response = await Auth.signIn(userData.username, userData.password);
+      console.log(response)
+      axios.get(`http://${user.network}:19001/api/getusers`)  
+      .then((response)=> {
+          if (userData.username !== undefined && userData.username.length > 0) {
+            user.setUsername(userData.username)
+            user.setUserId(response.data.filter((item)=> item.name === userData.username)[0].id)
+            user.setFullname(response.data.filter((item)=> item.name === userData.username)[0].fullname)
+            user.setImage(response.data.filter((item)=> item.name === userData.username)[0].src)
+          }
+      })
+      .catch(error => console.log(error))
+      navigation.navigate("Feed")
+    } catch(e) {
+        Alert.alert("Please try again.", e.message)
+    }
+    setLoading(false)
   }
-  const {
-    tokens: { colors },
-  } = useTheme();
   return (
     <View style={styles.loginPage}>
       <View style={{flexDirection:"row", alignItems:"center"}}>
@@ -62,34 +74,35 @@ const Login = () => {
           <View style={styles.signUpCredentials}>
             <View style={styles.fullName}>
               <View style={[styles.fullNameTextBox, styles.textPosition]} />
+              <Text style={[styles.fullNameHeader, styles.headerTypo]}>
+                Username
+              </Text>
                 <TextInput  style={[
                   styles.fullNameFiller,
                   styles.fillerTypo,
                   styles.fillerTypo1,
                 ]}
-                onChangeText={(e)=>user.setUsername(e)}
+                onChangeText={(e)=>setUserData({...userData, username:e})}
                 placeholder={"Type your name here"}
                 placeholderTextColor={'rgba(130, 130, 130, 1)'}
-                value={user.username}/>
-              <Text style={[styles.fullNameHeader, styles.headerTypo]}>
-                Username
-              </Text>
+                value={userData.username}/>
+              
             </View>
             <View style={[styles.password, styles.mt13]}>
               <View style={[styles.boxLayout, styles.textPosition]} />
+              <Text style={[styles.passwordHeader, styles.headerTypo]}>
+                Password
+              </Text>
                 <TextInput  style={[
                   styles.passwordInput,
                   styles.fillerTypo,
                   styles.fillerTypo1,
                 ]}
                 secureTextEntry={true}
-                onChangeText={onChangePasswordText}
+                onChangeText={(e)=>setUserData({...userData, password:e})}
                 placeholder={"*************"}
                 placeholderTextColor={'rgba(130, 130, 130, 1)'}
-                value={passwordText}/>
-              <Text style={[styles.passwordHeader, styles.headerTypo]}>
-                Password
-              </Text>
+                value={userData.password}/>
             </View>
           </View>
           <View style={[styles.rememberMyAccountBox,{ paddingTop:8, alignItems:"center", paddingBottom:2}]}>
@@ -123,10 +136,13 @@ const Login = () => {
               justifyContent:"center", marginTop:16, borderRadius:4, borderColor:"#fff",
               borderWidth:1, borderStyle:'dashed'
             }]}
-              onPress={()=>console.log(user.isExpo)}
+              onPress={()=>onSignIn()}
+              disabled={loading}
           >
               <Text style={[{alignSelf:"center",color:"#FFF", fontFamily:"Inter", fontSize:12, textAlign:"center", top:0.25}]}>
-                Login with AWS
+                {(loading)?'Loading...':
+                'Login with AWS'
+                }
               </Text>
           </Pressable>
           <Text style={styles.newAccountText}>don't have an account? 
@@ -214,7 +230,7 @@ const styles = StyleSheet.create({
     backgroundColor: GlobalStyles.Color.gray_500,
     minWidth: 321,
     height: 290,
-    paddingTop:22,
+    paddingTop:24,
     alignSelf:"center",
     position: "relative",
   },
@@ -356,5 +372,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
 });
+
 
 export default Login;

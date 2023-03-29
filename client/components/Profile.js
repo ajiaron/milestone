@@ -95,9 +95,10 @@ const Profile = ({route}) => {
         }
     }
     function handleTest() {
-        console.log(userid)
-        console.log(userData)
-        console.log(fileExt)
+       // console.log(userid)
+       // console.log(userData)
+       // console.log(fileExt)
+       console.log(user)
     }
     function handlePress() {
         navigation.navigate("Settings")

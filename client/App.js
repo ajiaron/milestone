@@ -7,6 +7,7 @@ import { useFonts } from 'expo-font'
 import Landing from './components/Landing'
 import Login from './components/Login'
 import Register from './components/Register'
+import ConfirmAccount from './components/ConfirmAccount'
 import Feed from './components/Feed'
 import Post from './components/Post'
 import Profile from './components/Profile'
@@ -41,6 +42,7 @@ function App() {
             <Stack.Screen name="Landing" component={Landing} />
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Register" component={Register} />
+            <Stack.Screen name="ConfirmAccount" component={ConfirmAccount} />
             <Stack.Screen name="Feed" component={Feed} />
             <Stack.Screen name="Post" component={Post} />
             <Stack.Screen name="Profile" component={Profile} />

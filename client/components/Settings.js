@@ -9,6 +9,9 @@ import Icons from '../data/Icons.js'
 import MilestoneTag from "./MilestoneTag";
 import userContext from '../contexts/userContext'
 import axios from 'axios'
+import { Amplify, Auth } from 'aws-amplify';
+import awsconfig from '../src/aws-exports';
+Amplify.configure(awsconfig);
 
 
 const windowW = Dimensions.get('window').width
@@ -31,6 +34,7 @@ const Settings = () => {
     const navigation = useNavigation()
     
     function handleChanges() {
+        user.setImage(image)    // TODO: convert image uri and store into S3
         axios.put(`http://${user.network}:19001/api/updateuser`, 
         {username: newUsername, description: newDescription, email:newEmail, fullname: newName, src:image, userid:user.userId})
         .then(() => {console.log('user info updated')})
@@ -220,7 +224,7 @@ const styles = StyleSheet.create({
     },
     settingsContainer: {
         alignSelf:"center",
-        marginTop:windowH*0.125-10
+        marginTop:windowH*0.125-26,
     },
     profilePicContainer: {
         alignSelf:"center",
@@ -242,7 +246,7 @@ const styles = StyleSheet.create({
     userInfo: {
         height: windowH * (348/windowH),
         width:windowW * (288/windowW),
-        marginTop:windowH*(26/windowH)
+        marginTop:windowH*(22/windowH)
     },
     userInfoContainer: {
         width:windowW * (288/windowW),
@@ -294,7 +298,6 @@ const styles = StyleSheet.create({
         left:0,
         maxWidth:windowW * (288/windowW),
         height: windowH * (20/windowH),
- 
         marginBottom:windowH*(20/windowH),
     },
     publicAccountToggle: {

@@ -21,6 +21,7 @@
     "@react-navigation/stack": "^6.3.10",
     "amazon-cognito-identity-js": "^6.1.2",
     "aws-amplify": "^5.0.16",
+    "aws-amplify-react-native": "^7.0.2",
     "axios": "^1.2.2",
     "expo": "~47.0.12",
     "expo-app-loading": "^2.1.1",

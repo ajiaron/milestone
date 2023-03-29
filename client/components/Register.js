@@ -1,13 +1,15 @@
 import  React, {useState, useEffect, useRef, useContext} from "react";
-import { Animated, Text, StyleSheet, View, Image, Pressable, TextInput, Dimensions} from "react-native";
+import { Animated, Text, StyleSheet, View, Image, Pressable, TextInput, Dimensions, Alert, ScrollView, KeyboardAvoidingView} from "react-native";
 import userContext from '../contexts/userContext'
 import { useFonts, Inter_400Black } from '@expo-google-fonts/inter';
 import { useNavigation } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
 import axios from 'axios'
 import { Icon } from 'react-native-elements'
+
 import * as Network from 'expo-network'
 import Constants from 'expo-constants';
+import { Auth } from "aws-amplify";
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
@@ -24,6 +26,15 @@ const Register = () => {
   const [fullname, setFullname] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [isValid, setIsValid] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  const validateEmail = (val) => {
+    setEmail(val)
+    const regex =  /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    setIsValid(regex.test(val))
+  }
+
   const defaultData = {
     name:username,
     milestones:0,
@@ -37,13 +48,12 @@ const Register = () => {
     public:1,
     favoriteid:1,
   }
-  function shakeTextLeft(value) {
+  function shakeTextLeft(value) {   // for empty fields
     Animated.timing(value,{
       toValue:100,
       duration:200,
       useNativeDriver:false,
     }).start(()=> shakeTextRight(value))
- 
   }
   function shakeTextRight(value) {
     Animated.timing(value,{
@@ -52,161 +62,171 @@ const Register = () => {
       useNativeDriver:false,
   }).start()
 }
-  function handlePress() {
-    console.log(username, fullname, email, password)
-    console.log(animatedvalue)
+  const handlePress = async() => {
     if (username.length <= 0) {
       shakeTextLeft(animatedvalue)
     }
     if (fullname.length <= 0) {
       shakeTextLeft(animatedfull)
     }
-    if (email.length <= 0) {
+    if (email.length <= 0 || !isValid) {
       shakeTextLeft(animatedemail)
     }
     if (password.length <= 0) {
       shakeTextLeft(animatedpass)
     }
-    if (username.length >0 && fullname.length >0 && email.length >0 && password.length >0) {
-      axios.post(`http://${user.network}:19001/api/registeruser`, 
-      {username:username, milestones:defaultData.milestones, blurb:defaultData.blurb, 
-      password:password, friends:0, groupcount:0, email:email, fullname:fullname, 
-      src:defaultData.src, public:1, favoriteid:1})
-      .then(() => {
-        user.setUsername(username)
-        user.setEmail(email)
-        user.setFullname(fullname)
-        user.setPassword(password)
-      })
-      .catch((error)=> console.log(error))
-      navigation.navigate("Login")
+    if (username.length >0 && fullname.length >0 && email.length >0 && password.length >0 && isValid) {
+      try {
+        const response = await Auth.signUp({
+           username:username,
+           password:password,
+           attributes:{name:fullname, email:email}
+        })
+        console.log(response)
+        axios.post(`http://${user.network}:19001/api/registeruser`, 
+        {username:username, milestones:defaultData.milestones, blurb:defaultData.blurb, 
+        password:password, friends:0, groupcount:0, email:email, fullname:fullname, 
+        src:defaultData.src, public:1, favoriteid:1})
+        .then(() => {
+          user.setUsername(username)
+          user.setFullname(fullname)
+        })
+        .catch((error)=> console.log(error))
+        navigateConfirm()
+      } catch (e) {
+        Alert.alert('Please try again.', e.message)
+      }
+      
     } // todo: if username already exists
   }
-
+  function navigateConfirm() {
+    navigation.navigate("ConfirmAccount", {username:username})
+  }
 
   return (
-    <View style={styles.loginPage}>
+    <View style={styles.registerPage}>
+      <KeyboardAvoidingView
+          style={{flex:1}}
+          behavior={"padding"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}>
+      
         <View style={{flexDirection:"row", alignItems:"center"}}>
-        <Pressable style={{left:0.085*windowW, top:0.0675*windowH}} onPress={()=>navigation.navigate("Landing")}>
-        <Icon 
-            style={styles.backButton}
-            name='arrow-back-ios'
-            color='white'
-            size={22}
-        />
-        </Pressable>
-      </View>
-      <View style={styles.loginFrame}>
-      <Text style={[styles.loginHeader, styles.loginText]}>Create an account</Text>
-          <View style={styles.signUpCredentials}>
-          <View style={[styles.fullName]}>
-            <Animated.Text style={[styles.fullNameHeader, styles.headerTypo, 
-            {left:animatedvalue.interpolate({inputRange:[0,33,66,100], outputRange:[0,-6,6,0]})}]}>
-                Username
-             </Animated.Text>
-              <View style={[styles.fullNameTextBox, styles.textPosition]} />
-                <TextInput  style={[
-                  styles.fullNameFiller,
-                  styles.fillerTypo,
-                  styles.fillerTypo1,
-                ]}
-                onChangeText={(e)=>setUsername(e)}
-                placeholder={"Type your name here"}
-                placeholderTextColor={'rgba(120, 120, 120, 1)'}
-                value={username}/>
-            </View>
-
-            <View style={[styles.fullName, {marginTop:13}]}>
-            <Animated.Text style={[styles.fullNameHeader, styles.headerTypo, 
-              {left:animatedfull.interpolate({inputRange:[0,33,66,100], outputRange:[0,-6,6,0]})}]}>
-                Full name
-             </Animated.Text>
-              <View style={[styles.fullNameTextBox, styles.textPosition]} />
-                <TextInput  style={[
-                  styles.fullNameFiller,
-                  styles.fillerTypo,
-                  styles.fillerTypo1,
-                ]}
-                onChangeText={(e)=>setFullname(e)}
-                placeholder={"Type your name here"}
-                placeholderTextColor={'rgba(120, 120, 120, 1)'}
-                value={fullname}/>
-            </View>
-
-            <View style={styles.emailAddress}>
-              <View style={[styles.fullNameTextBox, styles.textPosition]} />
-                <Animated.Text style={[styles.emailHeader, styles.headerTypo, {left:animatedemail.interpolate({inputRange:[0,33,66,100], outputRange:[0,-6,6,0]})}]}>
-                  Email Address
-                </Animated.Text>
-                <TextInput  style={[
-                  styles.fullNameFiller,
-                  styles.fillerTypo,
-                  styles.fillerTypo1,
-                ]}
-                onChangeText={(e)=>setEmail(e)}
-                placeholder={"Johnny Appleseed"}
-                placeholderTextColor={'rgba(120, 120, 120, 1)'}
-                value={email}/>
-            </View>
-
-            <View style={[styles.password]}>
-              <View style={[styles.boxLayout, styles.textPosition]} />
-                <Animated.Text style={[styles.passwordHeader, styles.headerTypo, {left:animatedpass.interpolate({inputRange:[0,33,66,100], outputRange:[0,-6,6,0]})}]}>
-                  Password
-                </Animated.Text>
-                <TextInput  style={[
-                  styles.passwordInput,
-                  styles.fillerTypo,
-                  styles.fillerTypo1,
-                ]}
-                secureTextEntry={true}
-                onChangeText={(e)=>setPassword(e)}
-                placeholder={"*************"}
-                placeholderTextColor={'rgba(120, 120, 120, 1)'}
-                value={password}/>
-            </View>
-          </View>
-          <View style={[styles.rememberMyAccountBox, {flexDirection:"row"}]}>
-
-
-            <Pressable onPress={()=>setChecked(!checked)}>
-                {(checked)?
-                    <Icon
-                    name={'check-box'}
-                    size={15}
-                    color={'rgba(53, 174, 146, 1)'}
-                    />
-                  :
-                    <Icon
-                    name={'check-box-outline-blank'}
-                    size={15}
-                    color={'#fff'}
-                    />}
-              </Pressable>
-    
-             <Text style={styles.rememberAccountText}>remember my account</Text>
-   
-
-
-          </View>
-          <Pressable
-            style={[styles.registerButton, styles.boxLayout]}
-            onPress={handlePress}
-          >
-            <View style={[styles.createAnAccountBox, styles.boxLayout]} />
-            <Text style={[styles.createAnAccountText1, styles.loginText]}>
-              Create an account
-            </Text>
+          <Pressable style={{left:0.08*windowW, top:0.07*windowH}} onPress={()=>navigation.navigate("Landing")}>
+            <Icon 
+                style={styles.backButton}
+                name='arrow-back-ios'
+                color='white'
+                size={22}
+            />
           </Pressable>
-          <Text style={styles.newAccountText}>already have an account?
-          <Pressable
-            style={[styles.loginTextButton]}
-            onPress={()=> navigation.navigate("Login")}
-          >
-          <Text style={styles.loginTextBold}> log in</Text>
-          </Pressable>
-        </Text>
         </View>
+        <View style={[styles.loginFrame, {alignSelf:"center"}]}>
+          <Text style={[styles.loginHeader, styles.loginText]}>Create an account</Text>
+            <View style={styles.signUpCredentials}>
+            <View style={[styles.fullName]}>
+              <Animated.Text style={[styles.fullNameHeader, styles.headerTypo, 
+              {left:animatedvalue.interpolate({inputRange:[0,33,66,100], outputRange:[0,-6,6,0]})}]}>
+                  Username
+              </Animated.Text>
+                <View style={[styles.fullNameTextBox, styles.textPosition]} />
+                  <TextInput  style={[
+                    styles.fullNameFiller,
+                    styles.fillerTypo,
+                    styles.fillerTypo1,
+                  ]}
+                  onChangeText={(e)=>setUsername(e)}
+                  placeholder={"Type your name here"}
+                  placeholderTextColor={'rgba(120, 120, 120, 1)'}
+                  value={username}/>
+              </View>
+
+              <View style={[styles.fullName, {marginTop:13}]}>
+              <Animated.Text style={[styles.fullNameHeader, styles.headerTypo, 
+                {left:animatedfull.interpolate({inputRange:[0,33,66,100], outputRange:[0,-6,6,0]})}]}>
+                  Full name
+              </Animated.Text>
+                <View style={[styles.fullNameTextBox, styles.textPosition]} />
+                  <TextInput  style={[
+                    styles.fullNameFiller,
+                    styles.fillerTypo,
+                    styles.fillerTypo1,
+                  ]}
+                  onChangeText={(e)=>setFullname(e)}
+                  placeholder={"Type your name here"}
+                  placeholderTextColor={'rgba(120, 120, 120, 1)'}
+                  value={fullname}/>
+              </View>
+
+              <View style={styles.emailAddress}>
+                <View style={[styles.fullNameTextBox, styles.textPosition]} />
+                  <Animated.Text style={[styles.emailHeader, styles.headerTypo, {left:animatedemail.interpolate({inputRange:[0,33,66,100], outputRange:[0,-6,6,0]})}]}>
+                    Email Address
+                  </Animated.Text>
+                  <TextInput  style={[
+                    styles.fullNameFiller,
+                    styles.fillerTypo,
+                    styles.fillerTypo1,
+                  ]}
+                  onChangeText={validateEmail}
+                  placeholder={"Johnny Appleseed"}
+                  placeholderTextColor={'rgba(120, 120, 120, 1)'}
+                  value={email}/>
+              </View>
+
+              <View style={[styles.password]}>
+                <View style={[styles.boxLayout, styles.textPosition]} />
+                  <Animated.Text style={[styles.passwordHeader, styles.headerTypo, {left:animatedpass.interpolate({inputRange:[0,33,66,100], outputRange:[0,-6,6,0]})}]}>
+                    Password
+                  </Animated.Text>
+                  <TextInput  style={[
+                    styles.passwordInput,
+                    styles.fillerTypo,
+                    styles.fillerTypo1,
+                  ]}
+                  secureTextEntry={true}
+                  onChangeText={(e)=>setPassword(e)}
+                  placeholder={"*************"}
+                  placeholderTextColor={'rgba(120, 120, 120, 1)'}
+                  value={password}/>
+              </View>
+            </View>
+            <View style={[styles.rememberMyAccountBox, {flexDirection:"row"}]}>
+              <Pressable onPress={()=>setChecked(!checked)}>
+                  {(checked)?
+                      <Icon
+                      name={'check-box'}
+                      size={15}
+                      color={'rgba(53, 174, 146, 1)'}
+                      />
+                    :
+                      <Icon
+                      name={'check-box-outline-blank'}
+                      size={15}
+                      color={'#fff'}
+                      />}
+                </Pressable>
+              <Text style={styles.rememberAccountText}>remember my account</Text>
+            </View>
+            <Pressable
+              style={[styles.registerButton, styles.boxLayout]}
+              onPress={handlePress}
+            >
+              <View style={[styles.createAnAccountBox, styles.boxLayout]} />
+              <Text style={[styles.createAnAccountText1, styles.loginText]}>
+                Create an account
+              </Text>
+            </Pressable>
+            <Text style={styles.newAccountText}>already have an account?
+            <Pressable
+              style={[styles.loginTextButton]}
+              onPress={()=>navigation.navigate("Login")}
+            >
+            <Text style={styles.loginTextBold}> log in</Text>
+            </Pressable>
+            </Text>
+          </View>
+
+      </KeyboardAvoidingView>
     </View>
    );
 }
@@ -231,15 +251,15 @@ const styles = StyleSheet.create({
     maxWidth:"100%",
     position: "absolute",
   },
-  passwordInput: {
-    top:"65%",
-    width:"100%"
-  },
   fillerTypo1: {
     color: "white",
     fontWeight: "500",
     left:10,
     fontFamily: "Inter",
+  },
+  passwordInput: {
+    top:"65%",
+    width:"100%"
   },
   headerTypo: {
     fontSize: GlobalStyles.FontSize.size_xl,
@@ -273,7 +293,6 @@ const styles = StyleSheet.create({
     backgroundColor: GlobalStyles.Color.gray_500,
     minWidth: 321,
     minHeight: 238,
-    alignSelf:"center",
     position: "relative",
   },
   rememberAccountText: {
@@ -308,16 +327,9 @@ const styles = StyleSheet.create({
   },
   fullNameFiller: {
     top: 37, 
-
     width: "100%",
+  },
 
-  },
-  fullNameHeader: {
- 
-  },
-  emailHeader: {
-    
-  },
   nameLogoIcon: {
     height: "20.34%",
     width: "5.16%",
@@ -369,7 +381,6 @@ const styles = StyleSheet.create({
     top: 6,
     position:"relative",
     alignSelf:"center",
-
   },
   createAnAccountText1: {
     alignSelf:"center",
@@ -382,7 +393,6 @@ const styles = StyleSheet.create({
     alignSelf:"center",
     marginTop:18,
     marginBottom:13
- 
   },
   backArrowIcon: {
     top: 49,
@@ -395,7 +405,6 @@ const styles = StyleSheet.create({
     fontFamily: "InterBold",
     color:"white",
     top:10
-  
   },
   newAccountText: {
     fontFamily: "Inter",
@@ -418,12 +427,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: GlobalStyles.Color.white,
   },
-  loginPage: {
+  registerPage: {
     backgroundColor: GlobalStyles.Color.gray_300,
-    flex: 1,
-    minWidth: "100%",
-    minHeight: "100%",
-    overflow: "hidden",
+    minWidth: windowW,
+    minHeight: windowH,
+    overflow: "scroll",
   },
 });
 
