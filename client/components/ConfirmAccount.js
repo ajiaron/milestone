@@ -20,11 +20,17 @@ function ConfirmAccount() {
     const [username, setUsername] = useState((route.params.username !== undefined)?route.params.username:'')
     const [active, setActive] = useState(true)
 
-    function handleResend() {
-        if (!active) {
-            Alert.alert("Please wait.", "Verficication may take some time to appear.")
+    const handleResend = async() => {
+        try {
+            const response = await Auth.resendSignUp(username)
+            console.log(response)
+            setActive(false)
+            setTimeout(()=> {
+                setActive(true)
+            }, 500)
+        } catch(e) {
+            Alert.alert("Please try again.", e.message)
         }
-        setActive(false)
     }
 
     const confirmUser = async() => {

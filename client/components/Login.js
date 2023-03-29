@@ -18,6 +18,8 @@ const Login = () => {
   const [userData, setUserData] = useState({username:'', password:''})
   const [loading, setLoading] = useState(false)
   const [checked, setChecked] = useState(false)
+  const [confirmed, setConfirmed] = useState(true)
+  const [userPassword, setUserPassword] = useState('')
   const user = useContext(userContext)
   function handlePress() { 
     axios.get(`http://${user.network}:19001/api/getusers`)  // for testing without auth
@@ -39,8 +41,6 @@ const Login = () => {
     }
     setLoading(true)
     try {
-      const response = await Auth.signIn(userData.username, userData.password);
-      console.log(response)
       axios.get(`http://${user.network}:19001/api/getusers`)  
       .then((response)=> {
           if (userData.username !== undefined && userData.username.length > 0) {
@@ -48,13 +48,22 @@ const Login = () => {
             user.setUserId(response.data.filter((item)=> item.name === userData.username)[0].id)
             user.setFullname(response.data.filter((item)=> item.name === userData.username)[0].fullname)
             user.setImage(response.data.filter((item)=> item.name === userData.username)[0].src)
+            setConfirmed(response.data.filter((item)=> item.name === userData.username)[0].confirmed)
+            setUserPassword(response.data.filter((item)=> item.name === userData.username)[0].password)
           }
       })
       .catch(error => console.log(error))
+      const response = await Auth.signIn(userData.username, userData.password);
+      console.log(response)
       navigation.navigate("Feed")
+      
     } catch(e) {
-        Alert.alert("Please try again.", e.message)
-    }
+        if (!confirmed && userData.password === userPassword) {
+          navigation.navigate("ConfirmAccount", {username:userData.username})
+        } else {
+          Alert.alert("Please try again.", e.message)
+        } 
+      }
     setLoading(false)
   }
   return (

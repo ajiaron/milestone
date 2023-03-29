@@ -224,6 +224,19 @@ app.put('/api/favoritemilestone', (req, res) => {
     })
 })
 
+app.put('/api/confirmuser', (req, res) => {
+    const confirmed = req.body.confirmed
+    const username = req.body.username
+    db.query('UPDATE users SET confirmed = ? WHERE name = ?', [confirmed, username],
+    (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    }
+    )
+})
 app.delete('/api/deletemilestone', (req, res) => {
     const milestoneid = req.body.milestoneid
     db.query("DELETE FROM milestones WHERE idmilestones = ?", [milestoneid], (err, result) => {

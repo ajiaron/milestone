@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import { Text, StyleSheet, View, Image, ScrollView, Pressable, TextInput, Switch, Dimensions, KeyboardAvoidingView } from "react-native";
+import { Text, StyleSheet, View, Image, ScrollView, Pressable, TextInput, Switch, Dimensions, KeyboardAvoidingView, Alert } from "react-native";
 import * as Device from 'expo-device'
 import { Icon } from 'react-native-elements'
 import * as ImagePicker from 'expo-image-picker'
@@ -9,7 +9,8 @@ import Icons from '../data/Icons.js'
 import MilestoneTag from "./MilestoneTag";
 import userContext from '../contexts/userContext'
 import axios from 'axios'
-import { Amplify, Auth } from 'aws-amplify';
+import { Amplify, Auth, Storage } from 'aws-amplify';
+
 import awsconfig from '../src/aws-exports';
 Amplify.configure(awsconfig);
 
@@ -29,17 +30,46 @@ const Settings = () => {
     const [newDescription, setNewDescription] = useState('')
     const [oldEmail, setOldEmail] = useState('')
     const [newEmail, setNewEmail] = useState('')
+    const [oldImage, setOldImage] = useState(user?user.image:'defaultpic')
     const [preview, setPreview] = useState(false)
     const [image, setImage] = useState(user?user.image:'defaultpic')
+    const [file, setFile] = useState('')
     const navigation = useNavigation()
-    
-    function handleChanges() {
-        user.setImage(image)    // TODO: convert image uri and store into S3
-        axios.put(`http://${user.network}:19001/api/updateuser`, 
-        {username: newUsername, description: newDescription, email:newEmail, fullname: newName, src:image, userid:user.userId})
-        .then(() => {console.log('user info updated')})
-        .catch((error)=> console.log(error))
-        navigation.navigate("Profile", {id:user.userId})
+    const fetchContent = async (uri) => {
+        const response = await fetch(uri)
+        const blob = await response.blob()
+        return blob
+    }
+    const handleChanges = async () => {
+        const content = await fetchContent(image)
+        if (oldImage === image) {
+            axios.put(`http://${user.network}:19001/api/updateuser`, 
+            {username: newUsername, description: newDescription, email:newEmail, fullname: newName, 
+            src:image, userid:user.userId})
+            .then(() => {console.log('user info updated')})
+            .catch((error)=> console.log(error))
+            navigation.navigate("Profile", {id:user.userId})
+        }
+        else {
+            return Storage.put(`post-content-${Math.random()}.jpg`, content, {
+                level:'public',
+                contentType: 'image',
+                progressCallback(uploadProgress) {
+                    console.log('progress --',uploadProgress.loaded+'/'+uploadProgress.total)
+                }
+            }).then((res)=> {
+                console.log(res)
+                setFile(`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`)
+                console.log('result ---',`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`)
+                user.setImage(`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`)    // TODO: convert image uri and store into S3
+                axios.put(`http://${user.network}:19001/api/updateuser`, 
+                {username: newUsername, description: newDescription, email:newEmail, fullname: newName, 
+                src:`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`, userid:user.userId})
+                .then(() => {console.log('user info updated')})
+                .catch((error)=> console.log(error))
+                navigation.navigate("Profile", {id:user.userId})
+            })
+        }
     }
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -49,6 +79,16 @@ const Settings = () => {
         })
         if (!result.canceled) {
             setImage(result.assets[0].uri)
+        }
+    }
+    
+    const handleSignOut = async() => {
+        try {
+            const response = await Auth.signOut()
+            console.log('signed out')
+            navigation.navigate("Landing")
+        } catch(e) {
+            Alert.alert("An error occured.", e.message)
         }
     }
     useEffect(()=> {
@@ -77,12 +117,14 @@ const Settings = () => {
                                 color='white'
                                 size={100} 
                             />:
+                            <Pressable onPress={()=>console.log(image)}>
                             <Image
                                 style={{width:windowW*(94/windowW), height:windowH*(94/windowH), alignSelf:"center", borderRadius:94}}
                                 resizeMode="contain"
                                 defaultSource={require("../assets/profile-pic-empty.png")}
                                 source={{uri:image}}
                             />
+                            </Pressable>
                             }
                             <Pressable onPress={pickImage}>
                                 <Text style={styles.changePicText}>Change Profile Picture</Text>
@@ -179,7 +221,7 @@ const Settings = () => {
                                 </View>
                             </Pressable>
 
-                            <Pressable onPress={()=>{navigation.navigate("Landing")}}
+                            <Pressable onPress={handleSignOut}
                                 style={styles.logoutButton}
                                 >
                                 <View style={styles.resetButtonContent} > 

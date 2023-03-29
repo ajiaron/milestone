@@ -82,7 +82,7 @@ const Register = () => {
            password:password,
            attributes:{name:fullname, email:email}
         })
-        console.log(response)
+        console.log(response.userConfirmed)
         axios.post(`http://${user.network}:19001/api/registeruser`, 
         {username:username, milestones:defaultData.milestones, blurb:defaultData.blurb, 
         password:password, friends:0, groupcount:0, email:email, fullname:fullname, 
