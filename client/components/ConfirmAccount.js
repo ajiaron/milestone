@@ -108,6 +108,7 @@ function ConfirmAccount() {
                             </View>
                         </Pressable>
                         <Pressable 
+                            onPress={handleResend}
                             style={{height:windowH*(26/windowH)}}
                         >
                             <View style={[styles.addFriendContainer, 
