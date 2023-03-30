@@ -10,14 +10,14 @@ import userContext from '../contexts/userContext'
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const Feed = ({route}) => {
+const Archive = ({route}) => {
     const user = useContext(userContext)
+    const navigation = useNavigation()
     const postData = require('../data/PostData.json')
     const [postFeed, setPostFeed]= useState(postData)
     const [refreshing, setRefreshing] = useState(false);
     const [isViewable, setIsViewable] = useState([0])
     const [loading, setLoading] = useState(true)
-
     const scrollRef = useRef()
     const animatedvalue = useRef(new Animated.Value(0)).current;
     const slideUp=() =>{
@@ -59,11 +59,10 @@ const Feed = ({route}) => {
     useEffect(()=> {
         axios.get(`http://ec2-13-52-215-193.us-west-1.compute.amazonaws.com:19001/api/getposts`)  // if this throws an error, replace 10.0.0.160 with localhost
         .then((response)=> {
-            setPostFeed(response.data)
+            setPostFeed(response.data.filter((item)=> item.ownerid === route.params.id))
         }).catch(error => console.log(error))
         .then(()=>slideUp())
     }, [route, refreshing])
-
     const renderPost = ({ item }) => {
       return (
           <PostItem 
@@ -83,8 +82,21 @@ const Feed = ({route}) => {
   }
     return (
       <View style={styles.feedPage}>
-        
-          <View style={styles.feedContainer}>
+          <View style={{flex:1,flexDirection:"row", maxHeight:76, position:"relative", backgroundColor:"#151515",
+            top:0, alignSelf:"center", width:'100%', justifyContent:"space-around", alignItems:"flex-end", 
+            paddingBottom:(windowH>900)?10:8}}>
+                <Pressable onPress={()=>navigation.navigate("Archive",{userid:route.params.id})}>
+                    <Text style={[styles.headerNavTitle, {alignSelf:"center",
+                      color:(route.name==="Archive")?"rgba(210,210,210,1)":"rgba(160,160,160,1)",
+                      fontFamily:(route.name === "Archive")?"InterBold":"Inter"}]}>Archive</Text>
+                </Pressable>
+                <Pressable onPress={()=>navigation.navigate("Profile", {id:route.params.id})}>
+                    <Text style={[styles.headerNavTitle, {alignSelf:"center",
+                    color:(route.name==="Profile")?"rgba(210,210,210,1)":"rgba(160,160,160,1)",
+                    fontFamily:(route.name==="Profile")?"InterBold":"Inter"}]}>Profile</Text>
+                </Pressable>
+            </View>
+          <View style={[styles.feedContainer,]}>
           {(loading)&&
             <Animated.View style={{zIndex:999,width:"100%", height:animatedvalue.interpolate({inputRange:[0,100], outputRange:[windowH, 0]})}}>
              <ActivityIndicator size="large" color="#FFFFFF" style={{top:"50%", position:"absolute", alignSelf:"center"}}/>
@@ -99,7 +111,6 @@ const Feed = ({route}) => {
                 removeClippedSubviews
                 initialNumToRender={3}
                 maxToRenderPerBatch={3}
-                style={{paddingTop:48}}
                 snapToAlignment="start"
                 showsVerticalScrollIndicator={false}
                 data={[...postFeed].reverse()} 
@@ -128,10 +139,19 @@ const styles = StyleSheet.create({
     },
     feedPage: {
         backgroundColor:"rgba(28, 28, 28, 1)",
+
         flex: 1,
         minWidth: "100%",
         minHeight: "100%",
-        overflow: "hidden",
+   
     },
+    headerNavTitle: {
+        fontFamily:"Inter",
+        fontSize:14,
+        color:"rgba(160,160,160,1)",
+    }
 })
-export default Feed
+
+
+
+export default Archive;

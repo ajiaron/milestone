@@ -43,6 +43,7 @@ const ProfileInfo = ({name, milestones, groups, friends}) => {
 
 const Profile = ({route}) => {
     const user = useContext(userContext)
+    const page = useRoute()
     const [profilePic, setProfilePic] = useState()
     const [userid, setUserid] = useState(route.params.id)
     const [owner, setOwner] = useState(route.params.id === user.userId)
@@ -105,7 +106,22 @@ const Profile = ({route}) => {
     }
     return (
         <View style={[styles.profilePage]}>
-            <View style={[styles.userInfoContainer]}>
+            <View style={{flex:1,flexDirection:"row", height:76, position:"absolute", backgroundColor:"#171717",
+            top:0, alignSelf:"center", width:'100%', justifyContent:"space-around", alignItems:"flex-end", 
+            paddingBottom:(windowH>900)?10:8, borderBottomLeftRadius:15, borderBottomRightRadius:15}}>
+                <Pressable onPress={()=>navigation.navigate("Archive",{id:route.params.id})}>
+                    <Text style={[styles.headerNavTitle, {alignSelf:"center",
+                      color:(route.name==="Archive")?"rgba(210,210,210,1)":"rgba(160,160,160,1)",
+                      fontFamily:(route.name === "Archive")?"InterBold":"Inter"}]}>Archive</Text>
+                </Pressable>
+                <View>
+                    <Text style={[styles.headerNavTitle, {alignSelf:"center",
+                    color:(route.name==="Profile")?"rgba(210,210,210,1)":"rgba(160,160,160,1)",
+                    fontFamily:(route.name==="Profile")?"InterBold":"Inter"}]}>Profile</Text>
+                </View>
+
+            </View>
+            <View style={[styles.userInfoContainer, {marginBottom:windowH*0.0175}]}>
                     <Pressable onPress={handleTest}>
                         <Image
                         style={{width:windowW*(60/windowW), height:windowH*(60/windowH), alignSelf:"center", borderRadius:60}}
@@ -199,7 +215,7 @@ const styles = StyleSheet.create({
         width:windowW*0.8,
         height: windowH*0.185,
         borderRadius:15,
-        top:windowH*0.205-8,
+        top:windowH*0.2125,
         position:"absolute",
         shadowColor: '#000',
         shadowOffset: {
@@ -283,6 +299,7 @@ const styles = StyleSheet.create({
         fontFamily:"Inter",
         fontSize: 20,
         color:"white",
+        top:6,
         left:3,
         alignSelf:"center",
     },
@@ -302,14 +319,14 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     milestoneList: {
-        top:16,
+        top:15,
         width:windowW*0.8,
         alignSelf:"center",
         maxHeight:92,
         borderRadius: 8,
     },
     groupTagList: {
-        top:18,
+        top:22,
         position:"relative"
     },
     profileTagContainer: {
@@ -320,7 +337,7 @@ const styles = StyleSheet.create({
         bottom:windowH*(30/windowH) + 4
     },
     userInfoContainer: {
-        top:"20%",
+        top:"24.5%",
         left:2,
         alignSelf:"center",
         maxWidth:windowW*0.8275,
@@ -373,5 +390,10 @@ const styles = StyleSheet.create({
         fontFamily:"InterBold",
         alignSelf:"center"
     },
+    headerNavTitle: {
+        fontFamily:"Inter",
+        fontSize:14,
+        color:"rgba(160,160,160,1)",
+    }
 })
 export default Profile

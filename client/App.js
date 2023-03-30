@@ -11,6 +11,7 @@ import ConfirmAccount from './components/ConfirmAccount'
 import Feed from './components/Feed'
 import Post from './components/Post'
 import Profile from './components/Profile'
+import Archive from './components/Archive'
 import Settings from './components/Settings'
 import CreatePost from './components/CreatePost'
 import EditPost from './components/EditPost'
@@ -46,6 +47,7 @@ function App() {
             <Stack.Screen name="Feed" component={Feed} />
             <Stack.Screen name="Post" component={Post} />
             <Stack.Screen name="Profile" component={Profile} />
+            <Stack.Screen name="Archive" component={Archive} />
             <Stack.Screen name="Settings" component={Settings} />
             <Stack.Screen name="MilestoneList" component={MilestoneList} />
             <Stack.Screen name="TakePost" component={TakePost} />

@@ -54,7 +54,6 @@ const Login = () => {
       })
       .catch(error => console.log(error))
       const response = await Auth.signIn(userData.username, userData.password);
-      console.log(response)
       navigation.navigate("Feed")
       
     } catch(e) {

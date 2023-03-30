@@ -204,10 +204,10 @@ const Settings = () => {
                                 <Switch
                                     style={{ transform: [{ scaleX: .6 }, { scaleY: .6}], top:-1, marginLeft:windowW*(4/windowW)}}
                                     trackColor={{ false: "#bbb", true: "#35AE92" }}
-                                    thumbColor={!user.quality ? "#1f1e1e" : "#1f1e1e"}
+                                    thumbColor={user.quality ? "#1f1e1e" : "#1f1e1e"}
                                     ios_backgroundColor="#eee"
                                     onValueChange={toggleQuality}
-                                    value={!user.quality}
+                                    value={user.quality}
                                 />
                                
                             </View>
