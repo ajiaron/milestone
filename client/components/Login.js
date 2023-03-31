@@ -41,6 +41,7 @@ const Login = () => {
     }
     setLoading(true)
     try {
+      // set user context
       axios.get(`http://${user.network}:19001/api/getusers`)  
       .then((response)=> {
           if (userData.username !== undefined && userData.username.length > 0) {
@@ -53,10 +54,11 @@ const Login = () => {
           }
       })
       .catch(error => console.log(error))
-      const response = await Auth.signIn(userData.username, userData.password);
+      // authenticate using aws amplify
+      await Auth.signIn(userData.username, userData.password);
       navigation.navigate("Feed")
-      
     } catch(e) {
+        // redirect unconfirmed users to verify email
         if (!confirmed && userData.password === userPassword) {
           navigation.navigate("ConfirmAccount", {username:userData.username})
         } else {
