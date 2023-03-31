@@ -8,6 +8,4 @@ This project was started using **Expo CLI** (`npx create-expo-app`) as opposed t
 
 Currently, the project has integrations with a couple AWS services, including S3, EC2, and RDS. As a result, the `server.js` file in this repo is unused as the actual file is running on an EC2 instance. Additionally, Cloudfront is being used for distribution, however the app still renders assets much slower without access to a proper wifi connection. Finally, Amplify is used to connect these services to our app, and I plan to use Amplify to handle authentication with Cognito in a future release.
 
-IF THIS WORKS YOU WILL BE ABLE TO SEE THIS
-
 The production build for the app is available on Testflight for external testing, and the build was put together by EAS for context. The development client has a few features that can't be used with the Expo client, such as `react-image-colors`, although I am currently working on making both versions identical. 
