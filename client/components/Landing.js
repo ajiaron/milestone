@@ -32,17 +32,20 @@ const LogoGradient = () => {
 const Landing = () => {
   const navigation = useNavigation();
   const user = useContext(userContext);
+  // determine user's connection
   useEffect(()=> {
-    axios.get(`http://ec2-13-52-215-193.us-west-1.compute.amazonaws.com:19001/api/testconnect`)
+    axios.get(`http://ec2-13-52-215-193.us-west-1.compute.amazonaws.com:19001/api/testconnect`)  // ec2 connection
     .then((response)=> {
       if (response) {
         user.setNetwork('ec2-13-52-215-193.us-west-1.compute.amazonaws.com')
       }
     }).catch(()=>
-     user.setNetwork(Constants.expoConfig.hostUri.substring(0,Constants.expoConfig.hostUri.indexOf(':'))))
+     user.setNetwork(Constants.expoConfig.hostUri.substring(0,Constants.expoConfig.hostUri.indexOf(':'))))  // local connection
   }, [])
+
+  // determine if app is running on Expo or actual build
   useEffect(()=> {
-    if (Constants.appOwnership === 'expo' || Constants.executionEnvironment === ExecutionEnvironment.StoreClient) {
+    if (Constants.appOwnership === 'expo' || Constants.executionEnvironment === ExecutionEnvironment.StoreClient) {  
       user.setIsExpo(true)
     } else {
       user.setIsExpo(false)
