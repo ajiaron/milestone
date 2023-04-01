@@ -5,11 +5,26 @@ import { useNavigation } from "@react-navigation/native";
 import Footer from './Footer'
 import MilestoneTag from "./MilestoneTag";
 import GroupTag from "./GroupTag";
+import FriendTag from "./FriendTag";
 import userContext from '../contexts/userContext'
 import axios from 'axios'
 
 const windowW = Dimensions.get('window').width      // get screen width
 const windowH = Dimensions.get('window').height     // get screen height
+
+/*
+frontend:
+    - fetch list of users and display
+    - search friends
+    - display list of added friends
+        - link to their profile
+    - display list on unadded friends
+        - display button to add friend
+backend:
+    - friends & requests (table)
+        - add request
+database:
+*/
 
 function Friends(){
     const [users, setUsers] = useState([])
@@ -50,7 +65,13 @@ function Friends(){
                         //keyExtractor={(item)=>(milestoneList.length>0)?item.idmilestones.toString():item.id.toString()}
                         >
                     </FlatList> 
+                    <View style={[styles.groupTagList]}>
+                        <FriendTag username={"Gym Grind"} img={require("../assets/dumbbell.png")}/>
+                        <FriendTag username={"Diversity Hires"} img={require("../assets/money.png")}/>
+                        <FriendTag username={"Guitar Gang"} img={require("../assets/guitar.png")}/>
+                    </View>
                 </View>
+
             <View style={{bottom:0, position:"absolute"}}>
                 <Footer/>
             </View>
@@ -99,7 +120,12 @@ friendsHeaderContainer: {
 },
 milestoneList:{
     top: windowH * .025,
-}
+},
+groupTagList: {
+    top:22,
+    position:"relative"
+},
+
 })
 
 export default Friends

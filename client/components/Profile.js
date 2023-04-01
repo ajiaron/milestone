@@ -80,7 +80,7 @@ const Profile = ({route}) => {
         )
     }
     function handleRequest() {
-        setRequested(!requested)
+        setRequested(!requested) 
         if (!requested) {
             Animated.timing(animatedvalue,{
                 toValue:100,
@@ -94,6 +94,7 @@ const Profile = ({route}) => {
                 useNativeDriver:false,
             }).start()
         }
+        // handle friend request here
     }
     function handleTest() {
        // console.log(userid)

@@ -369,7 +369,6 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         }
         </View>
 }
-
         {isLast?<View style={{marginBottom:48}}/>:null}
      </View>
     );

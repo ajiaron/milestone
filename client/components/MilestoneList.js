@@ -15,6 +15,7 @@ const MilestoneList = () => {
     const milestoneData = require('../data/Milestones.json')
     const user = useContext(userContext)
     const [milestoneList, setMilestoneList] = useState([])
+    const navigation = useNavigation()
     {/* 
          useEffect(()=> {
             milestoneData.map((item)=> {

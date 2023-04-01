@@ -45,7 +45,7 @@ const Feed = ({route}) => {
         });
     }
     const viewabilityConfig = {
-        itemVisiblePercentThreshold:(user.quality)?90:70 // lower this to make videos render sooner when on screen
+        itemVisiblePercentThreshold:70 // lower this to make videos render sooner when on screen
     }
     const onViewableItemsChanged = ({
         viewableItems, changed
