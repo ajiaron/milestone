@@ -21,6 +21,7 @@ import EditMilestone from './components/EditMilestone'
 import MilestonePage from './components/MilestonePage'
 import MilestoneList from './components/MilestoneList'
 import UserProvider from "./contexts/UserProvider";
+import Friends from './components/Friends'
 import { Amplify, Storage } from 'aws-amplify';
 import awsconfig from './src/aws-exports';
 Amplify.configure(awsconfig);
@@ -53,6 +54,7 @@ function App() {
             <Stack.Screen name="TakePost" component={TakePost} />
             <Stack.Screen name="CreatePost" component={CreatePost} />
             <Stack.Screen name="EditPost" component={EditPost} />
+            <Stack.Screen name="Friends" component={Friends} />
             <Stack.Screen name="CreateMilestone" component={CreateMilestone} />
             <Stack.Screen name="EditMilestone" component={EditMilestone} />
             <Stack.Screen name="MilestonePage" component={MilestonePage} />

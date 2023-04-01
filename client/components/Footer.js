@@ -70,7 +70,7 @@ const Footer = ({disable, onPressTouch}) => {
                         />
                     </View>
                 </Pressable>
-                <Pressable onPress={()=>navigation.navigate("Settings")}>
+                <Pressable onPress={()=>navigation.navigate("Friends")}>
                     <View styles={styles.friendsIcon}>
                         <Icon 
                             style={styles.friendsIcon}
