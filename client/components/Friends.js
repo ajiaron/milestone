@@ -11,16 +11,45 @@ import axios from 'axios'
 const windowW = Dimensions.get('window').width      // get screen width
 const windowH = Dimensions.get('window').height     // get screen height
 
-function Friends() {
+function Friends(){
     const [users, setUsers] = useState([])
     const user = useContext(userContext)
+    const [milestoneList, setMilestoneList] = useState([]) // initializes array
+
+    useEffect(()=> {
+        axios.get(`http://${user.network}:19001/api/getmilestones`) 
+        .then((response)=> {
+            setMilestoneList(response.data)})
+        .catch((error)=> console.log(error))
+    },[])
+    const renderMilestone = ({ item }) => {
+        return (
+            <MilestoneTag 
+                title={item.title} 
+                streak={item.streak} 
+                img={milestoneList.length>0?item.src:item.img} 
+                id={milestoneList.length>0?item.idmilestones:item.id} 
+                isLast={false}
+            />
+        )
+    }
     return (
         <View style={styles.friendsPage}>
                 <View style={styles.friendsWrapper}>
+                <Text style={[styles.friendsHeader, {top:(windowH > 900)?windowH *  0.005:windowH*0.135}]}>Your Friends</Text>
                     <View style={styles.friendsHeaderContainer}>
-                        <Text style={[styles.friendsHeader, {top:(windowH > 900)?windowH * 0.095:windowH*0.135}]}>Your Friends</Text>
                     </View>
-    
+                    <FlatList 
+                        //snapToAlignment="start"
+                        //decelerationRate={"fast"}
+                        //snapToInterval={(windowH*0.0755)+16}
+                        //showsVerticalScrollIndicator={false}
+                        style={[styles.milestoneList]} 
+                        data={milestoneList} 
+                        renderItem={renderMilestone} 
+                        //keyExtractor={(item)=>(milestoneList.length>0)?item.idmilestones.toString():item.id.toString()}
+                        >
+                    </FlatList> 
                 </View>
             <View style={{bottom:0, position:"absolute"}}>
                 <Footer/>
@@ -68,7 +97,9 @@ friendsHeaderContainer: {
     left:4,
     maxHeight:22,
 },
-
+milestoneList:{
+    top: windowH * .025,
+}
 })
 
 export default Friends
