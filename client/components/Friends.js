@@ -43,13 +43,8 @@ function Friends(){
     const renderMilestone = ({ item }) => {
         return (
             <FriendTag 
-<<<<<<< HEAD
                 username = {item.name}
                 img = {item.src}
-=======
-                username={'john'}
-                img = {require("../assets/dumbbell.png")}
->>>>>>> 5631548 (added request endpoint)
             />
         )
     }
@@ -60,28 +55,15 @@ function Friends(){
                     <View style={styles.friendsHeaderContainer}>
                     </View>
                     <FlatList 
-<<<<<<< HEAD
                         snapToAlignment="start"
                         decelerationRate={"fast"}
                         snapToInterval={(windowH*0.0755)+16}
                         showsVerticalScrollIndicator={false}
                         data={users}
-=======
-                        //snapToAlignment="start"
-                        //decelerationRate={"fast"}
-                        //snapToInterval={(windowH*0.0755)+16}
-                        //showsVerticalScrollIndicator={false}
-  
-                        data={milestoneList} 
->>>>>>> 5631548 (added request endpoint)
                         renderItem={renderMilestone} 
                         keyExtractor={(item)=>(milestoneList.length>0)?item.idmilestones.toString():item.id.toString()}
                         >
                     </FlatList> 
-<<<<<<< HEAD
-=======
-                   
->>>>>>> 5631548 (added request endpoint)
                 </View>
             <View style={{bottom:0, position:"absolute"}}>
                 <Footer/>
