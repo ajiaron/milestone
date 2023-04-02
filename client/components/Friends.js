@@ -32,46 +32,39 @@ function Friends(){
     const [milestoneList, setMilestoneList] = useState([]) // initializes array
 
     useEffect(()=> {
-        axios.get(`http://${user.network}:19001/api/getmilestones`) 
+        axios.get(`http://${user.network}:19001/api/getusers`) 
         .then((response)=> {
-            setMilestoneList(response.data)})
+            setUsers(response.data)
+            console.log(response.data)
+        })
+           
         .catch((error)=> console.log(error))
     },[])
     const renderMilestone = ({ item }) => {
         return (
-            <MilestoneTag 
-                title={item.title} 
-                streak={item.streak} 
-                img={milestoneList.length>0?item.src:item.img} 
-                id={milestoneList.length>0?item.idmilestones:item.id} 
-                isLast={false}
+            <FriendTag 
+                username = {item.name}
+                img = {item.src}
             />
         )
     }
     return (
         <View style={styles.friendsPage}>
                 <View style={styles.friendsWrapper}>
-                <Text style={[styles.friendsHeader, {top:(windowH > 900)?windowH *  0.005:windowH*0.135}]}>Your Friends</Text>
+                <Text style={[styles.friendsHeader, {top:(windowH > 900)?windowH *  -0.020:windowH*0.135}]}>Your Friends</Text>
                     <View style={styles.friendsHeaderContainer}>
                     </View>
                     <FlatList 
-                        //snapToAlignment="start"
-                        //decelerationRate={"fast"}
-                        //snapToInterval={(windowH*0.0755)+16}
-                        //showsVerticalScrollIndicator={false}
-                        style={[styles.milestoneList]} 
-                        data={milestoneList} 
+                        snapToAlignment="start"
+                        decelerationRate={"fast"}
+                        snapToInterval={(windowH*0.0755)+16}
+                        showsVerticalScrollIndicator={false}
+                        data={users}
                         renderItem={renderMilestone} 
-                        //keyExtractor={(item)=>(milestoneList.length>0)?item.idmilestones.toString():item.id.toString()}
+                        keyExtractor={(item)=>(milestoneList.length>0)?item.idmilestones.toString():item.id.toString()}
                         >
                     </FlatList> 
-                    <View style={[styles.groupTagList]}>
-                        <FriendTag username={"Gym Grind"} img={require("../assets/dumbbell.png")}/>
-                        <FriendTag username={"Diversity Hires"} img={require("../assets/money.png")}/>
-                        <FriendTag username={"Guitar Gang"} img={require("../assets/guitar.png")}/>
-                    </View>
                 </View>
-
             <View style={{bottom:0, position:"absolute"}}>
                 <Footer/>
             </View>
