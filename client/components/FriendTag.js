@@ -15,15 +15,33 @@ const FriendTag = ({username, img}) => {
         <View style={[styles.friendContainer]}>
             <View style={[styles.friendContentContainer]}>  
                 <View style={[styles.friendIconContainer]}>
+                    <Pressable onPress={()=>console.log(img)}>
+
+                    
+                
                     <Image
                             style={styles.friendIcon}
                             resizeMode="cover"
-                            source={img}/>
+                            // require() is for fake images, {uri: } is for real ones
+                            source={(img.length === 0 || img === undefined)?Icons['doggo']:{uri: img}}/> 
+                    </Pressable>
                 </View>
                 <View style={[styles.friendContext]}>
                     <Text style={[styles.friendTitle]}>
                         {username}
                     </Text>
+                </View>
+                <View style = {[styles.requestIcon]}>
+                    <Icon 
+                        name='check-circle'
+                        color="rgba(53, 174, 146, 1)"
+                        size={32}
+                    />
+                    <Icon   
+                        name='cancel'
+                        color="#9c3153"
+                        size={32}
+                    />
                 </View>
             </View>
         </View>
@@ -51,7 +69,8 @@ const styles = StyleSheet.create({
         height:(windowH*0.0756)*0.4285,
         flex:1,
         flexDirection:"row",
-        alignItems:"center"
+        alignItems:"center",
+        //paddingRight: 100,
     },
     friendIconContainer: {
         width:(windowW*0.082),
@@ -59,6 +78,11 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(214, 214, 214, 1)",
         borderRadius:5,
         justifyContent:"center",
+    },
+    requestIcon: {
+        right: 10,
+        flexDirection:"row",
+        alignItems:"center",
     },
     friendIcon: {
         width:"100%",
