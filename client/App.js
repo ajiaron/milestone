@@ -40,7 +40,7 @@ function App() {
   return (
     <UserProvider>
         <NavigationContainer>
-          <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName="Landing">
+          <Stack.Navigator screenOptions={{headerShown:false}} initialRouteName="Landing">
             <Stack.Screen name="Landing" component={Landing} />
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Register" component={Register} />

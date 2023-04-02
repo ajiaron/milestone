@@ -77,6 +77,15 @@ app.get('/api/getlikes', (req, res) => {
         }
     })
 })
+app.get('/api/getrequests', (req,res) => {
+    db.query('SELECT * FROM friends', (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
 app.post('/api/registeruser', (req, res)=> {
     const name = req.body.username
     const milestones = req.body.milestones
@@ -142,6 +151,13 @@ app.post('/api/linkmilestones', (req, res) => {
             res.send("post all good sir")
         }
     })
+})
+app.post('/api/requestfriend', (req, res)=> {
+    const userid = req.body.userid
+    const friendid = req.body.friendid
+    const approved = req.body.approved
+    db.query('INSERT INTO friends (userid, friendid, approved) VALUES (?,?,?)',
+    [userid, friendid, approved], (err, result))
 })
 app.post('/api/postcomment', (req, res) => {
     const postid = req.body.postid
