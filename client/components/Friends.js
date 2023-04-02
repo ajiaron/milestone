@@ -51,7 +51,7 @@ function Friends(){
     return (
         <View style={styles.friendsPage}>
                 <View style={styles.friendsWrapper}>
-                <Text style={[styles.friendsHeader, {top:(windowH > 900)?windowH *  -0.020:windowH*0.135}]}>Your Friends</Text>
+                <Text style={[styles.friendsHeader, {top:(windowH * -0.020)}]}>Your Friends</Text>
                     <View style={styles.friendsHeaderContainer}>
                     </View>
                     <FlatList 
