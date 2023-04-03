@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-import { StyleSheet, View, Text, Pressable, Image, Dimensions } from "react-native";
+import { StyleSheet, View, Text, Pressable, Image, Dimensions, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeModules } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import userContext from '../contexts/userContext'
 import GlobalStyles from "../styles/GlobalStyles";
 import RadialGradient from 'react-native-radial-gradient';
@@ -9,6 +10,9 @@ import { useFonts, Inter_400Black } from '@expo-google-fonts/inter';
 import * as Network from 'expo-network'
 import Constants, {ExecutionEnvironment} from 'expo-constants';
 import axios from 'axios'
+import { Amplify, Auth } from 'aws-amplify';
+import awsconfig from '../src/aws-exports';
+Amplify.configure(awsconfig);
 
 const windowW= Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
@@ -32,6 +36,54 @@ const LogoGradient = () => {
 const Landing = () => {
   const navigation = useNavigation();
   const user = useContext(userContext);
+  const [username, setUsername] = useState()
+  const [password, setPassword] = useState()
+  const [loading, setLoading] = useState(false)
+  const [confirmed, setConfirmed] = useState(true)
+  const [userPassword, setUserPassword] = useState('')
+  const rememberUser = async() => {
+    setUsername(await AsyncStorage.getItem('username'))
+    setPassword(await AsyncStorage.getItem('password'))
+  }
+  const onSignIn = async () => {
+    if (loading) { 
+      return
+    }
+    setLoading(true)
+    try {
+      // set user context
+      axios.get(`http://${user.network}:19001/api/getusers`)  
+      .then((response)=> {
+          if (username !== undefined && username.length > 0) {
+            user.setUsername(username)
+            user.setUserId(response.data.filter((item)=> item.name === username)[0].id)
+            user.setFullname(response.data.filter((item)=> item.name === username)[0].fullname)
+            user.setImage(response.data.filter((item)=> item.name === username)[0].src)
+            setConfirmed(response.data.filter((item)=> item.name === username)[0].confirmed)
+            setUserPassword(response.data.filter((item)=> item.name === username)[0].password)
+          }
+      })
+      .catch(error => console.log(error.message))
+      // authenticate using aws amplify
+      await Auth.signIn(username, password);
+      navigation.navigate("Feed")
+    } catch(e) {
+        // redirect unconfirmed users to verify email
+        if (!confirmed && password === userPassword) {
+          navigation.navigate("ConfirmAccount", {username:username})
+        } else {
+          Alert.alert("Please try again.", e.message)
+        } 
+      }
+    setLoading(false)
+  }
+  function handleLogin() {
+    if ((username && username.length > 0) && (password && password.length > 0)) {
+      onSignIn()
+    } else {
+      navigation.navigate("Login")
+    }
+  }
   // determine user's connection
   useEffect(()=> {
     axios.get(`http://ec2-13-52-215-193.us-west-1.compute.amazonaws.com:19001/api/testconnect`)  // ec2 connection
@@ -51,9 +103,12 @@ const Landing = () => {
       user.setIsExpo(false)
     }
   }, [])
-  function handlePress() {
-    navigation.navigate("Register")
-  }
+
+  // remember user's login info
+  useEffect(()=> {
+    rememberUser()
+  }, [])
+  
   return (
     <View style={styles.landingPage}>
       <View style={[styles.headerBorder, styles.backgroundIconPosition]} />
@@ -61,7 +116,7 @@ const Landing = () => {
         <View style={styles.frameForButtons}>
         <View style={styles.createLayout}>
         <Pressable
-          onPress={handlePress}
+          onPress={() => navigation.navigate("Register")}
         >
           <View style={[styles.createAnAccountBox, styles.createLayout]} />
           <Text
@@ -73,18 +128,22 @@ const Landing = () => {
         </View>
         <Pressable
           style={[styles.createLayout, styles.mt38]}
-          onPress={() => navigation.navigate("Login")}
+          onPress={handleLogin}
         >
           <View style={[styles.createAnAccountBox, styles.createLayout]} />
           <Text style={[styles.loginText, styles.textTypo1, styles.textTypo2]}>
-            Login
+            {(loading)?'Loading...':
+              (username && username.length > 0)?`Continue as ${username}`:'Login'
+            }
           </Text>
         </Pressable>
       </View>
       <View style={styles.alreadyHaveAnAccount}>
       <View style={{flex:1, height: 1, backgroundColor: 'white'}} />
         <Text style={[styles.alrdyHaveAnAccText, styles.textTypo]}>
-          already have an account?
+          {(username && username.length > 0)?
+          'using a different account?':'already have an account?'
+          }
         </Text>
         <View style={{flex:1, height: 1, backgroundColor: 'white'}} />
       </View>
@@ -95,7 +154,11 @@ const Landing = () => {
           {`community.`}
         </Text>
       </View>
+      <Pressable onPress={()=> console.log(username, password)}>
+
+
       <LogoGradient/>
+      </Pressable>
       <Text style={[styles.logoText]}>milestone</Text>
       </View>
       <Image

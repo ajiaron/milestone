@@ -112,6 +112,8 @@ const EditMilestone = ({route}) => {
     const [postPermission, setPostPermission] = useState("Everyone")
     const [viewPermission, setViewPermission] = useState((windowW>400)?"Friends Only":"Friends")
     const [duration, setDuration] = useState((windowW>400)?'Until Tomorrow':'Next Day')
+    const [loading, setLoading] = useState(false)
+    const [progress, setProgress] = useState(0)
     var fileExt = (image !== undefined)?image.toString().split('.').pop():'calender'
     const DeleteAlert = () => {
         return new Promise((resolve, reject) => {
@@ -158,6 +160,7 @@ const EditMilestone = ({route}) => {
     }
 
     const fetchContent = async (uri) => {
+        setLoading(true)
         const response = await fetch(uri)
         const blob = await response.blob()
         return blob
@@ -169,6 +172,7 @@ const EditMilestone = ({route}) => {
             level:'public',
             contentType: 'image',
             progressCallback(uploadProgress) {
+                setProgress(Math.round((uploadProgress.loaded/uploadProgress.total)*100))
                 console.log('progress --',uploadProgress.loaded+'/'+uploadProgress.total)
             }
         })
@@ -176,7 +180,11 @@ const EditMilestone = ({route}) => {
             console.log('result ---',`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`)
             axios.put(`http://${user.network}:19001/api/updatemilestone`, 
             {milestoneid: route.params.id, title: title, description:description, src:`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`})
-            .then(() => {console.log('milestone updated')})
+            .then(() => {
+                console.log('milestone updated')
+                setLoading(false)
+                navigation.navigate("Feed")
+            })
             .catch((error)=> console.log(error))
         })
         .catch((e)=>console.log(e))
@@ -190,10 +198,13 @@ const EditMilestone = ({route}) => {
        else {
         axios.put(`http://${user.network}:19001/api/updatemilestone`, 
         {milestoneid: route.params.id, title: title, description:description, src:image})
-        .then(() => {console.log('milestone updated')})
+        .then(() => {
+            console.log('milestone updated')
+            setLoading(false)
+            navigation.navigate("Feed")
+        })
         .catch((error)=> console.log(error))
        }
-       navigation.navigate("Feed")
     }
     useEffect(()=> {
         setOriginalImage((route.params.src !== undefined)?route.params.src:null)
@@ -312,7 +323,7 @@ const EditMilestone = ({route}) => {
                             </Pressable>
                             <Pressable onPress={submitMilestone}>
                             <View style={styles.publishButtonContainer}>
-                                <Text style={[styles.publishButtonText, {fontSize:(windowW>400)?14:13, top:(windowH>900)?0:0.5}]}>Save Changes</Text>
+                                <Text style={[styles.publishButtonText, {fontSize:(windowW>400)?14:13, top:(windowH>900)?0:0.5}]}>{(loading)?`Loading... ${progress}%`:"Save Changes"}</Text>
                             </View>
                             </Pressable>
                         </View>

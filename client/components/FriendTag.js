@@ -16,9 +16,6 @@ const FriendTag = ({username, img}) => {
             <View style={[styles.friendContentContainer]}>  
                 <View style={[styles.friendIconContainer]}>
                     <Pressable onPress={()=>console.log(img)}>
-
-                    
-                
                     <Image
                             style={styles.friendIcon}
                             resizeMode="cover"

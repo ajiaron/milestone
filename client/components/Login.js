@@ -1,7 +1,8 @@
-import  React, {useState, useContext} from "react";
+import  React, {useState, useContext, useEffect} from "react";
 import { Text, StyleSheet, View, Image, Pressable, TextInput, useColorScheme, Dimensions, Alert} from "react-native";
 import { CheckBox } from "react-native-elements";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import GlobalStyles from "../styles/GlobalStyles";
 import { Icon } from 'react-native-elements';
 import axios from 'axios';
@@ -15,12 +16,26 @@ const windowH = Dimensions.get('window').height
 
 const Login = () => {
   const navigation = useNavigation();
-  const [userData, setUserData] = useState({username:'', password:''})
+  const route = useRoute()
+  const user = useContext(userContext)
+  const [userData, setUserData] = useState({username:user.username, password:''})
   const [loading, setLoading] = useState(false)
-  const [checked, setChecked] = useState(false)
   const [confirmed, setConfirmed] = useState(true)
   const [userPassword, setUserPassword] = useState('')
-  const user = useContext(userContext)
+  const [rememberUser, setRememberUser] = useState()
+  const [rememberPass, setRememberPass] = useState()
+  const [checked, setChecked] = useState((rememberUser && rememberPass))
+
+  const rememberAccount = async() => {
+    setRememberUser(await AsyncStorage.getItem('username'));
+    setRememberPass(await AsyncStorage.getItem('password'));
+  }
+  useEffect(() => {
+    rememberAccount()
+    if (rememberUser && rememberPass) {
+      setChecked(true)
+    }
+  }, []);
   function handlePress() { 
     axios.get(`http://${user.network}:19001/api/getusers`)  // for testing without auth
     .then((response)=> {
@@ -31,9 +46,8 @@ const Login = () => {
           user.setImage(response.data.filter((item)=> item.name === userData.username)[0].src)
         }
     })
-    .catch(error => console.log(error))
+    .catch(error => console.log(error.message))
     navigation.navigate("Feed")
-    // authenticate here
   }
   const onSignIn = async () => {
     if (loading) { 
@@ -53,12 +67,23 @@ const Login = () => {
             setUserPassword(response.data.filter((item)=> item.name === userData.username)[0].password)
           }
       })
-      .catch(error => console.log(error))
+      .catch(error => console.log(error.message))
       // authenticate using aws amplify
-      await Auth.signIn(userData.username, userData.password);
+      const userToken = await Auth.signIn(userData.username, userData.password);
+      if (checked) {
+        console.log('checked')
+        await AsyncStorage.setItem('username', userData.username)
+        await AsyncStorage.setItem('password', userData.password)
+      } 
+      else {
+        await AsyncStorage.removeItem('username')
+        await AsyncStorage.removeItem('password')
+      }
       navigation.navigate("Feed")
     } catch(e) {
         // redirect unconfirmed users to verify email
+        await AsyncStorage.removeItem('username')
+        await AsyncStorage.removeItem('password')
         if (!confirmed && userData.password === userPassword) {
           navigation.navigate("ConfirmAccount", {username:userData.username})
         } else {
@@ -67,6 +92,7 @@ const Login = () => {
       }
     setLoading(false)
   }
+
   return (
     <View style={styles.loginPage}>
       <View style={{flexDirection:"row", alignItems:"center"}}>
@@ -165,7 +191,7 @@ const Login = () => {
         </Text>
         <Pressable
             style={[styles.newAccountTextButton, styles.forgotPassword]}
-            onPress={()=> navigation.navigate("Register")}
+            onPress={()=>console.log(rememberUser, rememberPass, checked)}
         >
           <Text style={styles.forgotPasswordText}> Forgot password?</Text>
         </Pressable>

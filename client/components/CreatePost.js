@@ -35,6 +35,8 @@ const CreatePost = ({route}) => {
     const user = useContext(userContext)
     const [postId, setPostId] = useState(0)
     const [file, setFile] = useState()
+    const [loading, setLoading] = useState(false)
+    const [progress, setProgress] = useState(0)
 
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getposts`)
@@ -57,6 +59,7 @@ const CreatePost = ({route}) => {
         src:'defaultpost'
     }
     const fetchContent = async (uri) => {
+        setLoading(true)
         const response = await fetch(uri)
         const blob = await response.blob()
         return blob
@@ -67,6 +70,7 @@ const CreatePost = ({route}) => {
             level:'public',
             contentType: asset,
             progressCallback(uploadProgress) {
+                setProgress(Math.round((uploadProgress.loaded/uploadProgress.total)*100))
                 console.log('progress --',uploadProgress.loaded+'/'+uploadProgress.total)
             }
         })
@@ -77,7 +81,11 @@ const CreatePost = ({route}) => {
             {idposts: postId,username:user.username?user.username:'ajiaron', caption:caption, 
             profilepic:(user.image !== undefined)?user.image:'defaultpic', 
             src:`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`, date: date, ownerid:user.userId})
-            .then(() => {console.log('new post saved')})
+            .then(() => {
+                console.log('new post saved')
+                setLoading(false)
+                navigation.navigate("Feed", {post: postData, milestones:milestones})
+            })
             .catch((error)=> console.log(error))
         })
         .catch((e)=>console.log(e))
@@ -90,13 +98,14 @@ const CreatePost = ({route}) => {
         milestones.map((item)=>{
             axios.post(`http://${user.network}:19001/api/linkmilestones`, 
             {postid:postId,milestoneid:item.id})
-            .then(() => {console.log('milestones linked')})
+            .then(() => {
+                console.log('milestones linked')
+            })    
             .catch((error)=> console.log(error))
         })
     }
     function submitPost() {
         handlePress()
-        navigation.navigate("Feed", {post: postData, milestones:milestones})
     }
     const renderMilestone = ({ item }) => {
         return (
@@ -199,9 +208,9 @@ const CreatePost = ({route}) => {
                             <Text style={styles.savePostButtonText}>Archive</Text>
                         </View>
                     </Pressable>
-                    <Pressable onPress={submitPost}>
+                    <Pressable onPress={submitPost} disabled={loading}>
                     <View style={styles.publishPostButtonContainer}>
-                        <Text style={styles.publishPostButtonText}>Publish</Text>
+                        <Text style={styles.publishPostButtonText}>{(loading)?`Loading... ${progress}%`:"Publish"}</Text>
                     </View>
                     </Pressable>
                 </View>

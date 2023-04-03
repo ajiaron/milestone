@@ -6,6 +6,7 @@ import * as ImagePicker from 'expo-image-picker'
 import { useNavigation } from "@react-navigation/native";
 import Footer from './Footer'
 import Icons from '../data/Icons.js'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import MilestoneTag from "./MilestoneTag";
 import userContext from '../contexts/userContext'
 import axios from 'axios'
@@ -34,8 +35,11 @@ const Settings = () => {
     const [preview, setPreview] = useState(false)
     const [image, setImage] = useState(user?user.image:'defaultpic')
     const [file, setFile] = useState('')
+    const [loading, setLoading] = useState(false)
+    const [progress, setProgress] = useState(0)
     const navigation = useNavigation()
     const fetchContent = async (uri) => {
+        setLoading(true)
         const response = await fetch(uri)
         const blob = await response.blob()
         return blob
@@ -46,28 +50,34 @@ const Settings = () => {
             axios.put(`http://${user.network}:19001/api/updateuser`, 
             {username: newUsername, description: newDescription, email:newEmail, fullname: newName, 
             src:image, userid:user.userId})
-            .then(() => {console.log('user info updated')})
+            .then(() => {
+                console.log('user info updated')
+                setLoading(false)
+                navigation.navigate("Profile", {id:user.userId})
+            })
             .catch((error)=> console.log(error))
-            navigation.navigate("Profile", {id:user.userId})
         }
         else {
             return Storage.put(`post-content-${Math.random()}.jpg`, content, {
                 level:'public',
                 contentType: 'image',
                 progressCallback(uploadProgress) {
+                    setProgress(Math.round((uploadProgress.loaded/uploadProgress.total)*100))
                     console.log('progress --',uploadProgress.loaded+'/'+uploadProgress.total)
                 }
             }).then((res)=> {
-                console.log(res)
                 setFile(`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`)
                 console.log('result ---',`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`)
                 user.setImage(`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`)    // TODO: convert image uri and store into S3
                 axios.put(`http://${user.network}:19001/api/updateuser`, 
                 {username: newUsername, description: newDescription, email:newEmail, fullname: newName, 
                 src:`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`, userid:user.userId})
-                .then(() => {console.log('user info updated')})
-                .catch((error)=> console.log(error))
-                navigation.navigate("Profile", {id:user.userId})
+                .then(() => {
+                    console.log('user info updated')
+                    setLoading(false)
+                    navigation.navigate("Profile", {id:user.userId})
+                })
+                .catch((error)=> console.log(error))  
             })
         }
     }
@@ -84,8 +94,9 @@ const Settings = () => {
     
     const handleSignOut = async() => {
         try {
-            const response = await Auth.signOut()
-            console.log('signed out')
+            await Auth.signOut()
+         //   await AsyncStorage.removeItem('username')
+         //   await AsyncStorage.removeItem('password')
             navigation.navigate("Landing")
         } catch(e) {
             Alert.alert("An error occured.", e.message)
@@ -216,7 +227,7 @@ const Settings = () => {
                                 >
                                 <View style={styles.resetButtonContent} > 
                                     <Text style={[styles.saveChangesText]}>
-                                        Save Changes
+                                        {(loading)?`Loading... ${progress}%`:"Save Changes"}
                                     </Text>
                                 </View>
                             </Pressable>

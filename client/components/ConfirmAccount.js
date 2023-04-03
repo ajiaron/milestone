@@ -14,6 +14,7 @@ const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
 function ConfirmAccount() {
+    const user = useContext(userContext)
     const route = useRoute()
     const navigation = useNavigation()
     const [confirmCode, setConfirmCode] = useState('')
@@ -41,9 +42,10 @@ function ConfirmAccount() {
             try {
                 const response = await Auth.confirmSignUp(username, confirmCode)
                 console.log(response)
-                axios.put(`http://${user.network}:19001/api/confirmuser`, 
-                {confirmed:true, username:username})
-                .then(console.log('user confirmed'))
+             //   axios.put(`http://${user.network}:19001/api/confirmuser`, 
+             //   {confirmed:true, username:username})
+             //   .then(console.log('user confirmed'))
+                navigation.popToTop();
                 navigation.navigate("Login")
             } catch (e) {
                 Alert.alert("Please try again.", e.message)

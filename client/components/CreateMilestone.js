@@ -110,6 +110,8 @@ const CreateMilestone = () => {
     const [postPermission, setPostPermission] = useState("Everyone")
     const [viewPermission, setViewPermission] = useState((windowW>400)?"Friends Only":"Friends")
     const [duration, setDuration] = useState((windowW>400)?'Until Tomorrow':'Next Day')
+    const [loading, setLoading] = useState(false)
+    const [progress, setProgress] = useState(0)
     function handlePress() {
         console.log(image.substring(image.indexOf('.')+1))
         console.log('Device: ', Device.deviceName)
@@ -134,6 +136,7 @@ const CreateMilestone = () => {
         pickImage()
     }
     const fetchContent = async (uri) => {
+        setLoading(true)
         const response = await fetch(uri)
         const blob = await response.blob()
         return blob
@@ -144,6 +147,7 @@ const CreateMilestone = () => {
             level:'public',
             contentType: 'image',
             progressCallback(uploadProgress) {
+                setProgress(Math.round((uploadProgress.loaded/uploadProgress.total)*100))
                 console.log('progress --',uploadProgress.loaded+'/'+uploadProgress.total)
             }
         })
@@ -151,14 +155,17 @@ const CreateMilestone = () => {
             console.log('result ---',`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`)
             axios.post(`http://${user.network}:19001/api/postmilestones`, 
             {title: title,src:image?`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`:'defaultmilestone', streak:0, description:description, ownerid:user.userId})
-            .then(() => {console.log('new milestone saved')})
+            .then(() => {
+                console.log('new milestone saved')
+                setLoading(false)
+                navigation.navigate("Feed")
+            })
             .catch((error)=> console.log(error))
         })
         .catch((e)=>console.log(e))
     }
     function submitMilestone() {
         uploadContent(image)
-        navigation.navigate("Feed")
     }
     return (
         <View style={styles.createMilestonePage}>
@@ -274,9 +281,9 @@ const CreateMilestone = () => {
                                     <Text style={styles.saveButtonText}>Archive</Text>
                                 </View>
                             </Pressable>
-                            <Pressable onPress={submitMilestone}>
+                            <Pressable onPress={submitMilestone} disabled={loading}>
                             <View style={styles.publishButtonContainer}>
-                                <Text style={styles.publishButtonText}>Publish</Text>
+                                <Text style={styles.publishButtonText}>{(loading)?`loading... ${progress}%`:'Publish'}</Text>
                             </View>
                             </Pressable>
                         </View>

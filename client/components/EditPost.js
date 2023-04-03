@@ -32,8 +32,8 @@ const EditPost = ({route}) => {
     const user = useContext(userContext)
     const [postId, setPostId] = useState(route.params.postId)
     const [confirmation, setConfirmation] = useState(false)
-    const [loading, setLoading] = useState(true)
-
+    const [loading, setLoading] = useState(true)    // for loading image & video preview
+    const [isLoading, setIsLoading] = useState(false)   // for loading backend requests
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getlinkedmilestones`)  
         .then((response)=> {
