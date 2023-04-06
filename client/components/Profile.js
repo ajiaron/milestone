@@ -57,12 +57,13 @@ const Profile = ({route}) => {
     const navigation = useNavigation()
     var fileExt = (user.image !== undefined)?user.image.toString().split('.').pop():'png';
     const animatedvalue = useRef(new Animated.Value(0)).current;
+    const [accept, setAccept] = useState(false)
 
-    useEffect(()=> {
+    useEffect(()=> {    // set displayed milestone to the favorited one
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response)=> {
-            // use this to display how many milestones the user owns in their insights
             setMilestones(response.data.filter((item)=> item.idmilestones === favorite))
+            // display how many milestones the user owns in their insights
             setMilestoneCount(response.data.filter((item)=>item.ownerId === userid).length)
         })
     }, [favorite])
@@ -73,15 +74,43 @@ const Profile = ({route}) => {
             setUserData(response.data.filter((item)=> item.id === userid)[0])
             setFavorite(response.data.filter((item)=> item.id === userid)[0].favoriteid)
         })
+        axios.get(`http://${user.network}:19001/api/getrequests`)
+        .then((response)=> {
+            setRequested(response.data.filter((item)=> item.requesterId === user.userId).map((val)=> val.recipientId).indexOf(userid) > -1)
+            setAccept(response.data.filter((item)=> item.recipientId === user.userId).map((val)=> val.requesterId).indexOf(userid) > -1)
+        })
      }, [route])
+     useEffect(()=> {
+        handleRequest()
+     }, [requested])
     const renderMilestone = ({ item }) => {
         return (
             <MilestoneTag title={item.title} streak={item.streak} img={item.src} id={item.idmilestones} isLast={false}/>
         )
     }
+    function requestFriend() {
+        console.log(user.userId, userid)
+        axios.post(`http://${user.network}:19001/api/requestfriend`, 
+        {requesterid:user.userId,recipientid:userid, approved:false})
+        .then(() => {
+            console.log('requested')
+            setRequested(true)
+        })
+        .catch((error)=> console.log(error))
+
+  //    axios.get(`http://${user.network}:19001/api/getrequests`)
+   //   .then((response)=> console.log(response.data))
+    }
+    function deleteFriend() {
+        axios.delete(`http://${user.network}:19001/api/deletefriend`, {data: {requesterid:user.userId, recipientid:userid}})
+        .then((response)=> console.log("requester deleted"))
+        .catch(error=>console.log(error))
+        axios.delete(`http://${user.network}:19001/api/deletefriend`, {data: {requesterid:userid, recipientid:user.userId}})
+        .then((response)=>  setRequested(false))
+        .catch(error=>console.log(error))
+    }
     function handleRequest() {
-        setRequested(!requested) 
-        if (!requested) {
+        if (requested) {
             Animated.timing(animatedvalue,{
                 toValue:100,
                 duration:150,
@@ -92,7 +121,7 @@ const Profile = ({route}) => {
                 toValue:0,
                 duration:150,
                 useNativeDriver:false,
-            }).start()
+            }).start(()=>requestFriend)
         }
         // handle friend request here
     }
@@ -100,7 +129,8 @@ const Profile = ({route}) => {
        // console.log(userid)
        // console.log(userData)
        // console.log(fileExt)
-       console.log(user)
+       //console.log(userid)
+       console.log(requested)
     }
     function handlePress() {
         navigation.navigate("Settings")
@@ -139,6 +169,7 @@ const Profile = ({route}) => {
                     <Text style={[styles.userBlurb, {minWidth:windowW*0.8, marginTop:(!owner&&windowW<400)?6.5:4}]}>{(userData !== undefined)?userData.blurb:'Im about writing apps and running laps'}</Text>
                 </View>
                 {(owner)?
+                // render settings button if this page is your profile
                 <View style={styles.settingsIcon}>
                     <Pressable onPress={handlePress}>
                         <View style={styles.settingsNotification}/>
@@ -150,20 +181,22 @@ const Profile = ({route}) => {
                         />
                     </Pressable>
                 </View>:
-                    <Pressable 
-                        style={{marginRight:(windowW>400)?14.5:11.5, marginTop:(windowW>400)?5.5:3.5, height:windowH*(26/windowH)}}
-                        onPress={handleRequest}>
-                        <Animated.View style={[styles.addFriendContainer, 
-                            {backgroundColor:animatedvalue.interpolate({inputRange:[0,100], outputRange:["rgba(0, 82, 63, 1)","#565454"]})
+                // render friend button if this page is not your profile
+                <Pressable 
+                    style={{marginRight:(windowW>400)?14.5:11.5, marginTop:(windowW>400)?5.5:3.5, height:windowH*(26/windowH)}}
+                    onPress={(requested)?deleteFriend:requestFriend}>
+                    <Animated.View style={[styles.addFriendContainer, 
+                        {backgroundColor:(requested)?"#565454":animatedvalue.interpolate({inputRange:[0,100], outputRange:["rgba(0, 82, 63, 1)","#565454"]})
+                        }]}>
+                        <Animated.Text style={[styles.addFriendText, 
+                            {fontSize:(windowW>400)?12.5:12.5, 
+                                color:(requested)?"rgba(10,10,10,1)":
+                                animatedvalue.interpolate({inputRange:[0,100], outputRange:["white","rgba(10,10,10,1)"]})
                             }]}>
-                            <Animated.Text style={[styles.addFriendText, 
-                                {fontSize:(windowW>400)?12.5:12.5, 
-                                 color:animatedvalue.interpolate({inputRange:[0,100], outputRange:["white","rgba(10,10,10,1)"]})
-                                }]}>
-                                {(requested)?"Requested":'Request'}
-                            </Animated.Text>
-                        </Animated.View>
-                    </Pressable>
+                            {(requested)?"Requested":(accept)?'Accept':'Request'}
+                        </Animated.Text>
+                    </Animated.View>
+                </Pressable>
                 }
             </View>
 

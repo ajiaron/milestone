@@ -36,19 +36,7 @@ const Login = () => {
       setChecked(true)
     }
   }, []);
-  function handlePress() { 
-    axios.get(`http://${user.network}:19001/api/getusers`)  // for testing without auth
-    .then((response)=> {
-        if (userData.username !== undefined && userData.username.length > 0) {
-          user.setUsername(userData.username)
-          user.setUserId(response.data.filter((item)=> item.name === userData.username)[0].id)
-          user.setFullname(response.data.filter((item)=> item.name === userData.username)[0].fullname)
-          user.setImage(response.data.filter((item)=> item.name === userData.username)[0].src)
-        }
-    })
-    .catch(error => console.log(error.message))
-    navigation.navigate("Feed")
-  }
+ 
   const onSignIn = async () => {
     if (loading) { 
       return
@@ -71,7 +59,6 @@ const Login = () => {
       // authenticate using aws amplify
       const userToken = await Auth.signIn(userData.username, userData.password);
       if (checked) {
-        console.log('checked')
         await AsyncStorage.setItem('username', userData.username)
         await AsyncStorage.setItem('password', userData.password)
       } 
@@ -160,10 +147,12 @@ const Login = () => {
           </View>
           <Pressable
               style={[styles.loginButton, styles.boxLayout]}
-              onPress={handlePress}>
-              <View style={[styles.createAnAccountBox, styles.boxLayout]} />
-              <Text style={[styles.createAnAccountText1, styles.loginText]}>
-                Login
+              onPress={()=>onSignIn()}>
+              <View style={[styles.createAnAccountBox, styles.boxLayout, {alignItems:"center"}]} />
+              <Text style={[styles.createAnAccountText1, styles.loginText,{alignSelf:"center"}]}>
+              {(loading)?'Loading...':
+                'Login'
+                }
               </Text>
           </Pressable>
           <Pressable
@@ -172,13 +161,11 @@ const Login = () => {
               justifyContent:"center", marginTop:16, borderRadius:4, borderColor:"#fff",
               borderWidth:1, borderStyle:'dashed'
             }]}
-              onPress={()=>onSignIn()}
+              onPress={()=>Alert.alert("Feature Unavailable","Sign-in with different platforms will be available in a future update.")}
               disabled={loading}
           >
               <Text style={[{alignSelf:"center",color:"#FFF", fontFamily:"Inter", fontSize:12, textAlign:"center", top:0.25}]}>
-                {(loading)?'Loading...':
-                'Login with AWS'
-                }
+                Login with AWS
               </Text>
           </Pressable>
           <Text style={styles.newAccountText}>don't have an account? 
@@ -349,7 +336,7 @@ const styles = StyleSheet.create({
   },
   createAnAccountText1: {
     top: 6,
-    left: 110,
+
     fontSize: GlobalStyles.FontSize.size_lg,
   },
   newAccountTextButton: {

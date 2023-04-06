@@ -286,7 +286,7 @@ const Post = ({navigation, route}) => {
         .then((response)=> {
            response.data.filter((item)=>commentList.map((val)=>val.userid).indexOf(item.id) > -1 ||
            likesList.map((val)=>val.userid).indexOf(item.id) > -1 ).map((item)=>
-                { commentList.forEach((e) => {      // map usernames to comments
+                { commentList.forEach((e) => {      // map usernames to comments and likes
                     if (e.userid === item.id) {
                         e.name=item.name
                         e.img=item.src

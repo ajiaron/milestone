@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { StyleSheet, View, Text, Pressable, Image, Dimensions, Alert } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute, useIsFocused } from "@react-navigation/native";
 import { NativeModules } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import userContext from '../contexts/userContext'
@@ -36,15 +36,12 @@ const LogoGradient = () => {
 const Landing = () => {
   const navigation = useNavigation();
   const user = useContext(userContext);
+  const isFocused = useIsFocused();
   const [username, setUsername] = useState()
   const [password, setPassword] = useState()
   const [loading, setLoading] = useState(false)
   const [confirmed, setConfirmed] = useState(true)
   const [userPassword, setUserPassword] = useState('')
-  const rememberUser = async() => {
-    setUsername(await AsyncStorage.getItem('username'))
-    setPassword(await AsyncStorage.getItem('password'))
-  }
   const onSignIn = async () => {
     if (loading) { 
       return
@@ -77,11 +74,25 @@ const Landing = () => {
       }
     setLoading(false)
   }
+
   function handleLogin() {
     if ((username && username.length > 0) && (password && password.length > 0)) {
       onSignIn()
     } else {
       navigation.navigate("Login")
+    }
+  }
+
+  const switchAccount = async() => {
+    try {
+      await AsyncStorage.removeItem('username')
+      await AsyncStorage.removeItem('password')
+      setUsername(null)
+      setPassword(null)
+      await Auth.signOut()
+      navigation.navigate("Login")
+    } catch(e) {
+      Alert.alert("An error occured", e.message)
     }
   }
   // determine user's connection
@@ -106,8 +117,20 @@ const Landing = () => {
 
   // remember user's login info
   useEffect(()=> {
-    rememberUser()
-  }, [])
+    const handleSignIn = async() => {
+      try {
+        const name = await AsyncStorage.getItem('username')
+        setUsername(name)
+        const pass = await AsyncStorage.getItem('password')
+        setPassword(pass)
+      } catch(e) {
+        Alert.alert("An error occured", e.message)
+      }
+    }
+    if (isFocused) {
+      handleSignIn()
+    }
+  }, [isFocused])
   
   return (
     <View style={styles.landingPage}>
@@ -140,11 +163,13 @@ const Landing = () => {
       </View>
       <View style={styles.alreadyHaveAnAccount}>
       <View style={{flex:1, height: 1, backgroundColor: 'white'}} />
+      <Pressable onPress={switchAccount}>
         <Text style={[styles.alrdyHaveAnAccText, styles.textTypo]}>
           {(username && username.length > 0)?
           'using a different account?':'already have an account?'
           }
         </Text>
+      </Pressable>
         <View style={{flex:1, height: 1, backgroundColor: 'white'}} />
       </View>
       <View style={[styles.descriptionForText, styles.descriptionLayout]}>
@@ -154,10 +179,8 @@ const Landing = () => {
           {`community.`}
         </Text>
       </View>
-      <Pressable onPress={()=> console.log(username, password)}>
-
-
-      <LogoGradient/>
+      <Pressable onPress={()=>console.log(username)}>
+        <LogoGradient/>
       </Pressable>
       <Text style={[styles.logoText]}>milestone</Text>
       </View>

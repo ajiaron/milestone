@@ -153,11 +153,17 @@ app.post('/api/linkmilestones', (req, res) => {
     })
 })
 app.post('/api/requestfriend', (req, res)=> {
-    const userid = req.body.userid
-    const friendid = req.body.friendid
+    const requesterid = req.body.requesterid
+    const recipientid = req.body.recipientid
     const approved = req.body.approved
-    db.query('INSERT INTO friends (userid, friendid, approved) VALUES (?,?,?)',
-    [userid, friendid, approved], (err, result))
+    db.query('INSERT INTO friends (requesterid, recipientid, approved) VALUES (?,?,?)',
+    [requesterid, recipientid, approved], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            result.send("friend request successful")
+        }
+    })
 })
 app.post('/api/postcomment', (req, res) => {
     const postid = req.body.postid
@@ -239,8 +245,7 @@ app.put('/api/favoritemilestone', (req, res) => {
         }
     })
 })
-
-app.put('/api/confirmuser', (req, res) => {
+app.put('/api/confirmuser', (req, res) => {     // for email confirmation on register
     const confirmed = req.body.confirmed
     const username = req.body.username
     db.query('UPDATE users SET confirmed = ? WHERE name = ?', [confirmed, username],
@@ -252,6 +257,30 @@ app.put('/api/confirmuser', (req, res) => {
         }
     }
     )
+})
+app.put('/api/acceptfriend', (req, res) => {
+    const requesterid = req.body.requesterid
+    const recepientid = req.body.recepientid
+    db.query('UPDATE friends SET approved = ? WHERE requesterid = ? AND recepientid = ?', [true, requesterid, recepientid],
+    (err, result)=> {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+
+app.delete('/api/deletefriend', (req, res) => {
+    const requesterid = req.body.requesterid
+    const recepientid = req.body.recepientid
+    db.query("DELETE FROM friends WHERE requesterid = ? AND recepientid = ?", [requesterid, recepientid], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send('deleted post')
+        }
+    })
 })
 app.delete('/api/deletemilestone', (req, res) => {
     const milestoneid = req.body.milestoneid

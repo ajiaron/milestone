@@ -85,11 +85,11 @@ const Archive = ({route}) => {
           <View style={{flex:1,flexDirection:"row", maxHeight:76, position:"relative", backgroundColor:"#151515",
             top:0, alignSelf:"center", width:'100%', justifyContent:"space-around", alignItems:"flex-end", 
             paddingBottom:(windowH>900)?10:8}}>
-                <Pressable onPress={()=>navigation.navigate("Archive",{userid:route.params.id})}>
+                <View>
                     <Text style={[styles.headerNavTitle, {alignSelf:"center",
                       color:(route.name==="Archive")?"rgba(210,210,210,1)":"rgba(160,160,160,1)",
                       fontFamily:(route.name === "Archive")?"InterBold":"Inter"}]}>Archive</Text>
-                </Pressable>
+                </View>
                 <Pressable onPress={()=>navigation.navigate("Profile", {id:route.params.id})}>
                     <Text style={[styles.headerNavTitle, {alignSelf:"center",
                     color:(route.name==="Profile")?"rgba(210,210,210,1)":"rgba(160,160,160,1)",
