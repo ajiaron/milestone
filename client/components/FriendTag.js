@@ -22,8 +22,19 @@ const FriendTag = ({id, username, img}) => {
         {requesterid:id,recipientid:user.userId})
         .then(() => {
             setIsFriend(true)
+            setPending(false)
+            setApproval(false)
             console.log('friend accepted')
         })
+    }
+    function requestFriend() {
+        axios.post(`http://${user.network}:19001/api/requestfriend`, 
+        {requesterid:user.userId,recipientid:id, approved:false})
+        .then(() => {
+            console.log('requested')
+            setPending(true)
+        })
+        .catch((error)=> console.log(error))
     }
     function deleteFriend() {
         axios.delete(`http://${user.network}:19001/api/deletefriend`, {data: {requesterid:user.userId, recipientid:id}})
@@ -32,26 +43,36 @@ const FriendTag = ({id, username, img}) => {
         axios.delete(`http://${user.network}:19001/api/deletefriend`, {data: {requesterid:id, recipientid:user.userId}})
         .then((response)=>  setPending(false))
         .catch(error=>console.log(error))
+        setIsFriend(false)
+        setPending(false)
+        setApproval(false)
     }
     function handleTest() {
         console.log('friend:',isFriend)
         console.log('pending:',pending)
         console.log('approval:',approval)
     }
+    function navigateProfile() {
+        navigation.popToTop()
+        navigation.navigate("Profile",{id:id})
+    }
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getrequests`) 
         .then((response)=>{ 
-            setFriends(response.data.filter((item)=>(item.requesterId === id)||(item.recipientId === id))[0])   // get friends from database
-            setIsFriend(response.data.filter((item)=>(item.requesterId === id)||(item.recipientId === id))[0].approved)
+            setFriends(response.data.filter((item)=>((item.requesterId === id)||(item.recipientId === id))&&
+            ((item.requesterId === user.userId) || (item.recipientId === user.userId)))[0])   
+            setIsFriend(response.data.filter((item)=>((item.requesterId === id)||(item.recipientId === id))&&
+            ((item.requesterId === user.userId) || (item.recipientId === user.userId)))[0].approved)
             setPending(response.data.filter((item)=> (item.requesterId === user.userId) && (item.recipientId === id) && (!item.approved)).length > 0)
             setApproval(response.data.filter((item)=> (item.requesterId === id) && (item.recipientId === user.userId) && (!item.approved)).length > 0)
+           // console.log(response.data.filter((item)=>(item.requesterId === id)||(item.recipientId === id)))
         })
     }, [])
     return (
         <View style={[styles.friendContainer]}>
             <View style={[styles.friendContentContainer]}>  
                 <View style={[styles.friendIconContainer]}>
-                    <Pressable onPress={()=>navigation.navigate("Profile",{id:id})}>
+                    <Pressable onPress={handleTest}>
                     <Image
                             style={styles.friendIcon}
                             resizeMode="cover"
@@ -60,7 +81,7 @@ const FriendTag = ({id, username, img}) => {
                     </Pressable>
                 </View>
                 <View style={[styles.friendContext]}>
-                    <Pressable onPress={()=>navigation.navigate("Profile",{id:id})}>
+                    <Pressable onPress={navigateProfile}>
 
                     
                         <Text style={[styles.friendTitle]}>
@@ -73,7 +94,7 @@ const FriendTag = ({id, username, img}) => {
                     {(isFriend)?
                     <Pressable 
                          style={{marginRight:(windowW>400)?14.5:11.5, marginTop:(windowW>400)?5.5:3.5, height:windowH*(26/windowH)}}
-                         //onPress={deleteFriend}
+                         onPress={deleteFriend}
                     >
                          <View style={[styles.addFriendContainer, {backgroundColor:"rgba(0, 82, 63, 1)"}]}>
                              <Text style={[styles.addFriendText, {fontSize:12.5, color:"rgba(255,255,255,1)"}]}>
@@ -109,7 +130,17 @@ const FriendTag = ({id, username, img}) => {
                              Pending
                          </Text>
                      </View>
-                 </Pressable>:null
+                 </Pressable>:
+            <Pressable 
+                  style={{marginRight:(windowW>400)?14.5:11.5, marginTop:(windowW>400)?5.5:3.5, height:windowH*(26/windowH)}}
+                  onPress={requestFriend}
+             >
+                  <View style={[styles.addFriendContainer, {backgroundColor:"rgba(0, 82, 63, 1)"}]}>
+                      <Text style={[styles.addFriendText, {fontSize:12.5, color:"rgba(255,255,255,1)"}]}>
+                          Request
+                      </Text>
+                  </View>
+              </Pressable>
                     }
                 </View>
             </View>

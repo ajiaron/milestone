@@ -34,6 +34,7 @@ function Friends(){
     const [friends, setFriends] = useState([])
     const [milestoneList, setMilestoneList] = useState([]) // initializes array
     const animatedvalue = useRef(new Animated.Value(0)).current;
+    const [refresh, setRefresh] = useState(false)
     const slideUp=() =>{
         Animated.timing(animatedvalue,{
             toValue:100,
@@ -47,18 +48,17 @@ function Friends(){
         axios.get(`http://${user.network}:19001/api/getrequests`) 
         .then((response)=>{ 
             setFriends(response.data.filter((item)=>(item.requesterId === user.userId || item.recipientId === user.userId)))   // get friends from database
-            console.log(response.data.filter((item)=>(item.requesterId === user.userId)||(item.recipientId === user.userId)))
+            console.log('ayo:',response.data.filter((item)=>(item.requesterId === user.userId)||(item.recipientId === user.userId)))
         })
     },[])
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getusers`) 
         .then((response)=> {
-            setUsers(response.data.filter((item)=>((friends.map((val)=>val.requesterId).indexOf(item.id) > -1)
+            setUsers(response.data.filter((item)=>((friends.map((val)=>val.requesterId).indexOf(item.id) > -1)  // match users to requests
             ||(friends.map((val)=> val.recipientId).indexOf(item.id) > -1)) && item.id !== user.userId))
             slideUp()
         })
         .catch((error)=> console.log(error))
-
     }, [friends, route])
     const renderMilestone = ({ item }) => {
         return (
@@ -66,6 +66,7 @@ function Friends(){
                 id = {item.id}
                 username = {item.name}
                 img = {item.src}
+    
             />
         )
     }
