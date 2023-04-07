@@ -1,5 +1,5 @@
-import  React, {useState, useEffect, useContext} from "react";
-import { Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, ScrollView, Dimensions } from "react-native";
+import  React, {useState, useEffect, useContext, useRef} from "react";
+import { Animated, ActivityIndicator, Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, ScrollView, Dimensions } from "react-native";
 import { Icon } from 'react-native-elements'
 import { useNavigation } from "@react-navigation/native";
 import Footer from './Footer'
@@ -28,21 +28,41 @@ database:
 
 function Friends(){
     const [users, setUsers] = useState([])
+    const [loading, setLoading] = useState(true)
     const user = useContext(userContext)
+    const [friends, setFriends] = useState([])
     const [milestoneList, setMilestoneList] = useState([]) // initializes array
-
+    const animatedvalue = useRef(new Animated.Value(0)).current;
+    const slideUp=() =>{
+        Animated.timing(animatedvalue,{
+            toValue:100,
+            delay:100,
+            duration:500,
+            useNativeDriver:false,
+        }).start(()=>setLoading(false))
+    }
+    useEffect(()=> {
+        setLoading(true)
+        axios.get(`http://${user.network}:19001/api/getrequests`) 
+        .then((response)=>{ 
+            setFriends(response.data.filter((item)=>(item.requesterId === user.userId)||(item.recipient === user.userid)))   // get friends from database
+        })
+    },[])
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getusers`) 
         .then((response)=> {
-            setUsers(response.data)
-            console.log(response.data)
+            setUsers(response.data.filter((item)=>((friends.map((val)=>val.requesterId).indexOf(item.id) > -1)
+            ||(friends.map((val)=> val.recipientId).indexOf(item.id) > -1)) && item.id !== user.userId))
         })
-           
         .catch((error)=> console.log(error))
-    },[])
+        .then(()=> {
+            slideUp()
+        })
+    }, [friends])
     const renderMilestone = ({ item }) => {
         return (
             <FriendTag 
+                id = {item.id}
                 username = {item.name}
                 img = {item.src}
             />
@@ -50,21 +70,28 @@ function Friends(){
     }
     return (
         <View style={styles.friendsPage}>
-                <View style={styles.friendsWrapper}>
-                <Text style={[styles.friendsHeader, {top:(windowH * -0.020)}]}>Your Friends</Text>
-                    <View style={styles.friendsHeaderContainer}>
-                    </View>
-                    <FlatList 
-                        snapToAlignment="start"
-                        decelerationRate={"fast"}
-                        snapToInterval={(windowH*0.0755)+16}
-                        showsVerticalScrollIndicator={false}
-                        data={users}
-                        renderItem={renderMilestone} 
-                        keyExtractor={(item)=>(milestoneList.length>0)?item.idmilestones.toString():item.id.toString()}
-                        >
-                    </FlatList> 
+            {(loading)&&
+                <Animated.View style={{zIndex:999,alignSelf:"center",width:"100%",top:"50%", height:animatedvalue.interpolate({inputRange:[0,100], outputRange:[windowH, 0]})}}>
+                    <ActivityIndicator size="large" color="#FFFFFF" style={{top:"50%", position:"absolute", alignSelf:"center"}}/>
+                </Animated.View>
+            }
+            <View style={styles.friendsWrapper}>
+            <Text style={[styles.friendsHeader, {top:(windowH * -0.020)}]}>Your Friends</Text>
+                <View style={styles.friendsHeaderContainer}>
                 </View>
+                {!loading &&
+                <FlatList 
+                    snapToAlignment="start"
+                    decelerationRate={"fast"}
+                    snapToInterval={(windowH*0.0755)+16}
+                    showsVerticalScrollIndicator={false}
+                    data={users}
+                    renderItem={renderMilestone} 
+                    keyExtractor={(item)=>(milestoneList.length>0)?item.idmilestones.toString():item.id.toString()}
+                    >
+                </FlatList> 
+                }
+            </View>
             <View style={{bottom:0, position:"absolute"}}>
                 <Footer/>
             </View>

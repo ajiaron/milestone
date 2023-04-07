@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useCallback } from "react"
+import React, { useState, useEffect, useCallback, useContext } from "react"
 import { FlatList, StyleSheet, Text, View, Button } from 'react-native';
 import 'react-native-gesture-handler'
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useFonts } from 'expo-font'
+import userContext from './contexts/userContext'
 import Landing from './components/Landing'
 import Login from './components/Login'
 import Register from './components/Register'
@@ -28,6 +29,7 @@ Amplify.configure(awsconfig);
 
 const Stack = createNativeStackNavigator()
 function App() {
+  const user = useContext(userContext)
   const [loaded] = useFonts({
     Inter: require('./assets/fonts/Inter-Medium.otf'),
     InterBold: require('./assets/fonts/Inter-SemiBold.otf'),
@@ -40,14 +42,14 @@ function App() {
   return (
     <UserProvider>
         <NavigationContainer>
-          <Stack.Navigator screenOptions={{headerShown:false}} initialRouteName="Landing">
+          <Stack.Navigator screenOptions={{headerShown:false}} initialRouteName={"Landing"}>
             <Stack.Screen name="Landing" component={Landing} />
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Register" component={Register} />
             <Stack.Screen name="ConfirmAccount" component={ConfirmAccount} />
-            <Stack.Screen name="Feed" component={Feed} />
+            <Stack.Screen name="Feed" component={Feed} options={{gestureEnabled: false}} />
             <Stack.Screen name="Post" component={Post} />
-            <Stack.Screen name="Profile" component={Profile} />
+            <Stack.Screen name="Profile" component={Profile} options={{gestureEnabled: false}}/>
             <Stack.Screen name="Archive" component={Archive} />
             <Stack.Screen name="Settings" component={Settings} />
             <Stack.Screen name="MilestoneList" component={MilestoneList} />

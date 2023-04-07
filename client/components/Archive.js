@@ -65,6 +65,15 @@ const Archive = ({route}) => {
     }, [route, refreshing])
     const renderPost = ({ item }) => {
       return (
+        /* render 3 of these in a row, then render each row in a grid
+        <Pressable onPress={()=>navigation.navigate("Post", {data:item, comments:false})}>
+            <View>
+                <Image src={item.src} resizeMode="cover"
+                style={{width:windowW/3,height:windowW/3}}>
+                </Image>
+            </View>
+        </Pressable>
+        */
           <PostItem 
               key={item.idposts}
               username={item.username}

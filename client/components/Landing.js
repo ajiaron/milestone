@@ -25,9 +25,10 @@ const LogoGradient = () => {
       resizeMode="contain"
       source={require("../assets/logo-gradient.png")}/>
        <Image
-        style={styles.logo}
-        resizeMode="cover"
-        source={require("../assets/milestone-logo.png")}
+        style={[styles.logo,{ aspectRatio: 1, width:111, height:111, borderRadius:111}]}
+       
+        resizeMode="contain"
+        source={require("../assets/landingbook7.png")}
       />
     </View> 
   )
@@ -63,6 +64,7 @@ const Landing = () => {
       .catch(error => console.log(error.message))
       // authenticate using aws amplify
       await Auth.signIn(username, password);
+      user.setLogged(true)
       navigation.navigate("Feed")
     } catch(e) {
         // redirect unconfirmed users to verify email

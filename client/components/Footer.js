@@ -32,7 +32,7 @@ const Footer = ({disable, onPressTouch}) => {
         
     }
     function navigateProfile() {
-        navigation.popToTop();
+        navigation.popToTop()
         navigation.navigate("Profile", {id:user.userId})
     }
     return (

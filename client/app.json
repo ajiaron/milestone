@@ -4,10 +4,10 @@
     "slug": "milestonenative",
     "version": "2.0.0",
     "orientation": "portrait",
-    "icon": "./assets/milelogo.png",
+    "icon": "./assets/milelogov3.png",
     "userInterfaceStyle": "dark",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/expo-splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -36,7 +36,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ajiaron.milestonenative",
-      "buildNumber": "11",
+      "buildNumber": "12",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos.",
         "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos."

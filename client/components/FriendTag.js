@@ -10,7 +10,42 @@ import axios from 'axios'
 const windowW= Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const FriendTag = ({username, img}) => {
+const FriendTag = ({id, username, img}) => {
+    const user = useContext(userContext)
+    const [friends, setFriends] = useState([])
+    const [approval, setApproval] = useState(false)
+    const [isFriend, setIsFriend] = useState(false)
+    const [pending, setPending] = useState(false)
+    function acceptFriend() {
+        axios.put(`http://${user.network}:19001/api/acceptfriend`, 
+        {requesterid:id,recipientid:user.userId})
+        .then(() => {
+            setIsFriend(true)
+            console.log('friend accepted')
+        })
+    }
+    function deleteFriend() {
+        axios.delete(`http://${user.network}:19001/api/deletefriend`, {data: {requesterid:user.userId, recipientid:id}})
+        .then((response)=> console.log("requester deleted"))
+        .catch(error=>console.log(error))
+        axios.delete(`http://${user.network}:19001/api/deletefriend`, {data: {requesterid:id, recipientid:user.userId}})
+        .then((response)=>  setPending(false))
+        .catch(error=>console.log(error))
+    }
+    function handleTest() {
+        console.log('friend:',isFriend)
+        console.log('pending:',pending)
+        console.log('approval:',approval)
+    }
+    useEffect(()=> {
+        axios.get(`http://${user.network}:19001/api/getrequests`) 
+        .then((response)=>{ 
+            setFriends(response.data.filter((item)=>(item.requesterId === id)||(item.recipientId === id))[0])   // get friends from database
+            setIsFriend(response.data.filter((item)=>(item.requesterId === id)||(item.recipientId === id))[0].approved)
+            setPending(response.data.filter((item)=> (item.requesterId === user.userId) && (item.recipientId === id) && (!item.approved)).length > 0)
+            setApproval(response.data.filter((item)=> (item.requesterId === id) && (item.recipientId === user.userId) && (!item.approved)).length > 0)
+        })
+    }, [])
     return (
         <View style={[styles.friendContainer]}>
             <View style={[styles.friendContentContainer]}>  
@@ -28,17 +63,49 @@ const FriendTag = ({username, img}) => {
                         {username}
                     </Text>
                 </View>
+
                 <View style = {[styles.requestIcon]}>
-                    <Icon 
-                        name='check-circle'
-                        color="rgba(53, 174, 146, 1)"
-                        size={32}
-                    />
-                    <Icon   
-                        name='cancel'
-                        color="#9c3153"
-                        size={32}
-                    />
+                    {(isFriend)?
+                    <Pressable 
+                         style={{marginRight:(windowW>400)?14.5:11.5, marginTop:(windowW>400)?5.5:3.5, height:windowH*(26/windowH)}}
+                         //onPress={deleteFriend}
+                    >
+                         <View style={[styles.addFriendContainer, {backgroundColor:"rgba(0, 82, 63, 1)"}]}>
+                             <Text style={[styles.addFriendText, {fontSize:12.5, color:"rgba(255,255,255,1)"}]}>
+                                 Friends
+                             </Text>
+
+                         </View>
+                     </Pressable>:
+                    (!isFriend && approval)?
+                    <View style={{flexDirection:"row"}}>
+                        <Pressable onPress={acceptFriend} style={{right:windowW*0.065,}}>
+                            <Icon 
+                                name='check-circle'
+                                color="rgba(53, 174, 146, 1)"
+                                size={32}
+                            />
+                        </Pressable>
+                        <Pressable onPress={deleteFriend} style={{right:windowW*0.065,}}>
+                            <Icon   
+                                name='cancel'
+                                color="#9c3153"
+                                size={32}
+                            />
+                        </Pressable>
+                    </View>:
+                    (!isFriend && pending)?
+                     <Pressable 
+                     style={{marginRight:(windowW>400)?14.5:11.5, marginTop:(windowW>400)?5.5:3.5, height:windowH*(26/windowH)}}
+                     onPress={deleteFriend}
+                >
+                     <View style={[styles.addFriendContainer, {backgroundColor:"#565656"}]}>
+                         <Text style={[styles.addFriendText, {fontSize:12.5, color:"rgba(8,8,8,1)"}]}>
+                             Pending
+                         </Text>
+                     </View>
+                 </Pressable>:null
+                    }
                 </View>
             </View>
         </View>
@@ -77,9 +144,12 @@ const styles = StyleSheet.create({
         justifyContent:"center",
     },
     requestIcon: {
-        right: 10,
+       // right: (windowW*0.800)*0.055,
         flexDirection:"row",
         alignItems:"center",
+        justifyContent:"center",
+        alignSelf:"center",
+  
     },
     friendIcon: {
         width:"100%",
@@ -100,6 +170,19 @@ const styles = StyleSheet.create({
         fontSize:16, 
         color:"white",
         left:windowW*0.0385,
+    },
+    addFriendContainer: {
+        minWidth:windowW *0.2,
+        height: windowH * (26/windowH),
+        borderRadius:4,
+        right:windowW*0.1,
+        bottom:1.5,
+        alignSelf:"center",
+        justifyContent:"center"
+    },
+    addFriendText: {
+        fontFamily:"InterBold",
+        alignSelf:"center"
     },
 })
 export default FriendTag

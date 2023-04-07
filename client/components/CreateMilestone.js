@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import { Animated, Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, Switch, Dimensions, TouchableOpacity } from "react-native";
+import { Animated, Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, Switch, Dimensions, TouchableOpacity, Alert } from "react-native";
 import * as Device from 'expo-device'
 import { Icon } from 'react-native-elements'
 import { useNavigation } from "@react-navigation/native";
@@ -112,6 +112,21 @@ const CreateMilestone = () => {
     const [duration, setDuration] = useState((windowW>400)?'Until Tomorrow':'Next Day')
     const [loading, setLoading] = useState(false)
     const [progress, setProgress] = useState(0)
+    const animatedval= useRef(new Animated.Value(0)).current;
+    function shakeLeft(value) {   // for empty fields
+        Animated.timing(value,{
+          toValue:100,
+          duration:300,
+          useNativeDriver:false,
+        }).start(()=> shakeRight(value))
+      }
+      function shakeRight(value) {
+        Animated.timing(value,{
+          toValue:0,
+          duration:0,
+          useNativeDriver:false,
+      }).start()
+    }
     function handlePress() {
         console.log(image.substring(image.indexOf('.')+1))
         console.log('Device: ', Device.deviceName)
@@ -165,15 +180,20 @@ const CreateMilestone = () => {
         .catch((e)=>console.log(e))
     }
     function submitMilestone() {
-        uploadContent(image)
+        if (!image) {
+            shakeLeft(animatedval)
+        }
+        else {
+            uploadContent(image)
+        }
     }
     return (
         <View style={styles.createMilestonePage}>
             <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
                 <View style={styles.createMilestoneContainer}>
                     <View style={{alignItems:"center", alignSelf:"center", justifyContent:"center"}}>
-                        <Image
-                            style={styles.milestonePic}
+                        <Animated.Image
+                            style={[styles.milestonePic, {left:animatedval.interpolate({inputRange:[0,33,66,100], outputRange:[0,-10,10,0]})}]}
                             resizeMode="cover"
                             source={(image)?{uri:image}:Icons['defaultmilestone']}/>
                         <Pressable onPress={handleSelection}>

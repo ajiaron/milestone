@@ -58,6 +58,8 @@ const Profile = ({route}) => {
     var fileExt = (user.image !== undefined)?user.image.toString().split('.').pop():'png';
     const animatedvalue = useRef(new Animated.Value(0)).current;
     const [accept, setAccept] = useState(false)
+    const [isFriend, setIsFriend] = useState(false)
+    const [friends, setFriends] = useState([])
 
     useEffect(()=> {    // set displayed milestone to the favorited one
         axios.get(`http://${user.network}:19001/api/getmilestones`)
@@ -76,8 +78,13 @@ const Profile = ({route}) => {
         })
         axios.get(`http://${user.network}:19001/api/getrequests`)
         .then((response)=> {
-            setRequested(response.data.filter((item)=> item.requesterId === user.userId).map((val)=> val.recipientId).indexOf(userid) > -1)
-            setAccept(response.data.filter((item)=> item.recipientId === user.userId).map((val)=> val.requesterId).indexOf(userid) > -1)
+            setFriends(response.data.filter((item)=> (item.requesterId === userid || item.recipientId === userid) && item.approved).length)
+            if (response.data.filter((item)=> (item.requesterId === user.userId || item.recipientId === user.userId)).length > 0) {
+                setIsFriend(response.data.filter((item)=> (item.requesterId === user.userId || item.recipientId === user.userId)
+                && (item.requesterId === userid || item.recipientId === userid))[0].approved)
+                setRequested(response.data.filter((item)=> item.requesterId === user.userId).map((val)=> val.recipientId).indexOf(userid) > -1)
+                setAccept(response.data.filter((item)=> item.recipientId === user.userId).map((val)=> val.requesterId).indexOf(userid) > -1)
+            }   
         })
      }, [route])
      useEffect(()=> {
@@ -89,7 +96,6 @@ const Profile = ({route}) => {
         )
     }
     function requestFriend() {
-        console.log(user.userId, userid)
         axios.post(`http://${user.network}:19001/api/requestfriend`, 
         {requesterid:user.userId,recipientid:userid, approved:false})
         .then(() => {
@@ -97,9 +103,13 @@ const Profile = ({route}) => {
             setRequested(true)
         })
         .catch((error)=> console.log(error))
-
-  //    axios.get(`http://${user.network}:19001/api/getrequests`)
-   //   .then((response)=> console.log(response.data))
+    }
+    function acceptFriend() {
+        axios.put(`http://${user.network}:19001/api/acceptfriend`, 
+        {requesterid:userid,recipientid:user.userId})
+        .then(() => {
+            setIsFriend(true)
+        })
     }
     function deleteFriend() {
         axios.delete(`http://${user.network}:19001/api/deletefriend`, {data: {requesterid:user.userId, recipientid:userid}})
@@ -130,7 +140,8 @@ const Profile = ({route}) => {
        // console.log(userData)
        // console.log(fileExt)
        //console.log(userid)
-       console.log(requested)
+       console.log(friends)
+       //console.log(user)
     }
     function handlePress() {
         navigation.navigate("Settings")
@@ -182,9 +193,10 @@ const Profile = ({route}) => {
                     </Pressable>
                 </View>:
                 // render friend button if this page is not your profile
+
                 <Pressable 
                     style={{marginRight:(windowW>400)?14.5:11.5, marginTop:(windowW>400)?5.5:3.5, height:windowH*(26/windowH)}}
-                    onPress={(requested)?deleteFriend:requestFriend}>
+                    onPress={(isFriend)?'':(requested)?deleteFriend:(accept)?acceptFriend:requestFriend}>
                     <Animated.View style={[styles.addFriendContainer, 
                         {backgroundColor:(requested)?"#565454":animatedvalue.interpolate({inputRange:[0,100], outputRange:["rgba(0, 82, 63, 1)","#565454"]})
                         }]}>
@@ -193,7 +205,7 @@ const Profile = ({route}) => {
                                 color:(requested)?"rgba(10,10,10,1)":
                                 animatedvalue.interpolate({inputRange:[0,100], outputRange:["white","rgba(10,10,10,1)"]})
                             }]}>
-                            {(requested)?"Requested":(accept)?'Accept':'Request'}
+                            {(isFriend)?"Friends":(requested)?"Requested":(accept)?'Accept':'Request'}
                         </Animated.Text>
                     </Animated.View>
                 </Pressable>
@@ -201,7 +213,7 @@ const Profile = ({route}) => {
             </View>
 
             <ProfileInfo name={(!owner && userData !== undefined)?userData.fullname:
-                user.fullname?user.fullname:"Johnny Appleseed"} milestones={milestoneCount} groups={3} friends={13} />
+                user.fullname?user.fullname:"Johnny Appleseed"} milestones={milestoneCount} groups={3} friends={friends} />
             <View style={[styles.profileTagContainer]}>
                 <View style={[styles.milestoneHeaderContainer]}>
                     <Text style={[styles.milestoneHeader]}>

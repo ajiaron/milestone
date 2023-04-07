@@ -95,8 +95,7 @@ const Settings = () => {
     const handleSignOut = async() => {
         try {
             await Auth.signOut()
-         //   await AsyncStorage.removeItem('username')
-         //   await AsyncStorage.removeItem('password')
+            user.setLogged(false)
             navigation.navigate("Landing")
         } catch(e) {
             Alert.alert("An error occured.", e.message)

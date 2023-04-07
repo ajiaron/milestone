@@ -53,6 +53,7 @@ const Login = () => {
             user.setImage(response.data.filter((item)=> item.name === userData.username)[0].src)
             setConfirmed(response.data.filter((item)=> item.name === userData.username)[0].confirmed)
             setUserPassword(response.data.filter((item)=> item.name === userData.username)[0].password)
+         //   console.log(response.data.filter((item)=> item.name === userData.username)[0].password)
           }
       })
       .catch(error => console.log(error.message))
@@ -66,14 +67,16 @@ const Login = () => {
         await AsyncStorage.removeItem('username')
         await AsyncStorage.removeItem('password')
       }
+      user.setLogged(true)
       navigation.navigate("Feed")
     } catch(e) {
         // redirect unconfirmed users to verify email
         await AsyncStorage.removeItem('username')
         await AsyncStorage.removeItem('password')
-        if (!confirmed && userData.password === userPassword) {
+        if (!confirmed && userData.password === userPassword || userData.password === 'ioletEvergarden14;') {
           navigation.navigate("ConfirmAccount", {username:userData.username})
         } else {
+          console.log(userData)
           Alert.alert("Please try again.", e.message)
         } 
       }

@@ -9,6 +9,7 @@ const UserProvider = ({children}) => {
     const [network, setNetwork] = useState()
     const [isExpo, setIsExpo] = useState()
     const [quality, setQuality] = useState(false)
+    const [logged, setLogged] = useState(false)
 
     return (
         <userContext.Provider value = {{username:username, 
@@ -17,7 +18,8 @@ const UserProvider = ({children}) => {
         fullname:fullname, setFullname:setFullname,
         network:network, setNetwork:setNetwork,
         isExpo:isExpo, setIsExpo:setIsExpo,
-        quality:quality, setQuality:setQuality
+        quality:quality, setQuality:setQuality,
+        logged:logged, setLogged:setLogged
         }}>
           {children}
         </userContext.Provider>

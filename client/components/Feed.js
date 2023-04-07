@@ -62,6 +62,7 @@ const Feed = ({route}) => {
             setPostFeed(response.data)
         }).catch(error => console.log(error))
         .then(()=>slideUp())
+        console.log()
     }, [route, refreshing])
 
     const renderPost = ({ item }) => {
