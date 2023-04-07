@@ -139,8 +139,8 @@ const Profile = ({route}) => {
        // console.log(userid)
        // console.log(userData)
        // console.log(fileExt)
-       //console.log(userid)
-       console.log(friends)
+       console.log(userid)
+
        //console.log(user)
     }
     function handlePress() {

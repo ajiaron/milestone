@@ -32,8 +32,11 @@ const Footer = ({disable, onPressTouch}) => {
         
     }
     function navigateProfile() {
-        navigation.popToTop()
-        navigation.navigate("Profile", {id:user.userId})
+        if (route.name !== "Profile") {
+            navigation.popToTop()
+            navigation.navigate("Profile", {id:user.userId})
+        } 
+        
     }
     return (
         <View style={[styles.footerContainer]}>

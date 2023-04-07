@@ -1,7 +1,7 @@
 import  React, {useState, useEffect, useContext, useRef} from "react";
 import { Animated, ActivityIndicator, Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, ScrollView, Dimensions } from "react-native";
 import { Icon } from 'react-native-elements'
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import Footer from './Footer'
 import MilestoneTag from "./MilestoneTag";
 import GroupTag from "./GroupTag";
@@ -30,6 +30,7 @@ function Friends(){
     const [users, setUsers] = useState([])
     const [loading, setLoading] = useState(true)
     const user = useContext(userContext)
+    const route = useRoute()
     const [friends, setFriends] = useState([])
     const [milestoneList, setMilestoneList] = useState([]) // initializes array
     const animatedvalue = useRef(new Animated.Value(0)).current;
@@ -45,7 +46,8 @@ function Friends(){
         setLoading(true)
         axios.get(`http://${user.network}:19001/api/getrequests`) 
         .then((response)=>{ 
-            setFriends(response.data.filter((item)=>(item.requesterId === user.userId)||(item.recipient === user.userid)))   // get friends from database
+            setFriends(response.data.filter((item)=>(item.requesterId === user.userId || item.recipientId === user.userId)))   // get friends from database
+            console.log(response.data.filter((item)=>(item.requesterId === user.userId)||(item.recipientId === user.userId)))
         })
     },[])
     useEffect(()=> {
@@ -53,12 +55,11 @@ function Friends(){
         .then((response)=> {
             setUsers(response.data.filter((item)=>((friends.map((val)=>val.requesterId).indexOf(item.id) > -1)
             ||(friends.map((val)=> val.recipientId).indexOf(item.id) > -1)) && item.id !== user.userId))
-        })
-        .catch((error)=> console.log(error))
-        .then(()=> {
             slideUp()
         })
-    }, [friends])
+        .catch((error)=> console.log(error))
+
+    }, [friends, route])
     const renderMilestone = ({ item }) => {
         return (
             <FriendTag 
