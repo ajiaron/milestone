@@ -11,6 +11,7 @@ const windowW= Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
 const FriendTag = ({id, username, img}) => {
+    const navigation= useNavigation()
     const user = useContext(userContext)
     const [friends, setFriends] = useState([])
     const [approval, setApproval] = useState(false)
@@ -50,7 +51,7 @@ const FriendTag = ({id, username, img}) => {
         <View style={[styles.friendContainer]}>
             <View style={[styles.friendContentContainer]}>  
                 <View style={[styles.friendIconContainer]}>
-                    <Pressable onPress={()=>console.log(img)}>
+                    <Pressable onPress={()=>navigation.navigate("Profile",{id:id})}>
                     <Image
                             style={styles.friendIcon}
                             resizeMode="cover"
@@ -59,9 +60,13 @@ const FriendTag = ({id, username, img}) => {
                     </Pressable>
                 </View>
                 <View style={[styles.friendContext]}>
-                    <Text style={[styles.friendTitle]}>
-                        {username}
-                    </Text>
+                    <Pressable onPress={()=>navigation.navigate("Profile",{id:id})}>
+
+                    
+                        <Text style={[styles.friendTitle]}>
+                            {username}
+                        </Text>
+                    </Pressable>
                 </View>
 
                 <View style = {[styles.requestIcon]}>

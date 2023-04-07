@@ -36,7 +36,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ajiaron.milestonenative",
-      "buildNumber": "14",
+      "buildNumber": "15",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos.",
         "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos."
