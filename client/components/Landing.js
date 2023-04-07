@@ -28,7 +28,7 @@ const LogoGradient = () => {
         style={[styles.logo,{ aspectRatio: 1, width:111, height:111, borderRadius:111}]}
        
         resizeMode="contain"
-        source={require("../assets/landingbook7.png")}
+        source={require("../assets/landingicon11.png")}
       />
     </View> 
   )
