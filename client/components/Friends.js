@@ -87,7 +87,6 @@ function Friends(){
     }
     return (
         <View style={styles.friendsPage}>
-
             {(loading)&&
                 <Animated.View style={{zIndex:999,alignSelf:"center",width:"100%",top:"50%", height:animatedvalue.interpolate({inputRange:[0,100], outputRange:[windowH, 0]})}}>
                     <ActivityIndicator size="large" color="#FFFFFF" style={{top:"50%", position:"absolute", alignSelf:"center"}}/>

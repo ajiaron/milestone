@@ -15,6 +15,7 @@ const windowH = Dimensions.get('window').height
 const ProgressView = ({count, postlist, month, monthname, monthnumber, year}) => {
     const [selected, setSelected] = useState(false)
     function pressDate(val) {     // print associated posts
+        console.log(val)
         if (selected === val) {
             setSelected(false)
         }
@@ -50,7 +51,8 @@ const ProgressView = ({count, postlist, month, monthname, monthnumber, year}) =>
                  <Pressable key={i} onPress={()=>pressDate(val)}
                     style={[(windowH>900)?styles.gridItemLarge:styles.gridItem, 
                     {   
-                        backgroundColor:(getActivity(val)===0)?"#696969":"rgb(37, 124, 103)", opacity:(selected===val)?0.5:1}]}>
+                        backgroundColor:(getActivity(val)===0)?"#696969":
+                        `rgba(${44-(getActivity(val)*8)}, ${124-(getActivity(val)*8)}, ${104-(getActivity(val)*8)}, 1)`}]}>   
                     <Text style={{  // color current day yellow
                         color:(new Date().toLocaleDateString("en-US",{month:"long", day:"numeric",year:"numeric"}) === val)?
                         "rgb(248, 210, 57)":"white",
