@@ -80,12 +80,17 @@ const Login = () => {
         // redirect unconfirmed users to verify email
         await AsyncStorage.removeItem('username')
         await AsyncStorage.removeItem('password')
-        console.log(userPassword.length)
       //  if (!confirmed && userData.password === userPassword) {
       //    setShouldConfirm(true)
       //    navigation.navigate("ConfirmAccount", {username:userData.username})
       //  } 
+        if (userData.password !== userPassword) {
+          Alert.alert("Please try again.", "Invalid username or password")
+        }
+        else {
           Alert.alert("Please try again.", e.message)
+        }
+        
       }
     setLoading(false)
   }
@@ -175,12 +180,12 @@ const Login = () => {
               justifyContent:"center", marginTop:16, borderRadius:4, borderColor:"#fff",
               borderWidth:1, borderStyle:'dashed'
             }]}
-              onPress={()=>(shouldConfirm)?navigation.navigate("ConfirmAccount", {username:userData.username}):
+              onPress={()=>(shouldConfirm && !loading)?navigation.navigate("ConfirmAccount", {username:userData.username}):
                 Alert.alert("Feature Unavailable","Sign-in with different platforms will be available in a future update.")}
               disabled={loading}
           >
               <Text style={[{alignSelf:"center",color:"#FFF", fontFamily:"Inter", fontSize:12, textAlign:"center", top:0.25}]}>
-                {(shouldConfirm)?'Confirm Account':'Login with AWS'}
+                {(shouldConfirm && !loading && !confirmed)?'Confirm Account':'Login with AWS'}
     
               </Text>
           </Pressable>
