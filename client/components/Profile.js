@@ -80,8 +80,12 @@ const Profile = ({route}) => {
         .then((response)=> {
             setFriends(response.data.filter((item)=> (item.requesterId === userid || item.recipientId === userid) && item.approved).length)
             if (response.data.filter((item)=> (item.requesterId === user.userId || item.recipientId === user.userId)).length > 0) {
-                setIsFriend(response.data.filter((item)=> (item.requesterId === user.userId || item.recipientId === user.userId)
-                && (item.requesterId === userid || item.recipientId === userid))[0].approved)
+
+                setIsFriend(response.data.filter((item)=>((item.requesterId === userid)||(item.recipientId === userid))&&
+                ((item.requesterId === user.userId) || (item.recipientId === user.userId))).length > 0?
+                response.data.filter((item)=>((item.requesterId === userid)||(item.recipientId === userid))&&
+                ((item.requesterId === user.userId) || (item.recipientId === user.userId)))[0].approved:false)
+
                 setRequested(response.data.filter((item)=> item.requesterId === user.userId).map((val)=> val.recipientId).indexOf(userid) > -1)
                 setAccept(response.data.filter((item)=> item.recipientId === user.userId).map((val)=> val.requesterId).indexOf(userid) > -1)
             }   

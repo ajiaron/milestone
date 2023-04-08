@@ -84,12 +84,12 @@ const Login = () => {
       //    setShouldConfirm(true)
       //    navigation.navigate("ConfirmAccount", {username:userData.username})
       //  } 
-        if (userData.password !== userPassword) {
-          Alert.alert("Please try again.", "Invalid username or password")
-        }
-        else {
-          Alert.alert("Please try again.", e.message)
-        }
+      //  if (userData.password !== userPassword && confirmed) {  // userPassword is undefined
+      //    Alert.alert("Please try again.", "Invalid username or password.")
+      //  }
+
+        Alert.alert("Please try again.", e.message)
+        
         
       }
     setLoading(false)

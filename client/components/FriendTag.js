@@ -1,9 +1,8 @@
 import  React, {useState, useEffect, useRef, useContext} from "react";
-import { Text, StyleSheet, View, Image, Pressable, PixelRatio, TouchableOpacity, Dimensions, Animated } from "react-native";
+import { Text, StyleSheet, View, Image, Pressable, Dimensions, Animated } from "react-native";
 import Icons from '../data/Icons.js'
 import { Icon } from 'react-native-elements'
-import { useNavigation, useRoute, NavigationActions } from "@react-navigation/native";
-import GlobalStyles from "../styles/GlobalStyles";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import userContext from '../contexts/userContext'
 import axios from 'axios'
 
@@ -72,7 +71,7 @@ const FriendTag = ({id, username, img}) => {
         <View style={[styles.friendContainer]}>
             <View style={[styles.friendContentContainer]}>  
                 <View style={[styles.friendIconContainer]}>
-                    <Pressable onPress={handleTest}>
+                    <Pressable onPress={navigateProfile}>
                     <Image
                             style={styles.friendIcon}
                             resizeMode="cover"
@@ -82,14 +81,11 @@ const FriendTag = ({id, username, img}) => {
                 </View>
                 <View style={[styles.friendContext]}>
                     <Pressable onPress={navigateProfile}>
-
-                    
                         <Text style={[styles.friendTitle]}>
                             {username}
                         </Text>
                     </Pressable>
                 </View>
-
                 <View style = {[styles.requestIcon]}>
                     {(isFriend)?
                     <Pressable 
@@ -100,7 +96,6 @@ const FriendTag = ({id, username, img}) => {
                              <Text style={[styles.addFriendText, {fontSize:12.5, color:"rgba(255,255,255,1)"}]}>
                                  Friends
                              </Text>
-
                          </View>
                      </Pressable>:
                     (!isFriend && approval)?

@@ -1,5 +1,5 @@
-import  React, {useState, useEffect, useContext, useRef} from "react";
-import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView, FlatList, Dimensions, Animated } from "react-native";
+import  React, {useState, useEffect, useContext, useRef, useCallback} from "react";
+import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView, FlatList, Dimensions, Animated, RefreshControl } from "react-native";
 import { Icon } from 'react-native-elements'
 import Icons from '../data/Icons.js'
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -9,245 +9,12 @@ import axios from 'axios'
 import PostItem from "./PostItem";
 import userContext from '../contexts/userContext'
 import MilestoneTag from "./MilestoneTag";
+import RequestButton from "./RequestButton.js";
+import CommentBox from "./CommentBox.js";
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentList, onSubmitComment, onToggle}) => {
-    const [toggled, setToggled] = useState(false)
-    const navigation = useNavigation()
-    const [comment, setComment] = useState('')
-    const animatedvalue = useRef(new Animated.Value(0)).current;
-    const [scrollable, setScrollable] = useState(true)
-    const scrollRef = useRef(null)
-    const slideup = () => {
-        setToggled(true)
-        Animated.timing(animatedvalue,{
-            toValue:(mediaType === 'mov')?(windowH > 900)?windowH*.83:windowH*.78:(windowH > 900)?windowH*.8:windowH*.66,
-            duration:300,
-            useNativeDriver:false,
-        }).start()
-    }
-    const slidedown = () => {
-        Animated.timing(animatedvalue,{
-            toValue:0,
-            duration:300,
-            useNativeDriver:false,
-        }).start(() => setToggled(false))
-    }
-    function handleToggle() { 
-        if (!toggled) {
-            slideup()
-        } 
-        else {
-            slidedown()
-        }
-    }
-    function handleSubmit(comment) {
-        if (comment.length > 0) {
-            onSubmitComment(comment)
-            setComment('')
-        } else if (!toggled) {
-            onToggle()
-        }
-        slidedown()
-    }
-    const handleScroll = (event) => {
-        const currentY = event.nativeEvent.contentOffset.y
-        if (currentY < -5) {
-            slidedown()
-        }
-    }
-    useEffect(()=> {
-        if (startToggle) {
-            slideup()
-        }
-    }, [])
-    const RequestButton = () => {
-        const [requested, setRequested] = useState(false)
-        const animatedcolor = useRef(new Animated.Value(0)).current;
-        function handleRequest() {
-            setRequested(!requested)
-            if (!requested) {
-                Animated.timing(animatedcolor,{
-                    toValue:100,
-                    duration:150,
-                    useNativeDriver:false,
-                }).start()
-            } else {
-                Animated.timing(animatedcolor,{
-                    toValue:0,
-                    duration:150,
-                    useNativeDriver:false,
-                }).start()
-            }
-        }
-        return (
-            <Pressable 
-                style={{right:(windowW>400)?0:0, alignSelf:"center", height:windowH*(26/windowH)}}
-                onPress={handleRequest}>
-                <Animated.View style={[styles.addFriendContainer, 
-                    {backgroundColor:animatedcolor.interpolate({inputRange:[0,100], outputRange:["rgba(0, 82, 63, 1)","#565454"]})
-                }]}>
-                    <Animated.Text style={[styles.addFriendText, 
-                        {fontSize:12, 
-                        color:animatedcolor.interpolate({inputRange:[0,100], outputRange:["white","rgba(10,10,10,1)"]})
-                    }]}>
-                        {(requested)?"Requested":'Request'}
-                    </Animated.Text>
-                </Animated.View>
-            </Pressable>
-        )
-    }
-    const renderLikes = ({item}) => {
-        return (
-            <View style={{paddingTop:(commentList.indexOf(item) === 0)?0:8, 
-                paddingBottom:(commentList.indexOf(item) === commentList.length - 1)?22:8}}>
-                    <View style={{flexDirection:"row", backgroundColor:"rgba(21,21,21,1)",justifyContent:"space-between"}}>
-                        <View style={{flexDirection:"row", alignItems:"center"}}>
-                            <Pressable style={{flexDirection:"row", alignItems:"center"}} onPress={()=>{navigation.navigate("Profile", {id:item.userid})}}>
-                                <Image
-                                    style={{borderRadius:23,height:23, width:23, marginRight:9}}
-                                    resizeMode="contain"
-                                    source={{uri:item.img}}
-                                />
-                                <Text style={{fontFamily:"InterBold", fontSize:13, color:"white", paddingBottom:3.5}}>{item.name}{'  '}</Text>
-                            </Pressable>    
-                        </View>
-                        {(item.userid !== userId)?
-                            <RequestButton/>:null
-                        }
-                    </View>
-                </View>
-        )
-    }
-    const renderComments = ({item}) => {
-        return (
-            <View style={{paddingTop:(commentList.indexOf(item) === 0)?0:8, 
-            paddingBottom:(commentList.indexOf(item) === commentList.length - 1)?22:8}}>
-                <View style={{flexDirection:"row", backgroundColor:"rgba(21,21,21,1)"}}>
-                    <View style={{flexDirection:"row", alignItems:"center"}}>
-                        <Pressable style={{flexDirection:"row", alignItems:"center"}} onPress={()=>{navigation.navigate("Profile", {id:item.userid})}}>
-                            <Image
-                                 style={{borderRadius:23,height:23, width:23, marginRight:9}}
-                                resizeMode="contain"
-                                //source={Icons['defaultpic']}
-                                source={{uri:item.img}}
-                            />
-                            <Text style={{fontFamily:"InterBold", fontSize:13, color:"white", paddingBottom:3.5}}>{item.name}{'  '}</Text>
-                        </Pressable>
-                        <Text style={{color:"white", fontFamily:"InterLight", fontSize:13, paddingBottom:3.5}}>
-                            {item.comment}
-                        </Text>
-                    </View>
-                </View>
-            </View>
-        )
-    }
-    return (
-        <ScrollView
-         contentConainerStyle={[styles.commentContentContainer]} 
-         ref = {scrollRef}
-         showsVerticalScrollIndicator={false}
-         onScroll={handleScroll}
-         keyboardDismissMode={'on-drag'}
-         scrollEventThrottle={0}
-         removeClippedSubviews
-         directionalLockEnabled
-         scrollEnabled={toggled && scrollable}
-        >
-        <ScrollView 
-        showsHorizontalScrollIndicator={false} snapToInterval={windowW} decelerationRate={"fast"} snapToAlignment={"start"}
-        horizontal nestedScrollEnabled={true} directionalLockEnabled contentConainerStyle={[styles.commentContent]} scrollEnabled={toggled}>
-            <ScrollView
-                contentConainerStyle={[styles.commentContent]} 
-                ref = {scrollRef}
-                showsVerticalScrollIndicator={false}
-                onScroll={handleScroll}
-                keyboardDismissMode={'on-drag'}
-                scrollEventThrottle={0}
-                scrollEnabled={toggled && scrollable}
-            > 
-                <View style={{paddingBottom:(mediaType === 'mov')?14:0,
-                flexDirection:"row", alignItems:"center", flex:1, paddingLeft:20, paddingRight:20, backgroundColor:"rgba(21,21,21,1)"}}>
-                <TextInput style={[styles.commentText,{flex:1, bottom:(!toggled)?2:(windowH>900)?-2:0}]} 
-                scrollEnabled={true}
-                readOnly={toggled}
-                onPressIn={(animatedvalue === 0 || !toggled)?handleToggle:null}
-                onChangeText={(e)=>setComment(e)}
-                placeholder={'Add a comment...'}
-                placeholderTextColor={'rgba(130, 130, 130, 1)'}
-                value={comment}
-                />
-                <Pressable onPress={()=>handleSubmit(comment)}>  
-                    <Icon 
-                        style={{alignSelf:"center", right:0, bottom:(!toggled)?2:(windowH>900)?-1.75:0}}
-                        name={(comment.length>0)?'send':'clear'}
-                        color='rgba(130, 130, 130, 1)'
-                        size={(windowH>900)?22:22}
-                    />
-                </Pressable>
-            </View>
-                <Animated.View style={[{height:animatedvalue, borderColor:'rgba(100, 100, 100, 1)',backgroundColor:"rgba(21,21,21,1)"}]}>
-                    <ScrollView horizontal={true} scrollEnabled={false}>
-                        <FlatList 
-                            scrollEnabled={true}
-                            style={{paddingBottom:8,paddingTop:8,
-                            width:windowW, paddingLeft:20, paddingRight:20, height:(windowH > 900)?windowH*(313/windowH):windowH*(261/windowH),
-                            zIndex:1}}
-                            decelerationRate={"fast"}
-                            showsVerticalScrollIndicator={false}
-                            data={commentList}
-                            renderItem={renderComments} 
-                            />
-                    </ScrollView>
-                </Animated.View>
-            </ScrollView>
-            {/* switch from comments tab to likes tab */}
-            <ScrollView 
-             contentConainerStyle={[styles.commentContent]} 
-             ref = {scrollRef}
-             showsVerticalScrollIndicator={false}
-             onScroll={handleScroll}
-             keyboardDismissMode={'on-drag'}
-             scrollEventThrottle={0}
-             scrollEnabled={toggled && scrollable}
-             > 
-                <View style={{flexDirection:"row", alignItems:"center", flex:1, paddingLeft:20, paddingRight:20, backgroundColor:"rgba(21,21,21,1)"}}>                 
-                    <Pressable style={{height:windowH*(46/windowH),flexDirection:"row",flex:1}} 
-                    onPressIn={(animatedvalue === 0 || !toggled)?handleToggle:null}>
-                        <Text style={{alignSelf:"center", fontSize:17.5,color:"white", fontFamily:"InterBold",bottom:(!toggled)?2:(windowH>900)?-2:-2.25 }}>
-                            Likes and Users
-                        </Text>
-                    </Pressable>
-                    <Pressable onPressIn={(animatedvalue === 0 || !toggled)?handleToggle:slidedown}>
-                        <Icon 
-                            style={{alignSelf:"center", right:0, bottom:(!toggled)?2:(windowH>900)?-1.2:-2.5}}
-                            name={(toggled)?'clear':'keyboard-arrow-up'}
-                            color='rgba(130, 130, 130, 1)'
-                            size={(toggled)?(windowH>900)?22:22:(windowH>900)?28:28}
-                        />
-                    </Pressable>
-            </View>
-                <Animated.View style={[{height:animatedvalue, borderColor:'rgba(100, 100, 100, 1)',backgroundColor:"rgba(21,21,21,1)"}]}>
-                    <ScrollView horizontal={true} scrollEnabled={false}>
-                        <FlatList 
-                            scrollEnabled={true}
-                            style={{paddingBottom:8,paddingTop:8,
-                            width:windowW, paddingLeft:20, paddingRight:20, height:(windowH > 900)?windowH*(313/windowH):windowH*(261/windowH),
-                            zIndex:1}}
-                            decelerationRate={"fast"}
-                            showsVerticalScrollIndicator={false}
-                            data={likesList}
-                            renderItem={renderLikes} 
-                            />
-                    </ScrollView>
-                </Animated.View>
-            </ScrollView>
-        </ScrollView>
-        </ScrollView>
-    )
-}
 const Post = ({navigation, route}) => {
     const user = useContext(userContext)
     const milestoneData = require('../data/Milestones.json')
@@ -262,6 +29,8 @@ const Post = ({navigation, route}) => {
     const [userList, setUserList] = useState([])
     const [mediaType, setMediaType] = useState(route.params.item.image.toString().split('.').pop())
     const currentRoute = useRoute()
+    const [loading, setLoading] = useState(true)
+
     function submitComment(comment) {
         setNewComment(comment)
         axios.post(`http://${user.network}:19001/api/postcomment`, 
@@ -300,6 +69,7 @@ const Post = ({navigation, route}) => {
                   })
                 }
             )
+            setLoading(false)
         }).catch(error => console.log(error))
     }, [commentList, likesList])
     useEffect(()=> {
@@ -340,7 +110,6 @@ const Post = ({navigation, route}) => {
                 ownerId={route.params.item.ownerId} date={route.params.item.date}
                 liked={route.params.item.liked} isLast={false} isViewable={true} onToggleComment={()=>setCommentToggle(!commentToggle)}/>
             </View>
-
             <View style={{marginTop:windowH*0.02}}>
                 <View style={[(windowH>900)?styles.milestoneHeaderContainerLarge:styles.milestoneHeaderContainer]}>
                 {milestoneList.length > 0?
@@ -376,7 +145,8 @@ const Post = ({navigation, route}) => {
             </ScrollView>
                 {(commentToggle)?
                      <CommentBox postId={route.params.item.postId} userId={user.userId} startToggle={commentToggle} mediaType={mediaType} 
-                     likesList={likesList} commentList={commentList} onSubmitComment={(comment)=>submitComment(comment)} onToggle={()=>setCommentToggle(false)}/>:null
+                     likesList={likesList} commentList={commentList} onSubmitComment={(comment)=>submitComment(comment)} onToggle={()=>setCommentToggle(false)}
+                     loading={loading}/>:null
                 }
             <Footer/>
         </View>
@@ -445,37 +215,6 @@ const styles = StyleSheet.create({
         fontFamily:"Inter",
         fontSize: 20,
         color:"white",
-    },
-    commentContentContainer: {
-        width:windowW,
-        bottom:0,
-        paddingLeft:20,
-        paddingRight:20,
-        backgroundColor:"rgba(21,21,21,0)",
-        zIndex:-1,
-        
-    },
-    commentContent: {
-        width:windowW,
-        paddingLeft:20,
-        paddingRight:20,
-        backgroundColor:"rgba(21,21,21,1)",
-        zIndex:1,
-    },
-    commentContentToggled: {
-        width:windowW,
-        paddingLeft:20,
-        paddingRight:20,
-        backgroundColor:"rgba(21,21,21,1)",
-        zIndex:1,
-    },
-    commentText: {
-        width:windowW - 66,
-        alignSelf:"center",
-        fontFamily:"Inter",
-        fontSize:13,
-        color:"#FFF",
-        height:windowH*(48/windowH),
     },
     footerPosition: {
         position:"absolute",

@@ -99,6 +99,7 @@ const MilestonePage = ({route}) => {
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('New start, new milestone! 👋') // add description to milestone object
     const [image, setImage] = useState('calender')
+    const routes = navigation.getState()?.routes;
     const [streak, setStreak] = useState(0)
     const [isViewable, setIsViewable] = useState(0)
     const [favorite, setFavorite] = useState(false)
@@ -286,8 +287,28 @@ const MilestonePage = ({route}) => {
                      renderItem={renderPost}
                      keyExtractor={(item, index)=>index}/>
                     : 
+                    <View style={{width:320, height:320, backgroundColor:'rgba(28,28,28,1)'}}>
+                        
+                        <View style={{alignSelf:"center", alignItems:"center", justifyContent:"center", flex:1}}>
+                            <Pressable onPress={()=>navigation.navigate("TakePost", {
+                            previous_screen: routes[routes.length - 1]
+                            })} style={{marginBottom:windowH*0.025}}>
+                                <Icon 
+                                    name='loupe'
+                                    style={{backgroundColor:'#33917a', alignSelf:"center", borderRadius:80}}
+                                    size={80}
+                                />
+                            </Pressable>
+                            <Text style={{fontSize:15, fontFamily:"Inter", color:"white", alignSelf:"center"}}>
+                                Add a post to this milestone!
+                            </Text>
+                        </View>
+               
+                    </View>
+                    
+                    /*
                     <PostItem username={user.username?user.username:'ajiaron'} caption={'This triplet melody is getting hard to play..'} 
-                    src={'defaultpic'} image={'defaultpost'} postId={0} liked={false} isLast={false} date={postdate}/>}
+                    src={'defaultpic'} image={'defaultpost'} postId={0} liked={false} isLast={false} date={postdate}/>*/}
                 </View>
                  <FlatList horizontal 
                      initialNumToRender={3}
@@ -306,7 +327,7 @@ const MilestonePage = ({route}) => {
                      })}
                      keyExtractor={(item, index)=>index}/>
                 {
-                    (ownerId===user.userId)?    // put milestone edit permissions here when implemented
+                    (ownerId===user.userId)?    
                         <Pressable onPress={handlePress} style={[styles.buttonContainer]}>
                         <View style={[styles.deletePostButtonContainer, {minHeight:(windowH>900)?windowH*0.035: windowH * 0.0375}]}>
                             <Text style={[styles.deletePostButtonText, {fontSize:(windowW > 400)?14.5:13.5}]}>Edit Milestone</Text>
