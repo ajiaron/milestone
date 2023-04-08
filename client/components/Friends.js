@@ -216,7 +216,7 @@ userInfoInput: {
 },
 postTagContainerLarge: {
     minWidth:windowW * 0.8,
-    maxHeight:windowH * 0.737,
+    height:windowH * 0.645,
     alignSelf:"center",
 
 },
