@@ -25,6 +25,7 @@ const Login = () => {
   const [rememberUser, setRememberUser] = useState()
   const [rememberPass, setRememberPass] = useState()
   const [checked, setChecked] = useState((rememberUser && rememberPass))
+  const [shouldConfirm, setShouldConfirm] = useState(false)
 
   const rememberAccount = async() => {
     setRememberUser(await AsyncStorage.getItem('username'));
@@ -53,12 +54,16 @@ const Login = () => {
             user.setImage(response.data.filter((item)=> item.name === userData.username)[0].src)
             setConfirmed(response.data.filter((item)=> item.name === userData.username)[0].confirmed)
             setUserPassword(response.data.filter((item)=> item.name === userData.username)[0].password)
-         //   console.log(response.data.filter((item)=> item.name === userData.username)[0].password)
+            if (!response.data.filter((item)=> item.name === userData.username)[0].confirmed
+             && userData.password === response.data.filter((item)=> item.name === userData.username)[0].password) {
+              setShouldConfirm(true)
+             }
           }
       })
       .catch(error => console.log(error.message))
       // authenticate using aws amplify
-      const userToken = await Auth.signIn(userData.username, userData.password);
+
+      await Auth.signIn(userData.username, userData.password);
       if (checked) {
         await AsyncStorage.setItem('username', userData.username)
         await AsyncStorage.setItem('password', userData.password)
@@ -68,20 +73,26 @@ const Login = () => {
         await AsyncStorage.removeItem('password')
       }
       user.setLogged(true)
-      navigation.navigate("Feed")
+      if (confirmed) {
+        navigation.navigate("Feed")
+      } 
     } catch(e) {
         // redirect unconfirmed users to verify email
         await AsyncStorage.removeItem('username')
         await AsyncStorage.removeItem('password')
-        if (!confirmed && userData.password === userPassword || userData.password === 'ioletEvergarden14;') {
-          navigation.navigate("ConfirmAccount", {username:userData.username})
-        } else {
-          console.log(userData)
+        console.log(userPassword.length)
+      //  if (!confirmed && userData.password === userPassword) {
+      //    setShouldConfirm(true)
+      //    navigation.navigate("ConfirmAccount", {username:userData.username})
+      //  } 
           Alert.alert("Please try again.", e.message)
-        } 
       }
     setLoading(false)
   }
+
+  useEffect(()=> {
+    setShouldConfirm(false)
+  }, [userData])
 
   return (
     <View style={styles.loginPage}>
@@ -164,11 +175,13 @@ const Login = () => {
               justifyContent:"center", marginTop:16, borderRadius:4, borderColor:"#fff",
               borderWidth:1, borderStyle:'dashed'
             }]}
-              onPress={()=>Alert.alert("Feature Unavailable","Sign-in with different platforms will be available in a future update.")}
+              onPress={()=>(shouldConfirm)?navigation.navigate("ConfirmAccount", {username:userData.username}):
+                Alert.alert("Feature Unavailable","Sign-in with different platforms will be available in a future update.")}
               disabled={loading}
           >
               <Text style={[{alignSelf:"center",color:"#FFF", fontFamily:"Inter", fontSize:12, textAlign:"center", top:0.25}]}>
-                Login with AWS
+                {(shouldConfirm)?'Confirm Account':'Login with AWS'}
+    
               </Text>
           </Pressable>
           <Text style={styles.newAccountText}>don't have an account? 

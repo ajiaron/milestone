@@ -30,9 +30,9 @@ const Register = () => {
   const [loading, setLoading] = useState(false)
 
   const validateEmail = (val) => {
-    setEmail(val)
+    setEmail(val.trim())
     const regex =  /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    setIsValid(regex.test(val))
+    setIsValid(regex.test(val.trim()))
   }
 
   const defaultData = {
@@ -63,6 +63,7 @@ const Register = () => {
   }).start()
 }
   const handlePress = async() => {
+    validateEmail(email)
     if (username.length <= 0) {
       shakeTextLeft(animatedvalue)
     }
@@ -191,7 +192,7 @@ const Register = () => {
               </View>
             </View>
             <View style={[styles.rememberMyAccountBox, {flexDirection:"row"}]}>
-              <Pressable onPress={()=>setChecked(!checked)}>
+              <Pressable onPress={()=>console.log(email)}>
                   {(checked)?
                       <Icon
                       name={'check-box'}
