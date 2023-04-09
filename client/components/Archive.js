@@ -120,6 +120,9 @@ const Archive = ({route}) => {
                 removeClippedSubviews
                 initialNumToRender={3}
                 maxToRenderPerBatch={3}
+
+                decelerationRate={"fast"}
+                snapToInterval={windowH-152}
                 snapToAlignment="start"
                 showsVerticalScrollIndicator={false}
                 data={[...postFeed].reverse()} 

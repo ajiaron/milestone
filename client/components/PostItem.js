@@ -129,9 +129,10 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
            <View style={{flexDirection:"row",flex:1, alignItems:"center", position:"absolute", zIndex:1}}>
            <Pressable style={[styles.postHeader, { backgroundColor:'rgba(0,0,0,0)'}]} onPress={navigateProfile}>
                    {(profilePic !== src || src !== 'defaultpic')?
-                   <View style={[{minHeight:60,marginLeft:12}]}>
+                   <View style={[{minHeight:60,marginLeft:(route.name === "Archive")?14:12}]}>
                     <Image
-                    style={{height:34, width:34, borderRadius:34, alignSelf:"center"}}
+                    style={(route.name==="Archive")?{height:38, width:38, borderRadius:38, alignSelf:"center",top:2,left:2}:
+                    {height:34, width:34, borderRadius:34, alignSelf:"center"}}
                     resizeMode="contain"
                     source={{uri:profilePic}}/>
                     </View>:
@@ -142,10 +143,12 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                            source={Icons['defaultpic']}/>
                    </View>}
                    <View style={[styles.postUserHeader]}>
+                    {(route.name !== "Archive") &&
                        <Text style={[styles.postOwnerName]}> {username} </Text>
-                       <Text style={[styles.postOwnerTime]}>
+                    }
+                       <Text style={[(route.name === 'Archive')?styles.ownerTimeArchive:styles.postOwnerTime]}>
                            {(date !== undefined)?
-                           (postDate === currentDate)?`Today at ` + postTime:postDate + ' at ' + postTime
+                           (postDate === currentDate)?`Today at ` + postTime:(route.name==="Archive")?postDate:postDate + ' at ' + postTime
                            :`Today at ${currentDate}`}</Text>
                    </View>
                    </Pressable>
@@ -195,7 +198,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
             <View style={[styles.postWrapper, 
                     {backgroundColor:"rgba(10,10,10,1)",
                     height:(route.name === 'MilestonePage')?windowW:
-                    (fileExt === 'mov' || fileExt === 'mp4')?windowH*(526/windowH):windowW
+                    ((fileExt === 'mov' || fileExt === 'mp4') && route.name !=="Archive")?windowH*(526/windowH):(route.name==="Archive")?windowH-152:windowW
                     }]}>
                     {(loading)&&
                         <ActivityIndicator size="large" color="#ffffff" style={{top:"47%", position:"absolute", alignSelf:"center"}}/>
@@ -244,7 +247,8 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
             </View>
         </Pressable>
         <View style={[(route.name === "Archive")?styles.actionbarAlt:styles.actionbarContainer]}>
-            <View style={[styles.actionIcon, styles.actionThumbsUp, {right:(route.name ==='Archive'?-4:0)}]}>
+            <View style={[(route.name==="Archive")?styles.actionIconAlt:styles.actionIcon, 
+            (route.name==="Archive")?styles.actionThumbsAlt:styles.actionThumbsUp]}>
                 <Pressable onPress={handleLike}>
                     <Icon 
                     size={28}
@@ -253,7 +257,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                 </Pressable>
             </View>
             <Pressable onPress={handleComment}>
-                <View style={[styles.actionIcon, styles.actionComment]}>
+                <View style={[(route.name==="Archive")?styles.actionIconAlt:styles.actionIcon, styles.actionComment]}>
                     <Icon 
                         size={25.5}
                         name='question-answer'
@@ -276,7 +280,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
             :
            
             <Pressable onPress={()=> navigation.navigate("Post", {item:data, comments:false})}>
-                <View style={[styles.actionIcon, {right:(route.name ==="Archive")?2:0}]}>
+                <View style={[(route.name==="Archive")?styles.actionIconAlt:styles.actionIcon, {right:(route.name ==="Archive")?2:0}]}>
                     <Image
                         style={styles.milebookImage}
                         resizeMode="contain"
@@ -386,20 +390,31 @@ const styles = StyleSheet.create({
         alignItems:"center",
         flexDirection:"column",
         position:"absolute",
-        right:6,
+        right:4,
+        width:50,
+        paddingLeft:3,
+        paddingBottom:3,
         justifyContent:"space-evenly",
         alignSelf:"center",
-        top:100,
-        height:'50%',
+        borderRadius:56,
+        bottom:"10%",
+        backgroundColor:"rgba(28, 28, 28, 0.3)",
+        height:'25%',
     },
     actionIcon: {
         marginLeft:32,
+    },
+    actionIconAlt: {
+        marginLeft:0,
     },
     actionThumbsUp: {
         marginTop:.75,
         marginRight:2,
         marginLeft:20,
-     
+    },
+    actionThumbsAlt: {
+        marginTop:.75,
+        marginRight:2,
     },
     actionComment: {
         marginTop:3,
@@ -483,6 +498,16 @@ const styles = StyleSheet.create({
         color:"rgba(222,222,222,1)",
         bottom:-1,
         fontSize:11
+    },
+    ownerTimeArchive: {
+
+        fontFamily:"InterBold",
+        alignSelf:"flex-end",
+        right:19,
+        top:7,
+        color:"rgba(240,240,240,1)",
+        fontSize:21
+        
     },
     feedContainer: {
         justifyContent:"center",
