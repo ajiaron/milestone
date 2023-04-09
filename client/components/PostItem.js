@@ -503,8 +503,8 @@ const styles = StyleSheet.create({
 
         fontFamily:"InterBold",
         alignSelf:"flex-end",
-        right:19,
-        top:7,
+        right:18,
+        top:6,
         color:"rgba(240,240,240,1)",
         fontSize:21
         
