@@ -33,7 +33,8 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     const [likes, setLikes] = useState([])
     const [loading, setLoading] = useState(true)
     const animatedvalue = useRef(new Animated.Value(0)).current;
-    
+    const animatedsize = useRef(new Animated.Value(0)).current;
+    const [expanded, setExpanded] = useState(true)
 
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getlikes`)  
@@ -57,8 +58,23 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         }).catch(error => console.log(error))
     }, [ownerId])
     useEffect(()=> {
-        setViewable(isViewable)
+        setViewable(isViewable)     // render first video without threshold
     }, [isViewable])
+
+    function expandPost() {
+        Animated.timing(animatedsize,{
+            toValue:100,
+            duration:200,
+            useNativeDriver:false,
+        }).start()
+    }
+    function compressPost() {
+        Animated.timing(animatedsize,{
+            toValue:0,
+            duration:200,
+            useNativeDriver:false,
+        }).start()
+    }
     function blurIn() {
         Animated.timing(animatedvalue,{
             toValue:100,
@@ -85,7 +101,6 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         navigation.navigate("Post", {item:data, comments:false})
     }
     const handleEdit = () => {
-        console.log(likes)
         navigation.navigate("EditPost", {uri:image, postId:postId, caption:caption})
     }
     const handleLike = () => {
@@ -103,13 +118,9 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         } 
     }
     const handleSelect = () => {
-        console.log(image)
         setIsActive(!isActive)
     }
     const toggleMute = () => {
-        if (isViewable !== undefined) {
-            console.log(isActive)
-        }
         setIsMuted(!isMuted)
     }
     const data = {
@@ -123,6 +134,13 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         ownerId:ownerid,
         date:date
     }
+    useEffect(()=> {
+        if (!expanded) {
+            expandPost()
+        } else {
+            compressPost() 
+        }
+    }, [expanded])
     return (
      <View style={[styles.postContainer]}>
         {(route.name === 'MilestonePage' || route.name === 'Archive') ?
@@ -194,12 +212,14 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         </View>
 }
 
-        <Pressable onPress={handleSelect}>
-            <View style={[styles.postWrapper, 
+        <Pressable onPress={(route.name === 'Archive')?()=>setExpanded(!expanded):handleSelect}>
+            <Animated.View style={[styles.postWrapper, 
                     {backgroundColor:"rgba(10,10,10,1)",
                     height:(route.name === 'MilestonePage')?windowW:
-                    ((fileExt === 'mov' || fileExt === 'mp4') && route.name !=="Archive")?windowH*(526/windowH):(route.name==="Archive")?windowH-152:windowW
-                    }]}>
+                    ((fileExt === 'mov' || fileExt === 'mp4') && route.name !=="Archive")?windowH*(526/windowH):(route.name==="Archive")?
+                    animatedsize.interpolate({inputRange:[0,100], outputRange:[windowW,windowH-152]}):
+                    windowW 
+                    }]}>                                                                                                               
                     {(loading)&&
                         <ActivityIndicator size="large" color="#ffffff" style={{top:"47%", position:"absolute", alignSelf:"center"}}/>
                     }
@@ -212,11 +232,6 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                             onLoad={()=> {setLoading(false)}}
                             onLoadStart={()=> {setLoading(true)}}
                             style={{height:"100%", width:"100%",alignSelf:"center", 
-                            borderRadius:(route.name !== 'MilestonePage')?9:0,
-                            borderBottomLeftRadius:(route.name === 'MilestonePage')?(index === 0)?9:0:0,
-                            borderTopLeftRadius:(route.name === 'MilestonePage')?(index === 0)?9:0:0,
-                            borderBottomRightRadius:(route.name === 'MilestonePage')?(index === count-1)?9:0:0,
-                            borderTopRightRadius:(route.name === 'MilestonePage')?(index === count-1)?9:0:0,
                             }}>
                             <View style={{minWidth:20, minHeight:20, zIndex:999, alignSelf:"flex-end", bottom:10, right:13, position:"absolute"}}>
                                 <TouchableOpacity onPress={toggleMute}>
@@ -236,15 +251,10 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                         source={(image === 'defaultpost')?Icons[image]:{uri:image}}
                         resizeMode={'cover'}
                         style={{height:"100%", width:"100%",alignSelf:"center", bottom:0, zIndex:1,
-                        borderRadius:(route.name !== 'MilestonePage')?9:0,
-                        borderBottomLeftRadius:(route.name === 'MilestonePage')?(index === 0)?9:0:0,
-                        borderTopLeftRadius:(route.name === 'MilestonePage')?(index === 0)?9:0:0,
-                        borderBottomRightRadius:(route.name === 'MilestonePage')?(index === count-1)?9:0:0,
-                        borderTopRightRadius:(route.name === 'MilestonePage')?(index === count-1)?9:0:0,
                         opacity:animatedvalue.interpolate({inputRange:[0,100], outputRange:[0,1]})}}
                     />:null
                     } 
-            </View>
+            </Animated.View>
         </Pressable>
         <View style={[(route.name === "Archive")?styles.actionbarAlt:styles.actionbarContainer]}>
             <View style={[(route.name==="Archive")?styles.actionIconAlt:styles.actionIcon, 
@@ -256,15 +266,17 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                     color={(isLiked)?'rgba(53, 174, 146, 1)':'white'}/>
                 </Pressable>
             </View>
-            <Pressable onPress={handleComment}>
-                <View style={[(route.name==="Archive")?styles.actionIconAlt:styles.actionIcon, styles.actionComment]}>
-                    <Icon 
-                        size={25.5}
-                        name='question-answer'
-                        color='white'
-                    />
+            
+                <View style={[(route.name==="Archive")?styles.actionIconAlt:styles.actionIcon, styles.actionComment, {paddingTop:(route.name === 'Archive'?2:0)}]}>
+                    <Pressable onPress={handleComment}>
+                        <Icon 
+                            size={25.5}
+                            name='question-answer'
+                            color='white'
+                        />
+                    </Pressable>
                 </View>
-            </Pressable>
+            
             {(route.name === 'MilestonePage')?      // scroll slider on milestone page; doesn't really work well
                 (index !== undefined && count < 4)?
                 <View style={{flexDirection:"row", 
@@ -280,9 +292,10 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
             :
            
             <Pressable onPress={()=> navigation.navigate("Post", {item:data, comments:false})}>
-                <View style={[(route.name==="Archive")?styles.actionIconAlt:styles.actionIcon, {right:(route.name ==="Archive")?2:0}]}>
+                <View style={[(route.name==="Archive")?styles.actionIconAlt:styles.actionIcon, {right:(route.name ==="Archive")?2:0, 
+                top:(route.name === 'Archive')?3:0}]}>
                     <Image
-                        style={styles.milebookImage}
+                        style={[styles.milebookImage, {bottom:(route.name === 'Archive')?2:0}]}
                         resizeMode="contain"
                         source={require("../assets/milebook-logo.png")} 
                     />
@@ -294,7 +307,8 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
             (route.name === "MilestonePage" || route.name === "Archive")?
             <View style={[styles.commentsContainer, {minHeight:(route.name === 'MilestonePage'|| route.name==="Archive")?50:(route.name === "Post")?
             (windowH>900)?75:60:80, position:"absolute", backgroundColor:"rgba(0,0,0,0)", zIndex:1, bottom:(route.name ==="Archive")?6:48}]}>
-                <Text numberOfLines={(route.name !== 'Post')?2:0} style={[styles.commentsContent, {width:windowW*0.89}]}>
+                <Text numberOfLines={(route.name !== 'Post')?(route.name === 'Archive')?1:2:0}
+                 style={[styles.commentsContent, {width:(route.name === 'Archive')?windowW*0.8:windowW*0.89}]}>
                     {caption}
                 </Text>
                 {(route.name === "Feed" || route.name === "MilestonePage")?
@@ -396,16 +410,22 @@ const styles = StyleSheet.create({
         paddingBottom:3,
         justifyContent:"space-evenly",
         alignSelf:"center",
-        borderRadius:56,
-        bottom:"10%",
-        backgroundColor:"rgba(28, 28, 28, 0.3)",
-        height:'25%',
+
+        bottom:"12.5%",
+        //backgroundColor:"rgba(28, 28, 28, 0.25)",
+        height:'37.5%',
     },
     actionIcon: {
         marginLeft:32,
     },
     actionIconAlt: {
         marginLeft:0,
+        backgroundColor:"rgba(28, 28, 28, 0.35)",
+        width: 40,
+        height:40,
+        borderRadius:40,
+        alignItems:"center",
+        justifyContent:"center",
     },
     actionThumbsUp: {
         marginTop:.75,
@@ -422,7 +442,8 @@ const styles = StyleSheet.create({
     },
     milebookImage: {
         maxHeight:26,
-        maxWidth:26
+        maxWidth:26,
+
     },
     feedSpace: {
         marginTop:44, 
