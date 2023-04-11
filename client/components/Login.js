@@ -77,21 +77,18 @@ const Login = () => {
         navigation.navigate("Feed")
       } 
     } catch(e) {
-        // redirect unconfirmed users to verify email
+    // redirect unconfirmed users to verify email
         await AsyncStorage.removeItem('username')
         await AsyncStorage.removeItem('password')
-      //  if (!confirmed && userData.password === userPassword) {
-      //    setShouldConfirm(true)
-      //    navigation.navigate("ConfirmAccount", {username:userData.username})
-      //  } 
-      //  if (userData.password !== userPassword && confirmed) {  // userPassword is undefined
-      //    Alert.alert("Please try again.", "Invalid username or password.")
-      //  }
-
+    //  if (!confirmed && userData.password === userPassword) {
+    //    setShouldConfirm(true)
+    //    navigation.navigate("ConfirmAccount", {username:userData.username})
+    //  } 
+    //  if (userData.password !== userPassword && confirmed) {  // userPassword is undefined
+    //    Alert.alert("Please try again.", "Invalid username or password.")
+    //  }
         Alert.alert("Please try again.", e.message)
-        
-        
-      }
+    }
     setLoading(false)
   }
 
@@ -104,7 +101,7 @@ const Login = () => {
       <View style={{flexDirection:"row", alignItems:"center"}}>
         <Pressable style={{left:0.085*windowW, top:0.0675*windowH}} onPress={()=>navigation.navigate("Landing")}>
         <Icon 
-            style={[styles.backButton ]}
+            style={[styles.backButton]}
             name='arrow-back-ios'
             color='white'
             size={22.5}

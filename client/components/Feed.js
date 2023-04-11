@@ -5,87 +5,12 @@ import { useNavigation } from "@react-navigation/native";
 import Footer from './Footer'
 import PostItem from './PostItem'
 import axios from 'axios'
+import Navbar from "./Navbar";
 import userContext from '../contexts/userContext'
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const Navbar = ({scrollY}) => {
-    const headerHeight = 96;
-    const [scrollDirection, setScrollDirection] = useState("start");
-    const prevScrollY = useRef(0);
-    const animatedoffset = useRef(new Animated.Value(0)).current
-   // console.log(scrollY)
-
-    const slideIn = () =>{
-        Animated.timing(animatedoffset,{
-            toValue:100,
-            delay:0,
-            duration:200,
-            useNativeDriver:true,
-            extrapolate:"clamp"
-        }).start()
-    }
-    const slideOut = ()=> {
-        Animated.timing(animatedoffset,{
-            toValue:0,
-            delay:0,
-            duration:200,
-            useNativeDriver:true,
-            extrapolate:"clamp"
-        }).start()
-    }
-    
-    useEffect(()=> {
-        if (scrollDirection === 'down') {
-            slideOut()
-        }
-        else {
-            if (scrollDirection === 'up' || scrollDirection ==='start') {
-                slideIn()
-            }
-        }
-    }, [scrollDirection])
-
-    useEffect(()=> {
-        const listener = scrollY.addListener((value) => {
-            setScrollDirection((value.value - prevScrollY.current === 0)?'none':
-            ((value.value <= prevScrollY.current) || (value.value <= 0))
-            ? 'up' : 'down')
-            prevScrollY.current = value.value;
-          });
-          return () => {
-            scrollY.removeListener(listener);
-          };
-    }, [scrollY])
-
-    return (
-        <Animated.View 
-        style={{width:windowW, height:94, transform:[{translateY: animatedoffset.interpolate(({inputRange:[0,100], outputRange:[-94,0]}))}],
-        backgroundColor:"#141414", flexDirection:"row", alignItems:"center", justifyContent:"center", 
-        paddingTop:(windowH>900)?36:38,
-        zIndex:999, position:"absolute", top:0}}>
-            <Animated.View style={{flexDirection:"row", width:"100%", alignItems:"center",justifyContent:"center",
-            paddingLeft:(windowH>900)?135:115}}>
-                <Text style={{fontFamily:"InterBold", color:"#fff", fontSize:(windowH>900)?21:20, alignSelf:"center"}}>
-                    milestone
-                </Text>
-                <Animated.View style={{position:"relative", paddingLeft:(windowH>900)?108.5:90}}>
-                    <Pressable onPress={()=>Alert.alert("Check again later!", "coming soon i swear")}>
-                        <View style={styles.settingsNotification}/>
-                        <Icon
-                            name='notifications'
-                            size={(windowH>900)?26.5:25}
-                            color='white'
-                            style={{color:"#fff",
-                            paddingBottom:8}}
-                        />
-                    </Pressable>
-                </Animated.View>
-            </Animated.View>
-        </Animated.View>
-    )
-}
 const Feed = ({route}) => {
     const user = useContext(userContext)
     const postData = require('../data/PostData.json')
@@ -104,7 +29,6 @@ const Feed = ({route}) => {
             useNativeDriver:false,
         }).start(()=>setLoading(false))
     }
-
     const onRefresh = useCallback(() => {
         if (user.quality) {
             setPostFeed([]) // lazy loading
@@ -159,15 +83,13 @@ const Feed = ({route}) => {
   }
     return (
       <View style={styles.feedPage}>
-         
            {(loading)&&
             <Animated.View style={{zIndex:999,width:"100%", height:animatedvalue.interpolate({inputRange:[0,100], outputRange:[windowH, 0]})}}>
              <ActivityIndicator size="large" color="#FFFFFF" style={{top:"50%", position:"absolute", alignSelf:"center"}}/>
             </Animated.View>
           }
-          <Navbar scrollY={scrollY}/>
+          <Navbar title={"milestone"} scrollY={scrollY}/>
           <View style={styles.feedContainer}>
-         
                 <Animated.FlatList 
                 ref={scrollRef}
                 refreshControl={

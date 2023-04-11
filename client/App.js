@@ -17,6 +17,7 @@ import Settings from './components/Settings'
 import CreatePost from './components/CreatePost'
 import EditPost from './components/EditPost'
 import TakePost from './components/TakePost'
+import Notifications from "./components/Notifications";
 import CreateMilestone from './components/CreateMilestone'
 import EditMilestone from './components/EditMilestone'
 import MilestonePage from './components/MilestonePage'
@@ -48,6 +49,7 @@ function App() {
             <Stack.Screen name="Register" component={Register} />
             <Stack.Screen name="ConfirmAccount" component={ConfirmAccount} />
             <Stack.Screen name="Feed" component={Feed} options={{gestureEnabled: false}} />
+            <Stack.Screen name="Notifications" component={Notifications} />
             <Stack.Screen name="Post" component={Post} />
             <Stack.Screen name="Profile" component={Profile} options={{gestureEnabled: false}}/>
             <Stack.Screen name="Archive" component={Archive} />
