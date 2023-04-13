@@ -109,15 +109,26 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         if (!isLiked) {
             axios.post(`http://${user.network}:19001/api/likepost`, 
             {postid:postId,userid:user.userId})
-            .then(() => {console.log('post likes')})
+            .then(() => {
+                console.log("post liked")
+            })
             .catch((error)=> console.log(error))
+            if (user.userId !== ownerId) {   // TODO: prevent multiple notifications from firing if user has already liked
+                axios.post(`http://${user.network}:19001/api/likenotification`, 
+                {requesterId: user.userId, recipientId: ownerId, type:"like", postId: postId})
+                .then(() => {
+                    console.log("like notified")
+                })
+            }
         }
+  
         else {
             axios.delete(`http://${user.network}:19001/api/unlikepost`, {data: {postid:postId, userid:user.userId}})
             .then((response)=> console.log("post unliked")).catch(error=>console.log(error))
         } 
     }
     const handleSelect = () => {
+        console.log(ownerId)
         setIsActive(!isActive)
     }
     const toggleMute = () => {

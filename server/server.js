@@ -86,6 +86,15 @@ app.get('/api/getrequests', (req,res) => {
         }
     })
 })
+app.get('/api/getnotifications', (req, res)=> {
+    db.query('SELECT * FROM notifications', (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
 app.post('/api/registeruser', (req, res)=> {
     const name = req.body.username
     const milestones = req.body.milestones
@@ -190,6 +199,77 @@ app.post('/api/likepost', (req, res) => {
         }
     })
 })
+app.post('/api/likenotification', (req, res) => {
+    const requesterId = req.body.requesterId
+    const recipientId = req.body.recipientId
+    const type = req.body.type
+    const postId = req.body.postId
+    db.query('INSERT INTO notifications (requesterId, recipientId, type, postId) VALUES (?,?,?,?)',
+    [requesterId, recipientId, type, postId], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send("like notification sent")
+        }
+    })
+})
+app.post('/api/commentnotification', (req, res) => {
+    const requesterId = req.body.requesterId
+    const recipientId = req.body.recipientId
+    const type = req.body.type
+    const comment = req.body.comment
+    const postId = req.body.postId
+    db.query('INSERT INTO notifications (requesterId, recipientId, type, comment, postId) VALUES (?,?,?,?,?)',
+    [requesterId, recipientId, type, comment, postId], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send("comment notification sent")
+        }
+    })
+})
+app.post('/api/friendnotification', (req, res) => {
+    const requesterId = req.body.requesterId
+    const recipientId = req.body.recipientId
+    const type = req.body.type
+    db.query('INSERT INTO notifications (requesterId, recipientId, type) VALUES (?,?,?)',
+    [requesterId, recipientId, type], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send("friend notification sent")
+        }
+    })
+})
+app.post('/api/acceptnotification', (req, res) => {
+    const requesterId = req.body.requesterId
+    const recipientId = req.body.recipientId
+    const type = req.body.type
+    db.query('INSERT INTO notifications (requesterId, recipientId, type) VALUES (?,?,?)',
+    [requesterId, recipientId, type], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send("accept notification sent")
+        }
+    })
+})
+
+app.post('/api/postnotification', (req, res) => {
+    const requesterId = req.body.requesterId
+    const recipientId = req.body.recipientId
+    const type = req.body.type
+    const postId = req.body.postId
+    const milestoneId = req.body.milestoneId
+    db.query('INSERT INTO notifications (requesterId, recipientId, type, postId, milestoneId) VALUES (?,?,?,?,?)',
+    [requesterId, recipientId, type, postId, milestoneId], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send("friend notification sent")
+        }
+    })
+})
 
 app.put('/api/updatepost', (req, res) => {
     const postid = req.body.postid
@@ -260,8 +340,8 @@ app.put('/api/confirmuser', (req, res) => {     // for email confirmation on reg
 })
 app.put('/api/acceptfriend', (req, res) => {
     const requesterid = req.body.requesterid
-    const recepientid = req.body.recepientid
-    db.query('UPDATE friends SET approved = ? WHERE requesterid = ? AND recepientid = ?', [true, requesterid, recepientid],
+    const recipientid = req.body.recipientid
+    db.query('UPDATE friends SET approved = ? WHERE requesterid = ? AND recipientid = ?', [true, requesterid, recipientid],
     (err, result)=> {
         if (err) {
             console.log(err)
@@ -273,8 +353,8 @@ app.put('/api/acceptfriend', (req, res) => {
 
 app.delete('/api/deletefriend', (req, res) => {
     const requesterid = req.body.requesterid
-    const recepientid = req.body.recepientid
-    db.query("DELETE FROM friends WHERE requesterid = ? AND recepientid = ?", [requesterid, recepientid], (err, result) => {
+    const recipientid = req.body.recipientid
+    db.query("DELETE FROM friends WHERE requesterid = ? AND recipientid = ?", [requesterid, recipientid], (err, result) => {
         if (err) {
             console.log(err)
         } else {
@@ -361,6 +441,26 @@ app.delete('/api/deletelikes', (req, res) => {
             console.log(err)
         } else {
             res.send('linked milestones removed')
+        }
+    })
+})
+app.delete('/api/deletenotification', (req, res) => {
+    const idnotifications = req.body.idnotifications
+    db.query("DELETE FROM notifications WHERE idnotifications = ?", [idnotifications], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send('notification removed')
+        }
+    })
+})
+app.delete('/api/clearnotifications', (req, res) => {
+    const recipientId = req.body.recipientId
+    db.query("DELETE FROM notifications WHERE recipientId = ?", [recipientId], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send('notifications cleared')
         }
     })
 })

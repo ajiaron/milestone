@@ -1,5 +1,5 @@
 import  React, {useState, useEffect, useContext, useCallback, useRef} from "react";
-import {Animated, Text, ActivityIndicator, StyleSheet, View, Image, Pressable, ScrollView, FlatList, Dimensions, RefreshControl, Alert} from "react-native";
+import {Animated, Text, ActivityIndicator, StyleSheet, View, Image, Alert, Pressable, ScrollView, FlatList, Dimensions, RefreshControl} from "react-native";
 import { Icon } from 'react-native-elements'
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Footer from './Footer'
@@ -10,14 +10,35 @@ import userContext from '../contexts/userContext'
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const Navbar = ({title, scrollY}) => {
+const Navbar = ({title, scrollY, onClearNotifications}) => {
     const navigation = useNavigation()
     const route = useRoute()
     const headerHeight = 96;
     const [scrollDirection, setScrollDirection] = useState("start");
     const prevScrollY = useRef(0);
     const animatedoffset = useRef(new Animated.Value(0)).current
-
+    const DeleteAlert = () => {
+        return new Promise((resolve, reject) => {
+            Alert.alert('Clear notifications?', 'You won\'t be able to restore them after this.', [{
+                text:'Cancel',
+                onPress: () => resolve(false),
+                style: 'cancel'
+            },
+            {
+                text:"Delete",
+                onPress: () => resolve(true),
+                style:{fontFamily:"Inter", color:"red"}
+            }
+            ], {cancelable:false})
+        })
+    }
+    function clearNotifications() {
+        DeleteAlert().then((resolve)=> {
+            if (resolve) {
+                  onClearNotifications()
+            }}
+        )
+    }
     const slideIn = () =>{
         Animated.timing(animatedoffset,{
             toValue:100,
@@ -84,7 +105,7 @@ const Navbar = ({title, scrollY}) => {
                     {title}
                 </Text>
           
-                {(title==='milestone') &&
+                {(title==='milestone') ?
                 <Animated.View style={{position:"relative", paddingLeft:(windowH>900)?108.5:90}}>
                     <Pressable onPress={()=>navigation.navigate("Notifications")}>
                         <View style={styles.settingsNotification}/>
@@ -94,6 +115,16 @@ const Navbar = ({title, scrollY}) => {
                             color='white'
                             style={{color:"#fff",
                             paddingBottom:8}}
+                        />
+                    </Pressable>
+                </Animated.View>:
+                <Animated.View style={{position:"absolute", right:16}}>
+                    <Pressable onPress={clearNotifications}>
+                        <Icon
+                            name='delete'
+                            size={27}
+                            color='white'
+                            style={{paddingTop:1}}
                         />
                     </Pressable>
                 </Animated.View>

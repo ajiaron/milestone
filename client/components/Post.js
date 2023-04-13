@@ -37,6 +37,14 @@ const Post = ({navigation, route}) => {
             {postid:postId,userid:user.userId, comment:comment})
             .then(() => {console.log('comment posted')})
             .catch((error)=> console.log(error))
+            if (user.userId !== route.params.item.ownerId) {   
+                axios.post(`http://${user.network}:19001/api/commentnotification`, 
+                {requesterId: user.userId, recipientId: route.params.item.ownerId, type:"comment", comment:comment, postId: postId})
+                .then(() => {
+                    console.log("comment notified")
+                })
+                .catch((error)=> console.log(error))
+            }
     }
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getlikes`)  
@@ -86,8 +94,9 @@ const Post = ({navigation, route}) => {
     }, [linkedMilestones])
     function handlePress() {
         //console.log(likesList)
-        console.log(route.params.item.image)
-        console.log(windowH)
+        //console.log(commentList)
+        console.log(route.params.item.ownerId)
+
     }
     const renderMilestone = ({ item }) => {
         return (

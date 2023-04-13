@@ -23,6 +23,12 @@ const RequestButton = ({id}) => {
             setApproval(false)
             console.log('friend accepted')
         })
+        axios.post(`http://${user.network}:19001/api/acceptnotification`, 
+        {requesterId:user.userId,recipientId:id, type:'accept'})
+        .then(() => {
+            console.log('acceptance notified')
+        })
+        .catch((error)=> console.log(error))
     }
     function requestFriend() {
         axios.post(`http://${user.network}:19001/api/requestfriend`, 
@@ -31,6 +37,13 @@ const RequestButton = ({id}) => {
             console.log('requested')
             setRequested(true)
             handleRequest()
+        })
+        .catch((error)=> console.log(error))
+
+        axios.post(`http://${user.network}:19001/api/friendnotification`, 
+        {requesterId:user.userId, recipientId:id, type:'friend'})
+        .then(() => {
+            console.log('friend request notified')
         })
         .catch((error)=> console.log(error))
     }
@@ -71,7 +84,6 @@ const RequestButton = ({id}) => {
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getrequests`) 
         .then((response)=>{ 
-         
             setIsFriend(response.data.filter((item)=>((item.requesterId === id)||(item.recipientId === id))&&
             ((item.requesterId === user.userId) || (item.recipientId === user.userId))).length > 0?
             response.data.filter((item)=>((item.requesterId === id)||(item.recipientId === id))&&

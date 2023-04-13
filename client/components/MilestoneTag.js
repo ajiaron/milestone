@@ -10,7 +10,7 @@ import axios from 'axios'
 const windowW= Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const MilestoneTag = ({title, streak, img, id, isLast, description, selected, onSelectMilestone, onRemoveMilestone}) => {
+const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, selected, onSelectMilestone, onRemoveMilestone}) => {
     const navigation = useNavigation();
     const animatedvalue = useRef(new Animated.Value(0)).current;
     const [isSelected, setIsSelected] = useState(selected===undefined||!selected?false:selected)
@@ -24,6 +24,7 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, selected, on
         title:"",
         streak:0,
         img:"",
+        ownerid:0,
     }
     const toggleSelect = () => {
         setIsSelected(!isSelected)
@@ -63,6 +64,7 @@ const MilestoneTag = ({title, streak, img, id, isLast, description, selected, on
         milestoneData.title = title
         milestoneData.streak = streak
         milestoneData.img = img
+        milestoneData.ownerid = ownerid
     }
     function handlePress(){  
         sendPost()

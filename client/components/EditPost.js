@@ -88,6 +88,7 @@ const EditPost = ({route}) => {
         )
     }
     function submitPost() {
+        // check owner of each milestone and send notification of post to milestone owners
         milestones.filter(item=>linkedMilestones.indexOf(item.id)<0).map(item=>{
             axios.post(`http://${user.network}:19001/api/linkmilestones`, {postid:postId, milestoneid:item.id})
             .then(()=>console.log('milestones added'))
@@ -108,6 +109,7 @@ const EditPost = ({route}) => {
                 streak={item.streak} 
                 img={milestoneList.length>0?item.src:item.img} 
                 id={milestoneList.length>0?item.idmilestones:item.id} 
+                ownerid={milestoneList.length>0?item.ownerId:0}
                 isLast={item.id == milestoneData.length}
                 selected={linkedMilestones.indexOf(item.idmilestones) > -1}
                 onSelectMilestone={(selected) => setMilestones([...milestones,selected])}

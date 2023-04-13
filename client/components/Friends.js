@@ -81,7 +81,6 @@ function Friends(){
                 id = {item.id}
                 username = {item.name}
                 img = {item.src}
-    
             />
         )
     }
@@ -92,13 +91,10 @@ function Friends(){
                     <ActivityIndicator size="large" color="#FFFFFF" style={{top:"50%", position:"absolute", alignSelf:"center"}}/>
                 </Animated.View>
             }
-            
             <View style={styles.friendsWrapper}>
             <Text style={[styles.friendsHeader, {top:(windowH * -0.020)}]}>Your Friends</Text>
-
             <View style={[styles.userInfoContainer]}>
                 <View style={styles.userInfoHeader}>
-
                 </View>
                 <TextInput 
                     style={styles.userInfoInput}
@@ -107,8 +103,7 @@ function Friends(){
                     placeholderTextColor={'rgba(221, 221, 221, 1)'}
                     value={query}/>
             </View>
-                <View style={styles.friendsHeaderContainer}>
-                    
+                <View style={styles.friendsHeaderContainer}>      
                 </View>
                 {!loading &&
                 <View style={(windowH > 900)?styles.postTagContainerLarge:styles.postTagContainer}>

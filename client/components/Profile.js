@@ -107,6 +107,12 @@ const Profile = ({route}) => {
             setRequested(true)
         })
         .catch((error)=> console.log(error))
+        axios.post(`http://${user.network}:19001/api/friendnotification`, 
+        {requesterId:user.userId, recipientId:userid, type:'friend'})
+        .then(() => {
+            console.log('friend request notified')
+        })
+        .catch((error)=> console.log(error))
     }
     function acceptFriend() {
         axios.put(`http://${user.network}:19001/api/acceptfriend`, 
@@ -114,6 +120,12 @@ const Profile = ({route}) => {
         .then(() => {
             setIsFriend(true)
         })
+        axios.post(`http://${user.network}:19001/api/acceptnotification`, 
+        {requesterId:user.userId,recipientId:userid, type:'accept'})
+        .then(() => {
+            console.log('acceptance notified')
+        })
+        .catch((error)=> console.log(error))
     }
     function deleteFriend() {
         axios.delete(`http://${user.network}:19001/api/deletefriend`, {data: {requesterid:user.userId, recipientid:userid}})
@@ -197,10 +209,9 @@ const Profile = ({route}) => {
                     </Pressable>
                 </View>:
                 // render friend button if this page is not your profile
-
                 <Pressable 
                     style={{marginRight:(windowW>400)?14.5:11.5, marginTop:(windowW>400)?5.5:3.5, height:windowH*(26/windowH)}}
-                    onPress={(isFriend)?'':(requested)?deleteFriend:(accept)?acceptFriend:requestFriend}>
+                    onPress={(isFriend)?null:(requested)?deleteFriend:(accept)?acceptFriend:requestFriend}>
                     <Animated.View style={[styles.addFriendContainer, 
                         {backgroundColor:(requested)?"#565454":animatedvalue.interpolate({inputRange:[0,100], outputRange:["rgba(0, 82, 63, 1)","#565454"]})
                         }]}>

@@ -25,6 +25,12 @@ const FriendTag = ({id, username, img}) => {
             setApproval(false)
             console.log('friend accepted')
         })
+        axios.post(`http://${user.network}:19001/api/acceptnotification`, 
+        {requesterId:user.userId,recipientId:id, type:'accept'})
+        .then(() => {
+            console.log('acceptance notified')
+        })
+        .catch((error)=> console.log(error))
     }
     function requestFriend() {
         axios.post(`http://${user.network}:19001/api/requestfriend`, 
@@ -34,6 +40,13 @@ const FriendTag = ({id, username, img}) => {
             setPending(true)
         })
         .catch((error)=> console.log(error))
+        axios.post(`http://${user.network}:19001/api/friendnotification`, 
+        {requesterId:user.userId, recipientId:id, type:'friend'})
+        .then(() => {
+            console.log('friend request notified')
+        })
+        .catch((error)=> console.log(error))
+        
     }
     function deleteFriend() {
         axios.delete(`http://${user.network}:19001/api/deletefriend`, {data: {requesterid:user.userId, recipientid:id}})

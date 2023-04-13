@@ -91,17 +91,27 @@ const CreatePost = ({route}) => {
         .catch((e)=>console.log(e))
     }
     function handleUpload() {
-        console.log(fileExt)
+        //console.log(fileExt)
+        console.log(milestones)
     }
     function handlePress() {
         uploadContent(img)
         milestones.map((item)=>{
+            // check owner of each milestone and send notification of post to milestone owners
             axios.post(`http://${user.network}:19001/api/linkmilestones`, 
             {postid:postId,milestoneid:item.id})
             .then(() => {
                 console.log('milestones linked')
             })    
             .catch((error)=> console.log(error))
+            if (item.ownerid !== user.userId) {
+                axios.post(`http://${user.network}:19001/api/postnotification`,
+                {requesterId:user.userId, recipientId:item.ownerid, type:'post', postId:postId, milestoneId:item.id})
+                .then(() => {
+                    console.log('post notified')
+                }) 
+                .catch((error)=> console.log(error))
+            }
         })
     }
     function submitPost() {
@@ -114,6 +124,7 @@ const CreatePost = ({route}) => {
                 streak={item.streak} 
                 img={milestoneList.length>0?item.src:item.img} 
                 id={milestoneList.length>0?item.idmilestones:item.id} 
+                ownerid={milestoneList.length>0?item.ownerId:0}
                 isLast={item.id == milestoneData.length}
                 onSelectMilestone={(selected) => setMilestones([...milestones,selected])}
                 onRemoveMilestone={(selected) => setMilestones(milestones.filter((item) => item.id !== selected.id))}
