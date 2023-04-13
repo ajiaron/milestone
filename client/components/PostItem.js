@@ -13,7 +13,7 @@ import { Video } from 'expo-av'
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const PostItem = ({username, caption, src, image, postId, liked, isLast, milestones, ownerId, date, index, count, isViewable, onToggleComment}) => {
+const PostItem = ({username, caption, src, image, postId, liked, isLast, milestones, ownerId, date, index, count, isPublic, isViewable, onToggleComment}) => {
     const milestoneList = milestones?milestones:[]
     const user = useContext(userContext)
     const navigation = useNavigation()
@@ -143,6 +143,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         liked:isLiked,
         milestones:milestoneList,
         ownerId:ownerid,
+        isPublic:isPublic,
         date:date
     }
     useEffect(()=> {
@@ -313,6 +314,15 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                 </View>
             </Pressable>
             }
+            {((route.name === "Feed" || route.name === "Post") && !isPublic)?
+            <View style={{right:16,top:10,position:"absolute"}}>
+                <Icon
+                    name = "lock"
+                    size={20}
+                    color="rgba(100,100,100,1)"
+                />
+            </View>
+            :null}
         </View>
         {
             (route.name === "MilestonePage" || route.name === "Archive")?

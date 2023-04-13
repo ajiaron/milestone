@@ -59,7 +59,8 @@ const Archive = ({route}) => {
     useEffect(()=> {
         axios.get(`http://ec2-13-52-215-193.us-west-1.compute.amazonaws.com:19001/api/getposts`)  // if this throws an error, replace 10.0.0.160 with localhost
         .then((response)=> {
-            setPostFeed(response.data.filter((item)=> item.ownerid === route.params.id))
+            setPostFeed(response.data.filter((item)=> (item.ownerid === route.params.id)
+             && (item.public === 1 || (item.public === 0 && item.ownerid === user.userId) )))
         }).catch(error => console.log(error))
         .then(()=>slideUp())
     }, [route, refreshing])
@@ -84,6 +85,7 @@ const Archive = ({route}) => {
               isLast={item.idposts == 1}
               milestones={[]}
               ownerId={item.ownerid}
+              isPublic={item.public}
               date={item.date}
               isViewable={isViewable.indexOf([...postFeed].reverse().indexOf(item))>=0}
           />

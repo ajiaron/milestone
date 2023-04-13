@@ -182,7 +182,8 @@ const MilestonePage = ({route}) => {
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getposts`)
         .then((response)=> {
-            setPostList(response.data.filter((item)=> postIdList.indexOf(item.idposts)>= 0))
+            setPostList(response.data.filter((item)=>(postIdList.indexOf(item.idposts)>= 0)
+            &&(item.public === 1 || (item.public === 0 && item.ownerid === user.userId))))
         })
     }, [postIdList])
     useEffect(()=> {
@@ -215,6 +216,7 @@ const MilestonePage = ({route}) => {
                     postId={item.idposts}
                     ownerId={item.ownerid}
                     date={item.date}
+                    isPublic={item.public}
                     index = {[...postList].reverse().indexOf(item)}
                     count = {postList.length}
                     isViewable= {[...postList].reverse().indexOf(item)===isViewable}

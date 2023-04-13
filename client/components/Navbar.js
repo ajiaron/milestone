@@ -10,7 +10,7 @@ import userContext from '../contexts/userContext'
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const Navbar = ({title, scrollY, onClearNotifications}) => {
+const Navbar = ({title, scrollY, newNotification, onClearNotifications}) => {
     const navigation = useNavigation()
     const route = useRoute()
     const headerHeight = 96;
@@ -57,7 +57,6 @@ const Navbar = ({title, scrollY, onClearNotifications}) => {
             extrapolate:"clamp"
         }).start()
     }
-    
     useEffect(()=> {
         if (scrollDirection === 'down') {
             slideOut()
@@ -91,7 +90,7 @@ const Navbar = ({title, scrollY, onClearNotifications}) => {
             paddingRight:(title==='notifications')?(windowH>900)?125:105:0}}>
                 {(title === 'notifications') &&
                     <Animated.View style={{paddingRight:(windowH>900)?103:83}}>
-                        <Pressable onPress={()=>navigation.goBack()}>
+                        <Pressable onPress={()=>navigation.navigate("Feed", {route:'notifications'})}>
                             <Icon 
                                 style={{paddingTop:3, transform:[{scaleY:0.9}]}}
                                 name='arrow-back-ios'
@@ -108,13 +107,17 @@ const Navbar = ({title, scrollY, onClearNotifications}) => {
                 {(title==='milestone') ?
                 <Animated.View style={{position:"relative", paddingLeft:(windowH>900)?108.5:90}}>
                     <Pressable onPress={()=>navigation.navigate("Notifications")}>
-                        <View style={styles.settingsNotification}/>
+                        {(newNotification)?
+                        <View style={styles.settingsNotification}/>:null
+                        }
                         <Icon
                             name='notifications'
                             size={(windowH>900)?26.5:25}
                             color='white'
                             style={{color:"#fff",
-                            paddingBottom:8}}
+                            paddingBottom:(newNotification)?8:0,
+                            paddingTop:(newNotification)?0:1
+                        }}
                         />
                     </Pressable>
                 </Animated.View>:

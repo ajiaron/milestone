@@ -20,6 +20,7 @@ const Post = ({navigation, route}) => {
     const milestoneData = require('../data/Milestones.json')
     const [commentToggle, setCommentToggle] = useState(route.params.comments?true:false)
     const [postId, setPostId] = useState(route.params.item.postId?route.params.item.postId:0)
+    const [isPublic, setIsPublic] = useState(route.params.item.isPublic?route.params.item.isPublic:true)
     const [linkedMilestones, setLinkedMilestones] = useState([])
     const [milestoneList, setMilestoneList] = useState([])
     const [hasMilestones, setHasMilestones] = useState(route.params.item.milestones.length > 0)
@@ -117,7 +118,7 @@ const Post = ({navigation, route}) => {
                 <PostItem username={route.params.item.username} caption={route.params.item.caption} 
                 src={route.params.item.src} image={route.params.item.image} postId={route.params.item.postId} 
                 ownerId={route.params.item.ownerId} date={route.params.item.date}
-                liked={route.params.item.liked} isLast={false} isViewable={true} onToggleComment={()=>setCommentToggle(!commentToggle)}/>
+                liked={route.params.item.liked} isLast={false} isPublic={route.params.item.isPublic} isViewable={true} onToggleComment={()=>setCommentToggle(!commentToggle)}/>
             </View>
             <View style={{marginTop:windowH*0.02}}>
                 <View style={[(windowH>900)?styles.milestoneHeaderContainerLarge:styles.milestoneHeaderContainer]}>

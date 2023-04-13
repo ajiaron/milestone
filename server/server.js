@@ -125,8 +125,11 @@ app.post('/api/pushposts', (req, res)=> {
     const src = req.body.src
     const date = req.body.date
     const ownerid = req.body.ownerid
-    db.query('INSERT INTO userposts (idposts, username, caption, profilepic, src, date, ownerid) VALUES (?,?,?,?,?,?,?)', 
-    [idposts, username, caption, profilepic, src, date, ownerid], (err, result) => {
+    const likes = req.body.likes
+    const comments = req.body.comments
+    const public = req.body.public
+    db.query('INSERT INTO userposts (idposts, username, caption, profilepic, src, date, ownerid, likes, comments, public) VALUES (?,?,?,?,?,?,?,?,?,?)', 
+    [idposts, username, caption, profilepic, src, date, ownerid, likes, comments, public], (err, result) => {
         if(err) {
             console.log(err)
         } else {
@@ -274,7 +277,10 @@ app.post('/api/postnotification', (req, res) => {
 app.put('/api/updatepost', (req, res) => {
     const postid = req.body.postid
     const caption = req.body.caption
-    db.query('UPDATE userposts SET caption = ? WHERE idposts = ?', [caption, postid],
+    const likes = req.body.likes
+    const comments = req.body.comments
+    const public = req.body.public
+    db.query('UPDATE userposts SET caption = ?, likes = ?, comments = ?, public = ? WHERE idposts = ?', [caption, likes, comments, public, postid],
     (err, result)=> {
         if (err) {
             console.log(err)

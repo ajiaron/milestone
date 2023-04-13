@@ -17,7 +17,7 @@ const EditPost = ({route}) => {
     const imgType = (route.params.type !== undefined)?route.params.type:"back"
     var fileExt = (route.params.uri !== undefined)?route.params.uri.toString().split('.').pop():'png';
     const date = new Date().toISOString().slice(0, 19).replace('T', ' ')
-    const [commmentsEnabled, setCommentsEnabled] = useState(true)
+    const [commentsEnabled, setCommentsEnabled] = useState(true)
     const toggleComments = () => setCommentsEnabled(previousState => !previousState)
     const [likesEnabled, setLikesEnabled] = useState(true)
     const toggleLikes = () => setLikesEnabled(previousState => !previousState)
@@ -34,6 +34,15 @@ const EditPost = ({route}) => {
     const [confirmation, setConfirmation] = useState(false)
     const [loading, setLoading] = useState(true)    // for loading image & video preview
     const [isLoading, setIsLoading] = useState(false)   // for loading backend requests
+    useEffect(()=> {
+        axios.get(`http://${user.network}:19001/api/getposts`)  
+        .then((response)=> {
+            
+            setLikesEnabled(response.data.filter((item)=> item.idposts === postId)[0].likes === 1?true:false)
+            setCommentsEnabled(response.data.filter((item)=> item.idposts === postId)[0].comments === 1?true:false)
+            setSharingEnabled(response.data.filter((item)=> item.idposts === postId)[0].public === 1?true:false)
+        }).catch(error => console.log(error))
+    }, [])
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getlinkedmilestones`)  
         .then((response)=> {
@@ -87,6 +96,11 @@ const EditPost = ({route}) => {
             }}
         )
     }
+    function handleTest() {
+        console.log('likes:',likesEnabled)
+        console.log('comments:',commentsEnabled)
+        console.log('public:',sharingEnabled)
+    }
     function submitPost() {
         // check owner of each milestone and send notification of post to milestone owners
         milestones.filter(item=>linkedMilestones.indexOf(item.id)<0).map(item=>{
@@ -98,8 +112,8 @@ const EditPost = ({route}) => {
             .then(()=>console.log("milestones removed"))
         })
         axios.put(`http://${user.network}:19001/api/updatepost`, 
-        {postid:postId, caption:caption})
-        .then(console.log('post caption updated'))
+        {postid:postId, caption:caption, likes:likesEnabled, comments:commentsEnabled, public:sharingEnabled})
+        .then(console.log('post updated'))
         navigation.navigate("Feed", {post: postData, milestones:milestones})
     }
     const renderMilestone = ({ item }) => {
@@ -153,7 +167,11 @@ const EditPost = ({route}) => {
        
                 </View>
                 <View style={styles.milestoneListHeader}>
+                    <Pressable onPress={handleTest}>
+
+        
                     <Text style={styles.milestoneHeaderText}>SELECT A MILESTONE</Text>
+                    </Pressable>
                 </View>
                 <View style={styles.PostTagContainer}>
                     <FlatList 
@@ -175,10 +193,10 @@ const EditPost = ({route}) => {
                         <Switch
                             style={{ transform: [{ scaleX: .45 }, { scaleY: .45 }]}}
                             trackColor={{ false: "#bbb", true: "#35AE92" }}
-                            thumbColor={commmentsEnabled ? "#1f1e1e" : "1f1e1e"}
+                            thumbColor={commentsEnabled ? "#1f1e1e" : "1f1e1e"}
                             ios_backgroundColor="#fff"
                             onValueChange={toggleComments}
-                            value={commmentsEnabled}
+                            value={commentsEnabled}
                         />
                     </View>
                     <View style={{flexDirection:"row"}}>
@@ -193,7 +211,7 @@ const EditPost = ({route}) => {
                         />
                     </View>
                     <View style={{flexDirection:"row"}}>
-                        <Text style={styles.switchText}>Sharing</Text>
+                        <Text style={styles.switchText}>Public</Text>
                         <Switch
                             style={{ transform: [{ scaleX: .45 }, { scaleY: .45 }]}}
                             trackColor={{ false: "#bbb", true: "#35AE92" }}
@@ -322,7 +340,8 @@ const styles = StyleSheet.create({
     },
     switchText: {
         fontFamily:"Inter",
-        fontSize:11.5,
+        fontSize:12,
+        bottom:0.25,
         color:"white",
         alignSelf:"center"
     },

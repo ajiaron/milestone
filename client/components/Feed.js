@@ -18,6 +18,7 @@ const Feed = ({route}) => {
     const [refreshing, setRefreshing] = useState(false)
     const [isViewable, setIsViewable] = useState([0])
     const [loading, setLoading] = useState(true)
+    const [notification, setNotification] = useState(false)
     const scrollRef = useRef()
     const scrollY = useRef(new Animated.Value(0)).current
     const animatedvalue = useRef(new Animated.Value(0)).current
@@ -59,11 +60,18 @@ const Feed = ({route}) => {
     useEffect(()=> {
         axios.get(`http://ec2-13-52-215-193.us-west-1.compute.amazonaws.com:19001/api/getposts`)  // if this throws an error, replace 10.0.0.160 with localhost
         .then((response)=> {
-            setPostFeed(response.data)
+            setPostFeed(response.data.filter((item)=>(item.public === 1)||(item.public=== 0 && item.ownerid === user.userId)))
         }).catch(error => console.log(error))
         .then(()=>slideUp())
         console.log()
     }, [route, refreshing])
+    useEffect(()=> {
+        axios.get(`http://${user.network}:19001/api/getnotifications`) 
+        .then((response)=>{ 
+            setNotification(response.data.filter((item)=> item.recipientId === user.userId).length > 0)
+        })
+        .catch((error) => console.log(error))
+    }, [route])
     const renderPost = ({ item }) => {
       return (
           <PostItem 
@@ -77,6 +85,7 @@ const Feed = ({route}) => {
               milestones={[]}
               ownerId={item.ownerid}
               date={item.date}
+              isPublic={item.public}
               isViewable={isViewable.indexOf([...postFeed].reverse().indexOf(item))>=0}
           />
       )
@@ -88,7 +97,7 @@ const Feed = ({route}) => {
              <ActivityIndicator size="large" color="#FFFFFF" style={{top:"50%", position:"absolute", alignSelf:"center"}}/>
             </Animated.View>
           }
-          <Navbar title={"milestone"} scrollY={scrollY}/>
+          <Navbar title={"milestone"} scrollY={scrollY} newNotification={notification}/>
           <View style={styles.feedContainer}>
                 <Animated.FlatList 
                 ref={scrollRef}

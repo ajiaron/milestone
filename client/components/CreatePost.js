@@ -80,7 +80,9 @@ const CreatePost = ({route}) => {
             axios.post(`http://${user.network}:19001/api/pushposts`, 
             {idposts: postId,username:user.username?user.username:'ajiaron', caption:caption, 
             profilepic:(user.image !== undefined)?user.image:'defaultpic', 
-            src:`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`, date: date, ownerid:user.userId})
+            src:`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`, date: date, ownerid:user.userId,
+            likes:likesEnabled, comments:commmentsEnabled, public:sharingEnabled
+        })
             .then(() => {
                 console.log('new post saved')
                 setLoading(false)
@@ -91,8 +93,9 @@ const CreatePost = ({route}) => {
         .catch((e)=>console.log(e))
     }
     function handleUpload() {
-        //console.log(fileExt)
-        console.log(milestones)
+        console.log('comments:',commmentsEnabled)
+        console.log('likes:',likesEnabled)
+        console.log('public:',sharingEnabled)
     }
     function handlePress() {
         uploadContent(img)
@@ -202,7 +205,7 @@ const CreatePost = ({route}) => {
                         />
                     </View>
                     <View style={{flexDirection:"row"}}>
-                        <Text style={styles.switchText}>Sharing</Text>
+                        <Text style={styles.switchText}>Public</Text>
                         <Switch
                             style={{ transform: [{ scaleX: .45 }, { scaleY: .45 }]}}
                             trackColor={{ false: "#bbb", true: "#35AE92" }}
@@ -331,8 +334,9 @@ const styles = StyleSheet.create({
     },
     switchText: {
         fontFamily:"Inter",
-        fontSize:11.5,
+        fontSize:12,
         color:"white",
+        bottom:0.25,
         alignSelf:"center"
     },
     buttonContainer: {
@@ -344,7 +348,7 @@ const styles = StyleSheet.create({
         marginTop:windowH*0.034
     },
     savePostButtonContainer: {
-        minWidth:windowW * 0.804,
+        width:windowW * 0.804,
         minHeight: windowH * 0.0375,
         backgroundColor:"rgba(10, 10, 10, 1)",
         borderRadius:4,
@@ -357,7 +361,7 @@ const styles = StyleSheet.create({
         alignSelf:"center"
     },
     publishPostButtonContainer: {
-        minWidth:windowW * 0.8,
+        width:windowW * 0.8,
         minHeight: windowH * 0.035,
         backgroundColor:"rgba(0, 82, 63, 1)",
         borderRadius:4,
