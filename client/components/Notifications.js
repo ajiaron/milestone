@@ -83,7 +83,7 @@ const Notifications = () => {
                         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                     }
                     style={{paddingTop:94}}
-                    removeClippedSubviews
+                    showsVerticalScrollIndicator={false}
                     decelerationRate={"fast"}
                     //snapToInterval={windowH*0.0756}
                 />:
