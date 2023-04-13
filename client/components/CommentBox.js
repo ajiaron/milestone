@@ -90,7 +90,7 @@ const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentL
             <View style={{paddingTop:(commentList.indexOf(item) === 0)?6:8, 
             paddingBottom:(commentList.indexOf(item) === commentList.length - 1)?22:8}}>
                 <View style={{flexDirection:"row", backgroundColor:"rgba(21,21,21,1)"}}>
-                    <View style={{flexDirection:"row", alignItems:"center"}}>
+                    <View style={{flexDirection:"row", alignItems:"center", maxWidth:windowW-120}}>
                         <Pressable style={{flexDirection:"row", alignItems:"center"}} onPress={()=>{navigation.navigate("Profile", {id:item.userid})}}>
                             <Image
                                  style={{borderRadius:23,height:23, width:23, marginRight:9}}
@@ -100,7 +100,7 @@ const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentL
                             />
                             <Text style={{fontFamily:"InterBold", fontSize:13, color:"white", paddingBottom:3.5}}>{item.name}{'  '}</Text>
                         </Pressable>
-                        <Text style={{color:"white", fontFamily:"InterLight", fontSize:13, paddingBottom:3.5}}>
+                        <Text style={{color:"white", fontFamily:"InterLight", fontSize:13, paddingBottom:3.5}}> 
                             {item.comment}
                         </Text>
                     </View>
