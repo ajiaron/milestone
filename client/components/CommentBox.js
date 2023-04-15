@@ -3,6 +3,7 @@ import { Text, StyleSheet, View, Image, Pressable, TextInput, ScrollView, FlatLi
 import { Icon } from 'react-native-elements'
 import { useNavigation, useRoute } from "@react-navigation/native";
 import axios from 'axios'
+import FastImage from "react-native-fast-image";
 import userContext from '../contexts/userContext'
 import RequestButton from "./RequestButton.js";
 
@@ -12,6 +13,7 @@ const windowH = Dimensions.get('window').height
 const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentList, onSubmitComment, onToggle, loading}) => {
     const [toggled, setToggled] = useState(false)
     const navigation = useNavigation()
+    const user = useContext(userContext)
     const [comment, setComment] = useState('')
     const animatedvalue = useRef(new Animated.Value(0)).current
     const [scrollable, setScrollable] = useState(true)
@@ -70,11 +72,23 @@ const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentL
                     <View style={{flexDirection:"row", backgroundColor:"rgba(21,21,21,1)",justifyContent:"space-between"}}>
                         <View style={{flexDirection:"row", alignItems:"center"}}>
                             <Pressable style={{flexDirection:"row", alignItems:"center"}} onPress={()=>{navigation.navigate("Profile", {id:item.userid})}}>
+                                {
+                                (!user.isExpo)?
+                                <FastImage
+                                    style={{borderRadius:23,height:23, width:23, marginRight:9}}
+                                    resizeMode={FastImage.resizeMode.contain}
+                                    source={{
+                                        uri:item.img,
+                                        priority:FastImage.priority.normal
+                                    }}
+                                />
+                                :
                                 <Image
                                     style={{borderRadius:23,height:23, width:23, marginRight:9}}
                                     resizeMode="contain"
                                     source={{uri:item.img}}
                                 />
+                                }
                                 <Text style={{fontFamily:"InterBold", fontSize:13, color:"white", paddingBottom:3.5}}>{item.name}{'  '}</Text>
                             </Pressable>    
                         </View>
@@ -92,12 +106,23 @@ const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentL
                 <View style={{flexDirection:"row", backgroundColor:"rgba(21,21,21,1)"}}>
                     <View style={{flexDirection:"row", alignItems:"center", maxWidth:windowW-120}}>
                         <Pressable style={{flexDirection:"row", alignItems:"center"}} onPress={()=>{navigation.navigate("Profile", {id:item.userid})}}>
+                            {
+                            (!user.isExpo)?
+                            <FastImage
+                                style={{borderRadius:23,height:23, width:23, marginRight:9}}
+                                resizeMode={FastImage.resizeMode.contain}
+                                source={{
+                                    uri:item.img,
+                                    priority:FastImage.priority.normal
+                                }}
+                            />
+                            :
                             <Image
-                                 style={{borderRadius:23,height:23, width:23, marginRight:9}}
+                                style={{borderRadius:23,height:23, width:23, marginRight:9}}
                                 resizeMode="contain"
-                                //source={Icons['defaultpic']}
                                 source={{uri:item.img}}
                             />
+                            }
                             <Text style={{fontFamily:"InterBold", fontSize:13, color:"white", paddingBottom:3.5}}>{item.name}{'  '}</Text>
                         </Pressable>
                         <Text style={{color:"white", fontFamily:"InterLight", fontSize:13, paddingBottom:3.5}}> 

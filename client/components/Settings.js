@@ -9,12 +9,12 @@ import Icons from '../data/Icons.js'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MilestoneTag from "./MilestoneTag";
 import userContext from '../contexts/userContext'
+import FastImage from "react-native-fast-image";
 import axios from 'axios'
 import { Amplify, Auth, Storage } from 'aws-amplify';
 
 import awsconfig from '../src/aws-exports';
 Amplify.configure(awsconfig);
-
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
@@ -128,12 +128,25 @@ const Settings = () => {
                                 size={100} 
                             />:
                             <Pressable onPress={()=>console.log(image)}>
+                            {
+                            (!user.isExpo)?
+                            <FastImage
+                                style={{width:windowW*(94/windowW), height:windowH*(94/windowH), alignSelf:"center", borderRadius:94}}
+                                resizeMode={FastImage.resizeMode.contain}
+                                defaultSource={require("../assets/profile-pic-empty.png")}
+                                source={{
+                                    uri:image,
+                                    priority: FastImage.priority.normal
+                                }}
+                            />
+                            :
                             <Image
                                 style={{width:windowW*(94/windowW), height:windowH*(94/windowH), alignSelf:"center", borderRadius:94}}
                                 resizeMode="contain"
                                 defaultSource={require("../assets/profile-pic-empty.png")}
                                 source={{uri:image}}
                             />
+                                }
                             </Pressable>
                             }
                             <Pressable onPress={pickImage}>

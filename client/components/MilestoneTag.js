@@ -5,6 +5,7 @@ import { Icon } from 'react-native-elements'
 import { useNavigation, useRoute, NavigationActions } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
 import userContext from '../contexts/userContext'
+import FastImage from "react-native-fast-image";
 import axios from 'axios'
 
 const windowW= Dimensions.get('window').width
@@ -128,10 +129,21 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
             ]}>    
             <View style={[styles.milestoneContentContainer]}>  
             <View style={[styles.milestoneIconContainer]}>
+                {
+                (!user.isExpo)?
+                <FastImage
+                    style={styles.milestoneIcon}
+                    resizeMode={FastImage.resizeMode.cover}
+                    source={(fileExt ==='jpg'||fileExt ==='png')?{
+                        uri:img,
+                        priority:FastImage.priority.normal
+                    }:Icons[img]}/>
+                :
                 <Image
                     style={styles.milestoneIcon}
                     resizeMode="cover"
                     source={(fileExt ==='jpg'||fileExt ==='png')?{uri:img}:Icons[img]}/>
+                }
             </View>
                 <View style={[styles.milestoneContext]}>
                     <Text style={[styles.milestoneTitle]}>

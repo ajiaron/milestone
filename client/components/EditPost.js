@@ -8,6 +8,7 @@ import MilestoneTag from "./MilestoneTag";
 import userContext from '../contexts/userContext'
 import axios from 'axios'
 import { Video } from 'expo-av'
+import FastImage from "react-native-fast-image";
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
@@ -157,12 +158,23 @@ const EditPost = ({route}) => {
                         onLoad={()=> {setLoading(false)}}
                         source={{uri:img}}/>
                     :
+                        (!user.isExpo)?
+                        <FastImage
+                        onLoadEnd={()=> {setLoading(false)}}
+                        style={(imgType==="front")?[styles.newPostImageContainer, {transform:[{rotateY:'180deg'}]}]:styles.newPostImageContainer}
+                        resizeMode={FastImage.resizeMode.cover}
+                        source={route.params.uri?{
+                            uri:img,
+                            priority:FastImage.priority.normal
+                        }:require('../assets/samplepost.png')}
+                        />
+                        :
                         <Image 
                         onLoadEnd={()=> {setLoading(false)}}
                         style={(imgType==="front")?[styles.newPostImageContainer, {transform:[{rotateY:'180deg'}]}]:styles.newPostImageContainer}
                         resizeMode="cover"
                         source={route.params.uri?{uri:img}:require('../assets/samplepost.png')}
-                    />
+                        />
                     }
        
                 </View>

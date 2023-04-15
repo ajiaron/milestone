@@ -5,6 +5,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import Footer from './Footer'
 import MilestoneTag from "./MilestoneTag";
 import GroupTag from "./GroupTag";
+import FastImage from 'react-native-fast-image'
 import userContext from '../contexts/userContext'
 import axios from 'axios'
 
@@ -181,13 +182,26 @@ const Profile = ({route}) => {
             </View>
             <View style={[styles.userInfoContainer, {marginBottom:windowH*0.0175}]}>
                     <Pressable onPress={handleTest}>
-                        <Image
-                        style={{width:windowW*(60/windowW), height:windowH*(60/windowH), alignSelf:"center", borderRadius:60}}
-                        resizeMode="contain"
-                        defaultSource={require("../assets/profile-pic-empty.png")}
-                        source={(!owner)?
-                        {uri:profilePic}:{uri:user.image}}
+                        {
+                        (!user.isExpo)?
+                        <FastImage
+                            style={{width:windowW*(60/windowW), height:windowH*(60/windowH), alignSelf:"center", borderRadius:60}}
+                            resizeMode={FastImage.resizeMode.contain}
+                            defaultSource={require("../assets/profile-pic-empty.png")}
+                            source={{
+                                uri:(!owner)?profilePic:user.image,
+                                priority: FastImage.priority.normal
+                            }}
                         />
+                        :
+                        <Image
+                            style={{width:windowW*(60/windowW), height:windowH*(60/windowH), alignSelf:"center", borderRadius:60}}
+                            resizeMode="contain"
+                            defaultSource={require("../assets/profile-pic-empty.png")}
+                            source={(!owner)?
+                            {uri:profilePic}:{uri:user.image}}
+                        />
+                        }
                      </Pressable>
                 <View style={styles.userDetails}>
                     <Text style={styles.usernameText}>@{(!owner && userData !== undefined)?userData.name:

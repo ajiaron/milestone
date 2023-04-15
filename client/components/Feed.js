@@ -1,7 +1,7 @@
 import  React, {useState, useEffect, useContext, useCallback, useRef} from "react";
 import {Animated, Text, ActivityIndicator, StyleSheet, View, Image, Pressable, ScrollView, FlatList, Dimensions, RefreshControl, Alert} from "react-native";
 import { Icon } from 'react-native-elements'
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 import Footer from './Footer'
 import PostItem from './PostItem'
 import axios from 'axios'
@@ -13,12 +13,14 @@ const windowH = Dimensions.get('window').height
 
 const Feed = ({route}) => {
     const user = useContext(userContext)
+    const navigation = useNavigation()
     const postData = require('../data/PostData.json')
     const [postFeed, setPostFeed]= useState(postData)
     const [refreshing, setRefreshing] = useState(false)
     const [isViewable, setIsViewable] = useState([0])
     const [loading, setLoading] = useState(true)
     const [notification, setNotification] = useState(false)
+    const isFocused = useIsFocused()
     const scrollRef = useRef()
     const scrollY = useRef(new Animated.Value(0)).current
     const animatedvalue = useRef(new Animated.Value(0)).current
@@ -71,7 +73,7 @@ const Feed = ({route}) => {
             setNotification(response.data.filter((item)=> item.recipientId === user.userId).length > 0)
         })
         .catch((error) => console.log(error))
-    }, [route])
+    }, [isFocused])
     const renderPost = ({ item }) => {
       return (
           <PostItem 

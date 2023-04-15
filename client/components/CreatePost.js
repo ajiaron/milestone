@@ -7,6 +7,7 @@ import Footer from './Footer'
 import MilestoneTag from "./MilestoneTag";
 import userContext from '../contexts/userContext'
 import axios from 'axios'
+import FastImage from "react-native-fast-image";
 import { Video } from 'expo-av'
 import { Amplify, Storage } from 'aws-amplify';
 import awsconfig from '../src/aws-exports';
@@ -155,7 +156,17 @@ const CreatePost = ({route}) => {
                         style={(imgType==="front")?[styles.newPostImageContainer, {transform:[{rotateY:'180deg'}]}]:styles.newPostImageContainer}
                         resizeMode="cover"
                         source={{uri:img}}/>
-                    :
+                        :
+                        (!user.isExpo)?
+                        <FastImage
+                        style={(imgType==="front")?[styles.newPostImageContainer, {transform:[{rotateY:'180deg'}]}]:styles.newPostImageContainer}
+                        resizeMode={FastImage.resizeMode.cover}
+                        source={route.params.uri?{
+                            uri:img,
+                            priority:FastImage.priority.normal
+                        }:require('../assets/samplepost.png')}
+                        />
+                        :
                         <Image 
                         style={(imgType==="front")?[styles.newPostImageContainer, {transform:[{rotateY:'180deg'}]}]:styles.newPostImageContainer}
                         resizeMode="cover"

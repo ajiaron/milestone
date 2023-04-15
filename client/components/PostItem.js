@@ -4,8 +4,8 @@ import { Icon } from 'react-native-elements'
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Icons from '../data/Icons.js'
 import userContext from '../contexts/userContext'
-import ImageColors from 'react-native-image-colors'
 import axios from 'axios'
+import FastImage from 'react-native-fast-image'
 import Footer from './Footer'
 import * as MediaLibrary from 'expo-media-library'
 import { Video } from 'expo-av'
@@ -34,6 +34,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     const [loading, setLoading] = useState(true)
     const animatedvalue = useRef(new Animated.Value(0)).current;
     const animatedsize = useRef(new Animated.Value(0)).current;
+    const AnimatedImage = Animated.createAnimatedComponent(FastImage);
     const [expanded, setExpanded] = useState(true)
 
     useEffect(()=> {
@@ -128,7 +129,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         } 
     }
     const handleSelect = () => {
-        console.log(ownerId)
+        console.log(user.isExpo)
         setIsActive(!isActive)
     }
     const toggleMute = () => {
@@ -155,16 +156,27 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     }, [expanded])
     return (
      <View style={[styles.postContainer]}>
-        {(route.name === 'MilestonePage' || route.name === 'Archive') ?
+        {(route.name === 'MilestonePage' || route.name === 'Archive') ? // transparent header for archive/milestonepage
            <View style={{flexDirection:"row",flex:1, alignItems:"center", position:"absolute", zIndex:1}}>
            <Pressable style={[styles.postHeader, { backgroundColor:'rgba(0,0,0,0)'}]} onPress={navigateProfile}>
                    {(profilePic !== src || src !== 'defaultpic')?
                    <View style={[{minHeight:60,marginLeft:(route.name === "Archive")?14:12}]}>
+                    {(!user.isExpo)?
+                     <FastImage
+                     style={(route.name==="Archive")?{height:38, width:38, borderRadius:38, alignSelf:"center",top:2,left:2}:
+                     {height:34, width:34, borderRadius:34, alignSelf:"center"}}
+                     resizeMode={FastImage.resizeMode.cover}
+                     source={{
+                        uri:profilePic,
+                        priority: FastImage.priority.normal
+                    }}/>
+                    :
                     <Image
                     style={(route.name==="Archive")?{height:38, width:38, borderRadius:38, alignSelf:"center",top:2,left:2}:
                     {height:34, width:34, borderRadius:34, alignSelf:"center"}}
                     resizeMode="contain"
                     source={{uri:profilePic}}/>
+                    }
                     </View>:
                    <View style={[styles.profilePicContainer]}>
                        <Image
@@ -184,16 +196,27 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                    </Pressable>
             </View>
         :
-        <View style={{flexDirection:"row",flex:1, alignItems:"center"}}>
+        <View style={{flexDirection:"row",flex:1, alignItems:"center"}}>   
         <Pressable style={[styles.postHeader, {backgroundColor:"#1c1c1c", 
         borderTopLeftRadius:(route.name)==='Post'?12:0}]} 
         onPress={navigateProfile}>
                 {(profilePic !== src || src !== 'defaultpic')?
                 <View style={[{minHeight:60,marginLeft:12}]}>
+                {
+                    (!user.isExpo)?
+                    <FastImage
+                        style={{height:34, width:34, borderRadius:34, alignSelf:"center"}}
+                        source={{
+                            uri:profilePic,
+                            priority: FastImage.priority.normal
+                        }}
+                        resizeMode={FastImage.resizeMode.cover}/>
+                    :
                  <Image
                  style={{height:34, width:34, borderRadius:34, alignSelf:"center"}}
                  resizeMode="contain"
                  source={{uri:profilePic}}/>
+                }
                  </View>:
                 <View style={[styles.profilePicContainer]}>
                     <Image
@@ -223,49 +246,61 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
             }
         </View>
 }
-
         <Pressable onPress={(route.name === 'Archive')?()=>setExpanded(!expanded):handleSelect}>
             <Animated.View style={[styles.postWrapper, 
-                    {backgroundColor:"rgba(10,10,10,1)",
-                    height:(route.name === 'MilestonePage')?windowW:
-                    ((fileExt === 'mov' || fileExt === 'mp4') && route.name !=="Archive")?windowH*(526/windowH):(route.name==="Archive")?
-                    animatedsize.interpolate({inputRange:[0,100], outputRange:[windowW,windowH-152]}):
-                    windowW 
-                    }]}>                                                                                                               
-                    {(loading)&&
-                        <ActivityIndicator size="large" color="#ffffff" style={{top:"47%", position:"absolute", alignSelf:"center"}}/>
-                    }
-                    {(route.name === 'MilestonePage' || image !=='defaultpost')?
-                    (fileExt === 'mov' || fileExt === 'mp4')? 
-                        <Video isLooping shouldPlay={isActive && viewable}
-                            isMuted={isMuted} 
-                            source={{uri:image}}
-                            resizeMode={'cover'}
-                            onLoad={()=> {setLoading(false)}}
-                            onLoadStart={()=> {setLoading(true)}}
-                            style={{height:"100%", width:"100%",alignSelf:"center", 
-                            }}>
-                            <View style={{minWidth:20, minHeight:20, zIndex:999, alignSelf:"flex-end", bottom:10, right:13, position:"absolute"}}>
-                                <TouchableOpacity onPress={toggleMute}>
-                                    <Icon
-                                    name={(isMuted)?'volume-off':'volume-up'}
-                                    color='white'
-                                    size={20}
-                                    />
-                                </TouchableOpacity>
-                            </View>
-                        </Video>
-                    :
-                    <Animated.Image
-                        onLoad={blurIn}
-                        onLoadEnd={()=> {setLoading(false)}}
-                        onLoadStart={()=> {setLoading(true)}}
-                        source={(image === 'defaultpost')?Icons[image]:{uri:image}}
+                {backgroundColor:"rgba(10,10,10,1)",
+                height:(route.name === 'MilestonePage')?windowW:
+                ((fileExt === 'mov' || fileExt === 'mp4') && route.name !=="Archive")?windowH*(526/windowH):(route.name==="Archive")?
+                animatedsize.interpolate({inputRange:[0,100], outputRange:[windowW,windowH-152]}):
+                windowW 
+            }]}>                                                                                                               
+                {(loading)&&
+                    <ActivityIndicator size="large" color="#ffffff" style={{top:"47%", position:"absolute", alignSelf:"center"}}/>
+                }
+                {(route.name === 'MilestonePage' || image !=='defaultpost')?
+                (fileExt === 'mov' || fileExt === 'mp4')? 
+                    <Video isLooping shouldPlay={isActive && viewable}
+                        isMuted={isMuted} 
+                        source={{uri:image}}
                         resizeMode={'cover'}
-                        style={{height:"100%", width:"100%",alignSelf:"center", bottom:0, zIndex:1,
-                        opacity:animatedvalue.interpolate({inputRange:[0,100], outputRange:[0,1]})}}
-                    />:null
-                    } 
+                        onLoad={()=> {setLoading(false)}}
+                        style={{height:"100%", width:"100%",alignSelf:"center", 
+                        }}>
+                        <View style={{minWidth:20, minHeight:20, zIndex:999, alignSelf:"flex-end", bottom:10, right:13, position:"absolute"}}>
+                            <TouchableOpacity onPress={toggleMute}>
+                                <Icon
+                                name={(isMuted)?'volume-off':'volume-up'}
+                                color='white'
+                                size={20}
+                                />
+                            </TouchableOpacity>
+                        </View>
+                    </Video>
+                :
+                (!user.isExpo)?
+                <AnimatedImage
+                    onLoad={blurIn}
+                    onLoadEnd={()=> {setLoading(false)}}
+                    source={{
+                        uri:image,
+                        priority: FastImage.priority.normal
+                    }}
+                    resizeMode={FastImage.resizeMode.cover}
+                    style={{height:"100%", width:"100%",alignSelf:"center", bottom:0, zIndex:1,
+                    opacity:animatedvalue.interpolate({inputRange:[0,100], outputRange:[0,1]})}}
+                />:
+                <Animated.Image
+                    onLoad={blurIn}
+                    onLoadEnd={()=> {setLoading(false)}}
+                    source={{
+                        uri:image,
+                    }}
+                    resizeMode={"cover"}
+                    style={{height:"100%", width:"100%",alignSelf:"center", bottom:0, zIndex:1,
+                    opacity:animatedvalue.interpolate({inputRange:[0,100], outputRange:[0,1]})}}
+                /> 
+                :null
+                } 
             </Animated.View>
         </Pressable>
         <View style={[(route.name === "Archive")?styles.actionbarAlt:styles.actionbarContainer]}>

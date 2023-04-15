@@ -26,7 +26,6 @@ const LogoGradient = () => {
       source={require("../assets/logo-gradient.png")}/>
        <Image
         style={[styles.logo,{ aspectRatio: 1, width:111, height:111, borderRadius:111}]}
-       
         resizeMode="contain"
         source={require("../assets/landingicon11.png")}
       />
@@ -181,7 +180,7 @@ const Landing = () => {
           {`community.`}
         </Text>
       </View>
-      <Pressable onPress={()=>console.log(username)}>
+      <Pressable onPress={()=>console.log(Constants.expoVersion)}>
         <LogoGradient/>
       </Pressable>
       <Text style={[styles.logoText]}>milestone</Text>

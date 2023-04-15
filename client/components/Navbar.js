@@ -12,7 +12,8 @@ const windowH = Dimensions.get('window').height
 
 const Navbar = ({title, scrollY, newNotification, onClearNotifications}) => {
     const navigation = useNavigation()
-    const route = useRoute()
+    const routes = navigation.getState()?.routes;
+    const prevRoute = routes[routes.length - 2]
     const headerHeight = 96;
     const [scrollDirection, setScrollDirection] = useState("start");
     const prevScrollY = useRef(0);
@@ -31,6 +32,9 @@ const Navbar = ({title, scrollY, newNotification, onClearNotifications}) => {
             }
             ], {cancelable:false})
         })
+    }
+    function navigateBack() {
+        navigation.goBack()
     }
     function clearNotifications() {
         DeleteAlert().then((resolve)=> {
@@ -90,7 +94,7 @@ const Navbar = ({title, scrollY, newNotification, onClearNotifications}) => {
             paddingRight:(title==='notifications')?(windowH>900)?125:105:0}}>
                 {(title === 'notifications') &&
                     <Animated.View style={{paddingRight:(windowH>900)?103:83}}>
-                        <Pressable onPress={()=>navigation.navigate("Feed", {route:'notifications'})}>
+                        <Pressable onPress={navigateBack}>
                             <Icon 
                                 style={{paddingTop:3, transform:[{scaleY:0.9}]}}
                                 name='arrow-back-ios'

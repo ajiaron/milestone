@@ -5,6 +5,7 @@ import { Icon } from 'react-native-elements'
 import { useNavigation } from "@react-navigation/native";
 import Footer from './Footer'
 import PostItem from "./PostItem";
+import FastImage from "react-native-fast-image";
 import Icons from '../data/Icons.js'
 import userContext from '../contexts/userContext'
 import axios from 'axios'
@@ -238,10 +239,25 @@ const MilestonePage = ({route}) => {
             
                         <View style={styles.headerContentWrapper}>
                             <View style={[styles.milestoneIconContainer, {alignSelf:"center"}]}>
+                                {
+                                (!user.isExpo)?
+                                <FastImage
+                                    style={styles.milestoneIcon}
+                                    resizeMode={FastImage.resizeMode.cover}
+                                    source={
+                                        (fileExt==='jpg' || fileExt==='png')?
+                                        {
+                                            uri:image,
+                                            priority:FastImage.priority.normal
+                                        }:
+                                        Icons[image]
+                                    }/>
+                                :
                                 <Image
                                     style={styles.milestoneIcon}
                                     resizeMode="cover"
                                     source={(fileExt==='jpg' || fileExt==='png')?{uri:image}:Icons[image]}/>
+                                }
                             </View>
                             <Text style={styles.milestoneTitle}>{title}</Text>
                             <Pressable onPress={pressShare}>

@@ -4,6 +4,7 @@ import Icons from '../data/Icons.js'
 import { Icon } from 'react-native-elements'
 import { useNavigation, useRoute } from "@react-navigation/native";
 import userContext from '../contexts/userContext'
+import FastImage from "react-native-fast-image";
 import axios from 'axios'
 
 const windowW= Dimensions.get('window').width
@@ -68,11 +69,22 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
             <View style={[styles.notificationContent, ]}>
                 <View style={{flexDirection:"row"}}>
                     <View style={{maxHeight:33, alignItems:"center", paddingRight:12, alignSelf:"center"}}>
+                        {
+                        (!user.isExpo)?
+                        <FastImage
+                            style={{height:33, width:33, borderRadius:33, alignSelf:"center"}}
+                            source={{
+                                uri:userImg,
+                                priority:FastImage.priority.normal
+                            }}
+                            resizeMode={FastImage.resizeMode.cover}
+                        />:
                         <Image
                             style={{height:33, width:33, borderRadius:33, alignSelf:"center"}}
                             source={{uri:userImg}}
                             resizeMode='cover'
                         />
+                        }
                     </View>
                     <View style={{flexDirection:"row",alignSelf:"center", maxWidth:windowW*0.645}}>
                         <Text style={{fontFamily:"InterBold", color:"#fff", fontSize:14, alignSelf:"center"}} numberOfLines={2}>
@@ -108,11 +120,23 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
                 </View>
          
                 <View style={{maxHeight:32,maxWidth:32, alignItems:"center", right:16, position:"absolute"}}>
+                    {
+                    (!user.isExpo)?
+                    <FastImage
+                        style={{height:32, width:32, borderRadius:4, alignSelf:"center"}}
+                        source={{
+                            uri:postImg,
+                            priority:FastImage.priority.normal
+                        }}
+                        resizeMode={FastImage.resizeMode.cover}
+                    />
+                    :
                     <Image
                         style={{height:32, width:32, borderRadius:4, alignSelf:"center"}}
                         source={{uri:postImg}}
                         resizeMode='cover'
                     />
+                    }
                 </View>
                 {(type==='friend')?
                 (isFriend)?

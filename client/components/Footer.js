@@ -4,6 +4,7 @@ import { Icon } from 'react-native-elements'
 import Icons from '../data/Icons.js'
 import { useNavigation, useRoute } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
+import FastImage from "react-native-fast-image";
 import userContext from '../contexts/userContext'
 
 const windowW = Dimensions.get('window').width
@@ -60,12 +61,12 @@ const Footer = ({disable, onPressTouch}) => {
                 </Pressable>
                 <Pressable  
                     onPress={() => navigation.navigate("CreateMilestone")}>
-                <View styles={styles.addMilestoneIcon}>
-                    <Image
-                        style={styles.milebookImage}
-                        resizeMode="contain"
-                        source={require("../assets/milebook-logo.png")} 
-                    />
+                <View styles={styles.addMilestoneIcon}>    
+                <Image
+                    style={styles.milebookImage}
+                    resizeMode="contain"
+                    source={require("../assets/milebook-logo.png")} 
+                />   
                 </View>
                 </Pressable>
                 <Pressable onPress={()=>navigation.navigate("TakePost", {
@@ -91,11 +92,25 @@ const Footer = ({disable, onPressTouch}) => {
                 </Pressable>
                 <Pressable styles={styles.profileButton}
                     onPress={navigateProfile}> 
+                    {
+                    (!user.isExpo)?
+                    <FastImage
+                        style={{width:26, height:26, borderRadius:26,top:0.25}}
+                        resizeMode={FastImage.resizeMode.contain}
+                        defaultSource={Icons['defaultpic']}
+                        source={{
+                            uri:user.image,
+                            priority: FastImage.priority.normal   
+                        }}
+                    />
+                    :
                     <Image
-                    style={{width:26, height:26, borderRadius:26,top:0.25}}
-                    resizeMode="contain"
-                    defaultSource={Icons['defaultpic']}
-                    source={(user)?{uri:user.image}:Icons['defaultpic']}/>
+                        style={{width:26, height:26, borderRadius:26,top:0.25}}
+                        resizeMode="contain"
+                        defaultSource={Icons['defaultpic']}
+                        source={{uri:user.image}}
+                    />
+                    }
                 </Pressable>
             </View>
         </View>

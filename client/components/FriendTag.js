@@ -5,6 +5,7 @@ import { Icon } from 'react-native-elements'
 import { useNavigation, useRoute } from "@react-navigation/native";
 import userContext from '../contexts/userContext'
 import axios from 'axios'
+import FastImage from "react-native-fast-image";
 
 const windowW= Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
@@ -85,11 +86,23 @@ const FriendTag = ({id, username, img}) => {
             <View style={[styles.friendContentContainer]}>  
                 <View style={[styles.friendIconContainer]}>
                     <Pressable onPress={navigateProfile}>
-                    <Image
-                            style={styles.friendIcon}
-                            resizeMode="cover"
-                            // require() is for fake images, {uri: } is for real ones
-                            source={(img.length === 0 || img === undefined)?Icons['doggo']:{uri: img}}/> 
+                        {
+                            (!user.isExpo)?
+                            <FastImage
+                                style={styles.friendIcon}
+                                resizeMode={FastImage.resizeMode.cover}
+                                source={{
+                                    uri: img,
+                                    priority: FastImage.priority.normal
+                                }}
+                            />
+                            :
+                            <Image
+                                style={styles.friendIcon}
+                                resizeMode="cover"
+                                source={{uri: img}}
+                            /> 
+                        }
                     </Pressable>
                 </View>
                 <View style={[styles.friendContext]}>
