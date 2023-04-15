@@ -11,6 +11,7 @@ import userContext from '../contexts/userContext'
 import MilestoneTag from "./MilestoneTag";
 import RequestButton from "./RequestButton.js";
 import CommentBox from "./CommentBox.js";
+import Navbar from "./Navbar.js";
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
@@ -23,7 +24,6 @@ const Post = ({navigation, route}) => {
     const [isPublic, setIsPublic] = useState(route.params.item.isPublic?route.params.item.isPublic:true)
     const [linkedMilestones, setLinkedMilestones] = useState([])
     const [milestoneList, setMilestoneList] = useState([])
-    const [hasMilestones, setHasMilestones] = useState(route.params.item.milestones.length > 0)
     const [newComment, setNewComment] = useState('')
     const [commentList, setCommentList] = useState([])
     const [likesList, setLikesList] = useState([])
@@ -31,6 +31,7 @@ const Post = ({navigation, route}) => {
     const [mediaType, setMediaType] = useState(route.params.item.image.toString().split('.').pop())
     const currentRoute = useRoute()
     const [loading, setLoading] = useState(true)
+    const scrollY = useRef(new Animated.Value(0)).current
 
     function submitComment(comment) {
         setNewComment(comment)
@@ -97,7 +98,6 @@ const Post = ({navigation, route}) => {
         //console.log(likesList)
         //console.log(commentList)
         console.log(route.params.item.ownerId)
-
     }
     const renderMilestone = ({ item }) => {
         return (
@@ -112,6 +112,7 @@ const Post = ({navigation, route}) => {
     }
     return (
         <View style={[styles.postPage]}>
+            <Navbar title={'milestone'} scrollY={scrollY}/>
             <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
             <View style={[styles.feedSpace]}/>
             <View style={[styles.postContainer]}>
@@ -178,7 +179,7 @@ const styles = StyleSheet.create({
         alignSelf:"center"
     },
     feedSpace: {
-        marginTop:48, 
+        marginTop:94, 
     },
     postSpace: {
         top:48

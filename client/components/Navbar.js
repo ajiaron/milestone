@@ -2,8 +2,6 @@ import  React, {useState, useEffect, useContext, useCallback, useRef} from "reac
 import {Animated, Text, ActivityIndicator, StyleSheet, View, Image, Alert, Pressable, ScrollView, FlatList, Dimensions, RefreshControl} from "react-native";
 import { Icon } from 'react-native-elements'
 import { useNavigation, useRoute } from "@react-navigation/native";
-import Footer from './Footer'
-import PostItem from './PostItem'
 import axios from 'axios'
 import userContext from '../contexts/userContext'
 
@@ -12,6 +10,8 @@ const windowH = Dimensions.get('window').height
 
 const Navbar = ({title, scrollY, newNotification, onClearNotifications}) => {
     const navigation = useNavigation()
+    const user = useContext(userContext)
+    const route = useRoute()
     const routes = navigation.getState()?.routes;
     const prevRoute = routes[routes.length - 2]
     const headerHeight = 96;
@@ -90,13 +90,17 @@ const Navbar = ({title, scrollY, newNotification, onClearNotifications}) => {
         paddingTop:(windowH>900)?36:38,
         zIndex:999, position:"absolute", top:0}}>
             <Animated.View style={{flexDirection:"row", width:"100%", alignItems:"center",justifyContent:"center",
-            paddingLeft:(title==='notifications')?0:(windowH>900)?135:115, 
-            paddingRight:(title==='notifications')?(windowH>900)?125:105:0}}>
-                {(title === 'notifications') &&
-                    <Animated.View style={{paddingRight:(windowH>900)?103:83}}>
+            paddingLeft:(route.name==='Notifications')?0:
+            (route.name === "Post" || route.name === "MilestonePage")?13.5:
+            (windowH>900)?135:115, 
+            paddingRight:(route.name==='Notifications')?(windowH>900)?125:105:0}}>
+                {(route.name !== 'Feed') &&
+                    <Animated.View style={
+                        {paddingRight:(windowH>900)?103:83}}>
                         <Pressable onPress={navigateBack}>
                             <Icon 
-                                style={{paddingTop:3, transform:[{scaleY:0.9}]}}
+                                style={
+                                    {paddingTop:(route.name === "Post")?4:3, transform:[{scaleY:0.9},]}}
                                 name='arrow-back-ios'
                                 color='white'
                                 size={22}
@@ -104,11 +108,14 @@ const Navbar = ({title, scrollY, newNotification, onClearNotifications}) => {
                         </Pressable>
                     </Animated.View> 
                 }
-                <Text style={{fontFamily:"InterBold", color:"#fff", fontSize:(windowH>900)?21:20, alignSelf:"center"}}>
+                <Text style={{fontFamily:"InterBold", color:"#fff", 
+                fontSize:(windowH>900)?21:20, alignSelf:"center",
+                paddingRight:(route.name === "Post" || route.name === "MilestonePage")?(windowH>900)?152:132:0,
+                paddingLeft:(route.name === "Post" || route.name === "MilestonePage")?13.5:0
+                }}>
                     {title}
                 </Text>
-          
-                {(title==='milestone') ?
+                {(route.name==='Feed') ?
                 <Animated.View style={{position:"relative", paddingLeft:(windowH>900)?108.5:90}}>
                     <Pressable onPress={()=>navigation.navigate("Notifications")}>
                         {(newNotification)?
@@ -125,6 +132,7 @@ const Navbar = ({title, scrollY, newNotification, onClearNotifications}) => {
                         />
                     </Pressable>
                 </Animated.View>:
+                (route.name === 'Notifications') &&
                 <Animated.View style={{position:"absolute", right:16}}>
                     <Pressable onPress={clearNotifications}>
                         <Icon

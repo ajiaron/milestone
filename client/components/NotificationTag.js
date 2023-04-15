@@ -1,5 +1,5 @@
 import  React, {useState, useEffect, useRef, useContext} from "react";
-import { Text, StyleSheet, View, Image, Pressable, Dimensions, Animated } from "react-native";
+import { Text, StyleSheet, View, Image, Pressable, Dimensions, Animated, Alert } from "react-native";
 import Icons from '../data/Icons.js'
 import { Icon } from 'react-native-elements'
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -16,6 +16,7 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
     const [userImg, setUserImg] = useState()
     const [username, setUsername] = useState()
     const [postImg, setPostImg] = useState()
+    const [postData, setPostData] = useState()
     const [milestoneImg, setMilestoneImg] = useState()
     const [prompt, setPrompt] = useState()
     const [accepted, setAccepted] = useState(false)
@@ -33,7 +34,24 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
         })
         .catch((error)=> console.log(error))
         setIsFriend(true)
-        
+    }
+    function handleTest() {
+        if (!postData) {
+            Alert.alert("This post no longer exists.", "The owner has removed this post, or it could not be found.")
+        }
+        else {
+            navigation.navigate("Post", {item:{
+                postId:postId,
+                username:postData.username,
+                src:postData.profilepic,
+                image:postImg,
+                caption:postData.caption,
+                ownerId:postData.ownerid,
+                isPublic:postData.public,
+                date:postData.date
+            }, comments:false})
+        }
+       // console.log(postData)
     }
     useEffect(()=> {
         if (type === 'friend') {
@@ -51,6 +69,7 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
             axios.get(`http://${user.network}:19001/api/getposts`) 
             .then((response)=> {
                 setPostImg(response.data.filter((item)=> item.idposts === postId)[0].src)
+                setPostData(response.data.filter((item)=> item.idposts === postId)[0])
             })
             .catch((error)=> console.log(error))
         }
@@ -86,13 +105,13 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
                         />
                         }
                     </View>
-                    <View style={{flexDirection:"row",alignSelf:"center", maxWidth:windowW*0.645}}>
+                    <View style={{flexDirection:"row",alignSelf:"center", maxWidth:windowW*0.65}}>
                         <Text style={{fontFamily:"InterBold", color:"#fff", fontSize:14, alignSelf:"center"}} numberOfLines={2}>
                             {username}
                             <Text style={{fontFamily:"Inter"}}>
                             {
                                 (type === 'like')&&
-                                <Text>{` liked your recent post. `}<Text style={{fontSize:13}}>👍</Text>
+                                <Text>{` liked your recent post. `}<Text style={{fontSize:13}}>👍 4d</Text>
                                 </Text>
 
                             }
@@ -101,7 +120,7 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
                             }
                             {
                                 (type === 'friend')&&
-                                <Text>{` sent you a friend request. `}<Text style={{fontSize:13}}>👋</Text>
+                                <Text>{` sent you a friend request. `}<Text style={{fontSize:13}}>👋 4d</Text>
                                 </Text>
                             }
                             {
@@ -120,23 +139,25 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
                 </View>
          
                 <View style={{maxHeight:32,maxWidth:32, alignItems:"center", right:16, position:"absolute"}}>
-                    {
-                    (!user.isExpo)?
-                    <FastImage
-                        style={{height:32, width:32, borderRadius:4, alignSelf:"center"}}
-                        source={{
-                            uri:postImg,
-                            priority:FastImage.priority.normal
-                        }}
-                        resizeMode={FastImage.resizeMode.cover}
-                    />
-                    :
-                    <Image
-                        style={{height:32, width:32, borderRadius:4, alignSelf:"center"}}
-                        source={{uri:postImg}}
-                        resizeMode='cover'
-                    />
-                    }
+                    <Pressable onPress={handleTest}>
+                        {
+                        (!user.isExpo)?
+                        <FastImage
+                            style={{height:32, width:32, borderRadius:4, alignSelf:"center"}}
+                            source={{
+                                uri:postImg,
+                                priority:FastImage.priority.normal
+                            }}
+                            resizeMode={FastImage.resizeMode.cover}
+                        />
+                        :
+                        <Image
+                            style={{height:32, width:32, borderRadius:4, alignSelf:"center"}}
+                            source={{uri:postImg}}
+                            resizeMode='cover'
+                        />
+                        }
+                    </Pressable>
                 </View>
                 {(type==='friend')?
                 (isFriend)?

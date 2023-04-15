@@ -6,6 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import Footer from './Footer'
 import PostItem from "./PostItem";
 import FastImage from "react-native-fast-image";
+import Navbar from "./Navbar";
 import Icons from '../data/Icons.js'
 import userContext from '../contexts/userContext'
 import axios from 'axios'
@@ -107,6 +108,7 @@ const MilestonePage = ({route}) => {
     const [isViewable, setIsViewable] = useState(0)
     const [favorite, setFavorite] = useState(false)
     const [loading, setLoading] = useState(true)
+    const scrollY = useRef(new Animated.Value(0)).current;
     const animatedvalue = useRef(new Animated.Value(0)).current;
     var fileExt = (image !== undefined)?image.toString().split('.').pop():'calender'
     const viewabilityConfig = {
@@ -233,8 +235,9 @@ const MilestonePage = ({route}) => {
              <ActivityIndicator size="large" color="#FFFFFF" style={{top:"50%", position:"absolute", alignSelf:"center"}}/>
             </Animated.View>
             }            
+            <Navbar title={"milestone"} scrollY={scrollY} />
             <Animated.ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}
-             style={{ height:animatedvalue.interpolate({inputRange:[0,100], outputRange:[0, windowH-94]})}}>
+             style={{ marginTop:windowH*0.054,height:animatedvalue.interpolate({inputRange:[0,100], outputRange:[0, windowH-94]})}}>
                 <View style={[styles.headerContent, {marginTop:windowH*((windowH>900?70:76)/windowH)}]}>
             
                         <View style={styles.headerContentWrapper}>
