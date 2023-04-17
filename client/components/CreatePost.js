@@ -39,7 +39,7 @@ const CreatePost = ({route}) => {
     const [file, setFile] = useState()
     const [loading, setLoading] = useState(false)
     const [progress, setProgress] = useState(0)
-    const [favorite, setFavorite] = useState(0)
+
 
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getposts`)
@@ -54,14 +54,6 @@ const CreatePost = ({route}) => {
             setMilestoneList(response.data)})
         .catch((error)=> console.log(error))
     },[])
-
-    useEffect(()=> {
-        axios.get(`http://${user.network}:19001/api/getusers`)
-        .then((response)=> {
-            setFavorite(response.data.filter((item)=>item.id === user.userId).favoriteid[0])
-        })
-        .catch((error)=> console.log(error))
-    }, [])
     const postData = {
         id:0,
         img:require('../assets/samplepost.png'),
@@ -142,7 +134,6 @@ const CreatePost = ({route}) => {
                 id={milestoneList.length>0?item.idmilestones:item.id} 
                 ownerid={milestoneList.length>0?item.ownerId:0}
                 isLast={milestoneList.map(item=>item.idmilestones).indexOf(item.idmilestones) === milestoneList.length-1}
-                isFavorite={item.idmilestones == favorite}
                 onSelectMilestone={(selected) => setMilestones([...milestones,selected])}
                 onRemoveMilestone={(selected) => setMilestones(milestones.filter((item) => item.id !== selected.id))}
             />
