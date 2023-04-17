@@ -48,7 +48,7 @@ const Footer = ({disable, onPressTouch}) => {
     return (
         <View style={[styles.footerContainer]}>
             <View style={[styles.iconContainer]}>
-                <Pressable  
+                <Pressable  style={{height:"100%", justifyContent:"center"}}
                     onPress={returnPage}>
                 <View styles={styles.feedIcon}>
                     <Icon 
@@ -59,7 +59,7 @@ const Footer = ({disable, onPressTouch}) => {
                     />
                 </View>
                 </Pressable>
-                <Pressable  
+                <Pressable  style={{height:"100%", justifyContent:"center"}}
                     onPress={() => navigation.navigate("CreateMilestone")}>
                 <View styles={styles.addMilestoneIcon}>    
                 <Image
@@ -69,9 +69,10 @@ const Footer = ({disable, onPressTouch}) => {
                 />   
                 </View>
                 </Pressable>
-                <Pressable onPress={()=>navigation.navigate("TakePost", {
+                <Pressable style={{height:"100%", justifyContent:"center"}}
+                    onPress={()=>navigation.navigate("TakePost", {
                     previous_screen: routes[routes.length - 1]
-                    })}>
+                })}>
                     <View styles={styles.createPostIcon}>
                         <Icon
                             name='add-circle-outline'
@@ -80,7 +81,8 @@ const Footer = ({disable, onPressTouch}) => {
                         />
                     </View>
                 </Pressable>
-                <Pressable onPress={()=>navigation.navigate("Friends")}>
+                <Pressable style={{height:"100%", justifyContent:"center"}}
+                onPress={()=>navigation.navigate("Friends")}>
                     <View styles={styles.friendsIcon}>
                         <Icon 
                             style={styles.friendsIcon}
@@ -90,12 +92,13 @@ const Footer = ({disable, onPressTouch}) => {
                         />
                     </View>
                 </Pressable>
-                <Pressable styles={styles.profileButton}
+                <Pressable styles={{minHeight:"100%", justifyContent:"center"}}
                     onPress={navigateProfile}> 
+                    <View style={styles.profileButton}>
                     {
                     (!user.isExpo)?
                     <FastImage
-                        style={{width:26, height:26, borderRadius:26,top:0.25}}
+                        style={{width:27, height:27, borderRadius:27,top:1}}
                         resizeMode={FastImage.resizeMode.contain}
                         defaultSource={Icons['defaultpic']}
                         source={{
@@ -105,12 +108,13 @@ const Footer = ({disable, onPressTouch}) => {
                     />
                     :
                     <Image
-                        style={{width:26, height:26, borderRadius:26,top:0.25}}
+                        style={{width:27, height:27, borderRadius:27,top:1}}
                         resizeMode="contain"
                         defaultSource={Icons['defaultpic']}
                         source={{uri:user.image}}
                     />
                     }
+                    </View>
                 </Pressable>
             </View>
         </View>
@@ -142,6 +146,7 @@ const styles = StyleSheet.create({
     },
     profileButton: {
         minHeight:windowH*(30/windowH),
+        justifyContent:"center",
         minWidth:windowW*(30/windowW),
     },
     profilePic: {

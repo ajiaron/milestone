@@ -91,7 +91,7 @@ const Navbar = ({title, scrollY, newNotification, onClearNotifications}) => {
         zIndex:999, position:"absolute", top:0}}>
             <Animated.View style={{flexDirection:"row", width:"100%", alignItems:"center",justifyContent:"center",
             paddingLeft:(route.name==='Notifications')?0:
-            (route.name === "Post" || route.name === "MilestonePage")?13.5:
+            (route.name !== "Feed" && route.name !== "Notifications")?13.5:
             (windowH>900)?135:115, 
             paddingRight:(route.name==='Notifications')?(windowH>900)?125:105:0}}>
                 {(route.name !== 'Feed') &&
@@ -110,8 +110,8 @@ const Navbar = ({title, scrollY, newNotification, onClearNotifications}) => {
                 }
                 <Text style={{fontFamily:"InterBold", color:"#fff", 
                 fontSize:(windowH>900)?21:20, alignSelf:"center",
-                paddingRight:(route.name === "Post" || route.name === "MilestonePage")?(windowH>900)?152:132:0,
-                paddingLeft:(route.name === "Post" || route.name === "MilestonePage")?13.5:0
+                paddingRight:(route.name !== "Feed" && route.name !== "Notifications")?(windowH>900)?152:132:0,
+                paddingLeft:(route.name !== "Feed" && route.name !== "Notifications")?13.5:0
                 }}>
                     {title}
                 </Text>

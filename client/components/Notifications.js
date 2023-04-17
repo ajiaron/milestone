@@ -62,6 +62,7 @@ const Notifications = () => {
                 date = {item.date}
                 index = {notifications.indexOf(item)}
                 isFirst = {notifications.length}
+                refreshing = {refreshing}
             />
         )
     }

@@ -18,6 +18,7 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
     const route = useRoute();
     const [posts, setPosts] = useState()
     const [startDate, setStartDate] = useState()
+    const [fullDate, setFullDate] = useState()
     var fileExt = (img !== undefined)?img.toString().split('.').pop():'money'
     const user = useContext(userContext)
     const milestoneData = {
@@ -83,7 +84,7 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
                 index: 0,
                 routes: [{name: 'MilestonePage'}],
               });
-            navigation.navigate("MilestonePage", {milestone:milestoneData})
+            navigation.navigate("MilestonePage", {milestone:milestoneData, date:fullDate, count:posts})
         }
     }
     useEffect(()=> {
@@ -95,6 +96,8 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
         .then((response)=> {
             setStartDate(new Date(response.data.filter((item)=> item.idmilestones === id).map((item)=>
             item.date)[0]).toLocaleDateString("en-US", {month:"short", day:"numeric"}))
+            setFullDate(new Date(response.data.filter((item)=> item.idmilestones === id).map((item)=>
+            item.date)[0]).toLocaleDateString("en-US", {month:"short", day:"numeric", year:"numeric"}))
         })
         .catch((error)=> console.log(error))
     },[])
@@ -129,21 +132,10 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
             ]}>    
             <View style={[styles.milestoneContentContainer]}>  
             <View style={[styles.milestoneIconContainer]}>
-                {
-                (!user.isExpo)?
-                <FastImage
-                    style={styles.milestoneIcon}
-                    resizeMode={FastImage.resizeMode.cover}
-                    source={(fileExt ==='jpg'||fileExt ==='png')?{
-                        uri:img,
-                        priority:FastImage.priority.normal
-                    }:Icons[img]}/>
-                :
                 <Image
                     style={styles.milestoneIcon}
                     resizeMode="cover"
                     source={(fileExt ==='jpg'||fileExt ==='png')?{uri:img}:Icons[img]}/>
-                }
             </View>
                 <View style={[styles.milestoneContext]}>
                     <Text style={[styles.milestoneTitle]}>
@@ -209,9 +201,10 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 4,
-        paddingTop:(windowH*0.0185)-4,
+        padding:(windowH*0.0185)-4,
         width:(windowW*0.800),
         height: (windowH*0.0756),
+        paddingBottom:16,
         borderRadius: 8,
         alignSelf:"center"
     },

@@ -8,6 +8,7 @@ import MilestoneTag from "./MilestoneTag";
 import userContext from '../contexts/userContext'
 import axios from 'axios'
 import FastImage from "react-native-fast-image";
+import uuid from 'react-native-uuid';
 import { Video } from 'expo-av'
 import { Amplify, Storage } from 'aws-amplify';
 import awsconfig from '../src/aws-exports';
@@ -38,19 +39,29 @@ const CreatePost = ({route}) => {
     const [file, setFile] = useState()
     const [loading, setLoading] = useState(false)
     const [progress, setProgress] = useState(0)
+    const [favorite, setFavorite] = useState(0)
 
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getposts`)
         .then((response)=> {
-            setPostId(Math.max(...response.data.map((item)=>item.idposts))+1)})
+            setPostId(uuid.v4())
+        })
         .catch((error)=> console.log(error))
-    })
+    }, [])
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response)=> {
             setMilestoneList(response.data)})
         .catch((error)=> console.log(error))
     },[])
+
+    useEffect(()=> {
+        axios.get(`http://${user.network}:19001/api/getusers`)
+        .then((response)=> {
+            setFavorite(response.data.filter((item)=>item.id === user.userId).favoriteid[0])
+        })
+        .catch((error)=> console.log(error))
+    }, [])
     const postData = {
         id:0,
         img:require('../assets/samplepost.png'),
@@ -97,6 +108,7 @@ const CreatePost = ({route}) => {
         console.log('comments:',commmentsEnabled)
         console.log('likes:',likesEnabled)
         console.log('public:',sharingEnabled)
+        console.log(postId)
     }
     function handlePress() {
         uploadContent(img)
@@ -129,7 +141,8 @@ const CreatePost = ({route}) => {
                 img={milestoneList.length>0?item.src:item.img} 
                 id={milestoneList.length>0?item.idmilestones:item.id} 
                 ownerid={milestoneList.length>0?item.ownerId:0}
-                isLast={item.id == milestoneData.length}
+                isLast={milestoneList.map(item=>item.idmilestones).indexOf(item.idmilestones) === milestoneList.length-1}
+                isFavorite={item.idmilestones == favorite}
                 onSelectMilestone={(selected) => setMilestones([...milestones,selected])}
                 onRemoveMilestone={(selected) => setMilestones(milestones.filter((item) => item.id !== selected.id))}
             />
@@ -299,9 +312,11 @@ const styles = StyleSheet.create({
         minHeight: windowH*0.1465,
     },
     milestoneList: {
-        top:14,
+        top:12,
         minWidth:windowW*0.8,
         alignSelf:"center",
+        paddingBottom:16,
+
         borderRadius: 8,
     },
     PostTagContainer: {

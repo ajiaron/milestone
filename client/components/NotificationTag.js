@@ -6,17 +6,19 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import userContext from '../contexts/userContext'
 import FastImage from "react-native-fast-image";
 import axios from 'axios'
+import uuid from 'react-native-uuid';
 
 const windowW= Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, milestoneId, date, index, isFirst}) => {
+const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, milestoneId, date, index, isFirst, refreshing}) => {
     const navigation = useNavigation()
     const user = useContext(userContext)
     const [userImg, setUserImg] = useState()
     const [username, setUsername] = useState()
     const [postImg, setPostImg] = useState()
     const [postData, setPostData] = useState()
+    const [timestamp, setTimestamp] = useState()
     const [milestoneImg, setMilestoneImg] = useState()
     const [prompt, setPrompt] = useState()
     const [accepted, setAccepted] = useState(false)
@@ -35,7 +37,7 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
         .catch((error)=> console.log(error))
         setIsFriend(true)
     }
-    function handleTest() {
+    function handleNavigation() {
         if (!postData) {
             Alert.alert("This post no longer exists.", "The owner has removed this post, or it could not be found.")
         }
@@ -51,8 +53,34 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
                 date:postData.date
             }, comments:false})
         }
-       // console.log(postData)
     }
+    function handleTest() {
+        console.log(timestamp)
+    }
+    useEffect(()=> {
+        const postDate = new Date(date)
+        const newDate = new Date()
+        if ((Math.abs(newDate-postDate)/1000) < 60) {
+            setTimestamp(Math.round(Math.abs(newDate-postDate)/1000).toString()+'s')
+        }
+        else if ((Math.abs(newDate-postDate)/60000) < 60) {
+            setTimestamp(Math.round(Math.abs(newDate-postDate)/60000).toString()+'m')
+        }
+        else if ((Math.abs(newDate-postDate)/3600000) < 24) {
+            setTimestamp(Math.round(Math.abs(newDate-postDate)/3600000).toString()+'h')
+        }
+        else if ((Math.abs(newDate-postDate)/86400000) < 7) {
+            setTimestamp(Math.round(Math.abs(newDate-postDate)/86400000).toString()+'d')
+        }
+        else if ((Math.abs(newDate-postDate)/86400000) < 30) {
+            setTimestamp(Math.round(Math.round(Math.abs(newDate-postDate)/86400000)%7).toString()+'w')
+        }
+        else if ((Math.abs(newDate-postDate)/2592000000) < 12) {
+            setTimestamp(Math.round(Math.abs(newDate-postDate)/2592000000).toString()+'mo')
+        } else {
+            setTimestamp(Math.round(Math.abs(newDate-postDate)/31536000000).toString()+'y')
+        }
+    }, [refreshing])
     useEffect(()=> {
         if (type === 'friend') {
             axios.get(`http://${user.network}:19001/api/getrequests`) 
@@ -88,22 +116,24 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
             <View style={[styles.notificationContent, ]}>
                 <View style={{flexDirection:"row"}}>
                     <View style={{maxHeight:33, alignItems:"center", paddingRight:12, alignSelf:"center"}}>
-                        {
-                        (!user.isExpo)?
-                        <FastImage
-                            style={{height:33, width:33, borderRadius:33, alignSelf:"center"}}
-                            source={{
-                                uri:userImg,
-                                priority:FastImage.priority.normal
-                            }}
-                            resizeMode={FastImage.resizeMode.cover}
-                        />:
-                        <Image
-                            style={{height:33, width:33, borderRadius:33, alignSelf:"center"}}
-                            source={{uri:userImg}}
-                            resizeMode='cover'
-                        />
-                        }
+                        <Pressable onPress={handleTest}>
+                            {
+                            (!user.isExpo)?
+                            <FastImage
+                                style={{height:33, width:33, borderRadius:33, alignSelf:"center"}}
+                                source={{
+                                    uri:userImg,
+                                    priority:FastImage.priority.normal
+                                }}
+                                resizeMode={FastImage.resizeMode.cover}
+                            />:
+                            <Image
+                                style={{height:33, width:33, borderRadius:33, alignSelf:"center"}}
+                                source={{uri:userImg}}
+                                resizeMode='cover'
+                            />
+                            }
+                        </Pressable>
                     </View>
                     <View style={{flexDirection:"row",alignSelf:"center", maxWidth:windowW*0.65}}>
                         <Text style={{fontFamily:"InterBold", color:"#fff", fontSize:14, alignSelf:"center"}} numberOfLines={2}>
@@ -111,7 +141,7 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
                             <Text style={{fontFamily:"Inter"}}>
                             {
                                 (type === 'like')&&
-                                <Text>{` liked your recent post. `}<Text style={{fontSize:13}}>👍 4d</Text>
+                                <Text>{` liked your recent post. `}<Text style={{fontSize:13}}>👍</Text>
                                 </Text>
 
                             }
@@ -120,26 +150,27 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
                             }
                             {
                                 (type === 'friend')&&
-                                <Text>{` sent you a friend request. `}<Text style={{fontSize:13}}>👋 4d</Text>
+                                <Text>{` sent you a friend request. `}<Text style={{fontSize:13}}>👋</Text>
                                 </Text>
                             }
                             {
                                 (type === 'accept')&&
-                                <Text>{` accepted your friend request! `}<Text style={{fontSize:13}}></Text>
+                                <Text>{` accepted your friend request!`}<Text style={{fontSize:13}}></Text>
                                 </Text>
                             }
                             {
                                 (type === 'post')&&
-                                <Text>{` posted to your milestone! `}
+                                <Text>{` posted to your milestone!`}
                                 </Text>
                             }
+                                <Text style={{color:"rgba(140,140,140,1)", fontSize:13, fontStyle:"InterLight"}}>  {timestamp}</Text>
                             </Text>
                         </Text>
                     </View>
                 </View>
          
                 <View style={{maxHeight:32,maxWidth:32, alignItems:"center", right:16, position:"absolute"}}>
-                    <Pressable onPress={handleTest}>
+                    <Pressable onPress={handleNavigation}>
                         {
                         (!user.isExpo)?
                         <FastImage

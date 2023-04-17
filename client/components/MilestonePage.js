@@ -16,17 +16,19 @@ const windowH = Dimensions.get('window').height
 
 const ProgressView = ({count, postlist, month, monthname, monthnumber, year}) => {
     const [selected, setSelected] = useState(false)
+    const currentDate =  new Date().toLocaleDateString("en-US",{month:"long", day:"numeric",year:"numeric"})
     function pressDate(val) {     // print associated posts
-        console.log(val)
+        //console.log(val)
+        console.log(Math.abs(new Date(val) - new Date(currentDate))/86400000)   // difference in days
         if (selected === val) {
             setSelected(false)
         }
         else {
             setSelected(val)
         }
-        console.log(postlist.filter(item=>
-            new Date(item.date).toLocaleDateString("en-US",{month:"long", day:"numeric",year:"numeric"}) === val
-        ).length)
+        //console.log(postlist.filter(item=>
+        //    new Date(item.date).toLocaleDateString("en-US",{month:"long", day:"numeric",year:"numeric"}) === val
+        //).length)
     }
     function getActivity(val) {   // determines color of square
         return (
@@ -69,7 +71,7 @@ const ProgressView = ({count, postlist, month, monthname, monthnumber, year}) =>
     return (
         <View style={{flex:1, paddingLeft:windowW*0.075, paddingRight:windowW*0.075, marginTop:windowH*0.02}}>
             <View style={styles.milestoneDatesHeader}>
-                    <Text style={styles.todaysMilestoneHeader}>
+                    <Text style={[styles.todaysMilestoneHeader]}>
                         {`⚡ Milestone Progress`}   
                     </Text>
                     <Text style={(windowW>400)?styles.milestoneDateLarge:styles.milestoneDate}>
@@ -108,6 +110,8 @@ const MilestonePage = ({route}) => {
     const [isViewable, setIsViewable] = useState(0)
     const [favorite, setFavorite] = useState(false)
     const [loading, setLoading] = useState(true)
+
+    const [timestamp, setTimestamp] = useState()
     const scrollY = useRef(new Animated.Value(0)).current;
     const animatedvalue = useRef(new Animated.Value(0)).current;
     var fileExt = (image !== undefined)?image.toString().split('.').pop():'calender'
@@ -139,8 +143,34 @@ const MilestonePage = ({route}) => {
     }
     const [monthList, setMonthList] = useState(getMonths())
     function pressShare() {
-       console.log(ownerId)
+       console.log(route.params)
     }
+    useEffect(()=> {
+        const newDate = new Date()
+        const postDate = new Date(route.params.date)
+        if ((Math.abs(newDate-postDate)/3600000) < 24) {
+            setTimestamp(' Today')
+        }
+        else if ((Math.abs(newDate-postDate)/86400000) < 7) {
+            setTimestamp((Math.floor(Math.abs(newDate-postDate)/86400000) < 2)?
+                Math.floor(Math.abs(newDate-postDate)/86400000).toString()+
+                ' Day': Math.floor(Math.abs(newDate-postDate)/86400000).toString()+' Days')
+        }
+        else if ((Math.abs(newDate-postDate)/86400000) < 30) {
+            setTimestamp((Math.floor(Math.floor(Math.abs(newDate-postDate)/86400000)%7) < 2)?
+                Math.floor(Math.floor(Math.abs(newDate-postDate)/86400000)%7).toString()+
+                ' Week':Math.floor(Math.floor(Math.abs(newDate-postDate)/86400000)%7).toString()+' Weeks')
+        }
+        else if ((Math.abs(newDate-postDate)/2592000000) < 12) {
+            setTimestamp((Math.floor(Math.abs(newDate-postDate)/2592000000) < 2)?
+                Math.floor(Math.abs(newDate-postDate)/2592000000).toString()+
+                ' Month': Math.floor(Math.abs(newDate-postDate)/2592000000).toString()+' Months')
+        } else {
+            setTimestamp((Math.floor(Math.abs(newDate-postDate)/31536000000)< 2)?
+                Math.floor(Math.abs(newDate-postDate)/31536000000).toString()+
+                ' Year':Math.floor(Math.abs(newDate-postDate)/31536000000).toString()+' Years')
+        }
+    }, [])
     function handlePress() {
         navigation.navigate("EditMilestone", {id:route.params.milestone.id, title:title, description:description, src:image})
     }
@@ -160,6 +190,9 @@ const MilestonePage = ({route}) => {
             delay:50,
             useNativeDriver:false,
         }).start(()=>setLoading(false))
+    }
+    function handleTest() {
+        console.log(timestamp)
     }
     useEffect(()=> {
         if (route) {
@@ -208,7 +241,7 @@ const MilestonePage = ({route}) => {
     }
     const renderPost = ({item}) => {
         return (
-            <Pressable onPress={()=>console.log(postList.indexOf(item))}>
+            <Pressable onPress={()=>console.log(item.date)}>
                 <View style={{maxWidth:windowW}}>
                     <PostItem
                     key={item.idposts}
@@ -237,11 +270,12 @@ const MilestonePage = ({route}) => {
             }            
             <Navbar title={"milestone"} scrollY={scrollY} />
             <Animated.ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}
-             style={{ marginTop:windowH*0.054,height:animatedvalue.interpolate({inputRange:[0,100], outputRange:[0, windowH-94]})}}>
+             style={{ marginTop:windowH*0.0525,height:animatedvalue.interpolate({inputRange:[0,100], outputRange:[0, windowH-94]})}}>
                 <View style={[styles.headerContent, {marginTop:windowH*((windowH>900?70:76)/windowH)}]}>
-            
+                  
                         <View style={styles.headerContentWrapper}>
                             <View style={[styles.milestoneIconContainer, {alignSelf:"center"}]}>
+                            <Pressable onPress={handleTest}>
                                 {
                                 (!user.isExpo)?
                                 <FastImage
@@ -261,6 +295,7 @@ const MilestonePage = ({route}) => {
                                     resizeMode="cover"
                                     source={(fileExt==='jpg' || fileExt==='png')?{uri:image}:Icons[image]}/>
                                 }
+                            </Pressable>
                             </View>
                             <Text style={styles.milestoneTitle}>{title}</Text>
                             <Pressable onPress={pressShare}>
@@ -290,8 +325,12 @@ const MilestonePage = ({route}) => {
                     </View>
                 </View>
                 <View style={styles.todaysHeaderContainer}>
-                    <Text style={styles.todaysMilestoneHeader}>
-                        {`🌟 Today’s Milestone`}
+                    <Text style={[styles.todaysMilestoneHeader, {fontSize:(route.params.count === 0 || windowH>900)?19:18.5}]}>
+                  {/* {`🌟 Today’s Milestone`} */}
+                    {(route.params.count === 0)?
+                    `🌟 Today’s Milestone`:
+                     `🌟 ${route.params.count} Posts in ${timestamp}`
+                    }
                     </Text>
                 </View>
                 <View style={[(postList.length > 0)?styles.postContainerScroll:styles.postContainer,{marginTop:windowH*0.015}]}>
@@ -383,7 +422,7 @@ const styles = StyleSheet.create({
         flexDirection:"row",
         alignItems:"center",
         marginBottom: windowH * (18/windowH),
-        marginLeft:windowW * .11
+        marginLeft:windowW * .105
     },
     milestoneIconContainer: {
         width:(windowW*0.082),
@@ -446,10 +485,10 @@ const styles = StyleSheet.create({
     },
     todaysMilestoneHeader: {
         fontFamily:"Inter",
-        fontSize: 19,
         color:"white",
         width:windowW*0.6,
         left:2,
+        fontSize:19,
         alignSelf:"center",
         top:0
     },
