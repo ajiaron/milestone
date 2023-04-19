@@ -274,7 +274,7 @@ const Profile = ({route}) => {
                     <GroupTag title={"Guitar Gang"} users={['jdason', 'hzenry']} img={require("../assets/guitar.png")}/>
                 </View>
             </View>
-            <Footer/>
+            <Footer id={userid}/>
         </View>
     )
 }

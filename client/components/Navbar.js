@@ -108,13 +108,15 @@ const Navbar = ({title, scrollY, newNotification, onClearNotifications}) => {
                         </Pressable>
                     </Animated.View> 
                 }
-                <Text style={{fontFamily:"InterBold", color:"#fff", 
-                fontSize:(windowH>900)?21:20, alignSelf:"center",
-                paddingRight:(route.name !== "Feed" && route.name !== "Notifications")?(windowH>900)?152:132:0,
-                paddingLeft:(route.name !== "Feed" && route.name !== "Notifications")?13.5:0
-                }}>
-                    {title}
-                </Text>
+                <Pressable onPress={()=>console.log(routes)}>
+                    <Text style={{fontFamily:"InterBold", color:"#fff", 
+                    fontSize:(windowH>900)?21:20, alignSelf:"center",
+                    paddingRight:(route.name !== "Feed" && route.name !== "Notifications")?(windowH>900)?152:132:0,
+                    paddingLeft:(route.name !== "Feed" && route.name !== "Notifications")?13.5:0
+                    }}>
+                        {title}
+                    </Text>
+                </Pressable>
                 {(route.name==='Feed') ?
                 <Animated.View style={{position:"relative", paddingLeft:(windowH>900)?108.5:90}}>
                     <Pressable onPress={()=>navigation.navigate("Notifications")}>

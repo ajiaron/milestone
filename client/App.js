@@ -51,7 +51,7 @@ function App() {
             <Stack.Screen name="Feed" component={Feed} options={{gestureEnabled: false}} />
             <Stack.Screen name="Notifications" component={Notifications} />
             <Stack.Screen name="Post" component={Post} />
-            <Stack.Screen name="Profile" component={Profile} options={{gestureEnabled: false}}/>
+            <Stack.Screen name="Profile" component={Profile}/>
             <Stack.Screen name="Archive" component={Archive} />
             <Stack.Screen name="Settings" component={Settings} />
             <Stack.Screen name="MilestoneList" component={MilestoneList} />

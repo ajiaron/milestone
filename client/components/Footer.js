@@ -10,7 +10,7 @@ import userContext from '../contexts/userContext'
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const Footer = ({disable, onPressTouch}) => {
+const Footer = ({disable, id, onPressTouch}) => {
     const route = useRoute();
     const preventNavigation = disable?disable:false
     const navigation = useNavigation()
@@ -34,13 +34,13 @@ const Footer = ({disable, onPressTouch}) => {
     }
     function navigateProfile() {
         if (route.name === "Profile") {
-            if (route.params.id !== user.userId) {
-                navigation.popToTop()
+            console.log(id)
+            if (id !== user.userId) {
+                navigation.pop()
                 navigation.navigate("Profile", {id:user.userId})
             }
         }
         else {
-            navigation.popToTop()
             navigation.navigate("Profile", {id:user.userId})
         }
         

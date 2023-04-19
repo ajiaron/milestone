@@ -79,14 +79,16 @@ const Notifications = () => {
                 <Animated.FlatList
                     data={[...notifications].reverse()}
                     renderItem={renderNotification}
-                    snapToAlignment="start"
+                  //  snapToAlignment="start"
                     refreshControl={
                         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                     }
-                    style={{paddingTop:94}}
+                    contentContainerStyle={{paddingTop:94,paddingBottom:76, flex:1, overflow:"scroll"}}
+
                     showsVerticalScrollIndicator={false}
                     decelerationRate={"fast"}
-                    //snapToInterval={windowH*0.0756}
+                    removeClippedSubviews
+                    snapToInterval={windowH*0.0756}
                 />:
                 <Text style={{fontFamily:"Inter", color:"rgba(120,120,120,1)", alignSelf:"center"}}>Nothing to see yet!</Text>
                 }
@@ -100,14 +102,15 @@ const Notifications = () => {
 const styles = StyleSheet.create({
     notificationsPage: {
         backgroundColor:"rgba(28, 28, 28, 1)",
-        flex: 1,
+        flex:1,
         minWidth: "100%",
         minHeight: "100%",
-        overflow: "hidden",
+      
     },
     notificationsContainer: {
         justifyContent:"center",
-        flex:1,
+  
+        overflow: "scroll",
         alignItems:"center",
         alignSelf:"center"
     }

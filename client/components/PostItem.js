@@ -1,7 +1,7 @@
 import  React, {useState, useRef, useEffect, useContext} from "react";
 import { Animated, Text, StyleSheet, ActivityIndicator, View, Image, Pressable, TextInput, ScrollView, Dimensions, TouchableOpacity } from "react-native";
 import { Icon } from 'react-native-elements'
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, StackActions } from "@react-navigation/native";
 import Icons from '../data/Icons.js'
 import userContext from '../contexts/userContext'
 import axios from 'axios'
@@ -84,21 +84,17 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         }).start()
     }
     function navigateProfile() {
-        navigation.navigate("Profile", {id:ownerId})
+        navigation.push("Profile", {id:ownerId})
     }
     function handleComment() {
         if (route.name ==="Post") {
             onToggleComment()
         } 
         else {
-            navigation.popToTop();
             navigation.navigate("Post", {item:data, comments:true})
         }
     }
     function handleNavigate() {
-        if (route.name === "MilestonePage"){
-            navigation.popToTop()
-        }
         navigation.navigate("Post", {item:data, comments:false})
     }
     const handleEdit = () => {

@@ -116,7 +116,7 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
             <View style={[styles.notificationContent, ]}>
                 <View style={{flexDirection:"row"}}>
                     <View style={{maxHeight:33, alignItems:"center", paddingRight:12, alignSelf:"center"}}>
-                        <Pressable onPress={handleTest}>
+                        <Pressable onPress={()=>navigation.navigate("Profile", {id:requesterId})}>
                             {
                             (!user.isExpo)?
                             <FastImage
@@ -220,11 +220,10 @@ const styles = StyleSheet.create({
         backgroundColor:'#232323',
         height:windowH*0.0756,
         width:windowW,
-        display:"flex",
         borderColor:"rgba(28, 28, 28, 1)",
         borderTopWidth:1,
         borderBottomWidth:1,
-        
+        flex:1,
         alignItems:"center",
         justifyContent:"center"
     },
