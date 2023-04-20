@@ -91,9 +91,7 @@ const DropdownPermission = ({permission, setPermission, permisisonList}) => {
 }
 
 const CreateMilestone = () => {
-    const permissionListLarge = ['Everyone', 'Friends Only', 'Group Members', 'Only You']
     const permissionList = ['Everyone', 'Friends', 'Groups', 'Only You']
-    const durationListLarge = ['Until Tomorrow', 'Next Month', 'Indefinitely', 'Custom']
     const durationList = ['Next Day', '1 Month', 'Indefinitely', 'Custom']
     const user = useContext(userContext)
     const navigation = useNavigation();
@@ -108,8 +106,8 @@ const CreateMilestone = () => {
     const [sharingEnabled, setSharingEnabled] = useState(true)
     const toggleSharing = () => setSharingEnabled(previousState => !previousState)
     const [postPermission, setPostPermission] = useState("Everyone")
-    const [viewPermission, setViewPermission] = useState((windowW>400)?"Friends Only":"Friends")
-    const [duration, setDuration] = useState((windowW>400)?'Until Tomorrow':'Next Day')
+    const [viewPermission, setViewPermission] = useState("Everyone")
+    const [duration, setDuration] = useState('Indefinitely')
     const [loading, setLoading] = useState(false)
     const [progress, setProgress] = useState(0)
     const animatedval= useRef(new Animated.Value(0)).current;
@@ -128,13 +126,13 @@ const CreateMilestone = () => {
       }).start()
     }
     function handlePress() {
-        console.log(image.substring(image.indexOf('.')+1))
+        console.log(image?.substring(image.indexOf('.')+1))
         console.log('Device: ', Device.deviceName)
         console.log("Width:", windowW, "Height:", windowH)
         console.log(user)
         console.log("Title:", title, "| Description:",description, "| Image:",(image)?image:'defaultmilestone')
         console.log("Posts:", postPermission, "| Views:", viewPermission, "| Duration:", duration)
-        console.log("Likes:", likesEnabled, "| Comments:", commmentsEnabled, "| Sharing:", sharingEnabled)
+        console.log("Comments:", commmentsEnabled, "| Likes:", likesEnabled, "| Sharing:", sharingEnabled)
     }
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -168,8 +166,9 @@ const CreateMilestone = () => {
         })
         .then((res)=> {
             console.log('result ---',`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`)
-            axios.post(`http://${user.network}:19001/api/postmilestones`, 
-            {title: title,src:image?`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`:'defaultmilestone', streak:0, description:description, ownerid:user.userId})
+            axios.post(`http://${user.network}:19001/api/postmilestones`, // TODO: put in duration
+            {title: title,src:image?`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`:'defaultmilestone',
+            streak:0, description:description, ownerid:user.userId, postable:postPermission, viewable:viewPermission}) 
             .then(() => {
                 console.log('new milestone saved')
                 setLoading(false)
@@ -239,13 +238,13 @@ const CreateMilestone = () => {
                                 <Text style={[styles.milestonePermissionText, 
                                     {marginLeft:2, alignSelf:"center"}]}>Who can post to this Milestone?</Text>
                                 <DropdownPermission permission={postPermission} setPermission={setPostPermission} 
-                                permisisonList={(windowW>400)?permissionListLarge:permissionList}/>
+                                permisisonList={permissionList}/>
                             </View>
                             <View style={[styles.milestonePermission, {marginTop:(windowH>900)?12:8}]}>
                                 <Text style={[styles.milestonePermissionText, 
                                     {marginLeft:2, alignSelf:"center"}]}>Who can view this Milestone?</Text>
                                 <DropdownPermission permission={viewPermission} setPermission={setViewPermission}
-                                permisisonList={(windowW>400)?permissionListLarge:permissionList}/>
+                                permisisonList={permissionList}/>
                             </View>
                             <View style={styles.switchContainer}>
                                 <View style={{flexDirection:"row"}}>
@@ -291,7 +290,7 @@ const CreateMilestone = () => {
                                 <Text style={[styles.milestonePermissionText, 
                                     {marginLeft:2, alignSelf:"center"}]}>How long will this last?</Text>
                             <DropdownPermission permission={duration} setPermission={setDuration}
-                                permisisonList={(windowW>400)?durationListLarge:durationList}/>
+                                permisisonList={durationList}/>
                             </View>    
                         </View>
                     </View>            

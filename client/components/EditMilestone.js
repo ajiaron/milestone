@@ -91,7 +91,6 @@ const DropdownPermission = ({permission, setPermission, permisisonList}) => {
 }
 
 const EditMilestone = ({route}) => {
-    const permissionListLarge = ['Everyone', 'Friends Only', 'Group Members', 'Only You']
     const permissionList = ['Everyone', 'Friends', 'Groups', 'Only You']
     const durationListLarge = ['Until Tomorrow', 'Next Month', 'Indefinitely', 'Custom']
     const durationList = ['Next Day', '1 Month', 'Indefinitely', 'Custom']
@@ -109,9 +108,9 @@ const EditMilestone = ({route}) => {
     const toggleLikes = () => setLikesEnabled(previousState => !previousState)
     const [sharingEnabled, setSharingEnabled] = useState(true)
     const toggleSharing = () => setSharingEnabled(previousState => !previousState)
-    const [postPermission, setPostPermission] = useState("Everyone")
-    const [viewPermission, setViewPermission] = useState((windowW>400)?"Friends Only":"Friends")
-    const [duration, setDuration] = useState((windowW>400)?'Until Tomorrow':'Next Day')
+    const [postPermission, setPostPermission] = useState((route.params.postable !== undefined)?route.params.postable:'Everyone')
+    const [viewPermission, setViewPermission] = useState((route.params.viewable !== undefined)?route.params.viewable:'Everyone')
+    const [duration, setDuration] = useState('Indefinitely')
     const [loading, setLoading] = useState(false)
     const [progress, setProgress] = useState(0)
     var fileExt = (image !== undefined)?image.toString().split('.').pop():'calender'
@@ -158,7 +157,6 @@ const EditMilestone = ({route}) => {
     function handleSelection() {
         pickImage()
     }
-
     const fetchContent = async (uri) => {
         setLoading(true)
         const response = await fetch(uri)
@@ -167,7 +165,6 @@ const EditMilestone = ({route}) => {
     }
     const uploadContent = async (uri) => {
         const content = await fetchContent(uri)
-   
         return Storage.put(`milestone-content-${Math.random()}.${image.substring(image.indexOf('.')+1)}`, content, {
             level:'public',
             contentType: 'image',
@@ -179,7 +176,8 @@ const EditMilestone = ({route}) => {
         .then((res)=> {
             console.log('result ---',`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`)
             axios.put(`http://${user.network}:19001/api/updatemilestone`, 
-            {milestoneid: route.params.id, title: title, description:description, src:`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`})
+            {milestoneid: route.params.id, title: title, description:description,
+            src:`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`, postable:postPermission, viewable:viewPermission})
             .then(() => {
                 console.log('milestone updated')
                 setLoading(false)
@@ -188,16 +186,14 @@ const EditMilestone = ({route}) => {
             .catch((error)=> console.log(error))
         })
         .catch((e)=>console.log(e))
-        
     }
-
     function submitMilestone() {
        if (image !== originalImage) {
         uploadContent(image)
        }
        else {
         axios.put(`http://${user.network}:19001/api/updatemilestone`, 
-        {milestoneid: route.params.id, title: title, description:description, src:image})
+        {milestoneid: route.params.id, title: title, description:description, src:image, postable:postPermission, viewable:viewPermission})
         .then(() => {
             console.log('milestone updated')
             setLoading(false)
@@ -259,13 +255,13 @@ const EditMilestone = ({route}) => {
                                 <Text style={[styles.milestonePermissionText, 
                                     {marginLeft:2, alignSelf:"center"}]}>Who can post to this Milestone?</Text>
                                 <DropdownPermission permission={postPermission} setPermission={setPostPermission} 
-                                permisisonList={(windowW>400)?permissionListLarge:permissionList}/>
+                                permisisonList={(windowW>400)?permissionList:permissionList}/>
                             </View>
                             <View style={[styles.milestonePermission, {marginTop:(windowH>900)?12:8}]}>
                                 <Text style={[styles.milestonePermissionText, 
                                     {marginLeft:2, alignSelf:"center"}]}>Who can view this Milestone?</Text>
                                 <DropdownPermission permission={viewPermission} setPermission={setViewPermission}
-                                permisisonList={(windowW>400)?permissionListLarge:permissionList}/>
+                                permisisonList={(windowW>400)?permissionList:permissionList}/>
                             </View>
                             <View style={styles.switchContainer}>
                                 <View style={{flexDirection:"row"}}>
@@ -311,7 +307,7 @@ const EditMilestone = ({route}) => {
                                 <Text style={[styles.milestonePermissionText, 
                                     {marginLeft:2, alignSelf:"center"}]}>How long will this last?</Text>
                             <DropdownPermission permission={duration} setPermission={setDuration}
-                                permisisonList={(windowW>400)?durationListLarge:durationList}/>
+                                permisisonList={durationList}/>
                             </View>    
                         </View>
                     </View>            

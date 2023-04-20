@@ -41,6 +41,11 @@ const Notifications = () => {
       .then((response)=> console.log("notifications cleared")).catch(error=>console.log(error))
       setClear(!clear)
     }
+    function onClear(id) {
+        axios.delete(`http://${user.network}:19001/api/deletenotification`, {data: {idnotifications:id}})
+        .then((response)=> console.log("notification deleted")).catch(error=>console.log(error))
+        setNotifications(notifications.filter((item)=>item.id !== id))
+    }
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getnotifications`) 
         .then((response)=>{ 
@@ -63,6 +68,7 @@ const Notifications = () => {
                 index = {notifications.indexOf(item)}
                 isFirst = {notifications.length}
                 refreshing = {refreshing}
+                onClear={(id)=>onClear(id)}
             />
         )
     }
@@ -79,12 +85,11 @@ const Notifications = () => {
                 <Animated.FlatList
                     data={[...notifications].reverse()}
                     renderItem={renderNotification}
-                  //  snapToAlignment="start"
+                    snapToAlignment="start"
                     refreshControl={
                         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                     }
                     contentContainerStyle={{paddingTop:94,paddingBottom:76, flex:1, overflow:"scroll"}}
-
                     showsVerticalScrollIndicator={false}
                     decelerationRate={"fast"}
                     removeClippedSubviews

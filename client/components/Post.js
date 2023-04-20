@@ -49,55 +49,27 @@ const Post = ({navigation, route}) => {
             }
     }
     useEffect(()=> {
-        axios.get(`http://${user.network}:19001/api/getlikes`)  
+        axios.get(`http://${user.network}:19001/api/getuserlikes/${postId}`)  
         .then((response)=> {
-            setLikesList(response.data.filter((item)=>item.postid === postId))
+            setLikesList(response.data)
         }).catch(error => console.log(error))
     }, [])
     useEffect(()=> {
-        axios.get(`http://${user.network}:19001/api/getcomments`)  
+        axios.get(`http://${user.network}:19001/api/getusercomments/${postId}`)  
         .then((response)=> {
-            setCommentList(response.data.filter((item)=>item.postid === postId))
+            setCommentList(response.data)
+            setLoading(false)
         }).catch(error => console.log(error))
     }, [newComment])
     useEffect(()=> {
-        axios.get(`http://${user.network}:19001/api/getusers`)  
-        .then((response)=> {
-           response.data.filter((item)=>commentList.map((val)=>val.userid).indexOf(item.id) > -1 ||
-           likesList.map((val)=>val.userid).indexOf(item.id) > -1 ).map((item)=>
-                { commentList.forEach((e) => {      // map usernames to comments and likes
-                    if (e.userid === item.id) {
-                        e.name=item.name
-                        e.img=item.src
-                    }
-                })
-                  likesList.forEach((e)=> {
-                    if (e.userid === item.id) {
-                        e.name=item.name
-                        e.img=item.src
-                    }
-                  })
-                }
-            )
-            setLoading(false)
-        }).catch(error => console.log(error))
-    }, [commentList, likesList])
-    useEffect(()=> {
-        axios.get(`http://${user.network}:19001/api/getlinkedmilestones`)  // if this throws an error, replace 10.0.0.160 with localhost
-        .then((response)=> {
-            setLinkedMilestones(response.data.filter((item)=>item.postid === postId).map((item)=>item.milestoneid))
-        }).catch(error => console.log(error))
-    }, [])
-    useEffect(()=> {
-        axios.get(`http://${user.network}:19001/api/getmilestones`)
+        axios.get(`http://${user.network}:19001/api/getpostmilestones/${postId}`)
         .then((response) => {
-            setMilestoneList(response.data.filter((item)=>linkedMilestones.indexOf(item.idmilestones) >= 0))
+            setMilestoneList(response.data)
         }).catch(error=>console.log(error))
-    }, [linkedMilestones])
+    }, [])
     function handlePress() {
-        //console.log(likesList)
-        //console.log(commentList)
-        console.log(route.params.item.ownerId)
+        console.log(likesList)
+        console.log(commentList)
     }
     const renderMilestone = ({ item }) => {
         return (

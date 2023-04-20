@@ -3,6 +3,7 @@ import { Text, StyleSheet, View, Image, Pressable, Dimensions, Animated, Alert }
 import Icons from '../data/Icons.js'
 import { Icon } from 'react-native-elements'
 import { useNavigation, useRoute } from "@react-navigation/native";
+import {Swipeable} from 'react-native-gesture-handler'
 import userContext from '../contexts/userContext'
 import FastImage from "react-native-fast-image";
 import axios from 'axios'
@@ -11,7 +12,7 @@ import uuid from 'react-native-uuid';
 const windowW= Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, milestoneId, date, index, isFirst, refreshing}) => {
+const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, milestoneId, date, index, isFirst, refreshing, onClear}) => {
     const navigation = useNavigation()
     const user = useContext(userContext)
     const [userImg, setUserImg] = useState()
@@ -23,6 +24,27 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
     const [prompt, setPrompt] = useState()
     const [accepted, setAccepted] = useState(false)
     const [isFriend, setIsFriend] = useState(false)
+    const animatedvalue = useRef(new Animated.Value(0)).current
+    function clearNotification() {
+        Animated.timing(animatedvalue,{
+            toValue:100,
+            duration:200,
+            extrapolate:'clamp',
+            useNativeDriver:false,
+          }).start(()=>onClear(id))
+    }
+    const renderRightActions = (progress, dragX) => {
+        const trans = dragX.interpolate({
+            inputRange: [0, windowW/2],
+            outputRange: [0,windowW/2],
+            extrapolate:'clamp'
+          });
+        return (
+            <Pressable onPress={clearNotification} style={[styles.deleteBody, {maxWidth:windowW*0.25}]}>
+                <Text style={{color:"#fff", fontFamily:"Inter", fontSize:17}}>Clear</Text>
+            </Pressable>
+        )
+    }
     function acceptFriend() {
         axios.put(`http://${user.network}:19001/api/acceptfriend`, 
         {requesterid:requesterId,recipientid:user.userId})
@@ -111,118 +133,132 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
         .catch((error)=> console.log(error))
     }, [])
     return (
-        <View style={[styles.notificationBody, 
-        {borderBottomWidth:(index===0)?0:2, borderTopWidth:(isFirst === index+1)?0:2}]}>
-            <View style={[styles.notificationContent, ]}>
-                <View style={{flexDirection:"row"}}>
-                    <View style={{maxHeight:33, alignItems:"center", paddingRight:12, alignSelf:"center"}}>
-                        <Pressable onPress={()=>navigation.navigate("Profile", {id:requesterId})}>
+        <Swipeable renderRightActions={renderRightActions} overshootRight={false} >
+            <Animated.View style={[styles.notificationBody,
+            { height:animatedvalue.interpolate({inputRange:[0,100], outputRange:[windowH*0.0756,0]}),
+              opacity:animatedvalue.interpolate({inputRange:[0,100], outputRange:[1,0]}),
+             borderBottomWidth:(index===0)?0:animatedvalue.interpolate({inputRange:[0,100], outputRange:[2,0]}),
+              borderTopWidth:(isFirst === index+1)?0:animatedvalue.interpolate({inputRange:[0,100], outputRange:[2,0]})}]}>
+                <View style={[styles.notificationContent, ]}>
+                    <View style={{flexDirection:"row"}}>
+                        <View style={{maxHeight:33, alignItems:"center", paddingRight:12, alignSelf:"center"}}>
+                            <Pressable onPress={()=>navigation.navigate("Profile", {id:requesterId})}>
+                                {
+                                (!user.isExpo)?
+                                <FastImage
+                                    style={{height:33, width:33, borderRadius:33, alignSelf:"center"}}
+                                    source={{
+                                        uri:userImg,
+                                        priority:FastImage.priority.normal
+                                    }}
+                                    resizeMode={FastImage.resizeMode.cover}
+                                />:
+                                <Image
+                                    style={{height:33, width:33, borderRadius:33, alignSelf:"center"}}
+                                    source={{uri:userImg}}
+                                    resizeMode='cover'
+                                />
+                                }
+                            </Pressable>
+                        </View>
+                        <View style={{flexDirection:"row",alignSelf:"center", maxWidth:windowW*0.65}}>
+                            <Text style={{fontFamily:"InterBold", color:"#fff", fontSize:14, alignSelf:"center"}} numberOfLines={2}>
+                                {username}
+                                <Text style={{fontFamily:"Inter"}}>
+                                {
+                                    (type === 'like')&&
+                                    <Text>{` liked your recent post. `}<Text style={{fontSize:13}}>👍</Text>
+                                    </Text>
+
+                                }
+                                {
+                                    (type === 'comment')&&<Text numberOfLines={1}>{` commented: ${comment}`}</Text>
+                                }
+                                {
+                                    (type === 'friend')&&
+                                    <Text>{` sent you a friend request. `}<Text style={{fontSize:13}}>👋</Text>
+                                    </Text>
+                                }
+                                {
+                                    (type === 'accept')&&
+                                    <Text>{` accepted your friend request!`}<Text style={{fontSize:13}}></Text>
+                                    </Text>
+                                }
+                                {
+                                    (type === 'post')&&
+                                    <Text>{` posted to your milestone!`}
+                                    </Text>
+                                }
+                                    <Text style={{color:"rgba(140,140,140,1)", fontSize:13, fontStyle:"InterLight"}}>  {timestamp}</Text>
+                                </Text>
+                            </Text>
+                        </View>
+                    </View>
+            
+                    <View style={{maxHeight:32,maxWidth:32, alignItems:"center", right:16, position:"absolute"}}>
+                        <Pressable onPress={handleNavigation}>
                             {
                             (!user.isExpo)?
                             <FastImage
-                                style={{height:33, width:33, borderRadius:33, alignSelf:"center"}}
+                                style={{height:32, width:32, borderRadius:4, alignSelf:"center"}}
                                 source={{
-                                    uri:userImg,
+                                    uri:postImg,
                                     priority:FastImage.priority.normal
                                 }}
                                 resizeMode={FastImage.resizeMode.cover}
-                            />:
+                            />
+                            :
                             <Image
-                                style={{height:33, width:33, borderRadius:33, alignSelf:"center"}}
-                                source={{uri:userImg}}
+                                style={{height:32, width:32, borderRadius:4, alignSelf:"center"}}
+                                source={{uri:postImg}}
                                 resizeMode='cover'
                             />
                             }
                         </Pressable>
                     </View>
-                    <View style={{flexDirection:"row",alignSelf:"center", maxWidth:windowW*0.65}}>
-                        <Text style={{fontFamily:"InterBold", color:"#fff", fontSize:14, alignSelf:"center"}} numberOfLines={2}>
-                            {username}
-                            <Text style={{fontFamily:"Inter"}}>
-                            {
-                                (type === 'like')&&
-                                <Text>{` liked your recent post. `}<Text style={{fontSize:13}}>👍</Text>
-                                </Text>
-
-                            }
-                            {
-                                (type === 'comment')&&<Text numberOfLines={1}>{` commented: ${comment}`}</Text>
-                            }
-                            {
-                                (type === 'friend')&&
-                                <Text>{` sent you a friend request. `}<Text style={{fontSize:13}}>👋</Text>
-                                </Text>
-                            }
-                            {
-                                (type === 'accept')&&
-                                <Text>{` accepted your friend request!`}<Text style={{fontSize:13}}></Text>
-                                </Text>
-                            }
-                            {
-                                (type === 'post')&&
-                                <Text>{` posted to your milestone!`}
-                                </Text>
-                            }
-                                <Text style={{color:"rgba(140,140,140,1)", fontSize:13, fontStyle:"InterLight"}}>  {timestamp}</Text>
-                            </Text>
-                        </Text>
-                    </View>
-                </View>
-         
-                <View style={{maxHeight:32,maxWidth:32, alignItems:"center", right:16, position:"absolute"}}>
-                    <Pressable onPress={handleNavigation}>
-                        {
-                        (!user.isExpo)?
-                        <FastImage
-                            style={{height:32, width:32, borderRadius:4, alignSelf:"center"}}
-                            source={{
-                                uri:postImg,
-                                priority:FastImage.priority.normal
-                            }}
-                            resizeMode={FastImage.resizeMode.cover}
-                        />
-                        :
-                        <Image
-                            style={{height:32, width:32, borderRadius:4, alignSelf:"center"}}
-                            source={{uri:postImg}}
-                            resizeMode='cover'
-                        />
-                        }
-                    </Pressable>
-                </View>
-                {(type==='friend')?
-                (isFriend)?
-                <View style={{flexDirection:"row", position:"absolute", right:16}}>
-                    <Icon 
-                        name='check-circle'
-                        style={{backgroundColor:"rgba(43, 164, 136, 1)", borderRadius:30}}
-                        color="#232323"
-                        size={28}
-                    />
-                </View>
-                :
-                 <View style={{flexDirection:"row", position:"absolute", right:16}}>
-                    <Pressable onPress={acceptFriend}>
+                    {(type==='friend')?
+                    (isFriend)?
+                    <View style={{flexDirection:"row", position:"absolute", right:16}}>
                         <Icon 
                             name='check-circle'
-                            color="rgba(43, 164, 136, 1)"
-                            size={32}
+                            style={{backgroundColor:"rgba(43, 164, 136, 1)", borderRadius:30}}
+                            color="#232323"
+                            size={28}
                         />
-                    </Pressable>
-                </View>:null
-                }
-            </View>
-        </View>
+                    </View>
+                    :
+                    <View style={{flexDirection:"row", position:"absolute", right:16}}>
+                        <Pressable onPress={acceptFriend}>
+                            <Icon 
+                                name='check-circle'
+                                color="rgba(43, 164, 136, 1)"
+                                size={32}
+                            />
+                        </Pressable>
+                    </View>:null
+                    }
+                </View>
+            </Animated.View>
+        </Swipeable>
     )
 }
 const styles = StyleSheet.create({
     notificationBody: {
         backgroundColor:'#232323',
-        height:windowH*0.0756,
         width:windowW,
         borderColor:"rgba(28, 28, 28, 1)",
         borderTopWidth:1,
         borderBottomWidth:1,
+        flex:1,
+        alignItems:"center",
+        justifyContent:"center"
+    },
+    deleteBody: {
+        backgroundColor:'#9c3a53',
+        height:(windowH*0.0756),
+        borderColor:"rgba(28, 28, 28, 1)",
+        borderTopWidth:2,
+        borderBottomWidth:2,
         flex:1,
         alignItems:"center",
         justifyContent:"center"

@@ -31,7 +31,7 @@ const MilestoneList = () => {
                 streak={item.streak} 
                 img={milestoneList.length>0?item.src:item.img} 
                 id={milestoneList.length>0?item.idmilestones:item.id} 
-                isLast={item.id == milestoneData.length}
+                isLast={milestoneList.map(item=>item.idmilestones).indexOf(item.idmilestones) === milestoneList.length-1}
             />
         )
     }
@@ -55,7 +55,7 @@ const MilestoneList = () => {
                     <FlatList 
                         snapToAlignment="start"
                         decelerationRate={"fast"}
-                        snapToInterval={(windowH*0.0755)+16}
+                        snapToInterval={(windowH*0.0756)+16}
                         showsVerticalScrollIndicator={false}
                         style={[styles.milestoneList]} 
                         data={milestoneList.length>0?milestoneList:milestoneData} 

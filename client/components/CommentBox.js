@@ -22,7 +22,7 @@ const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentL
     const slideup = () => {
         setToggled(true)
         Animated.timing(animatedvalue,{
-            toValue:(mediaType === 'mov')?(windowH > 900)?windowH*.83:windowH*.78:(windowH > 900)?windowH*.8:windowH*.66,
+            toValue:(mediaType === 'mov')?(windowH > 900)?windowH*.83:windowH*.78:(windowH > 900)?windowH*.84:windowH*.7,
             duration:300,
             useNativeDriver:false,
         }).start()
@@ -35,7 +35,6 @@ const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentL
         }).start(() => setToggled(false))
     }
     function handleToggle() { 
-        console.log(likesList)
         if (!toggled) {
             slideup()
         } 
@@ -157,7 +156,7 @@ const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentL
                 scrollEventThrottle={0}
                 scrollEnabled={toggled && scrollable}
             > 
-                <View style={{paddingBottom:(mediaType === 'mov')?14:0,
+                <View style={{paddingBottom:(mediaType === 'mov')?14:2,
                 flexDirection:"row", alignItems:"center", flex:1, paddingLeft:20, paddingRight:20, backgroundColor:"rgba(18,18,18,1)"}}>
                 <TextInput style={[styles.commentText,{flex:1, bottom:(!toggled)?2:(windowH>900)?-2:-1}]} 
                 scrollEnabled={true}
@@ -170,7 +169,7 @@ const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentL
                 />
                 <Pressable onPress={()=>handleSubmit(comment)}>  
                     <Icon 
-                        style={{alignSelf:"center", right:0, bottom:(!toggled)?2:-1}}
+                        style={{alignSelf:"center", right:0, bottom:(!toggled)?2:0}}
                         name={(comment.length>0)?'send':'clear'}
                         color='rgba(130, 130, 130, 1)'
                         size={(windowH>900)?22:22}

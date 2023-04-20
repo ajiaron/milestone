@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
         width:(windowW*0.800),
         height: (windowH*0.0756),
         borderRadius: 8,
-        marginBottom:16,
+        marginBottom:8,
         alignSelf:"center"
     },
     selectedContainerLast: {
@@ -250,6 +250,7 @@ const styles = StyleSheet.create({
     milestoneContainerLast: {
         alignItems:"center",
         paddingTop:windowH*0.0185,
+        marginBottom:16,
         width:windowW*0.800,
         height: windowH*0.0756,
         backgroundColor: "rgba(10, 10, 10, 1)",

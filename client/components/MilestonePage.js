@@ -97,8 +97,6 @@ const MilestonePage = ({route}) => {
     const postdate = month + ' ' + day
     const user = useContext(userContext)
     const navigation = useNavigation()
-    const [gridCount, setGridCount] = useState(new Date(now.getFullYear(), now.getMonth()+1, 0).getDate())
-    const [postIdList, setPostIdList] = useState([])
     const [postList, setPostList] = useState([])
     const [ownerId, setOwnerId] = useState(0)
     const [milestoneId, setMilestoneId] = useState(0)
@@ -110,7 +108,8 @@ const MilestonePage = ({route}) => {
     const [isViewable, setIsViewable] = useState(0)
     const [favorite, setFavorite] = useState(false)
     const [loading, setLoading] = useState(true)
-
+    const [postPermission, setPostPermission] = useState('Everyone')
+    const [viewPermission, setViewPermission] = useState('Everyone')
     const [timestamp, setTimestamp] = useState()
     const scrollY = useRef(new Animated.Value(0)).current;
     const animatedvalue = useRef(new Animated.Value(0)).current;
@@ -172,7 +171,8 @@ const MilestonePage = ({route}) => {
         }
     }, [])
     function handlePress() {
-        navigation.navigate("EditMilestone", {id:route.params.milestone.id, title:title, description:description, src:image})
+        navigation.navigate("EditMilestone", {id:route.params.milestone.id, title:title, description:description, src:image,
+        postable:postPermission, viewable:viewPermission})
     }
     function handleFavorite() {
         setFavorite(!favorite)
@@ -192,36 +192,33 @@ const MilestonePage = ({route}) => {
         }).start(()=>setLoading(false))
     }
     function handleTest() {
+        console.log('Posts:', postPermission)
+        console.log('Views:', viewPermission)
         console.log(timestamp)
     }
     useEffect(()=> {
         if (route) {
             setMilestoneId(route.params.milestone.id)
         }
-        axios.get(`http://${user.network}:19001/api/getmilestones`)  // if this throws an error, replace 10.0.0.160 with localhost
+        axios.get(`http://${user.network}:19001/api/getmilestones`)  // combine these states using useReducer or some object
         .then((response)=> {
             setTitle(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].title)
             setImage(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].src)
             setStreak(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].streak)
             setDescription(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].description)
             setOwnerId(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].ownerId)
+            setPostPermission(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].postable)
+            setViewPermission(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].viewable)
         })
         .then(()=>slideUp())
         .catch(error => console.log(error))
     }, [])
     useEffect(()=> {
-        axios.get(`http://${user.network}:19001/api/getlinkedmilestones`)  // if this throws an error, replace 10.0.0.160 with localhost
-        .then((response)=> {
-            setPostIdList(response.data.filter((item)=>item.milestoneid === route.params.milestone.id).map((item)=>item.postid))
-        }).catch(error => console.log(error))
+        axios.get(`http://${user.network}:19001/api/getlinkedposts/${route.params.milestone.id}`)
+        .then((response) => {
+            setPostList(response.data)
+        }).catch(error=>console.log(error))
     }, [])
-    useEffect(()=> {
-        axios.get(`http://${user.network}:19001/api/getposts`)
-        .then((response)=> {
-            setPostList(response.data.filter((item)=>(postIdList.indexOf(item.idposts)>= 0)
-            &&(item.public === 1 || (item.public === 0 && item.ownerid === user.userId))))
-        })
-    }, [postIdList])
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getusers`)
         .then((response)=> {
@@ -329,7 +326,7 @@ const MilestonePage = ({route}) => {
                   {/* {`🌟 Today’s Milestone`} */}
                     {(route.params.count === 0)?
                     `🌟 Today’s Milestone`:
-                     `🌟 ${route.params.count} Posts in ${timestamp}`
+                     `🌟 ${route.params.count} ${(route.params.count>1)?'Posts':'Post'}${(timestamp === " Today"?'':' in ')}${timestamp}`
                     }
                     </Text>
                 </View>
@@ -397,7 +394,6 @@ const MilestonePage = ({route}) => {
                     </Pressable>:null
                 }
             </Animated.ScrollView>   
-     
             <Footer/>
         </View>
     )

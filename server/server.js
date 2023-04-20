@@ -49,7 +49,7 @@ app.get('/api/getposts', (req, res) => {
             res.send(result)
         }
     })
-}) 
+})
 app.get('/api/getlinkedmilestones', (req, res) => {
     db.query('SELECT * FROM postmilestones', (err, result) => {
         if (err) {
@@ -95,6 +95,63 @@ app.get('/api/getnotifications', (req, res)=> {
         }
     })
 })
+
+/* new stuff */
+app.get('/api/getlinkedposts/:milestoneid', (req, res) => {
+    const milestoneid = req.params.milestoneid
+    const sql = 'SELECT * FROM userposts ' +
+                'WHERE idposts IN (SELECT postid FROM postmilestones WHERE milestoneid = ?)'
+    db.query(sql, [milestoneid], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+
+app.get('/api/getpostmilestones/:postid', (req, res) => {
+    const postid = req.params.postid
+    const sql = 'SELECT * FROM milestones ' +
+                'WHERE idmilestones IN (SELECT milestoneid FROM postmilestones WHERE postid = ?)'
+    db.query(sql, [postid], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+
+app.get('/api/getuserlikes/:postid', (req, res) => {
+    const postid = req.params.postid
+    const sql = 'SELECT id as userid, name, src as img FROM users ' +
+                'INNER JOIN postlikes' +
+                'ON id = userid WHERE postid = ?'
+    db.query(sql, [postid], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+
+app.get('/api/getusercomments/:postid', (req, res) => {
+    const postid = req.params.postid
+    const sql = 'SELECT id as userid, name, src as img, postcomments.commentid, postcomments.comment, postcomments.date FROM milestone_db.users' +
+                'INNER JOIN postcomments' +
+                'ON id = userid WHERE postid = ?'
+    db.query(sql, [postid], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+/* end of new stuff */
+
 app.post('/api/registeruser', (req, res)=> {
     const name = req.body.username
     const milestones = req.body.milestones
@@ -143,8 +200,10 @@ app.post('/api/postmilestones', (req, res) => {
     const streak = req.body.streak
     const description = req.body.description
     const ownerid = req.body.ownerid
-    db.query('INSERT INTO milestones (title, src, streak, description, ownerid) VALUES (?,?,?,?,?)',
-    [title, src, streak, description, ownerid], (err, result) => {
+    const postable = req.body.postable
+    const viewable = req.body.viewable
+    db.query('INSERT INTO milestones (title, src, streak, description, ownerid, postable, viewable) VALUES (?,?,?,?,?,?,?)',
+    [title, src, streak, description, ownerid, postable, viewable], (err, result) => {
         if(err) {
             console.log(err)
         } else {
@@ -310,7 +369,10 @@ app.put('/api/updatemilestone', (req, res) => {
     const title = req.body.title
     const description = req.body.description
     const src = req.body.src
-    db.query('UPDATE milestones SET title = ?, description = ?, src = ? WHERE idmilestones = ?', [title, description, src, milestoneid],
+    const postable = req.body.postable
+    const viewable = req.body.viewable
+    db.query('UPDATE milestones SET title = ?, description = ?, src = ?, postable = ?, viewable = ? WHERE idmilestones = ?',
+    [title, description, src, postable, viewable, milestoneid],
     (err, result)=> {
         if (err) {
             console.log(err)
