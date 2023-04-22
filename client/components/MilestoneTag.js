@@ -2,7 +2,7 @@ import  React, {useState, useEffect, useRef, useContext} from "react";
 import { Text, StyleSheet, View, Image, Pressable, PixelRatio, TouchableOpacity, Dimensions, Animated } from "react-native";
 import Icons from '../data/Icons.js'
 import { Icon } from 'react-native-elements'
-import { useNavigation, useRoute, NavigationActions } from "@react-navigation/native";
+import { useNavigation, useRoute, useIsFocused } from "@react-navigation/native";
 import GlobalStyles from "../styles/GlobalStyles";
 import userContext from '../contexts/userContext'
 import FastImage from "react-native-fast-image";
@@ -11,14 +11,17 @@ import axios from 'axios'
 const windowW= Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, selected, onSelectMilestone, onRemoveMilestone}) => {
+const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, selected, isEmpty, date, onSelectMilestone, onRemoveMilestone}) => {
     const navigation = useNavigation();
+    const isFocused = useIsFocused()
     const animatedvalue = useRef(new Animated.Value(0)).current;
+    const [tagDate, setTagDate] = useState(date !== undefined?new Date(date).toLocaleDateString("en-US", {month:"short", day:"numeric"}):false)
     const [isSelected, setIsSelected] = useState(selected===undefined||!selected?false:selected)
     const route = useRoute();
     const [posts, setPosts] = useState()
     const [startDate, setStartDate] = useState()
     const [fullDate, setFullDate] = useState()
+    const [isLoading, setIsLoading] = useState(false)
     var fileExt = (img !== undefined)?img.toString().split('.').pop():'money'
     const user = useContext(userContext)
     const milestoneData = {
@@ -71,6 +74,7 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
     function handlePress(){  
         sendPost()
         if (route.name === "CreatePost" || route.name === 'EditPost') {
+            console.log(tagDate)
             if (!isSelected) {
                 onSelectMilestone(milestoneData)
             }
@@ -92,6 +96,8 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
         .then((response)=> {
             setPosts(response.data.filter((item)=> item.milestoneid === id).length)
         })
+    },[isEmpty])
+    useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response)=> {
             setStartDate(new Date(response.data.filter((item)=> item.idmilestones === id).map((item)=>
@@ -100,7 +106,7 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
             item.date)[0]).toLocaleDateString("en-US", {month:"short", day:"numeric", year:"numeric"}))
         })
         .catch((error)=> console.log(error))
-    },[])
+    }, [])
     useEffect(()=> {
         if (route.name === 'EditPost' && selected) {
             setIsSelected(selected)
@@ -108,7 +114,8 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
             onSelectMilestone(milestoneData)
         }
     }, [selected])
-    useEffect(()=> {        /* clear selected milestones if screen changes */
+    useEffect(()=> {
+                /* clear selected milestones if screen changes */
         const deselect = navigation.addListener('focus', ()=> {
             setIsSelected(false)
             if (route.name === "CreatePost" || route.name === "EditPost") {
@@ -116,9 +123,25 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
             }
         })
         return deselect
+        setIsLoading(false)
     }, [navigation])
     return (
     <Pressable onPress={handlePress} activeOpacity={0.2}>
+        {((route.name === 'EditPost' || route.name === 'CreatePost')&&isEmpty)&&
+        <Pressable onPress={()=>navigation.navigate("CreateMilestone", {from:'create'})}>
+            <View style={[styles.milestoneEmptyContainer]}>
+                <View style={{alignItems:"center",alignSelf:"center", justifyContent:"space-evenly"}}>
+                    <Icon
+                    name = {'add-to-photos'}
+                    color="rgba(58, 184, 156, 1)"
+                    size={(windowH>900)?27.5:26}
+                    />
+                    <Text style={{fontFamily:"Inter", color:"rgba(58, 184, 156, 1)", 
+                    fontSize:(windowH>900)?12:11, paddingTop:6}}>Add a new milestone...</Text>
+                </View>
+
+            </View>
+        </Pressable>}
        <Animated.View style={[((isSelected)&& (route.name=="CreatePost" || route.name=='EditPost'))?
             ((isLast)?styles.highlightContainerLast:styles.highlightContainer):
             (isLast)?styles.milestoneContainerLast:styles.milestoneContainer, 
@@ -145,16 +168,19 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
                         {color:animatedvalue.interpolate({inputRange: [0,100], outputRange: selected?
                         ["rgb(248, 210, 57)","rgba(53, 174, 146, 1)"]
                         :["rgba(53, 174, 146, 1)", "rgb(248, 210, 57)"]})}]}>
-                        {posts}{' '}posts{' '}
+                        
+                        {(!isLoading)&&posts}{' '}posts{' '}
+                
                         <Animated.Text style={[styles.milestoneStreakContext,
                         {color:animatedvalue.interpolate({inputRange: [0,100], outputRange: selected?
                             ["#FFF","rgba(180, 180, 180, 1)"]:["rgba(180, 180, 180, 1)", "#FFF"]})}]}>
-                            since{' '}{startDate}
+                            since{' '}{(route.name ==="EditPost"|| route.name ==='CreatePost')?tagDate:startDate}
                         </Animated.Text>
                     </Animated.Text>
                 </View>
             </View>
         </Animated.View>
+
     </Pressable>
     )
 }
@@ -174,6 +200,26 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 4,
+        alignSelf:"center"
+    },
+    milestoneEmptyContainer: {
+        alignItems:"center",
+        padding:(windowH*0.0185)-2.25,
+        width:windowW*0.800,
+        height: windowH*0.0756,
+        backgroundColor: "rgba(28, 28, 28, 1)",
+        borderColor:"rgba(58, 184, 156, 1)",
+        borderRadius: 8,
+        borderWidth:2.25,
+        borderStyle:"dashed",
+        marginBottom:16,
+        shadowColor: '#000',
+        shadowOffset: {
+        width: 0,
+        height: 2,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
         alignSelf:"center"
     },
     highlightContainer: {

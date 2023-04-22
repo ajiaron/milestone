@@ -362,12 +362,8 @@ const MilestonePage = ({route}) => {
                                 Add a post to this milestone!
                             </Text>
                         </View>
-               
-                    </View>
-                    
-                    /*
-                    <PostItem username={user.username?user.username:'ajiaron'} caption={'This triplet melody is getting hard to play..'} 
-                    src={'defaultpic'} image={'defaultpost'} postId={0} liked={false} isLast={false} date={postdate}/>*/}
+                    </View>  
+                  }
                 </View>
                  <FlatList horizontal 
                      initialNumToRender={3}

@@ -1,8 +1,8 @@
-import React, {useState, useEffect, useContext} from "react";
-import { Text, ActivityIndicator, StyleSheet, View, Image, FlatList, Pressable, TextInput, Switch, Dimensions, Alert } from "react-native";
+import React, {useState, useEffect, useContext, useRef, useCallback} from "react";
+import { Text, Animated, ActivityIndicator, StyleSheet, RefreshControl, View, Image, FlatList, Pressable, TextInput, Switch, Dimensions, Alert, ScrollView } from "react-native";
 import * as Device from 'expo-device'
 import { Icon } from 'react-native-elements'
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute, useIsFocused } from "@react-navigation/native";
 import Footer from './Footer'
 import MilestoneTag from "./MilestoneTag";
 import userContext from '../contexts/userContext'
@@ -16,8 +16,8 @@ const windowH = Dimensions.get('window').height
 const EditPost = ({route}) => {
     const img = (route.params.uri !== undefined)?route.params.uri:require('../assets/samplepostwide.png')
     const imgType = (route.params.type !== undefined)?route.params.type:"back"
+    const isFocused = useIsFocused()
     var fileExt = (route.params.uri !== undefined)?route.params.uri.toString().split('.').pop():'png';
-    const date = new Date().toISOString().slice(0, 19).replace('T', ' ')
     const [commentsEnabled, setCommentsEnabled] = useState(true)
     const toggleComments = () => setCommentsEnabled(previousState => !previousState)
     const [likesEnabled, setLikesEnabled] = useState(true)
@@ -32,13 +32,35 @@ const EditPost = ({route}) => {
     const navigation = useNavigation()
     const user = useContext(userContext)
     const [postId, setPostId] = useState(route.params.postId)
-    const [confirmation, setConfirmation] = useState(false)
+    const [personalMilestones, setPersonalMilestones] = useState([])
+    const [refreshing, setRefreshing] = useState(false);
     const [loading, setLoading] = useState(true)    // for loading image & video preview
-    const [isLoading, setIsLoading] = useState(false)   // for loading backend requests
+    const [isPersonal, setIsPersonal] = useState(true)
+    const animatedvalue = useRef(new Animated.Value(0)).current;
+
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 800);
+    }, []);
+    function switchPersonal() {
+        Animated.timing(animatedvalue,{
+            toValue:100,
+            duration:150,
+            useNativeDriver:false,
+        }).start(()=>setIsPersonal(false))
+    }
+    function switchPublic() {
+        Animated.timing(animatedvalue,{
+            toValue:0,
+            duration:150,
+            useNativeDriver:false,
+        }).start(()=>setIsPersonal(true))
+    }
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getposts`)  
         .then((response)=> {
-            
             setLikesEnabled(response.data.filter((item)=> item.idposts === postId)[0].likes === 1?true:false)
             setCommentsEnabled(response.data.filter((item)=> item.idposts === postId)[0].comments === 1?true:false)
             setSharingEnabled(response.data.filter((item)=> item.idposts === postId)[0].public === 1?true:false)
@@ -53,9 +75,12 @@ const EditPost = ({route}) => {
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response)=> {
-            setMilestoneList(response.data)})
+            setMilestoneList(response.data.filter((item)=>item.postable === "Everyone"))})      // TODO: Friends condition
         .catch((error)=> console.log(error))
-    },[])
+    },[isFocused])
+    function handleTest() {
+        console.log(personalMilestones)
+    }
     const DeleteAlert = () => {
         return new Promise((resolve, reject) => {
             Alert.alert('Delete Post?', 'You won\'t be able to restore this post after it is deleted.', [{
@@ -97,11 +122,6 @@ const EditPost = ({route}) => {
             }}
         )
     }
-    function handleTest() {
-        console.log('likes:',likesEnabled)
-        console.log('comments:',commentsEnabled)
-        console.log('public:',sharingEnabled)
-    }
     function submitPost() {
         // check owner of each milestone and send notification of post to milestone owners
         milestones.filter(item=>linkedMilestones.indexOf(item.id)<0).map(item=>{
@@ -125,8 +145,11 @@ const EditPost = ({route}) => {
                 img={milestoneList.length>0?item.src:item.img} 
                 id={milestoneList.length>0?item.idmilestones:item.id} 
                 ownerid={milestoneList.length>0?item.ownerId:0}
-                isLast={item.id == milestoneData.length}
+                isLast={milestoneList.indexOf(item) === milestoneList.length}
                 selected={linkedMilestones.indexOf(item.idmilestones) > -1}
+                isEmpty={isPersonal && milestoneList.filter((val)=>val.ownerId === user.userId).indexOf(item) === 
+                milestoneList.filter((val)=>val.ownerId === user.userId).length-1}
+                date={item.date}
                 onSelectMilestone={(selected) => setMilestones([...milestones,selected])}
                 onRemoveMilestone={(selected) => setMilestones(milestones.filter((item) => item.id !== selected.id))}
             />
@@ -135,7 +158,9 @@ const EditPost = ({route}) => {
     return (
         <View style={styles.createPostPage}>
             <View style={styles.createPostContainer}>
-                <Text style={styles.milestoneHeaderText}>DESCRIPTION</Text>
+                <Pressable onPress={handleTest}>
+                <Text style={[styles.milestoneHeaderText,{fontSize:(windowH>900)?11.5:11}]}>DESCRIPTION</Text>
+                </Pressable>
                 <View style={styles.newPostContent}>
                     <View style={styles.newPostCaption}>
                         <TextInput 
@@ -176,30 +201,42 @@ const EditPost = ({route}) => {
                         source={route.params.uri?{uri:img}:require('../assets/samplepost.png')}
                         />
                     }
-       
                 </View>
-                <View style={styles.milestoneListHeader}>
-                    <Pressable onPress={handleTest}>
-
-        
-                    <Text style={styles.milestoneHeaderText}>SELECT A MILESTONE</Text>
+                <View style={[styles.milestoneListHeader]}>
+                    <Pressable onPress={switchPublic} style={{height:"100%"}}>
+                        <Animated.Text style={[styles.milestoneHeaderText, 
+                            {fontSize:(windowH>900)?11.5:11, 
+                            color:animatedvalue.interpolate({inputRange:[0,100], outputRange:['rgba(53,174,146,1)','rgba(195, 191, 191, 1)']})
+                            }]}>
+                            PERSONAL MILESTONES
+                        </Animated.Text>
+                    </Pressable>
+                    <Pressable onPress={switchPersonal} style={{height:"100%"}}>
+                        <Animated.Text style={[styles.milestoneHeaderEndText, 
+                            {fontSize:(windowH>900)?11.5:11,
+                            color:
+                            animatedvalue.interpolate({inputRange:[0,100], outputRange:['rgba(195, 191, 191, 1)','rgba(53,174,146,1)']})
+                            }]}>
+                            PUBLIC MILESTONES</Animated.Text>
                     </Pressable>
                 </View>
-                <View style={styles.PostTagContainer}>
-                    <FlatList 
-                        snapToAlignment="start"
-                        decelerationRate={"fast"}
-                        initialNumToRender={4}
-                        maxToRenderPerBatch={4}
-                        snapToInterval={(windowH*0.0756)+16}
-                        showsVerticalScrollIndicator={false}
-                        style={[styles.milestoneList]} 
-                        data={milestoneList.length>0?milestoneList:milestoneData} 
-                        renderItem={renderMilestone} 
-                        keyExtractor={(item)=>(milestoneList.length>0)?item.idmilestones.toString():item.id.toString()}>
-                    </FlatList> 
-                </View>   
-                <View style={styles.switchContainer}>
+                    <View style={styles.PostTagContainer}>
+                        <FlatList 
+                            snapToAlignment="start"
+                            decelerationRate={"fast"}
+                            refreshControl={
+                                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                            }
+                            initialNumToRender={0}
+                            snapToInterval={(windowH*0.0756)+16}
+                            showsVerticalScrollIndicator={false}
+                            style={[styles.milestoneList]} 
+                            data={isPersonal?[...milestoneList.filter((item)=>item.ownerId === user.userId)].reverse():milestoneList} 
+                            renderItem={renderMilestone} 
+                            keyExtractor={(item)=>item.idmilestones.toString()}>
+                        </FlatList> 
+                    </View>   
+                <View style={[styles.switchContainer]}>
                     <View style={{flexDirection:"row"}}>
                         <Text style={styles.switchText}>Comments</Text>
                         <Switch
@@ -264,7 +301,7 @@ const styles = StyleSheet.create({
     },
     createPostContainer: {
         alignSelf:"center",
-        marginTop:windowH*0.0835
+        marginTop:windowH*0.08
     },
     newPostContent: {
         maxWidth:windowW*0.8,
@@ -312,23 +349,31 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     PostTagContainer: {
-        flex: 1,
         minWidth:windowW * 0.8,
-        maxHeight:windowH * 0.367,
         alignSelf:"center",
-        bottom:28
+        bottom:0,
+        flex:1,
+        maxHeight:windowH * 0.367,
+        bottom:24
     },
     milestoneListHeader: {
         maxWidth:windowW * 0.8,
         height: windowH * 0.05,
-        left:0,
+        flex:1,
+        flexDirection:"row",
+        justifyContent:"space-between"
     },
     milestoneHeaderText: {
         fontFamily:"InterBold",
         left:2,
         fontSize:11,
         color:"rgba(195, 191, 191, 1)",
-        alignSelf:"flex-start"
+    },
+    milestoneHeaderEndText: {
+        fontFamily:"InterBold",
+        fontSize:11,
+        right:2,
+        color:"rgba(195, 191, 191, 1)",
     },
     postHeaderText: {
         fontFamily:"InterBold",

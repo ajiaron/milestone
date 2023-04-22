@@ -2,7 +2,8 @@ import React, { useState, useEffect, useContext, useRef } from "react";
 import { Animated, Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, Switch, Dimensions, TouchableOpacity, Alert } from "react-native";
 import * as Device from 'expo-device'
 import { Icon } from 'react-native-elements'
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import Navbar from "./Navbar";
 import Footer from './Footer'
 import Icons from '../data/Icons.js'
 import userContext from '../contexts/userContext'
@@ -90,7 +91,7 @@ const DropdownPermission = ({permission, setPermission, permisisonList}) => {
     )
 }
 
-const CreateMilestone = () => {
+const CreateMilestone = ({route}) => {
     const permissionList = ['Everyone', 'Friends', 'Groups', 'Only You']
     const durationList = ['Next Day', '1 Month', 'Indefinitely', 'Custom']
     const user = useContext(userContext)
@@ -111,6 +112,9 @@ const CreateMilestone = () => {
     const [loading, setLoading] = useState(false)
     const [progress, setProgress] = useState(0)
     const animatedval= useRef(new Animated.Value(0)).current;
+    const scrollY = useRef(new Animated.Value(0)).current;
+    const routes = navigation.getState()?.routes;
+    const [fromCreate, setFromCreate] = useState(route.params !== undefined?route.params.from:false)
     function shakeLeft(value) {   // for empty fields
         Animated.timing(value,{
           toValue:100,
@@ -126,13 +130,15 @@ const CreateMilestone = () => {
       }).start()
     }
     function handlePress() {
-        console.log(image?.substring(image.indexOf('.')+1))
-        console.log('Device: ', Device.deviceName)
-        console.log("Width:", windowW, "Height:", windowH)
-        console.log(user)
-        console.log("Title:", title, "| Description:",description, "| Image:",(image)?image:'defaultmilestone')
-        console.log("Posts:", postPermission, "| Views:", viewPermission, "| Duration:", duration)
-        console.log("Comments:", commmentsEnabled, "| Likes:", likesEnabled, "| Sharing:", sharingEnabled)
+        console.log(fromCreate)
+      //  console.log(routes)
+       // console.log(image?.substring(image.indexOf('.')+1))
+       // console.log('Device: ', Device.deviceName)
+       // console.log("Width:", windowW, "Height:", windowH)
+       // console.log(user)
+       // console.log("Title:", title, "| Description:",description, "| Image:",(image)?image:'defaultmilestone')
+       // console.log("Posts:", postPermission, "| Views:", viewPermission, "| Duration:", duration)
+       // console.log("Comments:", commmentsEnabled, "| Likes:", likesEnabled, "| Sharing:", sharingEnabled)
     }
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -172,7 +178,12 @@ const CreateMilestone = () => {
             .then(() => {
                 console.log('new milestone saved')
                 setLoading(false)
-                navigation.navigate("Feed")
+                if (fromCreate) {
+                    navigation.goBack()
+                }
+                else {
+                    navigation.navigate("Feed")
+                }  
             })
             .catch((error)=> console.log(error))
         })
@@ -188,6 +199,7 @@ const CreateMilestone = () => {
     }
     return (
         <View style={styles.createMilestonePage}>
+            <Navbar title={'milestone'} scrollY={scrollY}/>
             <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
                 <View style={styles.createMilestoneContainer}>
                     <View style={{alignItems:"center", alignSelf:"center", justifyContent:"center"}}>
@@ -198,7 +210,6 @@ const CreateMilestone = () => {
                         <Pressable onPress={handleSelection}>
                             <Text style={styles.uploadText}>+Upload Photo</Text>
                         </Pressable>
-     
                     <View style={styles.milestoneInfo}>
                         <View style={styles.milestoneInfoContainer}>
                             <View style={styles.milestoneInfoHeader}>
@@ -325,7 +336,7 @@ const styles = StyleSheet.create({
     },
     createMilestoneContainer: {
         alignSelf:"center",
-        marginTop:windowH*0.12,
+        marginTop:windowH*0.15,
         marginBottom:windowH*0.06,
         minWidth:windowW*0.785
     },

@@ -3,6 +3,7 @@ import { Animated, Text, StyleSheet, View, Image, FlatList, Pressable, TextInput
 import * as Device from 'expo-device'
 import { Icon } from 'react-native-elements'
 import { useNavigation, useRoute } from "@react-navigation/native";
+import Navbar from "./Navbar";
 import Footer from './Footer'
 import Icons from '../data/Icons.js'
 import userContext from '../contexts/userContext'
@@ -11,6 +12,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import * as ImagePicker from 'expo-image-picker'
 import { Amplify, Storage } from 'aws-amplify';
 import awsconfig from '../src/aws-exports';
+
 Amplify.configure(awsconfig);
 
 const windowW = Dimensions.get('window').width
@@ -112,6 +114,7 @@ const EditMilestone = ({route}) => {
     const [viewPermission, setViewPermission] = useState((route.params.viewable !== undefined)?route.params.viewable:'Everyone')
     const [duration, setDuration] = useState('Indefinitely')
     const [loading, setLoading] = useState(false)
+    const scrollY = useRef(new Animated.Value(0)).current;
     const [progress, setProgress] = useState(0)
     var fileExt = (image !== undefined)?image.toString().split('.').pop():'calender'
     const DeleteAlert = () => {
@@ -207,6 +210,7 @@ const EditMilestone = ({route}) => {
     }, [routes])
     return (
         <View style={styles.createMilestonePage}>
+            <Navbar title={'milestone'} scrollY={scrollY}/>
             <ScrollView nestedScrollEnabled={true} showsVerticalScrollIndicator={false}>
                 <View style={styles.createMilestoneContainer}>
                     <View style={{alignItems:"center", alignSelf:"center", justifyContent:"center"}}>
@@ -342,7 +346,7 @@ const styles = StyleSheet.create({
     },
     createMilestoneContainer: {
         alignSelf:"center",
-        marginTop:windowH*0.12,
+        marginTop:windowH*0.15,
         marginBottom:windowH*0.06,
         minWidth:windowW*0.785
     },
