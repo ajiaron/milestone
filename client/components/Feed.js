@@ -5,6 +5,7 @@ import { useNavigation, useIsFocused } from "@react-navigation/native";
 import Footer from './Footer'
 import PostItem from './PostItem'
 import axios from 'axios'
+import MilestoneReel from "./MilestoneReel";
 import Navbar from "./Navbar";
 import userContext from '../contexts/userContext'
 
@@ -76,6 +77,10 @@ const Feed = ({route}) => {
     }, [isFocused])
     const renderPost = ({ item }) => {
       return (
+        <>
+        {
+            ([...postFeed].reverse().indexOf(item) === 0 && <MilestoneReel/>)
+        }
           <PostItem 
               key={item.idposts}
               username={item.username}
@@ -90,6 +95,7 @@ const Feed = ({route}) => {
               isPublic={item.public}
               isViewable={isViewable.indexOf([...postFeed].reverse().indexOf(item))>=0}
           />
+          </>
       )
   }
     return (

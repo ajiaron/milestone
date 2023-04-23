@@ -2,6 +2,7 @@ import  React, {useState, useEffect, useContext, useRef, useCallback} from "reac
 import { Animated, ActivityIndicator, Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, Dimensions, RefreshControl } from "react-native";
 import { Icon } from 'react-native-elements'
 import { useNavigation, useRoute } from "@react-navigation/native";
+import Navbar from "./Navbar";
 import Footer from './Footer'
 import MilestoneTag from "./MilestoneTag";
 import GroupTag from "./GroupTag";
@@ -36,6 +37,7 @@ function Friends(){
     const animatedvalue = useRef(new Animated.Value(0)).current;
     //const [refresh, setRefresh] = useState(false)
     const [query, setQuery] = useState('')
+    const scrollY = useRef(new Animated.Value(0)).current;
     const [refreshing, setRefreshing] = useState(false);
     const [filtered, setFiltered] = useState([])
 
@@ -75,7 +77,7 @@ function Friends(){
         })
         .catch((error)=> console.log(error))
     }, [friends, route])
-    const renderMilestone = ({ item }) => {
+    const renderFriend = ({ item }) => {
         return (
             <FriendTag 
                 id = {item.id}
@@ -86,13 +88,14 @@ function Friends(){
     }
     return (
         <View style={styles.friendsPage}>
+            <Navbar title={'milestone'} scrollY={scrollY}/>
             {(loading)&&
                 <Animated.View style={{zIndex:999,alignSelf:"center",width:"100%",top:"50%", height:animatedvalue.interpolate({inputRange:[0,100], outputRange:[windowH, 0]})}}>
                     <ActivityIndicator size="large" color="#FFFFFF" style={{top:"50%", position:"absolute", alignSelf:"center"}}/>
                 </Animated.View>
             }
             <View style={styles.friendsWrapper}>
-            <Text style={[styles.friendsHeader, {top:(windowH * -0.020)}]}>Your Friends</Text>
+            <Text style={[styles.friendsHeader, {top:(windowH * -0.0125), left:2}]}>Your Friends</Text>
             <View style={[styles.userInfoContainer]}>
                 <View style={styles.userInfoHeader}>
                 </View>
@@ -113,10 +116,12 @@ function Friends(){
                     refreshControl={
                         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                     }
-                    snapToInterval={(windowH*0.0755)+16}
+                    style=
+                    {{maxHeight:(windowH > 900)?((windowH*0.0952)-14)*8:((windowH*0.0952)-12)*7}}
+                    snapToInterval={(windowH*0.075)+16}
                     showsVerticalScrollIndicator={false}
                     data={(query.length > 0)?filtered:users}
-                    renderItem={renderMilestone} 
+                    renderItem={renderFriend} 
                     keyExtractor={(item)=>(milestoneList.length>0)?item.idmilestones.toString():item.id.toString()}
                     >
                 </FlatList> 
@@ -144,7 +149,7 @@ friendsWrapper: {
     alignSelf:"center",
     maxHeight:windowH * 0.665,
     maxWidth:windowW*0.8,
-    top:windowH*0.115
+    top:(windowH>900)?(windowH*0.145):(windowH*0.165)
 },
 friendsWrapperLarge: {
     minWidth:windowW * 0.8,

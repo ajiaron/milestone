@@ -3,6 +3,7 @@ import {Animated, Text, ActivityIndicator, StyleSheet, View, Image, Alert, Press
 import { Icon } from 'react-native-elements'
 import { useNavigation, useRoute } from "@react-navigation/native";
 import axios from 'axios'
+import MilestoneReel from "./MilestoneReel";
 import userContext from '../contexts/userContext'
 
 const windowW = Dimensions.get('window').width
@@ -84,70 +85,70 @@ const Navbar = ({title, scrollY, newNotification, onClearNotifications}) => {
     }, [scrollY])
 
     return (
-        <Animated.View 
-        style={{width:windowW, height:94, transform:[{translateY: animatedoffset.interpolate(({inputRange:[0,100], outputRange:[-94,0]}))}],
-        backgroundColor:"#141414", flexDirection:"row", alignItems:"center", justifyContent:"center", 
-        paddingTop:(windowH>900)?36:38,
-        zIndex:999, position:"absolute", top:0}}>
-            <Animated.View style={{flexDirection:"row", width:"100%", alignItems:"center",justifyContent:"center",
-            paddingLeft:(route.name==='Notifications')?0:
-            (route.name !== "Feed" && route.name !== "Notifications")?13.5:
-            (windowH>900)?135:115, 
-            paddingRight:(route.name==='Notifications')?(windowH>900)?125:105:0}}>
-                {(route.name !== 'Feed') &&
-                    <Animated.View style={
-                        {paddingRight:(windowH>900)?103:83}}>
-                        <Pressable onPress={navigateBack}>
-                            <Icon 
-                                style={
-                                    {paddingTop:(route.name === "Post")?4:3, transform:[{scaleY:0.9},]}}
-                                name='arrow-back-ios'
+            <Animated.View 
+            style={{width:windowW, height:94, transform:[{translateY: animatedoffset.interpolate(({inputRange:[0,100], outputRange:[-94,0]}))}],
+            backgroundColor:"#141414", flexDirection:"row", alignItems:"center", justifyContent:"center", 
+            paddingTop:(windowH>900)?36:38,
+            zIndex:999, position:"absolute", top:0}}>
+                <Animated.View style={{flexDirection:"row", width:"100%", alignItems:"center",justifyContent:"center",
+                paddingLeft:(route.name==='Notifications')?0:
+                (route.name !== "Feed" && route.name !== "Notifications")?13.5:
+                (windowH>900)?135:115, 
+                paddingRight:(route.name==='Notifications')?(windowH>900)?125:105:0}}>
+                    {(route.name !== 'Feed') &&
+                        <Animated.View style={
+                            {paddingRight:(windowH>900)?103:83}}>
+                            <Pressable onPress={navigateBack}>
+                                <Icon 
+                                    style={
+                                        {paddingTop:(route.name === "Post")?4:3, transform:[{scaleY:0.9},]}}
+                                    name='arrow-back-ios'
+                                    color='white'
+                                    size={22}
+                                />
+                            </Pressable>
+                        </Animated.View> 
+                    }
+                    <Pressable onPress={()=>console.log(windowH, windowW)}>
+                        <Text style={{fontFamily:"InterBold", color:"#fff", 
+                        fontSize:(windowH>900)?21:20, alignSelf:"center",
+                        paddingRight:(route.name !== "Feed" && route.name !== "Notifications")?(windowH>900)?152:132:0,
+                        paddingLeft:(route.name !== "Feed" && route.name !== "Notifications")?13.5:0
+                        }}>
+                            {title}
+                        </Text>
+                    </Pressable>
+                    {(route.name==='Feed') ?
+                    <Animated.View style={{position:"relative", paddingLeft:(windowH>900)?108.5:90}}>
+                        <Pressable onPress={()=>navigation.navigate("Notifications")}>
+                            {(newNotification)?
+                            <View style={styles.settingsNotification}/>:null
+                            }
+                            <Icon
+                                name='notifications'
+                                size={(windowH>900)?26.5:25}
                                 color='white'
-                                size={22}
+                                style={{color:"#fff",
+                                paddingBottom:(newNotification)?8:0,
+                                paddingTop:(newNotification)?0:1
+                            }}
                             />
                         </Pressable>
-                    </Animated.View> 
-                }
-                <Pressable onPress={()=>console.log(routes)}>
-                    <Text style={{fontFamily:"InterBold", color:"#fff", 
-                    fontSize:(windowH>900)?21:20, alignSelf:"center",
-                    paddingRight:(route.name !== "Feed" && route.name !== "Notifications")?(windowH>900)?152:132:0,
-                    paddingLeft:(route.name !== "Feed" && route.name !== "Notifications")?13.5:0
-                    }}>
-                        {title}
-                    </Text>
-                </Pressable>
-                {(route.name==='Feed') ?
-                <Animated.View style={{position:"relative", paddingLeft:(windowH>900)?108.5:90}}>
-                    <Pressable onPress={()=>navigation.navigate("Notifications")}>
-                        {(newNotification)?
-                        <View style={styles.settingsNotification}/>:null
-                        }
-                        <Icon
-                            name='notifications'
-                            size={(windowH>900)?26.5:25}
-                            color='white'
-                            style={{color:"#fff",
-                            paddingBottom:(newNotification)?8:0,
-                            paddingTop:(newNotification)?0:1
-                        }}
-                        />
-                    </Pressable>
-                </Animated.View>:
-                (route.name === 'Notifications') &&
-                <Animated.View style={{position:"absolute", right:16}}>
-                    <Pressable onPress={clearNotifications}>
-                        <Icon
-                            name='delete'
-                            size={27}
-                            color='white'
-                            style={{paddingTop:1}}
-                        />
-                    </Pressable>
+                    </Animated.View>:
+                    (route.name === 'Notifications') &&
+                    <Animated.View style={{position:"absolute", right:16}}>
+                        <Pressable onPress={clearNotifications}>
+                            <Icon
+                                name='delete'
+                                size={27}
+                                color='white'
+                                style={{paddingTop:1}}
+                            />
+                        </Pressable>
+                    </Animated.View>
+                    }
                 </Animated.View>
-                }
             </Animated.View>
-        </Animated.View>
     )
 }
 const styles=StyleSheet.create({

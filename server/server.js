@@ -95,8 +95,6 @@ app.get('/api/getnotifications', (req, res)=> {
         }
     })
 })
-
-/* new stuff */
 app.get('/api/getlinkedposts/:milestoneid', (req, res) => {
     const milestoneid = req.params.milestoneid
     const sql = 'SELECT * FROM userposts ' +
@@ -109,7 +107,6 @@ app.get('/api/getlinkedposts/:milestoneid', (req, res) => {
         }
     })
 })
-
 app.get('/api/getpostmilestones/:postid', (req, res) => {
     const postid = req.params.postid
     const sql = 'SELECT * FROM milestones ' +
@@ -122,7 +119,6 @@ app.get('/api/getpostmilestones/:postid', (req, res) => {
         }
     })
 })
-
 app.get('/api/getuserlikes/:postid', (req, res) => {
     const postid = req.params.postid
     const sql = 'SELECT id as userid, name, src as img FROM users ' +
@@ -136,7 +132,6 @@ app.get('/api/getuserlikes/:postid', (req, res) => {
         }
     })
 })
-
 app.get('/api/getusercomments/:postid', (req, res) => {
     const postid = req.params.postid
     const sql = 'SELECT id as userid, name, src as img, postcomments.commentid, postcomments.comment, postcomments.date FROM milestone_db.users' +
@@ -150,7 +145,65 @@ app.get('/api/getusercomments/:postid', (req, res) => {
         }
     })
 })
-/* end of new stuff */
+// grabs the milestones that have been posted to within the last week, 
+// if your either own the milestone, or if the post owner is in your friends list
+app.get('/api/getrecentupdates/:id', (req, res) => {
+    const id = req.params.id
+    const sql = 'SELECT DISTINCT userposts.*, '+
+    'milestones.idmilestones, milestones.title, milestones.ownerId as mileOwner, milestones.src as mileImage, milestones.date as mileDate, '+
+    'milestones.streak, milestones.postable, milestones.viewable '+
+    'FROM milestone_db.milestones ' +
+    'INNER JOIN milestone_db.postmilestones ON idmilestones = milestoneid ' +
+    'INNER JOIN milestone_db.userposts ON idposts = postid WHERE (userposts.date > CURRENT_TIMESTAMP - interval 1 week) ' +
+    'AND milestones.idmilestones IN (SELECT milestoneid FROM milestone_db.postmilestones WHERE postmilestones.postid IN ' +
+    '(SELECT idposts FROM milestone_db.userposts WHERE date > CURRENT_TIMESTAMP - interval 1 week)) AND ' +
+    '(userposts.ownerId = ? OR milestones.ownerId = ? OR ' +
+    '(userposts.ownerID IN ' +
+    '(SELECT DISTINCT id FROM milestone_db.users ' +
+    'JOIN milestone_db.friends ON (id = requesterId OR id = recipientId) ' +
+    'WHERE id IN (SELECT requesterId FROM milestone_db.friends WHERE (recipientId = ? AND approved = true) UNION ' +
+    'SELECT recipientId FROM milestone_db.friends WHERE (requesterId = ? AND approved = true)))));'
+    db.query(sql, [id,id,id,id], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+// grabs all the posts under the recent week's milestone(s) 
+app.get('/api/getrecentupdates/:milestoneid', (req, res) => {
+    const milestoneid = req.params.milestoneid
+    const sql = 'SELECT idmilestones,userposts.idposts, userposts.date as postdate, title, userposts.caption, userposts.ownerId as postOwner, userposts.public, ' +
+    'userposts.username, milestones.ownerId as mileOwner, milestones.postable, milestones.viewable FROM milestone_db.milestones ' +
+    'INNER JOIN milestone_db.postmilestones ON milestoneid = idmilestones ' +
+    'INNER JOIN milestone_db.userposts ON idposts = postid WHERE (userposts.date > CURRENT_TIMESTAMP - interval 1 week) ' +
+    'AND milestones.idmilestones IN (SELECT milestoneid FROM milestone_db.postmilestones WHERE postmilestones.postid IN ' +
+    '(SELECT idposts FROM milestone_db.userposts WHERE date > CURRENT_TIMESTAMP - interval 1 week)) AND milestones.idmilestones = ?;'
+    db.query(sql, [milestoneid], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+// grabs the user's friends with user info
+app.get('/api/getfriendslist/:id', (req, res) => {
+    const id = req.params.id
+    const sql = 'SELECT DISTINCT users.*, friends.approved FROM milestone_db.users ' +
+    'JOIN milestone_db.friends ON (id = requesterId OR id = recipientId) ' +
+    'WHERE id IN ( ' +
+    'SELECT requesterId FROM milestone_db.friends WHERE (recipientId = ?) UNION ' +
+    'SELECT recipientId FROM milestone_db.friends WHERE (requesterId = ?));'
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
 
 app.post('/api/registeruser', (req, res)=> {
     const name = req.body.username
