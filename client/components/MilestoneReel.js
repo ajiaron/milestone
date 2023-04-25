@@ -2,7 +2,7 @@ import  React, {useState, useEffect, useRef, useContext} from "react";
 import { Text, StyleSheet, View, Image, Pressable, Dimensions, Animated, FlatList } from "react-native";
 import Icons from '../data/Icons.js'
 import { Icon } from 'react-native-elements'
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, useIsFocused } from "@react-navigation/native";
 import userContext from '../contexts/userContext'
 import axios from 'axios'
 import FastImage from "react-native-fast-image";
@@ -11,21 +11,23 @@ import MilestoneStory from "./MilestoneStory.js";
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const MilestoneReel = ({refresh}) => {
+const MilestoneReel = ({refresh, focus, milestones}) => {
     const user = useContext(userContext)
+    const isFocused = useIsFocused()
     const route = useRoute()
     const navigation = useNavigation()
     const routes = navigation.getState()?.routes;
     const animatedvalue = useRef(new Animated.Value(0)).current;
     const [selected, setSelected] = useState(false)
+    const [ascending, setAscending] = useState(false)
     const [recentMilestones, setRecentMilestones] = useState([])
     function navigateCamera() {
         navigation.navigate("TakePost", {
             previous_screen: routes[routes.length - 1]
         })
     }
-    function handleTest() {
-        console.log(recentMilestones)
+    function handlePress() {
+       setAscending(!ascending)
     }
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getrecentupdates/${user.userId}`) 
@@ -33,25 +35,25 @@ const MilestoneReel = ({refresh}) => {
             setRecentMilestones([...response.data].reverse())
         })
         .catch((error) => console.log(error))
-    }, [refresh])
+    }, [refresh, focus, isFocused])
     const renderMilestone = ({item}) => {
         return (
-            <MilestoneStory item={item}/>
+            <MilestoneStory item={item} refresh={refresh} focus={isFocused} ascending={ascending}/>
         )
     }
     return (
         <View style={[styles.reelContainer]}>
             <View style={[styles.reelContent]}>
-                <Pressable onPress={handleTest} style={{paddingRight:0, marginLeft:20}}>
+                <Pressable onPress={handlePress} style={{paddingRight:0, marginLeft:20}}>
                     <Icon
-                        name={'add'}
+                        name={'multiple-stop'}
                         size={28}
-                        style={{top:0}}
+                        style={{top:-1}}
                         color={'rgba(48, 174, 146, 1)'}
                     />
                  </Pressable>
                 <FlatList
-                    data={[...recentMilestones].reverse()}
+                    data={(!ascending)?[...recentMilestones].reverse():recentMilestones}
                     renderItem={renderMilestone}
                     showsHorizontalScrollIndicator={false}
                     horizontal
@@ -65,10 +67,11 @@ const styles = StyleSheet.create({
     reelContainer: {
         backgroundColor:'#1c1c1c',
         minWidth:windowW,
-        paddingTop:4,
+        paddingTop:0,
         borderColor:"rgba(28, 28, 28, 1)",
-        height:windowH*0.0725,
+        height:windowH*0.08,
         flex:1,
+        marginBottom:2,
  
         justifyContent:"center"
     },

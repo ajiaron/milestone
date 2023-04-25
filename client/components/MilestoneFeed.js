@@ -55,6 +55,15 @@ const MilestoneFeed = ({route}) => {
         }
       };
     const viewabilityConfigCallbackPairs = useRef([{ viewabilityConfig, onViewableItemsChanged }])
+    useEffect(()=> {
+        if (postFeed.length === 0 || postFeed[0].idmilestones !== route.params?.id) {
+            axios.get(`http://${user.network}:19001/api/getrecentposts/${route.params?.id}`) 
+            .then((response)=>{ 
+                setPostFeed(response.data)
+            })
+            .catch((error) => console.log(error))
+        }
+    }, [refreshing])
     const renderPost = ({ item }) => {
         return (
             <PostItem 
@@ -75,9 +84,8 @@ const MilestoneFeed = ({route}) => {
     }
     return (
         <View style={[styles.feedPage]}>
-
           <Navbar title={route.params.title} scrollY={scrollY}/>
-        <View style={[styles.feedContainer,]}>
+            <View style={[styles.feedContainer,]}>
                 <FlatList 
                 ref={scrollRef}
                 refreshControl={
@@ -89,7 +97,7 @@ const MilestoneFeed = ({route}) => {
                 maxToRenderPerBatch={3}
                 snapToAlignment="start"
                 showsVerticalScrollIndicator={false}
-                data={[...postFeed].reverse()} 
+                data={postFeed} 
                 renderItem={renderPost} 
                 keyExtractor={(item, index)=>index}>
             </FlatList> 

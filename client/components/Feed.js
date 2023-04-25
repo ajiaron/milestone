@@ -66,7 +66,6 @@ const Feed = ({route}) => {
             setPostFeed(response.data.filter((item)=>(item.public === 1)||(item.public=== 0 && item.ownerid === user.userId)))
         }).catch(error => console.log(error))
         .then(()=>slideUp())
-        console.log()
     }, [route, refreshing])
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getnotifications`) 
@@ -79,7 +78,8 @@ const Feed = ({route}) => {
       return (
         <>
         {
-            ([...postFeed].reverse().indexOf(item) === 0 && <MilestoneReel refresh={refreshing}/>)
+            ([...postFeed].reverse().indexOf(item) === 0
+             && <MilestoneReel refresh={refreshing} focus={isFocused}/>)
         }
           <PostItem 
               key={item.idposts}
@@ -122,7 +122,7 @@ const Feed = ({route}) => {
                 removeClippedSubviews
                 initialNumToRender={3}
                 maxToRenderPerBatch={3}
-                style={{paddingTop:98}}
+                style={{paddingTop:100}}
                 snapToAlignment="start"
                 showsVerticalScrollIndicator={false}
                 data={[...postFeed].reverse()} 

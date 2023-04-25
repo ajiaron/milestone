@@ -143,8 +143,12 @@ const EditPost = ({route}) => {
         })
         axios.put(`http://${user.network}:19001/api/updatepost`, 
         {postid:postId, caption:caption, likes:likesEnabled, comments:commentsEnabled, public:sharingEnabled})
-        .then(console.log('post updated'))
-        navigation.navigate("Feed", {post: postData, milestones:milestones})
+        .then(
+            ()=>{
+                console.log('post updated')
+                navigation.navigate("Feed", {post: postData, milestones:milestones})
+            }
+        )
     }
     const renderMilestone = ({ item }) => {
         return (

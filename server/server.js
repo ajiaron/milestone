@@ -151,7 +151,7 @@ app.get('/api/getrecentupdates/:id', (req, res) => {
     const id = req.params.id
     const sql = 'SELECT DISTINCT '+
     'milestones.idmilestones, milestones.title, milestones.ownerId as mileOwner, milestones.src as mileImage, milestones.date as mileDate, '+
-    'milestones.streak, milestones.postable, milestones.viewable '+
+    'milestones.streak, milestones.postable, milestones.viewable, MAX(userposts.date) as postdate '+
     'FROM milestone_db.milestones ' +
     'INNER JOIN milestone_db.postmilestones ON idmilestones = milestoneid ' +
     'INNER JOIN milestone_db.userposts ON idposts = postid WHERE (userposts.date > CURRENT_TIMESTAMP - interval 1 week) ' +
@@ -163,7 +163,8 @@ app.get('/api/getrecentupdates/:id', (req, res) => {
     'JOIN milestone_db.friends ON (id = requesterId OR id = recipientId) ' +
     'WHERE id IN (SELECT requesterId FROM milestone_db.friends WHERE (recipientId = ? AND approved = true) UNION ' +
     'SELECT recipientId FROM milestone_db.friends WHERE (requesterId = ? AND approved = true))))) ' +
-    'ORDER BY userposts.date DESC;'
+    'GROUP BY idmilestones '+
+    'ORDER BY MAX(userposts.date) DESC;'
     db.query(sql, [id,id,id,id], (err, result) => {
         if (err) {
             console.log(err)
