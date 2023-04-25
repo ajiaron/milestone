@@ -42,6 +42,8 @@ const MilestoneReel = ({refresh, focus, milestones}) => {
         )
     }
     return (
+        <>
+        {(recentMilestones.length === 0)?null:
         <View style={[styles.reelContainer]}>
             <View style={[styles.reelContent]}>
                 <Pressable onPress={handlePress} style={{paddingRight:0, marginLeft:20}}>
@@ -61,6 +63,8 @@ const MilestoneReel = ({refresh, focus, milestones}) => {
                 />
             </View>
         </View>
+        }
+        </>
     )
 }
 const styles = StyleSheet.create({
