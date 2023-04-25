@@ -149,7 +149,7 @@ app.get('/api/getusercomments/:postid', (req, res) => {
 // if your either own the milestone, or if the post owner is in your friends list
 app.get('/api/getrecentupdates/:id', (req, res) => {
     const id = req.params.id
-    const sql = 'SELECT DISTINCT userposts.*, '+
+    const sql = 'SELECT DISTINCT '+
     'milestones.idmilestones, milestones.title, milestones.ownerId as mileOwner, milestones.src as mileImage, milestones.date as mileDate, '+
     'milestones.streak, milestones.postable, milestones.viewable '+
     'FROM milestone_db.milestones ' +
@@ -162,7 +162,8 @@ app.get('/api/getrecentupdates/:id', (req, res) => {
     '(SELECT DISTINCT id FROM milestone_db.users ' +
     'JOIN milestone_db.friends ON (id = requesterId OR id = recipientId) ' +
     'WHERE id IN (SELECT requesterId FROM milestone_db.friends WHERE (recipientId = ? AND approved = true) UNION ' +
-    'SELECT recipientId FROM milestone_db.friends WHERE (requesterId = ? AND approved = true)))));'
+    'SELECT recipientId FROM milestone_db.friends WHERE (requesterId = ? AND approved = true))))) ' +
+    'ORDER BY userposts.date DESC;'
     db.query(sql, [id,id,id,id], (err, result) => {
         if (err) {
             console.log(err)
@@ -172,14 +173,15 @@ app.get('/api/getrecentupdates/:id', (req, res) => {
     })
 })
 // grabs all the posts under the recent week's milestone(s) 
-app.get('/api/getrecentupdates/:milestoneid', (req, res) => {
+app.get('/api/getrecentposts/:milestoneid', (req, res) => {
     const milestoneid = req.params.milestoneid
-    const sql = 'SELECT idmilestones,userposts.idposts, userposts.date as postdate, title, userposts.caption, userposts.ownerId as postOwner, userposts.public, ' +
-    'userposts.username, milestones.ownerId as mileOwner, milestones.postable, milestones.viewable FROM milestone_db.milestones ' +
+    const sql = 'SELECT DISTINCT idmilestones, title, userposts.* ' +
+    'FROM milestone_db.milestones ' +
     'INNER JOIN milestone_db.postmilestones ON milestoneid = idmilestones ' +
     'INNER JOIN milestone_db.userposts ON idposts = postid WHERE (userposts.date > CURRENT_TIMESTAMP - interval 1 week) ' +
     'AND milestones.idmilestones IN (SELECT milestoneid FROM milestone_db.postmilestones WHERE postmilestones.postid IN ' +
-    '(SELECT idposts FROM milestone_db.userposts WHERE date > CURRENT_TIMESTAMP - interval 1 week)) AND milestones.idmilestones = ?;'
+    '(SELECT idposts FROM milestone_db.userposts WHERE date > CURRENT_TIMESTAMP - interval 1 week)) AND milestones.idmilestones = ? '+
+    'ORDER BY userposts.date DESC;'
     db.query(sql, [milestoneid], (err, result) => {
         if (err) {
             console.log(err)

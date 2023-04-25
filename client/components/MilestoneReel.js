@@ -6,78 +6,57 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import userContext from '../contexts/userContext'
 import axios from 'axios'
 import FastImage from "react-native-fast-image";
+import MilestoneStory from "./MilestoneStory.js";
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const MilestoneReel = () => {
+const MilestoneReel = ({refresh}) => {
     const user = useContext(userContext)
+    const route = useRoute()
+    const navigation = useNavigation()
+    const routes = navigation.getState()?.routes;
     const animatedvalue = useRef(new Animated.Value(0)).current;
     const [selected, setSelected] = useState(false)
     const [recentMilestones, setRecentMilestones] = useState([])
+    function navigateCamera() {
+        navigation.navigate("TakePost", {
+            previous_screen: routes[routes.length - 1]
+        })
+    }
+    function handleTest() {
+        console.log(recentMilestones)
+    }
     useEffect(()=> {
+        console.log('yessir')
         axios.get(`http://${user.network}:19001/api/getrecentupdates/${user.userId}`) 
         .then((response)=>{ 
             setRecentMilestones([...response.data].reverse())
         })
         .catch((error) => console.log(error))
-    }, [])
+    }, [refresh])
     const renderMilestone = ({item}) => {
         return (
-            <View style={{height:40, width:40, marginLeft:(windowH>900)?26:22}}>
-                <View>
-                    <Pressable onPress={()=> setSelected(!selected)}>
-                        <View style={[styles.reelItemContainer]}>
-                            {
-                                (!user.isExpo && 
-                                (item.mileImage.toString().split('.').pop() === 'jpg' 
-                                || item.mileImage.toString().split('.').pop() === 'png'))?
-                                <FastImage
-                                    style={[styles.reelItem,
-                                        {borderWidth:(item.mileImage === 'campfire')?0:3, 
-                                        borderColor:(item.ownerid === user.userId && item.mileOwner === user.userId)?'rgba(48, 174, 146, 1)':'#3583AE'}
-                                    ]}
-                                    resizeMode={FastImage.resizeMode.cover}
-                                    source={{
-                                        uri: item.mileImage,
-                                        priority: FastImage.priority.normal
-                                    }}
-                                />
-                                :
-                                <Image
-                                    style={[styles.reelItem,
-                                        {borderWidth:(item.mileImage === 'campfire')?0:3, 
-                                        borderColor:(item.ownerid === user.userId && item.mileOwner === user.userId)?'rgba(48, 174, 146, 1)':'#3583AE'}
-                                    ]}
-                                    resizeMode="cover"
-                                    source={(item.mileImage.toString().split('.').pop() === 'jpg' 
-                                    || item.mileImage.toString().split('.').pop() === 'png')?
-                                    {uri: item.mileImage}:Icons[item.mileImage]}
-                                /> 
-                            }
-                        </View>
-                    </Pressable>
-                </View>
-            </View>
+            <MilestoneStory item={item}/>
         )
     }
     return (
         <View style={[styles.reelContainer]}>
             <View style={[styles.reelContent]}>
-                <Pressable onPress={()=>console.log(recentMilestones)} style={{paddingRight:40}}>
+                <Pressable onPress={handleTest} style={{paddingRight:0, marginLeft:20}}>
                     <Icon
                         name={'add'}
                         size={28}
-                        style={{top:1, paddingLeft:28}}
+                        style={{top:0}}
                         color={'rgba(48, 174, 146, 1)'}
                     />
                  </Pressable>
                 <FlatList
-                    data={recentMilestones}
+                    data={[...recentMilestones].reverse()}
                     renderItem={renderMilestone}
                     showsHorizontalScrollIndicator={false}
                     horizontal
-                    style={{minWidth:windowW}}
+                    style={{minWidth:windowW-84}}
                 />
             </View>
         </View>
@@ -86,24 +65,24 @@ const MilestoneReel = () => {
 const styles = StyleSheet.create({
     reelContainer: {
         backgroundColor:'#1c1c1c',
-        width:windowW,
-        paddingTop:2,
+        minWidth:windowW,
+        paddingTop:4,
         borderColor:"rgba(28, 28, 28, 1)",
         height:windowH*0.0725,
-        
         flex:1,
-        alignItems:"center",
-
+ 
         justifyContent:"center"
     },
     reelContent: {
-        minWidth:windowW,
+        minWidth:windowW-84,
         flexDirection:"row",
+        overflow:"scroll",
         alignItems:"center",
         justifyContent:"space-evenly",
         flex:1,
-        alignSelf:"center",
-        paddingLeft:32,
+        alignSelf:"flex-start",
+        paddingLeft:0,
+        paddingRight:16,
 
     },
     reelItem: {

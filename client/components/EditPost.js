@@ -71,7 +71,7 @@ const EditPost = ({route}) => {
         .then((response)=> {
             setLinkedMilestones(response.data.filter((item)=>item.postid === postId).map((item)=>item.milestoneid))
         }).catch(error => console.log(error))
-    }, [])
+    }, [isFocused])
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response)=> {
@@ -79,7 +79,7 @@ const EditPost = ({route}) => {
         .catch((error)=> console.log(error))
     },[isFocused])
     function handleTest() {
-        console.log(personalMilestones)
+        console.log(milestones)
     }
     const DeleteAlert = () => {
         return new Promise((resolve, reject) => {
@@ -221,6 +221,22 @@ const EditPost = ({route}) => {
                     </Pressable>
                 </View>
                     <View style={styles.PostTagContainer}>
+                    {((isPersonal)&& milestoneList.filter((item)=>item.ownerId === user.userId).length === 0) ?
+                         <Pressable onPress={()=>navigation.navigate("CreateMilestone", {from:'create'})} style={{top:15, marginBottom:232}}>
+                         <View style={[styles.milestoneEmptyContainer]}>
+                             <View style={{alignItems:"center",alignSelf:"center", justifyContent:"space-evenly"}}>
+                                 <Icon
+                                 name = {'add-to-photos'}
+                                 color="rgba(58, 184, 156, 1)"
+                                 size={(windowH>900)?27.5:26}
+                                 />
+                                 <Text style={{fontFamily:"Inter", color:"rgba(58, 184, 156, 1)", 
+                                 fontSize:(windowH>900)?12:11, paddingTop:6}}>Add a new milestone...</Text>
+                             </View>
+             
+                         </View>
+                     </Pressable>
+                     :
                         <FlatList 
                             snapToAlignment="start"
                             decelerationRate={"fast"}
@@ -235,6 +251,7 @@ const EditPost = ({route}) => {
                             renderItem={renderMilestone} 
                             keyExtractor={(item)=>item.idmilestones.toString()}>
                         </FlatList> 
+                    }
                     </View>   
                 <View style={[styles.switchContainer]}>
                     <View style={{flexDirection:"row"}}>
@@ -441,7 +458,27 @@ const styles = StyleSheet.create({
     footerContainer: {
         position:"absolute",
         bottom:0
-    }
+    },
+    milestoneEmptyContainer: {
+        alignItems:"center",
+        padding:(windowH*0.0185)-2.25,
+        width:windowW*0.800,
+        height: windowH*0.0756,
+        backgroundColor: "rgba(28, 28, 28, 1)",
+        borderColor:"rgba(58, 184, 156, 1)",
+        borderRadius: 8,
+        borderWidth:2.25,
+        borderStyle:"dashed",
+        marginBottom:16,
+        shadowColor: '#000',
+        shadowOffset: {
+        width: 0,
+        height: 2,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
+        alignSelf:"center"
+    },
 })
 
 export default EditPost

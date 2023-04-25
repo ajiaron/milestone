@@ -87,21 +87,21 @@ const Navbar = ({title, scrollY, newNotification, onClearNotifications}) => {
     return (
             <Animated.View 
             style={{width:windowW, height:94, transform:[{translateY: animatedoffset.interpolate(({inputRange:[0,100], outputRange:[-94,0]}))}],
-            backgroundColor:"#141414", flexDirection:"row", alignItems:"center", justifyContent:"center", 
+            backgroundColor:"#141414", flexDirection:"row", alignItems:"center", justifyContent:"center", paddingLeft:(route.name === "MilestoneFeed")?windowW*0:0,
             paddingTop:(windowH>900)?36:38,
             zIndex:999, position:"absolute", top:0}}>
-                <Animated.View style={{flexDirection:"row", width:"100%", alignItems:"center",justifyContent:"center",
+                <Animated.View style={{flexDirection:"row", width:"100%", alignItems:"center",justifyContent:"center", 
                 paddingLeft:(route.name==='Notifications')?0:
                 (route.name !== "Feed" && route.name !== "Notifications")?13.5:
                 (windowH>900)?135:115, 
                 paddingRight:(route.name==='Notifications')?(windowH>900)?125:105:0}}>
                     {(route.name !== 'Feed') &&
                         <Animated.View style={
-                            {paddingRight:(windowH>900)?103:83}}>
+                            {paddingRight:(route.name === 'MilestoneFeed')?0:(windowH>900)?103:83}}>
                             <Pressable onPress={navigateBack}>
                                 <Icon 
                                     style={
-                                        {paddingTop:(route.name === "Post")?4:3, transform:[{scaleY:0.9},]}}
+                                        {paddingTop:(route.name === "Post")?4:(route.name === "MilestoneFeed")?0:3, transform:[{scaleY:0.9},]}}
                                     name='arrow-back-ios'
                                     color='white'
                                     size={22}
@@ -112,7 +112,7 @@ const Navbar = ({title, scrollY, newNotification, onClearNotifications}) => {
                     <Pressable onPress={()=>console.log(windowH, windowW)}>
                         <Text style={{fontFamily:"InterBold", color:"#fff", 
                         fontSize:(windowH>900)?21:20, alignSelf:"center",
-                        paddingRight:(route.name !== "Feed" && route.name !== "Notifications")?(windowH>900)?152:132:0,
+                        paddingRight:(route.name !== "Feed" && route.name !== "Notifications")?(route.name==='MilestoneFeed')?40:(windowH>900)?152:132:0,
                         paddingLeft:(route.name !== "Feed" && route.name !== "Notifications")?13.5:0
                         }}>
                             {title}

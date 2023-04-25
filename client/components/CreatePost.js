@@ -116,10 +116,11 @@ const CreatePost = ({route}) => {
         .catch((e)=>console.log(e))
     }
     function handleUpload() {
-        console.log('comments:',commmentsEnabled)
-        console.log('likes:',likesEnabled)
-        console.log('public:',sharingEnabled)
-        console.log(postId)
+       // console.log('comments:',commmentsEnabled)
+       // console.log('likes:',likesEnabled)
+       // console.log('public:',sharingEnabled)
+       // console.log(postId)
+        console.log(milestoneList.filter((item)=>item.ownerId === user.userId).length )
     }
     function handlePress() {
         uploadContent(img)
@@ -220,6 +221,22 @@ const CreatePost = ({route}) => {
                     </Pressable>
                 </View>
                 <View style={styles.PostTagContainer}>
+                    {((isPersonal)&& milestoneList.filter((item)=>item.ownerId === user.userId).length === 0) ?
+                         <Pressable onPress={()=>navigation.navigate("CreateMilestone", {from:'create'})} style={{top:14, marginBottom:232}}>
+                         <View style={[styles.milestoneEmptyContainer]}>
+                             <View style={{alignItems:"center",alignSelf:"center", justifyContent:"space-evenly"}}>
+                                 <Icon
+                                 name = {'add-to-photos'}
+                                 color="rgba(58, 184, 156, 1)"
+                                 size={(windowH>900)?27.5:26}
+                                 />
+                                 <Text style={{fontFamily:"Inter", color:"rgba(58, 184, 156, 1)", 
+                                 fontSize:(windowH>900)?12:11, paddingTop:6}}>Add a new milestone...</Text>
+                             </View>
+             
+                         </View>
+                     </Pressable>
+                    :
                     <FlatList 
                         snapToAlignment="start"
                         decelerationRate={"fast"}
@@ -231,7 +248,7 @@ const CreatePost = ({route}) => {
                         data={isPersonal?[...milestoneList.filter((item)=>item.ownerId === user.userId)].reverse():milestoneList} 
                         renderItem={renderMilestone} 
                         keyExtractor={(item)=>item.idmilestones.toString()}>
-                    </FlatList> 
+                    </FlatList> }
                 </View>   
                 <View style={styles.switchContainer}>
                     <View style={{flexDirection:"row"}}>
@@ -438,7 +455,28 @@ const styles = StyleSheet.create({
     footerContainer: {
         position:"absolute",
         bottom:0
-    }
+    },
+    milestoneEmptyContainer: {
+        alignItems:"center",
+        padding:(windowH*0.0185)-2.25,
+        width:windowW*0.800,
+        height: windowH*0.0756,
+        backgroundColor: "rgba(28, 28, 28, 1)",
+        borderColor:"rgba(58, 184, 156, 1)",
+        borderRadius: 8,
+        borderWidth:2.25,
+        borderStyle:"dashed",
+        marginBottom:16,
+        shadowColor: '#000',
+        shadowOffset: {
+        width: 0,
+        height: 2,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
+        alignSelf:"center"
+    },
+
 })
 
 export default CreatePost

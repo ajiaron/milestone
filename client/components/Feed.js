@@ -79,7 +79,7 @@ const Feed = ({route}) => {
       return (
         <>
         {
-            ([...postFeed].reverse().indexOf(item) === 0 && <MilestoneReel/>)
+            ([...postFeed].reverse().indexOf(item) === 0 && <MilestoneReel refresh={refreshing}/>)
         }
           <PostItem 
               key={item.idposts}
