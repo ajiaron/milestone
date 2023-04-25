@@ -86,6 +86,10 @@ const MilestoneFeed = ({route}) => {
         <View style={[styles.feedPage]}>
           <Navbar title={route.params.title} scrollY={scrollY}/>
             <View style={[styles.feedContainer,]}>
+                {(postFeed.filter((item)=>(item.public === 1)||(item.ownerid === user.userId)).length === 0)?
+                <Text style={{fontFamily:"Inter", color:"rgba(180,180,180,1)", fontSize:16,alignItems:"center", alignSelf:"center"}}>
+                    Private posts won't be listed here!
+                </Text>:
                 <FlatList 
                 ref={scrollRef}
                 refreshControl={
@@ -101,6 +105,7 @@ const MilestoneFeed = ({route}) => {
                 renderItem={renderPost} 
                 keyExtractor={(item, index)=>index}>
             </FlatList> 
+            }
         </View>
         <Footer onPressTouch={onPressTouch}/>
         </View>
