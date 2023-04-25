@@ -97,7 +97,7 @@ const MilestoneFeed = ({route}) => {
                 maxToRenderPerBatch={3}
                 snapToAlignment="start"
                 showsVerticalScrollIndicator={false}
-                data={postFeed} 
+                data={postFeed.filter((item)=>(item.public === 1)||(item.ownerid === user.userId))} 
                 renderItem={renderPost} 
                 keyExtractor={(item, index)=>index}>
             </FlatList> 
