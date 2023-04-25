@@ -25,12 +25,30 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
     var fileExt = (img !== undefined)?img.toString().split('.').pop():'money'
     const user = useContext(userContext)
     const milestoneData = {
-        id:0,
-        title:"",
-        streak:0,
-        img:"",
-        ownerid:0,
+        id:id,
+        title:title,
+        streak:streak,
+        img:img,
+        ownerid:ownerid,
     }
+    const autoSelect = () => {
+       
+        if (selected) {
+            Animated.timing(animatedvalue,{
+                toValue:100,
+                duration:250,
+                useNativeDriver:false,
+            }).start()
+        } else {
+            Animated.timing(animatedvalue,{
+                toValue:0,
+                duration:200,
+                useNativeDriver:false,
+            }).start()
+        }
+        
+    }
+   
     const toggleSelect = () => {
         setIsSelected(!isSelected)
         if (selected) {
@@ -65,7 +83,7 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
         }
     }
     function sendPost() {
-        milestoneData.id = id
+        milestoneData.idmilestones = id
         milestoneData.title = title
         milestoneData.streak = streak
         milestoneData.img = img
@@ -74,7 +92,6 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
     function handlePress(){  
         sendPost()
         if (route.name === "CreatePost" || route.name === 'EditPost') {
-            console.log(tagDate)
             if (!isSelected) {
                 onSelectMilestone(milestoneData)
             }
@@ -107,26 +124,37 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
         })
         .catch((error)=> console.log(error))
     }, [])
+
     useEffect(()=> {
-        if (route.name === 'EditPost' && selected) {
+        if (route.name === 'EditPost') {
+            //console.log(title)
+           // animatedvalue.setValue(isSelected?100:0)
             setIsSelected(selected)
             sendPost()
-            onSelectMilestone(milestoneData)
+        //    onSelectMilestone(milestoneData)
         }
-    }, [selected])
+    }, [selected, navigation])
     useEffect(()=> {
-                /* clear selected milestones if screen changes */
+        if (route.name === 'EditPost' && !selected) {
+            autoSelect()
+        }
+    }, [navigation])
+    
+    /*
+    useEffect(()=> {
+                 clear selected milestones if screen changes 
         const deselect = navigation.addListener('focus', ()=> {
             setIsSelected(false)
-            if (route.name === "CreatePost" || route.name === "EditPost") {
+            if ((route.name === "CreatePost" || route.name === "EditPost")) {
                 onRemoveMilestone(milestoneData)
             }
         })
         return deselect
         setIsLoading(false)
     }, [navigation])
+    */
     return (
-    <Pressable onPress={handlePress} activeOpacity={0.2}>
+    <View>
         {((route.name === 'EditPost' || route.name === 'CreatePost')&&isEmpty)&&
         <Pressable onPress={()=>navigation.navigate("CreateMilestone", {from:'create'})}>
             <View style={[styles.milestoneEmptyContainer]}>
@@ -142,46 +170,49 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
 
             </View>
         </Pressable>}
-       <Animated.View style={[((isSelected)&& (route.name=="CreatePost" || route.name=='EditPost'))?
-            ((isLast)?styles.highlightContainerLast:styles.highlightContainer):
-            (isLast)?styles.milestoneContainerLast:styles.milestoneContainer, 
-            {backgroundColor:animatedvalue.interpolate({inputRange: [0,100], outputRange:selected?
-                 ["#35AE92","rgba(10, 10, 10, 1)"]:["rgba(10, 10, 10, 1)","#35AE92"]})},
-            {borderColor:animatedvalue.interpolate({inputRange: [0,100], outputRange: selected?
-                ["#00523F","rgba(10, 10, 10, 1)"]:["rgba(10, 10, 10, 1)", "#00523F"]})},
-            {borderWidth:animatedvalue.interpolate({inputRange: [0,100], outputRange: selected?[4,0]:[0,4]})},
-            {paddingTop:animatedvalue.interpolate({inputRange: [0,100], outputRange: selected?
-                [(windowH*0.0185)-4,(windowH*0.0185)]:[(windowH*0.0185),(windowH*0.0185)-4]})}
-            ]}>    
-            <View style={[styles.milestoneContentContainer]}>  
-            <View style={[styles.milestoneIconContainer]}>
-                <Image
-                    style={styles.milestoneIcon}
-                    resizeMode="cover"
-                    source={(fileExt ==='jpg'||fileExt ==='png')?{uri:img}:Icons[img]}/>
-            </View>
-                <View style={[styles.milestoneContext]}>
-                    <Text style={[styles.milestoneTitle]}>
-                        {title}
-                    </Text>
-                    <Animated.Text style={[styles.milestoneStreak,
-                        {color:animatedvalue.interpolate({inputRange: [0,100], outputRange: selected?
-                        ["rgb(248, 210, 57)","rgba(53, 174, 146, 1)"]
-                        :["rgba(53, 174, 146, 1)", "rgb(248, 210, 57)"]})}]}>
-                        
-                        {(!isLoading)&&posts}{' '}posts{' '}
-                
-                        <Animated.Text style={[styles.milestoneStreakContext,
-                        {color:animatedvalue.interpolate({inputRange: [0,100], outputRange: selected?
-                            ["#FFF","rgba(180, 180, 180, 1)"]:["rgba(180, 180, 180, 1)", "#FFF"]})}]}>
-                            since{' '}{(route.name ==="EditPost"|| route.name ==='CreatePost')?tagDate:startDate}
-                        </Animated.Text>
-                    </Animated.Text>
+        
+        <Pressable onPress={handlePress} activeOpacity={0.2}>
+         <Animated.View style={[((isSelected)&& (route.name=="CreatePost" || route.name=='EditPost'))?
+                ((isLast)?styles.highlightContainerLast:styles.highlightContainer):
+                (isLast)?styles.milestoneContainerLast:styles.milestoneContainer, 
+                {backgroundColor:animatedvalue.interpolate({inputRange: [0,100], outputRange:selected?
+                    ["#35AE92","rgba(10, 10, 10, 1)"]:["rgba(10, 10, 10, 1)","#35AE92"]})},
+                {borderColor:animatedvalue.interpolate({inputRange: [0,100], outputRange: selected?
+                    ["#00523F","rgba(10, 10, 10, 1)"]:["rgba(10, 10, 10, 1)", "#00523F"]})},
+                {borderWidth:animatedvalue.interpolate({inputRange: [0,100], outputRange: selected?[4,0]:[0,4]})},
+                {paddingTop:animatedvalue.interpolate({inputRange: [0,100], outputRange: selected?
+                    [(windowH*0.0185)-4,(windowH*0.0185)]:[(windowH*0.0185),(windowH*0.0185)-4]})}
+                ]}>    
+                <View style={[styles.milestoneContentContainer]}>  
+                <View style={[styles.milestoneIconContainer]}>
+                    <Image
+                        style={styles.milestoneIcon}
+                        resizeMode="cover"
+                        source={(fileExt ==='jpg'||fileExt ==='png')?{uri:img}:Icons[img]}/>
                 </View>
-            </View>
-        </Animated.View>
+                    <View style={[styles.milestoneContext]}>
+                        <Text style={[styles.milestoneTitle]}>
+                            {title}
+                        </Text>
+                        <Animated.Text style={[styles.milestoneStreak,
+                            {color:animatedvalue.interpolate({inputRange: [0,100], outputRange: selected?
+                            ["rgb(248, 210, 57)","rgba(53, 174, 146, 1)"]
+                            :["rgba(53, 174, 146, 1)", "rgb(248, 210, 57)"]})}]}>
+                            
+                            {(!isLoading)&&posts}{' '}posts{' '}
+                    
+                            <Animated.Text style={[styles.milestoneStreakContext,
+                            {color:animatedvalue.interpolate({inputRange: [0,100], outputRange: selected?
+                                ["#FFF","rgba(180, 180, 180, 1)"]:["rgba(180, 180, 180, 1)", "#FFF"]})}]}>
+                                since{' '}{(route.name ==="EditPost"|| route.name ==='CreatePost')?tagDate:startDate}
+                            </Animated.Text>
+                        </Animated.Text>
+                    </View>
+                </View>
+            </Animated.View>
+        </Pressable>
 
-    </Pressable>
+    </View>
     )
 }
 const styles = StyleSheet.create({  

@@ -165,7 +165,9 @@ const CreatePost = ({route}) => {
     return (
         <View style={styles.createPostPage}>
             <View style={styles.createPostContainer}>
+                <Pressable>
                 <Text style={styles.milestoneHeaderText}>DESCRIPTION</Text>
+                </Pressable>
                 <View style={styles.newPostContent}>
                     <View style={styles.newPostCaption}>
                         <TextInput 

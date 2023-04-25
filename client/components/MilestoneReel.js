@@ -28,7 +28,6 @@ const MilestoneReel = ({refresh}) => {
         console.log(recentMilestones)
     }
     useEffect(()=> {
-        console.log('yessir')
         axios.get(`http://${user.network}:19001/api/getrecentupdates/${user.userId}`) 
         .then((response)=>{ 
             setRecentMilestones([...response.data].reverse())

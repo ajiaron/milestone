@@ -30,6 +30,7 @@ const EditPost = ({route}) => {
     const [milestones, setMilestones] = useState([])
     const [linkedMilestones, setLinkedMilestones] = useState([])
     const navigation = useNavigation()
+    const routes = navigation.getState()?.routes;
     const user = useContext(userContext)
     const [postId, setPostId] = useState(route.params.postId)
     const [personalMilestones, setPersonalMilestones] = useState([])
@@ -73,13 +74,21 @@ const EditPost = ({route}) => {
         }).catch(error => console.log(error))
     }, [isFocused])
     useEffect(()=> {
+        console.log('focused')
+        axios.get(`http://${user.network}:19001/api/getpostmilestones/${postId}`)  
+        .then((response)=> {
+            setMilestones(response.data)
+        }).catch(error => console.log(error))
+    }, [])
+    useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response)=> {
             setMilestoneList(response.data.filter((item)=>item.postable === "Everyone"))})      // TODO: Friends condition
         .catch((error)=> console.log(error))
-    },[isFocused])
+    },[isFocused, refreshing])
     function handleTest() {
-        console.log(milestones)
+    //    console.log(routes)
+        console.log(linkedMilestones, milestones.map((item)=>item.title))
     }
     const DeleteAlert = () => {
         return new Promise((resolve, reject) => {
@@ -124,11 +133,11 @@ const EditPost = ({route}) => {
     }
     function submitPost() {
         // check owner of each milestone and send notification of post to milestone owners
-        milestones.filter(item=>linkedMilestones.indexOf(item.id)<0).map(item=>{
-            axios.post(`http://${user.network}:19001/api/linkmilestones`, {postid:postId, milestoneid:item.id})
+        milestones.filter(item=>linkedMilestones.indexOf(item.idmilestones)<0).map(item=>{
+            axios.post(`http://${user.network}:19001/api/linkmilestones`, {postid:postId, milestoneid:item.idmilestones})
             .then(()=>console.log('milestones added'))
         })
-        linkedMilestones.filter(item=>milestones.map(item=>item.id).indexOf(item)<0).map(item=>{
+        linkedMilestones.filter(item=>milestones.map(item=>item.idmilestones).indexOf(item)<0).map(item=>{
             axios.delete(`http://${user.network}:19001/api/removelinktag`, {data: {postid:postId, milestoneid:item}})
             .then(()=>console.log("milestones removed"))
         })
@@ -151,7 +160,7 @@ const EditPost = ({route}) => {
                 milestoneList.filter((val)=>val.ownerId === user.userId).length-1}
                 date={item.date}
                 onSelectMilestone={(selected) => setMilestones([...milestones,selected])}
-                onRemoveMilestone={(selected) => setMilestones(milestones.filter((item) => item.id !== selected.id))}
+                onRemoveMilestone={(selected) => setMilestones(milestones.filter((item) => item.idmilestones !== selected.idmilestones))}
             />
         )
     }
