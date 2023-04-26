@@ -1,6 +1,5 @@
 # milestone
-This repo has the whole bundle, I didn't really try reducing the size at all (apologies)!
-There are a lot of files that should be ignored, but most of them are config files that you still might need for npm start/expo start to work.
+*This repo does not have the `aws-exports.js` file, which may be needed to run the application. Creating a `/src` folder in the client with a file named `aws-exports.js` should solve the issue (currently looking to resolve the issue).
 
 Actual pages and components should be in the **client** folder, which contains `App.js` as the top-level component. Everything that's actually visible on the app itself *should* be in the **components** folder, along with some sub-components. There should also be a contexts folder, which provides the user's information as well as details about the current device's connection. This data can be accessed through importing the `userContext.js` file.
 
