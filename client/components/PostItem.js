@@ -33,7 +33,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     const [likes, setLikes] = useState([])
     const [loading, setLoading] = useState(true)
     const animatedvalue = useRef(new Animated.Value(0)).current;
-    const animatedsize = useRef(new Animated.Value(0)).current;
+    const animatedsize = useRef(new Animated.Value(route.name === "MilestoneFeed"?100:0)).current;
     const AnimatedImage = Animated.createAnimatedComponent(FastImage);
     const [expanded, setExpanded] = useState(true)
 
@@ -152,14 +152,15 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     }, [expanded])
     return (
      <View style={[styles.postContainer]}>
-        {(route.name === 'MilestonePage' || route.name === 'Archive') ? // transparent header for archive/milestonepage
+        {(route.name === 'MilestonePage' || route.name === 'Archive' || route.name === 'MilestoneFeed') ? // transparent header 
            <View style={{flexDirection:"row",flex:1, alignItems:"center", position:"absolute", zIndex:1}}>
            <Pressable style={[styles.postHeader, { backgroundColor:'rgba(0,0,0,0)'}]} onPress={navigateProfile}>
                    {(profilePic !== src || src !== 'defaultpic')?
-                   <View style={[{minHeight:60,marginLeft:(route.name === "Archive")?14:12}]}>
+                   <View style={[{minHeight:60,marginLeft:(route.name === "Archive" || route.name === 'MilestoneFeed')?14:12}]}>
                     {(!user.isExpo)?
                      <FastImage
-                     style={(route.name==="Archive")?{height:38, width:38, borderRadius:38, alignSelf:"center",top:2,left:2}:
+                     style={(route.name==="Archive" || route.name === 'MilestoneFeed')?
+                     {height:38, width:38, borderRadius:38, alignSelf:"center",top:2,left:2}:
                      {height:34, width:34, borderRadius:34, alignSelf:"center"}}
                      resizeMode={FastImage.resizeMode.cover}
                      source={{
@@ -168,7 +169,8 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                     }}/>
                     :
                     <Image
-                    style={(route.name==="Archive")?{height:38, width:38, borderRadius:38, alignSelf:"center",top:2,left:2}:
+                    style={(route.name==="Archive" || route.name ==='MilestoneFeed')?
+                    {height:38, width:38, borderRadius:38, alignSelf:"center",top:2,left:2}:
                     {height:34, width:34, borderRadius:34, alignSelf:"center"}}
                     resizeMode="contain"
                     source={{uri:profilePic}}/>
@@ -181,15 +183,21 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                            source={Icons['defaultpic']}/>
                    </View>}
                    <View style={[styles.postUserHeader]}>
-                    {(route.name !== "Archive") &&
-                       <Text style={[styles.postOwnerName]}> {username} </Text>
+                    {(route.name !== "Archive" && route.name !== "MilestoneFeed") &&
+                       <Text style={[styles.postOwnerName]}> 
+                            {username} 
+                       </Text>
                     }
-                       <Text style={[(route.name === 'Archive')?styles.ownerTimeArchive:styles.postOwnerTime]}>
-                           {(date !== undefined)?
-                           (postDate === currentDate)?`Today at ` + postTime:(route.name==="Archive")?postDate:postDate + ' at ' + postTime
-                           :`Today at ${currentDate}`}</Text>
+                        <Text style={[(route.name === 'Archive' || route.name ==='MilestoneFeed')?
+                        styles.ownerTimeArchive:styles.postOwnerTime]}>
+                            {(date !== undefined)?
+                            (postDate === currentDate)?`Today at ` + 
+                            postTime:(route.name==="Archive" || route.name === 'MilestoneFeed')?
+                            postDate:postDate + ' at ' + postTime
+                            :`Today at ${currentDate}`}
+                        </Text>
                    </View>
-                   </Pressable>
+                </Pressable>
             </View>
         :
         <View style={{flexDirection:"row",flex:1, alignItems:"center"}}>   
@@ -242,11 +250,12 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
             }
         </View>
 }
-        <Pressable onPress={(route.name === 'Archive')?()=>setExpanded(!expanded):handleSelect}>
+        <Pressable onPress={(route.name === 'Archive' || route.name === 'MilestoneFeed')?()=>setExpanded(!expanded):handleSelect}>
             <Animated.View style={[styles.postWrapper, 
                 {backgroundColor:"rgba(10,10,10,1)",
                 height:(route.name === 'MilestonePage')?windowW:
-                ((fileExt === 'mov' || fileExt === 'mp4') && route.name !=="Archive")?windowH*(526/windowH):(route.name==="Archive")?
+                ((fileExt === 'mov' || fileExt === 'mp4') && route.name !=="Archive" && route.name !== 'MilestoneFeed')
+                ?windowH*(526/windowH):(route.name==="Archive" || route.name === 'MilestoneFeed')?
                 animatedsize.interpolate({inputRange:[0,100], outputRange:[windowW,windowH-152]}):
                 windowW 
             }]}>                                                                                                               
@@ -299,9 +308,9 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                 } 
             </Animated.View>
         </Pressable>
-        <View style={[(route.name === "Archive")?styles.actionbarAlt:styles.actionbarContainer]}>
-            <View style={[(route.name==="Archive")?styles.actionIconAlt:styles.actionIcon, 
-            (route.name==="Archive")?styles.actionThumbsAlt:styles.actionThumbsUp]}>
+        <View style={[(route.name === "Archive"|| route.name === "MilestoneFeed")?styles.actionbarAlt:styles.actionbarContainer]}>
+            <View style={[(route.name==="Archive" || route.name === "MilestoneFeed")?styles.actionIconAlt:styles.actionIcon, 
+            (route.name==="Archive" || route.name === "MilestoneFeed")?styles.actionThumbsAlt:styles.actionThumbsUp]}>
                 <Pressable onPress={handleLike}>
                     <Icon 
                     size={28}
@@ -310,7 +319,9 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                 </Pressable>
             </View>
             
-                <View style={[(route.name==="Archive")?styles.actionIconAlt:styles.actionIcon, styles.actionComment, {paddingTop:(route.name === 'Archive'?2:0)}]}>
+                <View style={[(route.name==="Archive" || route.name === "MilestoneFeed")?
+                styles.actionIconAlt:styles.actionIcon, styles.actionComment, 
+                {paddingTop:(route.name === 'Archive' || route.name ==='MilestoneFeed'?2:0)}]}>
                     <Pressable onPress={handleComment}>
                         <Icon 
                             size={25.5}
@@ -335,10 +346,11 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
             :
            
             <Pressable onPress={()=> navigation.navigate("Post", {item:data, comments:false})}>
-                <View style={[(route.name==="Archive")?styles.actionIconAlt:styles.actionIcon, {right:(route.name ==="Archive")?2:0, 
-                top:(route.name === 'Archive')?3:0}]}>
+                <View style={[(route.name==="Archive" || route.name === "MilestoneFeed")
+                ?styles.actionIconAlt:styles.actionIcon, {right:(route.name ==="Archive" || route.name === "MilestoneFeed")?2:0, 
+                top:(route.name === 'Archive' || route.name === 'MilestoneFeed')?3:0}]}>
                     <Image
-                        style={[styles.milebookImage, {bottom:(route.name === 'Archive')?2:0}]}
+                        style={[styles.milebookImage, {bottom:(route.name === 'Archive' || route.name === 'MilestoneFeed')?2:0}]}
                         resizeMode="contain"
                         source={require("../assets/milebook-logo.png")} 
                     />
@@ -356,16 +368,20 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
             :null}
         </View>
         {
-            (route.name === "MilestonePage" || route.name === "Archive")?
-            <View style={[styles.commentsContainer, {minHeight:(route.name === 'MilestonePage'|| route.name==="Archive")?50:(route.name === "Post")?
-            (windowH>900)?75:60:80, position:"absolute", backgroundColor:"rgba(0,0,0,0)", zIndex:1, bottom:(route.name ==="Archive")?6:48}]}>
-                <Text numberOfLines={(route.name !== 'Post')?(route.name === 'Archive')?1:2:0}
-                 style={[styles.commentsContent, {width:(route.name === 'Archive')?windowW*0.8:windowW*0.89}]}>
+            (route.name === "MilestonePage" || route.name === "Archive" || route.name === "MilestoneFeed")?
+            <View style={[styles.commentsContainer, 
+                {minHeight:(route.name === 'MilestonePage'|| route.name==="Archive" || route.name === "MilestoneFeed")?
+                50:(route.name === "Post")?
+            (windowH>900)?75:60:80, position:"absolute", backgroundColor:"rgba(0,0,0,0)", zIndex:1, 
+            bottom:(route.name ==="Archive" || route.name === "MilestoneFeed")?6:48}]}>
+                <Text numberOfLines={(route.name !== 'Post')?(route.name === 'Archive' || route.name === "MilestoneFeed")?1:2:0}
+                 style={[styles.commentsContent, {width:(route.name === 'Archive' || route.name === "MilestoneFeed")?
+                 windowW*0.8:windowW*0.89}]}>
                     {caption}
                 </Text>
                 {(route.name === "Feed" || route.name === "MilestonePage")?
                 <Pressable onPress={(commentCount>0 || likes.length>0)?handleComment:handleNavigate}>
-                <Text style={[styles.viewPostLink, {color:(route.name === "Archive")?"#eee":"rgba(144,144,144,1)"}]}>
+                <Text style={[styles.viewPostLink, {color:(route.name === "Archive" || route.name === "MilestoneFeed")?"#eee":"rgba(144,144,144,1)"}]}>
                     {(commentCount>0)?
                     `View ${commentCount}${(commentCount>1)?" comments":" comment"}${(likes.length>0)?` & ${likes.length}${likes.length>1?" likes":" like"}` :''}`
                     :
@@ -373,25 +389,27 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                     `View Milestones & Groups`}
                 </Text>
                 </Pressable>
-                :(route.name === "Archive")?null:
+                :(route.name === "Archive" || route.name === "MilestoneFeed")?null:
                 (commentCount>0)?
                 <Pressable onPress={handleComment}>
                     <Text style={[styles.viewPostLink, {fontSize:11.5, color:(route.name === "Archive")?"#eee":"rgba(144,144,144,1)"}]}>
                     View {commentCount}{(commentCount>1)?" comments ":" comment "}{(likes.length>0)?`& ${likes.length}${likes.length>1?" likes":" like"}` :''}
                     </Text>
                 </Pressable>
-                :(route.name === "Archive")?null:
+                :(route.name === "Archive" || route.name === "MilestoneFeed")?null:
                 (likes.length>0)?
                 <Pressable onPress={handleComment}>
-                    <Text style={[styles.viewPostLink, {fontSize:11.5, color:(route.name === "Archive")?"#eee":"rgba(144,144,144,1)"}]}>
+                    <Text style={[styles.viewPostLink, {fontSize:11.5, 
+                        color:(route.name === "Archive" || route.name === "MilestoneFeed")?"#eee":"rgba(144,144,144,1)"}]}>
                         View {likes.length}{(likes.length>1)?" likes":" like"}
                     </Text>
                 </Pressable>
-                :(route.name === "Archive")?null:
+                :(route.name === "Archive" || route.name === "MilestoneFeed")?null:
                 <Pressable onPress={handleComment}>
-                    <Text style={[styles.viewPostLink, {fontSize:11.5, color:(route.name === "Archive")?"#eee":"rgba(144,144,144,1)"}]}>
+                    <Text style={[styles.viewPostLink, {fontSize:11.5, color:(route.name === "Archive" || route.name === "MilestoneFeed")?
+                    "#eee":"rgba(144,144,144,1)"}]}>
                         Be the {<Text style={[styles.viewPostLink, {fontFamily:'Inter', 
-                        color:(route.name === "Archive")?"#eee":"rgba(144,144,144,1)"}]}>
+                        color:(route.name === "Archive" || route.name === "MilestoneFeed")?"#eee":"rgba(144,144,144,1)"}]}>
                         first</Text>} to comment on {username}'s post
                     </Text>
                 </Pressable>
@@ -405,7 +423,8 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
             </Text>
             {(route.name === "Feed" || route.name === "MilestonePage")?
             <Pressable onPress={(commentCount>0 || likes.length>0)?handleComment:handleNavigate}>
-            <Text style={[styles.viewPostLink, {color:(route.name === "Archive")?"#eee":"rgba(144,144,144,1)"}]}>
+            <Text style={[styles.viewPostLink, {color:(route.name === "Archive" || route.name === "MilestoneFeed")?
+            "#eee":"rgba(144,144,144,1)"}]}>
                 {(commentCount>0)?
                 `View ${commentCount}${(commentCount>1)?" comments":" comment"}${(likes.length>0)?` & ${likes.length}${likes.length>1?" likes":" like"}` :''}`
                 :
@@ -413,10 +432,11 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                 `View Milestones & Groups`}
             </Text>
             </Pressable>
-            :(route.name === "Archive")?null:
+            :(route.name === "Archive" || route.name === "MilestoneFeed")?null:
             (commentCount>0)?
             <Pressable onPress={handleComment}>
-                <Text style={[styles.viewPostLink, {fontSize:11.5, color:(route.name === "Archive")?"#eee":"rgba(144,144,144,1)"}]}>
+                <Text style={[styles.viewPostLink, {fontSize:11.5, color:(route.name === "Archive" || route.name === "MilestoneFeed")?
+                "#eee":"rgba(144,144,144,1)"}]}>
                 View {commentCount}{(commentCount>1)?" comments ":" comment "}
                 {(likes.length>0)?`& ${likes.length}${likes.length>1?" likes":" like"}` :''}
                 </Text>
@@ -424,15 +444,18 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
             :
             (likes.length>0)?
             <Pressable onPress={handleComment}>
-                <Text style={[styles.viewPostLink, {fontSize:11.5, color:(route.name === "Archive")?"#eee":"rgba(144,144,144,1)"}]}>
+                <Text style={[styles.viewPostLink, {fontSize:11.5, color:(route.name === "Archive" || route.name === "MilestoneFeed")?
+                "#eee":"rgba(144,144,144,1)"}]}>
                     View {likes.length}{(likes.length>1)?" likes":" like"}
                 </Text>
             </Pressable>
-            :(route.name === "Archive")?null:
+            :(route.name === "Archive" || route.name === "MilestoneFeed")?null:
             <Pressable onPress={handleComment}>
-                <Text style={[styles.viewPostLink, {fontSize:11.5, color:(route.name === "Archive")?"#eee":"rgba(144,144,144,1)"}]}>
+                <Text style={[styles.viewPostLink, {fontSize:11.5, color:(route.name === "Archive" || route.name === "MilestoneFeed")?
+                "#eee":"rgba(144,144,144,1)"}]}>
                     Be the {<Text style={[styles.viewPostLink, 
-                    {fontFamily:'Inter', color:(route.name === "Archive")?"#eee":"rgba(144,144,144,1)"}]}>
+                    {fontFamily:'Inter', color:(route.name === "Archive" || route.name === "MilestoneFeed")?
+                    "#eee":"rgba(144,144,144,1)"}]}>
                     first</Text>} to comment on {username}'s post
                 </Text>
             </Pressable>
