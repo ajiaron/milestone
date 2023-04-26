@@ -1,4 +1,4 @@
-# milestone - native
+# milestone
 This repo has the whole bundle, I didn't really try reducing the size at all (apologies)!
 There are a lot of files that should be ignored, but most of them are config files that you still might need for npm start/expo start to work.
 
