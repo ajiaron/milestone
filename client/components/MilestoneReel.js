@@ -46,12 +46,12 @@ const MilestoneReel = ({refresh, focus, milestones}) => {
         {(recentMilestones.length === 0)?null:
         <View style={[styles.reelContainer]}>
             <View style={[styles.reelContent]}>
-                <Pressable onPress={handlePress} style={{paddingRight:0, marginLeft:20}}>
+                <Pressable onPress={handlePress} style={{paddingRight:0, marginLeft:16}}>
                     <Icon
                         name={'multiple-stop'}
                         size={28}
-                        style={{top:-1}}
-                        color={'rgba(48, 174, 146, 1)'}
+                        style={{top:-1.5, left:3.5}}
+                        color={'rgba(48, 184, 146, 1)'}
                     />
                  </Pressable>
                 <FlatList
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
         minWidth:windowW,
         paddingTop:0,
         borderColor:"rgba(28, 28, 28, 1)",
-        height:windowH*0.08,
+        height:(windowH*0.08)+8,
         flex:1,
         marginBottom:2,
  
@@ -104,8 +104,6 @@ const styles = StyleSheet.create({
         justifyContent:"center",
         backgroundColor: "rgba(214, 214, 214, 1)",
         borderRadius:5,
-
-
     }
 })
 export default MilestoneReel

@@ -9,7 +9,7 @@ import userContext from '../contexts/userContext'
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const Navbar = ({title, scrollY, newNotification, onClearNotifications}) => {
+const Navbar = ({title, scrollY, id, date, count, newNotification, onClearNotifications}) => {
     const navigation = useNavigation()
     const user = useContext(userContext)
     const route = useRoute()
@@ -109,7 +109,9 @@ const Navbar = ({title, scrollY, newNotification, onClearNotifications}) => {
                             </Pressable>
                         </Animated.View> 
                     }
-                    <Pressable onPress={()=>console.log(windowH, windowW)}>
+                    <Pressable onPress={()=>(route.name==="MilestoneFeed")?
+                    navigation.push("MilestonePage", {milestone:{id:id}, date:date, count:count}):
+                    console.log(windowH, windowW)}>
                         <Text style={{fontFamily:"InterBold", color:"#fff", 
                         fontSize:(windowH>900)?21:20, alignSelf:"center",
                         paddingRight:(route.name !== "Feed" && route.name !== "Notifications")?(route.name==='MilestoneFeed')?40:(windowH>900)?152:132:0,

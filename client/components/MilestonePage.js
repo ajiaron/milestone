@@ -151,21 +151,21 @@ const MilestonePage = ({route}) => {
             setTimestamp(' Today')
         }
         else if ((Math.abs(newDate-postDate)/86400000) < 7) {
-            setTimestamp((Math.floor(Math.abs(newDate-postDate)/86400000) < 2)?
+            setTimestamp((Math.floor(Math.abs(newDate-postDate)/86400000) <= 2)?
                 Math.floor(Math.abs(newDate-postDate)/86400000).toString()+
                 ' Day': Math.floor(Math.abs(newDate-postDate)/86400000).toString()+' Days')
         }
-        else if ((Math.abs(newDate-postDate)/86400000) < 30) {
-            setTimestamp((Math.floor(Math.floor(Math.abs(newDate-postDate)/86400000)%7) < 2)?
-                Math.floor(Math.floor(Math.abs(newDate-postDate)/86400000)%7).toString()+
-                ' Week':Math.floor(Math.floor(Math.abs(newDate-postDate)/86400000)%7).toString()+' Weeks')
+        else if ((Math.abs(newDate-postDate)/86400000) <= 30) {
+            setTimestamp((Math.floor(Math.floor(Math.abs(newDate-postDate)/86400000)/7) <= 2)?
+                Math.floor(Math.floor(Math.abs(newDate-postDate)/86400000)/7).toString()+
+                ' Week':Math.floor(Math.floor(Math.abs(newDate-postDate)/86400000)/7).toString()+' Weeks')
         }
-        else if ((Math.abs(newDate-postDate)/2592000000) < 12) {
-            setTimestamp((Math.floor(Math.abs(newDate-postDate)/2592000000) < 2)?
+        else if ((Math.abs(newDate-postDate)/2592000000) <= 12) {
+            setTimestamp((Math.floor(Math.abs(newDate-postDate)/2592000000) <= 2)?
                 Math.floor(Math.abs(newDate-postDate)/2592000000).toString()+
                 ' Month': Math.floor(Math.abs(newDate-postDate)/2592000000).toString()+' Months')
         } else {
-            setTimestamp((Math.floor(Math.abs(newDate-postDate)/31536000000)< 2)?
+            setTimestamp((Math.floor(Math.abs(newDate-postDate)/31536000000)<= 2)?
                 Math.floor(Math.abs(newDate-postDate)/31536000000).toString()+
                 ' Year':Math.floor(Math.abs(newDate-postDate)/31536000000).toString()+' Years')
         }
@@ -346,7 +346,7 @@ const MilestonePage = ({route}) => {
                      renderItem={renderPost}
                      keyExtractor={(item, index)=>index}/>
                     : 
-                    <View style={{width:320, height:320, backgroundColor:'rgba(28,28,28,1)'}}>
+                    <View style={{width:320, height:320, backgroundColor:'rgba(28,28,28,1)', alignSelf:"center"}}>
                         
                         <View style={{alignSelf:"center", alignItems:"center", justifyContent:"center", flex:1}}>
                             <Pressable onPress={()=>navigation.navigate("TakePost", {

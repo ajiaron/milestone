@@ -18,6 +18,8 @@ const MilestoneFeed = ({route}) => {
     const [refreshing, setRefreshing] = useState(false);
     const [isViewable, setIsViewable] = useState([0])
     const [loading, setLoading] = useState(true)
+    const [startDate, setStartDate] = useState()
+    const [postCount, setPostCount] = useState(0)
     const scrollRef = useRef()
     const animatedvalue = useRef(new Animated.Value(0)).current;
     const scrollY = useRef(new Animated.Value(0)).current
@@ -56,6 +58,20 @@ const MilestoneFeed = ({route}) => {
       };
     const viewabilityConfigCallbackPairs = useRef([{ viewabilityConfig, onViewableItemsChanged }])
     useEffect(()=> {
+        axios.get(`http://${user.network}:19001/api/getmilestones`)
+        .then((response)=> {
+            setStartDate(new Date(response.data.filter((item)=> item.idmilestones === route.params?.id).map((item)=>
+            item.date)[0]).toLocaleDateString("en-US", {month:"short", day:"numeric", year:"numeric"}))
+        })
+        .catch((error)=> console.log(error))
+    }, [])
+    useEffect(()=> {
+        axios.get(`http://${user.network}:19001/api/getlinkedmilestones`)
+        .then((response)=> {
+            setPostCount(response.data.filter((item)=> item.milestoneid === route.params?.id).length)
+        })
+    },[])
+    useEffect(()=> {
         if (postFeed.length === 0 || postFeed[0].idmilestones !== route.params?.id) {
             axios.get(`http://${user.network}:19001/api/getrecentposts/${route.params?.id}`) 
             .then((response)=>{ 
@@ -84,7 +100,7 @@ const MilestoneFeed = ({route}) => {
     }
     return (
         <View style={[styles.feedPage]}>
-          <Navbar title={route.params.title} scrollY={scrollY}/>
+          <Navbar title={route.params.title} id={route.params?.id} date={startDate} count={postCount} scrollY={scrollY}/>
             <View style={[styles.feedContainer,]}>
                 {(postFeed.filter((item)=>(item.public === 1)||(item.ownerid === user.userId)).length === 0)?
                 <Text style={{fontFamily:"Inter", color:"rgba(180,180,180,1)", fontSize:16,alignItems:"center", alignSelf:"center"}}>

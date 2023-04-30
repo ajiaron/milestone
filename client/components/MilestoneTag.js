@@ -13,7 +13,6 @@ const windowH = Dimensions.get('window').height
 
 const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, selected, isEmpty, date, onSelectMilestone, onRemoveMilestone}) => {
     const navigation = useNavigation();
-    const isFocused = useIsFocused()
     const animatedvalue = useRef(new Animated.Value(0)).current;
     const [tagDate, setTagDate] = useState(date !== undefined?new Date(date).toLocaleDateString("en-US", {month:"short", day:"numeric"}):false)
     const [isSelected, setIsSelected] = useState(selected===undefined||!selected?false:selected)
@@ -105,7 +104,7 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
                 index: 0,
                 routes: [{name: 'MilestonePage'}],
               });
-            navigation.navigate("MilestonePage", {milestone:milestoneData, date:fullDate, count:posts})
+            navigation.push("MilestonePage", {milestone:milestoneData, date:fullDate, count:posts})
         }
     }
     useEffect(()=> {
