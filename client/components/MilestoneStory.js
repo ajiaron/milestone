@@ -65,11 +65,11 @@ const MilestoneStory = ({item, refresh, focus, ascending}) => {
     return (
         <View style={{paddingTop:(windowH>900)?6:8, overflow:"visible", borderRadius:5}}>
         {(!user.isExpo)?
-        <View style={{marginLeft:(windowH>900)?29:26}}>
-            <LinearGradient style={[styles.reelBackContent]} start={{x:0,y:0}} end={{x:0,y:1}}
+        <View style={{marginLeft:(windowH>900)?30:28}}>
+            <LinearGradient style={[styles.reelBackContent]} start={{x:0,y:0}} end={{x:1,y:0.5}}
             colors={[getColors(0),getColors(50)]}/> 
             <Pressable onPress={handleNavigate}>
-                <View style={[styles.reelItemContainer, {top:-36,left:6}]}>
+                <View style={[styles.reelItemContainer, {top:-36,left:6,}]}>
                 {
                     (!user.isExpo && 
                     (item.mileImage.toString().split('.').pop() === 'jpg' 
@@ -96,9 +96,10 @@ const MilestoneStory = ({item, refresh, focus, ascending}) => {
         </View>
 
         :
-        <View style={[styles.reelBackContent, {backgroundColor:getColors(10), marginLeft:(windowH>900)?29:26}]}> 
+        <View style={[styles.reelBackContent, {
+            backgroundColor:getColors(10), marginLeft:(windowH>900)?30:28}]}> 
         <Pressable onPress={handleNavigate}>
-            <View style={[styles.reelItemContainer]}>
+            <View style={[styles.reelItemContainer, {transform:[{rotate:'5deg'}]}]}>
             {
                 (!user.isExpo && 
                 (item.mileImage.toString().split('.').pop() === 'jpg' 
@@ -155,33 +156,37 @@ const styles = StyleSheet.create({
         narginLeft:32,
     },
     reelBackContent: {
-        height:42,
-        width:42, 
+        height:(windowH>900)?42:41,
+        width:(windowH>900)?42:41, 
         backgroundColor:'transparent',
         borderRadius:5,
         zIndex:-1,
+        transform:[{rotate:'-5deg'}],
         alignSelf:"center",
+
     },
     reelItem: {
         alignSelf:"center",
-        width:41,
-        height:41,
+        height:(windowH>900)?42:41,
+        width:(windowH>900)?42:41, 
         borderRadius:5,
     },
     reelItemContainer: {
-        width:41,
+        height:(windowH>900)?42:41,
+        width:(windowH>900)?42:41, 
         position:"absolute",
-        height:41,
+       
         alignItems:"center",
         justifyContent:"center",
         backgroundColor: "rgba(214, 214, 214, 1)",
         borderRadius:5,
         alignSelf:"center",
         zIndex:999,
+
         shadowColor: '#000',
         shadowOffset: {
-        width: -5,
-        height: -5,
+        width: -3,
+        height: -3,
         },
         shadowOpacity: 0.2,
         shadowRadius: 5,
@@ -192,10 +197,11 @@ const styles = StyleSheet.create({
         fontFamily:"Inter", 
         color:'rgba(180,180,180,1)', 
         fontSize:(windowH>900)?11:10.5, 
-        marginLeft:(windowH>900)?26:22, 
+        marginLeft:(windowH>900)?30:28, 
         alignSelf:"center", 
-        marginTop:8,
+        marginTop:9,
         left:6
+
     },
     settingsNotification: {
         backgroundColor:"rgba(238, 64, 64, 1)",

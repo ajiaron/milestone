@@ -336,6 +336,7 @@ const MilestonePage = ({route}) => {
                      viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
                      viewabilityConfig={viewabilityConfig}
                      decelerationRate={"fast"}
+                     removeClippedSubviews
                      snapToInterval={windowW}
                      initialNumToRender={3}
                      maxToRenderPerBatch={3}
@@ -371,6 +372,7 @@ const MilestonePage = ({route}) => {
                      initialScrollIndex={now.getMonth()}
                      decelerationRate={"fast"}
                      snapToInterval={windowW}
+                     removeClippedSubviews
                      showsHorizontalScrollIndicator={false}
                      data={monthList}
                      style={{ flexGrow: 1, flexDirection:"row", alignSelf:"center",marginTop:(windowH>900)?6:8}}

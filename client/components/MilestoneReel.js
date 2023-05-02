@@ -32,7 +32,8 @@ const MilestoneReel = ({refresh, focus, milestones}) => {
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getrecentupdates/${user.userId}`) 
         .then((response)=>{ 
-            setRecentMilestones([...response.data].reverse())
+            setRecentMilestones([...response.data.filter((item)=>
+                item.viewable === "Everyone"|| (item.viewable === "Only You") && user.userId === item.mileOwner)].reverse())
         })
         .catch((error) => console.log(error))
     }, [refresh, focus, isFocused])
