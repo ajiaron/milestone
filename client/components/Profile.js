@@ -154,7 +154,7 @@ const Profile = ({route}) => {
        // console.log(userid)
        // console.log(userData)
        // console.log(fileExt)
-       console.log(userid)
+       console.log(windowH, windowW)
 
        //console.log(user)
     }
