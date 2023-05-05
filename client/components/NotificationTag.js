@@ -85,19 +85,19 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
         if ((Math.abs(newDate-postDate)/1000) < 60) {
             setTimestamp(Math.round(Math.abs(newDate-postDate)/1000).toString()+'s')
         }
-        else if ((Math.abs(newDate-postDate)/60000) < 60) {
+        else if ((Math.abs(newDate-postDate)/60000) <= 60) {
             setTimestamp(Math.round(Math.abs(newDate-postDate)/60000).toString()+'m')
         }
-        else if ((Math.abs(newDate-postDate)/3600000) < 24) {
+        else if ((Math.abs(newDate-postDate)/3600000) <= 24) {
             setTimestamp(Math.round(Math.abs(newDate-postDate)/3600000).toString()+'h')
         }
-        else if ((Math.abs(newDate-postDate)/86400000) < 7) {
+        else if ((Math.abs(newDate-postDate)/86400000) <= 7) {
             setTimestamp(Math.round(Math.abs(newDate-postDate)/86400000).toString()+'d')
         }
-        else if ((Math.abs(newDate-postDate)/86400000) < 30) {
-            setTimestamp(Math.round(Math.round(Math.abs(newDate-postDate)/86400000)%7).toString()+'w')
+        else if ((Math.abs(newDate-postDate)/86400000) <= 30) {
+            setTimestamp(Math.round(Math.round(Math.abs(newDate-postDate)/86400000)/7).toString()+'w')
         }
-        else if ((Math.abs(newDate-postDate)/2592000000) < 12) {
+        else if ((Math.abs(newDate-postDate)/2592000000) <= 12) {
             setTimestamp(Math.round(Math.abs(newDate-postDate)/2592000000).toString()+'mo')
         } else {
             setTimestamp(Math.round(Math.abs(newDate-postDate)/31536000000).toString()+'y')

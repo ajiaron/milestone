@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
         justifyContent:"center",
         flex:1,
         alignItems:"center",
-        marginTop:98,
+        marginTop:94,
         alignSelf:"center"
     },
     feedPage: {
