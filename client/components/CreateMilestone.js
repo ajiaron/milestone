@@ -10,8 +10,10 @@ import userContext from '../contexts/userContext'
 import axios from 'axios'
 import { ScrollView } from "react-native-gesture-handler";
 import * as ImagePicker from 'expo-image-picker'
+import DatePicker from 'react-native-date-picker';
 import { Amplify, Storage } from 'aws-amplify';
 import awsconfig from '../src/aws-exports';
+import { UserAgent } from "amazon-cognito-identity-js";
 Amplify.configure(awsconfig);
 
 const windowW = Dimensions.get('window').width
@@ -19,7 +21,10 @@ const windowH = Dimensions.get('window').height
 
 const DropdownPermission = ({permission, setPermission, permisisonList}) => {
     const [toggled, setToggled] = useState(false)
-    const animatedvalue = useRef(new Animated.Value(0)).current;
+    const animatedvalue = useRef(new Animated.Value(0)).current
+    const [selectedDate, setSelectedDate] = useState(new Date())
+    const [toggleDate, setToggleDate] = useState(false)
+    const [confirmed, setConfirmed] = useState(false)
     const slidedown = () => {
         setToggled(true)
         Animated.timing(animatedvalue,{
@@ -44,7 +49,13 @@ const DropdownPermission = ({permission, setPermission, permisisonList}) => {
         }
     }
     function handleSelect(e, id) {
-        setPermission(e)
+        if (e !== "Custom") {
+            setPermission(e)
+        } 
+        else {
+            setToggleDate(true)
+            console.log(selectedDate)
+        }
     }
     const renderOption = ({item,id}) => {
         return (
@@ -87,6 +98,25 @@ const DropdownPermission = ({permission, setPermission, permisisonList}) => {
                 </ScrollView>
             </Animated.View>
             :null}
+            <DatePicker
+                useNativeDriver={false}
+                modal
+                theme = "dark"
+                date={selectedDate}
+                mode="date"
+                title={"How long should your milestone take?"}
+                open={toggleDate}
+                onConfirm = {(selectedDate)=> {
+                    setToggleDate(false)
+                    setConfirmed(true)
+                    setSelectedDate(selectedDate)
+                    setPermission(selectedDate.toLocaleDateString('en-US',{month:'short', day:'numeric',year:'numeric'}))
+                }}
+                onCancel={()=> {
+                    setToggleDate(false)
+                }}
+                minimumDate={new Date(+new Date() + 86400000)}
+            />
         </View>
     )
 }
@@ -130,14 +160,18 @@ const CreateMilestone = ({route}) => {
       }).start()
     }
     function handlePress() {
-        console.log(fromCreate)
-      //  console.log(routes)
-       // console.log(image?.substring(image.indexOf('.')+1))
-       // console.log('Device: ', Device.deviceName)
-       // console.log("Width:", windowW, "Height:", windowH)
-       // console.log(user)
-       // console.log("Title:", title, "| Description:",description, "| Image:",(image)?image:'defaultmilestone')
-       // console.log("Posts:", postPermission, "| Views:", viewPermission, "| Duration:", duration)
+        const now = (duration !== "Indefinitely" && duration !== "1 Month" && duration !== "Next Day")?
+        new Date(duration).toISOString():new Date()
+        const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
+        const modifiedISOString = (duration === "1 Month")?
+        `${new Date(now.getFullYear(), now.getMonth()+1, now.getDate()).toISOString().substr(0, 11)}`+
+        `${currentTime}${new Date(now.getFullYear(), now.getMonth()+1, now.getDate()).toISOString().substr(19, 5)}`
+        :(duration === "Next Day")?
+        `${new Date(now.getFullYear(), now.getMonth(), now.getDate()+1).toISOString().substr(0, 11)}`+
+        `${currentTime}${new Date(now.getFullYear(), now.getMonth(), now.getDate()+1).toISOString().substr(19, 5)}`:
+        (duration !== "Indefinitely")?
+        `${now.substr(0, 11)}${currentTime}${now.substr(19, 5)}`:null
+        console.log("Posts:", postPermission, "| Views:", viewPermission, "| Duration:", modifiedISOString)
        // console.log("Comments:", commmentsEnabled, "| Likes:", likesEnabled, "| Sharing:", sharingEnabled)
     }
     const pickImage = async () => {
@@ -171,10 +205,23 @@ const CreateMilestone = ({route}) => {
             }
         })
         .then((res)=> {
+            const now = (duration !== "Indefinitely" && duration !== "1 Month" && duration !== "Next Day")?
+            new Date(duration).toISOString():new Date()
+            const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
+            const modifiedISOString = (duration === "1 Month")?
+            `${new Date(now.getFullYear(), now.getMonth()+1, now.getDate()).toISOString().substr(0, 11)}`+
+            `${currentTime}${new Date(now.getFullYear(), now.getMonth()+1, now.getDate()).toISOString().substr(19, 5)}`
+            :(duration === "Next Day")?
+            `${new Date(now.getFullYear(), now.getMonth(), now.getDate()+1).toISOString().substr(0, 11)}`+
+            `${currentTime}${new Date(now.getFullYear(), now.getMonth(), now.getDate()+1).toISOString().substr(19, 5)}`:
+            (duration !== "Indefinitely")?
+            `${now.substr(0, 11)}${currentTime}${now.substr(19, 5)}`:null
+            console.log("Posts:", postPermission, "| Views:", viewPermission, "| Duration:", modifiedISOString)
             console.log('result ---',`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`)
             axios.post(`http://${user.network}:19001/api/postmilestones`, // TODO: put in duration
             {title: title,src:image?`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`:'defaultmilestone',
-            streak:0, description:description, ownerid:user.userId, postable:postPermission, viewable:viewPermission}) 
+            streak:0, description:description, ownerid:user.userId, postable:postPermission, viewable:viewPermission, 
+            duration:modifiedISOString}) 
             .then(() => {
                 console.log('new milestone saved')
                 setLoading(false)

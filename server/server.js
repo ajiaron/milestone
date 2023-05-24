@@ -258,8 +258,9 @@ app.post('/api/postmilestones', (req, res) => {
     const ownerid = req.body.ownerid
     const postable = req.body.postable
     const viewable = req.body.viewable
-    db.query('INSERT INTO milestones (title, src, streak, description, ownerid, postable, viewable) VALUES (?,?,?,?,?,?,?)',
-    [title, src, streak, description, ownerid, postable, viewable], (err, result) => {
+    const duration = req.body.duration
+    db.query('INSERT INTO milestones (title, src, streak, description, ownerid, postable, viewable, duration) VALUES (?,?,?,?,?,?,?,?)',
+    [title, src, streak, description, ownerid, postable, viewable, duration], (err, result) => {
         if(err) {
             console.log(err)
         } else {
