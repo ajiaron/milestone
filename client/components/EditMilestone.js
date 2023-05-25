@@ -10,6 +10,7 @@ import userContext from '../contexts/userContext'
 import axios from 'axios'
 import { ScrollView } from "react-native-gesture-handler";
 import * as ImagePicker from 'expo-image-picker'
+import DatePicker from 'react-native-date-picker';
 import { Amplify, Storage } from 'aws-amplify';
 import awsconfig from '../src/aws-exports';
 
@@ -21,6 +22,9 @@ const windowH = Dimensions.get('window').height
 const DropdownPermission = ({permission, setPermission, permisisonList}) => {
     const [toggled, setToggled] = useState(false)
     const animatedvalue = useRef(new Animated.Value(0)).current;
+    const [selectedDate, setSelectedDate] = useState(new Date())
+    const [toggleDate, setToggleDate] = useState(false)
+    const [confirmed, setConfirmed] = useState(false)   // unused; set in date picker
     const slidedown = () => {
         setToggled(true)
         Animated.timing(animatedvalue,{
@@ -45,7 +49,14 @@ const DropdownPermission = ({permission, setPermission, permisisonList}) => {
         }
     }
     function handleSelect(e, id) {
-        setPermission(e)
+        if (e !== "Custom") {
+            setPermission(e)
+            console.log(e)
+        } 
+        else {
+            setToggleDate(true)
+            console.log(selectedDate)
+        }
     }
     const renderOption = ({item,id}) => {
         return (
@@ -88,6 +99,25 @@ const DropdownPermission = ({permission, setPermission, permisisonList}) => {
                 </ScrollView>
             </Animated.View>
             :null}
+            <DatePicker
+                useNativeDriver={false}
+                modal
+                theme = "dark"
+                date={selectedDate}
+                mode="date"
+                title={"How long should your milestone take?"}
+                open={toggleDate}
+                onConfirm = {(selectedDate)=> {
+                    setToggleDate(false)
+                    setConfirmed(true)
+                    setSelectedDate(selectedDate)
+                    setPermission(selectedDate.toLocaleDateString('en-US',{month:'short', day:'numeric',year:'numeric'}))
+                }}
+                onCancel={()=> {
+                    setToggleDate(false)
+                }}
+                minimumDate={new Date(+new Date() + 86400000)}
+            />
         </View>
     )
 }
@@ -112,7 +142,7 @@ const EditMilestone = ({route}) => {
     const toggleSharing = () => setSharingEnabled(previousState => !previousState)
     const [postPermission, setPostPermission] = useState((route.params.postable !== undefined)?route.params.postable:'Everyone')
     const [viewPermission, setViewPermission] = useState((route.params.viewable !== undefined)?route.params.viewable:'Everyone')
-    const [duration, setDuration] = useState('Indefinitely')
+    const [duration, setDuration] = useState((route.params.duration !== undefined)?route.params.duration:null)
     const [loading, setLoading] = useState(false)
     const scrollY = useRef(new Animated.Value(0)).current;
     const [progress, setProgress] = useState(0)
@@ -146,6 +176,20 @@ const EditMilestone = ({route}) => {
             }}
         )
     }
+    function handleDate() {
+        const now = (duration !== "Indefinitely" && duration !== "1 Month" && duration !== "Next Day")?
+        new Date(duration).toISOString():new Date()
+        const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
+        const modifiedISOString = (duration === "1 Month")?
+        `${new Date(now.getFullYear(), now.getMonth()+1, now.getDate()).toISOString().substr(0, 11)}`+
+        `${currentTime}${new Date(now.getFullYear(), now.getMonth()+1, now.getDate()).toISOString().substr(19, 5)}`
+        :(duration === "Next Day")?
+        `${new Date(now.getFullYear(), now.getMonth(), now.getDate()+1).toISOString().substr(0, 11)}`+
+        `${currentTime}${new Date(now.getFullYear(), now.getMonth(), now.getDate()+1).toISOString().substr(19, 5)}`:
+        (duration !== "Indefinitely")?
+        `${now.substr(0, 11)}${currentTime}${now.substr(19, 5)}`:null
+        return modifiedISOString
+    }
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -177,10 +221,12 @@ const EditMilestone = ({route}) => {
             }
         })
         .then((res)=> {
+            const modifiedISOString = handleDate()
             console.log('result ---',`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`)
             axios.put(`http://${user.network}:19001/api/updatemilestone`, 
             {milestoneid: route.params.id, title: title, description:description,
-            src:`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`, postable:postPermission, viewable:viewPermission})
+            src:`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`, postable:postPermission, viewable:viewPermission,
+            duration:modifiedISOString})
             .then(() => {
                 console.log('milestone updated')
                 setLoading(false)
@@ -195,8 +241,10 @@ const EditMilestone = ({route}) => {
         uploadContent(image)
        }
        else {
+        const modifiedISOString = handleDate()
         axios.put(`http://${user.network}:19001/api/updatemilestone`, 
-        {milestoneid: route.params.id, title: title, description:description, src:image, postable:postPermission, viewable:viewPermission})
+        {milestoneid: route.params.id, title: title, description:description, 
+        src:image, postable:postPermission, viewable:viewPermission, duration:modifiedISOString})
         .then(() => {
             console.log('milestone updated')
             setLoading(false)
@@ -208,6 +256,10 @@ const EditMilestone = ({route}) => {
     useEffect(()=> {
         setOriginalImage((route.params.src !== undefined)?route.params.src:null)
     }, [routes])
+    function handleTest() {
+        const modifiedISOString = handleDate()
+        console.log(modifiedISOString)
+    }
     return (
         <View style={styles.createMilestonePage}>
             <Navbar title={'milestone'} scrollY={scrollY}/>
@@ -303,15 +355,21 @@ const EditMilestone = ({route}) => {
                                 </View>
                             </View>        
                             <View style={[styles.milestoneInfoHeader, {marginTop:14}]}>
-                                <Text style={styles.milestoneInfoHeaderText}>
-                                    DURATION
-                                </Text>
+                                <Pressable onPress={handleTest}>
+                                    <Text style={styles.milestoneInfoHeaderText}>
+                                        DURATION
+                                    </Text>
+                                </Pressable>
                             </View>
                             <View style={[styles.milestonePermission, {marginTop:(windowH>900)?2:0}]}>
                                 <Text style={[styles.milestonePermissionText, 
                                     {marginLeft:2, alignSelf:"center"}]}>How long will this last?</Text>
-                            <DropdownPermission permission={duration} setPermission={setDuration}
-                                permisisonList={durationList}/>
+                            <DropdownPermission permission={(duration === null)?"Indefinitely":
+                            (duration === "Indefinitely"||duration === "Next Day"||duration === "1 Month")?
+                            duration:
+                            new Date(duration).toLocaleDateString('en-US',{month:'short', day:'numeric',year:'numeric'})}
+                            setPermission={setDuration}
+                            permisisonList={durationList}/>
                             </View>    
                         </View>
                     </View>            

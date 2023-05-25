@@ -24,7 +24,7 @@ const DropdownPermission = ({permission, setPermission, permisisonList}) => {
     const animatedvalue = useRef(new Animated.Value(0)).current
     const [selectedDate, setSelectedDate] = useState(new Date())
     const [toggleDate, setToggleDate] = useState(false)
-    const [confirmed, setConfirmed] = useState(false)
+    const [confirmed, setConfirmed] = useState(false)   // unused; set in date picker
     const slidedown = () => {
         setToggled(true)
         Animated.timing(animatedvalue,{
@@ -159,7 +159,7 @@ const CreateMilestone = ({route}) => {
           useNativeDriver:false,
       }).start()
     }
-    function handlePress() {
+    function handleDate() {
         const now = (duration !== "Indefinitely" && duration !== "1 Month" && duration !== "Next Day")?
         new Date(duration).toISOString():new Date()
         const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
@@ -171,6 +171,10 @@ const CreateMilestone = ({route}) => {
         `${currentTime}${new Date(now.getFullYear(), now.getMonth(), now.getDate()+1).toISOString().substr(19, 5)}`:
         (duration !== "Indefinitely")?
         `${now.substr(0, 11)}${currentTime}${now.substr(19, 5)}`:null
+        return modifiedISOString
+    }
+    function handlePress() {
+        const modifiedISOString = handleDate()
         console.log("Posts:", postPermission, "| Views:", viewPermission, "| Duration:", modifiedISOString)
        // console.log("Comments:", commmentsEnabled, "| Likes:", likesEnabled, "| Sharing:", sharingEnabled)
     }
@@ -205,18 +209,7 @@ const CreateMilestone = ({route}) => {
             }
         })
         .then((res)=> {
-            const now = (duration !== "Indefinitely" && duration !== "1 Month" && duration !== "Next Day")?
-            new Date(duration).toISOString():new Date()
-            const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
-            const modifiedISOString = (duration === "1 Month")?
-            `${new Date(now.getFullYear(), now.getMonth()+1, now.getDate()).toISOString().substr(0, 11)}`+
-            `${currentTime}${new Date(now.getFullYear(), now.getMonth()+1, now.getDate()).toISOString().substr(19, 5)}`
-            :(duration === "Next Day")?
-            `${new Date(now.getFullYear(), now.getMonth(), now.getDate()+1).toISOString().substr(0, 11)}`+
-            `${currentTime}${new Date(now.getFullYear(), now.getMonth(), now.getDate()+1).toISOString().substr(19, 5)}`:
-            (duration !== "Indefinitely")?
-            `${now.substr(0, 11)}${currentTime}${now.substr(19, 5)}`:null
-            console.log("Posts:", postPermission, "| Views:", viewPermission, "| Duration:", modifiedISOString)
+            const modifiedISOString = handleDate()
             console.log('result ---',`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`)
             axios.post(`http://${user.network}:19001/api/postmilestones`, // TODO: put in duration
             {title: title,src:image?`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`:'defaultmilestone',

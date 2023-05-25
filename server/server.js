@@ -428,8 +428,9 @@ app.put('/api/updatemilestone', (req, res) => {
     const src = req.body.src
     const postable = req.body.postable
     const viewable = req.body.viewable
-    db.query('UPDATE milestones SET title = ?, description = ?, src = ?, postable = ?, viewable = ? WHERE idmilestones = ?',
-    [title, description, src, postable, viewable, milestoneid],
+    const duration = req.body.duration
+    db.query('UPDATE milestones SET title = ?, description = ?, src = ?, postable = ?, viewable = ?, duration = ? WHERE idmilestones = ?',
+    [title, description, src, postable, viewable, duration, milestoneid],
     (err, result)=> {
         if (err) {
             console.log(err)

@@ -101,7 +101,7 @@ const MilestonePage = ({route}) => {
     const [ownerId, setOwnerId] = useState(0)
     const [milestoneId, setMilestoneId] = useState(0)
     const [title, setTitle] = useState('')
-    const [description, setDescription] = useState('New start, new milestone! 👋') // add description to milestone object
+    const [description, setDescription] = useState('New start, new milestone! 👋')
     const [image, setImage] = useState('calender')
     const routes = navigation.getState()?.routes;
     const [streak, setStreak] = useState(0)
@@ -110,22 +110,24 @@ const MilestonePage = ({route}) => {
     const [loading, setLoading] = useState(true)
     const [postPermission, setPostPermission] = useState('Everyone')
     const [viewPermission, setViewPermission] = useState('Everyone')
+    const [duration, setDuration] = useState(null)
     const [timestamp, setTimestamp] = useState()
     const scrollY = useRef(new Animated.Value(0)).current;
     const animatedvalue = useRef(new Animated.Value(0)).current;
     var fileExt = (image !== undefined)?image.toString().split('.').pop():'calender'
+
     const viewabilityConfig = {
-        itemVisiblePercentThreshold:30
+        itemVisiblePercentThreshold:30  // render videos when more than 30% of it is visible
     }
-    const onViewableItemsChanged = ({
+    const onViewableItemsChanged = ({   
         viewableItems
       }) => {
-        if (viewableItems.length > 0) {
-            setIsViewable(viewableItems[0].index)
+        if (viewableItems.length > 0) {    
+            setIsViewable(viewableItems[0].index)  
         }
       };
     const viewabilityConfigCallbackPairs = useRef([{ viewabilityConfig, onViewableItemsChanged }])
-    function getMonths() {
+    function getMonths() {      // format month string
         let months = []
         var current = new Date(year, 0)
         while (current.getFullYear() === year) {
@@ -141,10 +143,10 @@ const MilestonePage = ({route}) => {
         return months
     }
     const [monthList, setMonthList] = useState(getMonths())
-    function pressShare() {
+    function pressShare() {     // for testing
        console.log(route.params)
     }
-    useEffect(()=> {
+    useEffect(()=> {    // gets "x posts in y days"
         const newDate = new Date()
         const postDate = new Date(route.params.date)
         if ((Math.abs(newDate-postDate)/3600000) < 24) {
@@ -170,11 +172,11 @@ const MilestonePage = ({route}) => {
                 ' Year':Math.floor(Math.abs(newDate-postDate)/31536000000).toString()+' Years')
         }
     }, [])
-    function handlePress() {
+    function handlePress() {    // pass props to EditMilestone
         navigation.navigate("EditMilestone", {id:route.params.milestone.id, title:title, description:description, src:image,
-        postable:postPermission, viewable:viewPermission})
+        postable:postPermission, viewable:viewPermission, duration:duration})
     }
-    function handleFavorite() {
+    function handleFavorite() {     // change displayed milestone on profile page
         setFavorite(!favorite)
         if (!favorite) {
             axios.put(`http://${user.network}:19001/api/favoritemilestone`, 
@@ -183,7 +185,7 @@ const MilestonePage = ({route}) => {
             .catch((error)=> console.log(error))
         }
     }
-    const slideUp=() =>{
+    const slideUp=() =>{    // for loading animation
         Animated.timing(animatedvalue,{
             toValue:100,
             duration:300,
@@ -196,7 +198,7 @@ const MilestonePage = ({route}) => {
         console.log('Views:', viewPermission)
         console.log(timestamp)
     }
-    useEffect(()=> {
+    useEffect(()=> {    // fetch milestone info
         if (route) {
             setMilestoneId(route.params.milestone.id)
         }
@@ -209,23 +211,24 @@ const MilestonePage = ({route}) => {
             setOwnerId(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].ownerId)
             setPostPermission(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].postable)
             setViewPermission(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].viewable)
+            setDuration(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].duration)
         })
         .then(()=>slideUp())
         .catch(error => console.log(error))
     }, [])
-    useEffect(()=> {
+    useEffect(()=> {    
         axios.get(`http://${user.network}:19001/api/getlinkedposts/${route.params.milestone.id}`)
         .then((response) => {
             setPostList(response.data)
         }).catch(error=>console.log(error))
     }, [])
-    useEffect(()=> {
+    useEffect(()=> {    // check if current milestone is favorited
         axios.get(`http://${user.network}:19001/api/getusers`)
         .then((response)=> {
             setFavorite(response.data.filter((item)=> item.id === user.userId)[0].favoriteid === route.params.milestone.id)
         })
      }, [])
-    const renderGrid = ({item}) => {
+    const renderGrid = ({item}) => {    // for calender
         return (
             <ProgressView count={item.count} 
                 postlist={postList}
@@ -236,7 +239,7 @@ const MilestonePage = ({route}) => {
                 />
         )
     }
-    const renderPost = ({item}) => {
+    const renderPost = ({item}) => {    // for post list
         return (
             <Pressable onPress={()=>console.log(item.date)}>
                 <View style={{maxWidth:windowW}}>
@@ -271,7 +274,8 @@ const MilestonePage = ({route}) => {
                 <View style={[styles.headerContent, {marginTop:windowH*((windowH>900?70:76)/windowH)}]}>
                   
                         <View style={styles.headerContentWrapper}>
-                            <View style={[styles.milestoneIconContainer, {alignSelf:"center"}]}>
+                            <View style={[styles.milestoneIconContainer, {alignSelf:"center", 
+                            top:(duration!==null)?windowH*0.009:0}]}>
                             <Pressable onPress={handleTest}>
                                 {
                                 (!user.isExpo)?
@@ -294,7 +298,8 @@ const MilestonePage = ({route}) => {
                                 }
                             </Pressable>
                             </View>
-                            <Text style={styles.milestoneTitle}>{title}</Text>
+                            <Text style={[styles.milestoneTitle]}>{title}</Text>
+                            
                             <Pressable onPress={pressShare}>
                                 <Icon 
                                     style={{transform:[{rotate:"-45deg"}], top:-0.5, alignSelf:"center", marginRight:10}}
@@ -314,6 +319,13 @@ const MilestonePage = ({route}) => {
                         </TouchableOpacity>:null
                         }
                     </View>
+                    {(duration !== null)&&
+                    <View style={styles.durationWrapper}>
+                        <Text style={[styles.durationText, {fontSize:(windowH>900)?12:11.5, bottom:(windowH>900)?windowH*0.021:windowH*0.024}]}> 
+                        {`Expires on ${new Date(duration).toLocaleDateString('en-US',{month:'short', day:'numeric',year:'numeric'})}`}
+                        </Text>
+                    </View>
+                    }
                     <View style={styles.descriptionContainer}>
                         <Text style={[styles.descriptionText, {fontSize:(windowH>900)?13:12.5}]}>
                             {(description)?description:
@@ -625,5 +637,17 @@ const styles = StyleSheet.create({
         color:"white",
         alignSelf:"center"
     },
+    durationWrapper: {
+        width:windowW*0.8,
+        alignSelf:"center",
+        flex:1
+    },
+    durationText: {
+        fontFamily:"InterBold",
+        color:"rgba(191, 191, 191, 1)",
+        fontSize:12,
+        marginLeft:(windowH>900)?windowW*0.1275:windowW*0.13,
+        bottom:windowH*0.021
+    }
 })
 export default MilestonePage
