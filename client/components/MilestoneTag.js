@@ -21,6 +21,7 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
     const [startDate, setStartDate] = useState()
     const [fullDate, setFullDate] = useState()
     const [isLoading, setIsLoading] = useState(false)
+    const [duration, setDuration] = useState(null)
     var fileExt = (img !== undefined)?img.toString().split('.').pop():'money'
     const user = useContext(userContext)
     const milestoneData = {
@@ -88,6 +89,12 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
         milestoneData.img = img
         milestoneData.ownerid = ownerid
     }
+    function checkDate() {
+        if ((new Date(duration)- new Date())/86400000 < 0 && duration !== null) {
+            return true
+        } 
+        return false
+    }
     function handlePress(){  
         sendPost()
         if (route.name === "CreatePost" || route.name === 'EditPost') {
@@ -120,6 +127,7 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
             item.date)[0]).toLocaleDateString("en-US", {month:"short", day:"numeric"}))
             setFullDate(new Date(response.data.filter((item)=> item.idmilestones === id).map((item)=>
             item.date)[0]).toLocaleDateString("en-US", {month:"short", day:"numeric", year:"numeric"}))
+            setDuration(response.data.filter((item)=> item.idmilestones === id)[0].duration)
         })
         .catch((error)=> console.log(error))
     }, [])
@@ -207,10 +215,18 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
                             </Animated.Text>
                         </Animated.Text>
                     </View>
+                    {(checkDate())&&
+                    <View style={{top:1, left:8, alignSelf:"flex-start", marginBottom:'auto'}}>
+                        <Icon 
+                            name='check-circle'
+                            color="rgba(43, 164, 136, 1)"
+                            size={(windowH>900)?32:30}
+                        />
+                    </View>
+                    }
                 </View>
             </Animated.View>
         </Pressable>
-
     </View>
     )
 }

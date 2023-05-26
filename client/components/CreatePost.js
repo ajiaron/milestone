@@ -58,6 +58,12 @@ const CreatePost = ({route}) => {
             useNativeDriver:false,
         }).start(()=>setIsPersonal(true))
     }
+    function checkDate(duration) {
+        if ((new Date(duration) - new Date())/86400000 > 0 || duration === null) {
+            return true
+        } 
+        return false
+    }
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getposts`)
         .then((response)=> {
@@ -69,7 +75,7 @@ const CreatePost = ({route}) => {
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response)=> {
             setPersonalMilestones(response.data.filter((item)=>item.ownerId === user.userId))
-            setMilestoneList(response.data.filter((item)=>item.postable === "Everyone"))
+            setMilestoneList(response.data.filter((item)=>item.postable === "Everyone" && checkDate(item.duration)))
         })
         .catch((error)=> console.log(error))
     },[isFocused])

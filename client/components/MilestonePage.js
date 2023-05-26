@@ -14,12 +14,24 @@ import axios from 'axios'
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const ProgressView = ({count, postlist, month, monthname, monthnumber, year}) => {
+const ProgressView = ({count, postlist, month, monthname, monthnumber, year, duration}) => {
     const [selected, setSelected] = useState(false)
     const currentDate =  new Date().toLocaleDateString("en-US",{month:"long", day:"numeric",year:"numeric"})
+    function checkDate(val) {
+        if ((new Date(duration)- new Date(val))/86400000 < 0 && duration !== null) {
+            return '#494949'
+        } 
+        else if ((new Date(duration)- new Date(val))/86400000 >= 0 && (new Date(duration)- new Date(val))/86400000 < 1 && duration !== null) {
+            return '#B34654'
+        }
+        else {
+            return false
+        }
+    }
     function pressDate(val) {     // print associated posts
-        //console.log(val)
-        console.log(Math.abs(new Date(val) - new Date(currentDate))/86400000)   // difference in days
+        //console.log(new Date(duration).toLocaleDateString('en-US',{month:'short', day:'numeric',year:'numeric'}))
+        //console.log(Math.abs(new Date(val) - new Date(currentDate))/86400000)   // difference in days
+        console.log((new Date(duration)- new Date(val))/86400000)
         if (selected === val) {
             setSelected(false)
         }
@@ -30,6 +42,7 @@ const ProgressView = ({count, postlist, month, monthname, monthnumber, year}) =>
         //    new Date(item.date).toLocaleDateString("en-US",{month:"long", day:"numeric",year:"numeric"}) === val
         //).length)
     }
+  
     function getActivity(val) {   // determines color of square
         return (
             postlist.filter(item=>
@@ -55,8 +68,8 @@ const ProgressView = ({count, postlist, month, monthname, monthnumber, year}) =>
                  <Pressable key={i} onPress={()=>pressDate(val)}
                     style={[(windowH>900)?styles.gridItemLarge:styles.gridItem, 
                     {   
-                        backgroundColor:(getActivity(val)===0)?"#696969":
-                        `rgba(${44-(getActivity(val)*8)}, ${124-(getActivity(val)*8)}, ${104-(getActivity(val)*8)}, 1)`}]}>   
+                        backgroundColor:(!checkDate(val))?(getActivity(val)===0)?"#696969":
+                        `rgba(${44-(getActivity(val)*8)}, ${124-(getActivity(val)*8)}, ${104-(getActivity(val)*8)}, 1)`:checkDate(val)}]}>   
                     <Text style={{  // color current day yellow
                         color:(new Date().toLocaleDateString("en-US",{month:"long", day:"numeric",year:"numeric"}) === val)?
                         "rgb(248, 210, 57)":"white",
@@ -236,6 +249,7 @@ const MilestonePage = ({route}) => {
                 monthnumber={item.monthnumber+1}
                 monthname={item.long}
                 year={year}
+                duration={duration}
                 />
         )
     }

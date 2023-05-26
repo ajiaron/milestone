@@ -59,6 +59,12 @@ const EditPost = ({route}) => {
             useNativeDriver:false,
         }).start(()=>setIsPersonal(true))
     }
+    function checkDate(duration) {
+        if ((new Date(duration) - new Date())/86400000 > 0 || duration === null) {
+            return true
+        } 
+        return false
+    }
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getposts`)  
         .then((response)=> {
@@ -83,7 +89,7 @@ const EditPost = ({route}) => {
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response)=> {
-            setMilestoneList(response.data.filter((item)=>item.postable === "Everyone"))})      // TODO: Friends condition
+            setMilestoneList(response.data.filter((item)=>item.postable === "Everyone" && checkDate(item.duration)))})      // TODO: Friends condition
         .catch((error)=> console.log(error))
     },[isFocused, refreshing])
     function handleTest() {
