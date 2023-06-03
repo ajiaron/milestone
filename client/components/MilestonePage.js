@@ -211,6 +211,12 @@ const MilestonePage = ({route}) => {
         console.log('Views:', viewPermission)
         console.log(timestamp)
     }
+    function checkDate() {
+        if ((new Date(duration) - new Date())/86400000 < 0 && duration !== null) {
+            return true
+        } 
+        return false
+    }
     useEffect(()=> {    // fetch milestone info
         if (route) {
             setMilestoneId(route.params.milestone.id)
@@ -336,7 +342,7 @@ const MilestonePage = ({route}) => {
                     {(duration !== null)&&
                     <View style={styles.durationWrapper}>
                         <Text style={[styles.durationText, {fontSize:(windowH>900)?12:11.5, bottom:(windowH>900)?windowH*0.021:windowH*0.024}]}> 
-                        {`Expires on ${new Date(duration).toLocaleDateString('en-US',{month:'short', day:'numeric',year:'numeric'})}`}
+                        {`Expire${checkDate()?'d':'s'} on ${new Date(duration).toLocaleDateString('en-US',{month:'short', day:'numeric',year:'numeric'})}`}
                         </Text>
                     </View>
                     }

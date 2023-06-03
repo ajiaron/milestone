@@ -75,7 +75,9 @@ const FriendTag = ({id, username, img}) => {
             setFriends(response.data.filter((item)=>((item.requesterId === id)||(item.recipientId === id))&&
             ((item.requesterId === user.userId) || (item.recipientId === user.userId)))[0])   
             setIsFriend(response.data.filter((item)=>((item.requesterId === id)||(item.recipientId === id))&&
-            ((item.requesterId === user.userId) || (item.recipientId === user.userId)))[0].approved)
+            ((item.requesterId === user.userId) || (item.recipientId === user.userId)))[0]?
+            response.data.filter((item)=>((item.requesterId === id)||(item.recipientId === id))&&
+            ((item.requesterId === user.userId) || (item.recipientId === user.userId)))[0].approved:false)
             setPending(response.data.filter((item)=> (item.requesterId === user.userId) && (item.recipientId === id) && (!item.approved)).length > 0)
             setApproval(response.data.filter((item)=> (item.requesterId === id) && (item.recipientId === user.userId) && (!item.approved)).length > 0)
            // console.log(response.data.filter((item)=>(item.requesterId === id)||(item.recipientId === id)))

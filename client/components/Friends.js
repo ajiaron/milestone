@@ -34,12 +34,14 @@ function Friends(){
     const route = useRoute()
     const [friends, setFriends] = useState([])
     const [milestoneList, setMilestoneList] = useState([]) // initializes array
-    const animatedvalue = useRef(new Animated.Value(0)).current;
-    //const [refresh, setRefresh] = useState(false)
+    const animatedvalue = useRef(new Animated.Value(0)).current
+    const animatedcolor = useRef(new Animated.Value(0)).current
     const [query, setQuery] = useState('')
-    const scrollY = useRef(new Animated.Value(0)).current;
-    const [refreshing, setRefreshing] = useState(false);
+    const scrollY = useRef(new Animated.Value(0)).current
+    const [refreshing, setRefreshing] = useState(false)
     const [filtered, setFiltered] = useState([])
+    const [userToggle, setUserToggle] = useState(false)
+    const [userFullList, setUserFullList] = useState([])
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
@@ -47,13 +49,28 @@ function Friends(){
             setRefreshing(false);
         }, 800);
     }, []);
-    const slideUp=() =>{
+    
+    const slideUp = () =>{
         Animated.timing(animatedvalue,{
             toValue:100,
             delay:100,
             duration:500,
             useNativeDriver:false,
         }).start(()=>setLoading(false))
+    }
+    function toggleColorOn(){
+        Animated.timing(animatedcolor,{
+            toValue:0,
+            duration:250,
+            useNativeDriver:false,
+        }).start()
+    }
+    function toggleColorOff() {
+        Animated.timing(animatedcolor,{
+            toValue:100,
+            duration:250,
+            useNativeDriver:false,
+        }).start()
     }
     useEffect(()=> {
         if (query.length > 0) {
@@ -71,18 +88,28 @@ function Friends(){
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getusers`) 
         .then((response)=> {
-            setUsers(response.data.filter((item)=>((friends.map((val)=>val.requesterId).indexOf(item.id) > -1)  // match users to requests
-            ||(friends.map((val)=> val.recipientId).indexOf(item.id) > -1)) && item.id !== user.userId))
-            slideUp()
+            if (userToggle) {
+                setUsers(response.data.filter((item)=> item.public == true))
+                slideUp()
+                toggleColorOff()
+            }
+            else {
+                setUsers(response.data.filter((item)=>(
+                (friends.map((val)=>val.requesterId).indexOf(item.id) > -1)  // match users to requests
+                ||(friends.map((val)=> val.recipientId).indexOf(item.id) > -1)) && item.id !== user.userId))
+                slideUp()
+                toggleColorOn()
+            }
         })
         .catch((error)=> console.log(error))
-    }, [friends, route])
+    }, [friends, route, userToggle])
     const renderFriend = ({ item }) => {
         return (
             <FriendTag 
                 id = {item.id}
                 username = {item.name}
                 img = {item.src}
+
             />
         )
     }
@@ -95,19 +122,43 @@ function Friends(){
                 </Animated.View>
             }
             <View style={styles.friendsWrapper}>
-            <Text style={[styles.friendsHeader, {top:(windowH * -0.0125), left:2}]}>Your Friends</Text>
-            <View style={[styles.userInfoContainer]}>
-                <View style={styles.userInfoHeader}>
+                <View style={{flexDirection:"row", justifyContent:'space-between', width:windowW*.775, alignSelf:"center"}}> 
+                    {(userToggle)?
+                    <Pressable onPress={()=> setUserToggle(!userToggle)}>
+                        <Animated.Text style={[styles.friendsHeader, {color:
+                            animatedcolor.interpolate({inputRange:[0,100], outputRange:['rgba(63,184,156,1)','#fff']}),top:(windowH * -0.0125)}]}>
+                            Your Friends
+                        </Animated.Text>
+                    </Pressable>:
+                    <Animated.Text style={[styles.friendsHeader, {color:
+                    animatedcolor.interpolate({inputRange:[0,100], outputRange:['rgba(63,184,156,1)','#fff']}),top:(windowH * -0.0125)}]}>
+                        Your Friends
+                    </Animated.Text>
+                    }
+                    {(!userToggle)?
+                    <Pressable onPress={()=> setUserToggle(!userToggle)}>
+                        <Animated.Text style={[styles.friendsHeader, {color:
+                            animatedcolor.interpolate({inputRange:[0,100], outputRange:['#fff','rgba(63,184,156,1)']}),top:(windowH * -0.0125), right:4}]}>
+                            All Users
+                        </Animated.Text>
+                    </Pressable>:
+                     <Animated.Text style={[styles.friendsHeader, {color:
+                        animatedcolor.interpolate({inputRange:[0,100], outputRange:['#fff','rgba(63,184,156,1)']}),top:(windowH * -0.0125), right:4}]}>
+                        All Users
+                    </Animated.Text>
+
+                    }
                 </View>
-                <TextInput 
-                    style={styles.userInfoInput}
-                    onChangeText={(e)=>setQuery(e)}
-                    placeholder={'Search a user...'}
-                    placeholderTextColor={'rgba(221, 221, 221, 1)'}
-                    value={query}/>
-            </View>
-                <View style={styles.friendsHeaderContainer}>      
+            
+                <View style={[styles.userInfoContainer]}>
+                    <TextInput 
+                        style={styles.userInfoInput}
+                        onChangeText={(e)=>setQuery(e)}
+                        placeholder={'Search a user...'}
+                        placeholderTextColor={'rgba(221, 221, 221, 1)'}
+                        value={query}/>
                 </View>
+  
                 {!loading &&
                 <View style={(windowH > 900)?styles.postTagContainerLarge:styles.postTagContainer}>
                 <FlatList 
@@ -165,7 +216,7 @@ friendsList: {
 friendsHeader: {
     fontFamily:"Inter",
     fontSize: 20,
-    color:"white",
+
 },
 friendsHeaderContainer: {
     alignSelf:"center",
