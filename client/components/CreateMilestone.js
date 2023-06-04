@@ -20,6 +20,7 @@ const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
 const DropdownPermission = ({permission, setPermission, permisisonList}) => {
+    const user = useContext(userContext)
     const [toggled, setToggled] = useState(false)
     const animatedvalue = useRef(new Animated.Value(0)).current
     const [selectedDate, setSelectedDate] = useState(new Date())
@@ -105,7 +106,7 @@ const DropdownPermission = ({permission, setPermission, permisisonList}) => {
                 date={selectedDate}
                 mode="date"
                 title={"How long should your milestone take?"}
-                open={toggleDate}
+                open={toggleDate && !user.isExpo}
                 onConfirm = {(selectedDate)=> {
                     setToggleDate(false)
                     setConfirmed(true)
@@ -175,6 +176,7 @@ const CreateMilestone = ({route}) => {
     }
     function handlePress() {
         const modifiedISOString = handleDate()
+        console.log(user.isExpo)
         console.log("Posts:", postPermission, "| Views:", viewPermission, "| Duration:", modifiedISOString)
        // console.log("Comments:", commmentsEnabled, "| Likes:", likesEnabled, "| Sharing:", sharingEnabled)
     }

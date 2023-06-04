@@ -9,6 +9,7 @@ import FastImage from 'react-native-fast-image'
 import Footer from './Footer'
 import * as MediaLibrary from 'expo-media-library'
 import { Video } from 'expo-av'
+import pushContext from "../contexts/pushContext.js";
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
@@ -16,6 +17,7 @@ const windowH = Dimensions.get('window').height
 const PostItem = ({username, caption, src, image, postId, liked, isLast, milestones, ownerId, date, index, count, isPublic, isViewable, onToggleComment}) => {
     const milestoneList = milestones?milestones:[]
     const user = useContext(userContext)
+    const push = useContext(pushContext)
     const navigation = useNavigation()
     const route = useRoute()
     const [profilePic, setProfilePic] = useState()
@@ -32,11 +34,19 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     const [isLiked, setIsLiked] = useState(liked?liked:false)
     const [likes, setLikes] = useState([])
     const [loading, setLoading] = useState(true)
+    const [userToken, setUserToken] = useState()
     const animatedvalue = useRef(new Animated.Value(0)).current;
     const animatedsize = useRef(new Animated.Value(route.name === "MilestoneFeed"?100:0)).current;
     const AnimatedImage = Animated.createAnimatedComponent(FastImage);
     const [expanded, setExpanded] = useState(true)
-
+    const likeMessage = {
+        to: push.expoPushToken,
+        sound: 'default',
+        title: 'Milestone',
+        body: `${user.username} liked your post.`,
+        data: { route: "Notifications" },
+    };
+    
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getlikes`)  
         .then((response)=> {
@@ -55,6 +65,8 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         .then((response)=> {
             if (ownerId !== undefined) {
                 setProfilePic(response.data.filter((item)=>item.id === ownerId)[0].src)
+                setUserToken(response.data.filter((item)=> item.id === ownerId)[0].pushtoken?
+                `ExponentPushToken[${response.data.filter((item)=> item.id === ownerId)[0].pushtoken}]`:null)
             }
         }).catch(error => console.log(error))
     }, [ownerId])
@@ -100,6 +112,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     const handleEdit = () => {
         navigation.navigate("EditPost", {uri:image, postId:postId, caption:caption})
     }
+
     const handleLike = () => {
         setIsLiked(!isLiked)
         liked = isLiked
@@ -117,8 +130,13 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                     console.log("like notified")
                 })
             }
+            if (userToken && (user.userId !== ownerId)) {    // must be using a physical device to send push notifications
+                const sendPush = async() => {
+                    await push.sendPushNotification(userToken, likeMessage)
+                }
+                sendPush()
+            }
         }
-  
         else {
             axios.delete(`http://${user.network}:19001/api/unlikepost`, {data: {postid:postId, userid:user.userId}})
             .then((response)=> console.log("post unliked")).catch(error=>console.log(error))
@@ -126,6 +144,8 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     }
     const handleSelect = () => {
         //console.log(image)
+     //   console.log(userToken)
+        console.log(route)
         setIsActive(!isActive)
     }
     const toggleMute = () => {

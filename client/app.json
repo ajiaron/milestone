@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/milelogov3.png",
     "userInterfaceStyle": "dark",
+    "notification":{"icon":"./assets/milelogov3.png"},
     "splash": {
       "image": "./assets/expo-splash.png",
       "resizeMode": "contain",
@@ -36,7 +37,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.ajiaron.milestonenative",
-      "buildNumber": "31",
+      "buildNumber": "32",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos.",
         "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos."

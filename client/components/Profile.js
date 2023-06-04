@@ -6,6 +6,7 @@ import Footer from './Footer'
 import MilestoneTag from "./MilestoneTag";
 import GroupTag from "./GroupTag";
 import FastImage from 'react-native-fast-image'
+import pushContext from "../contexts/pushContext";
 import userContext from '../contexts/userContext'
 import axios from 'axios'
 
@@ -44,6 +45,7 @@ const ProfileInfo = ({name, milestones, groups, friends}) => {
 
 const Profile = ({route}) => {
     const user = useContext(userContext)
+    const push = useContext(pushContext)
     const page = useRoute()
     const [profilePic, setProfilePic] = useState()
     const [userid, setUserid] = useState(route.params.id)
@@ -154,9 +156,9 @@ const Profile = ({route}) => {
        // console.log(userid)
        // console.log(userData)
        // console.log(fileExt)
-       console.log(windowH, windowW)
-
-       //console.log(user)
+       console.log(push)
+      // console.log(windowH, windowW)
+      // console.log(user)
     }
     function handlePress() {
         navigation.navigate("Settings")

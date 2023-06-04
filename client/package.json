@@ -36,6 +36,7 @@
     "expo-image-picker": "~14.0.2",
     "expo-media-library": "~15.0.0",
     "expo-network": "~5.0.0",
+    "expo-notifications": "^0.18.1",
     "expo-sharing": "~11.0.1",
     "expo-splash-screen": "~0.17.5",
     "expo-status-bar": "~1.4.2",

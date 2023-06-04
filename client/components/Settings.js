@@ -3,7 +3,8 @@ import { Text, StyleSheet, View, Image, ScrollView, Pressable, TextInput, Switch
 import * as Device from 'expo-device'
 import { Icon } from 'react-native-elements'
 import * as ImagePicker from 'expo-image-picker'
-import { useNavigation } from "@react-navigation/native";
+import * as Notifications from 'expo-notifications';
+import { useNavigation, useRoute } from "@react-navigation/native";
 import Footer from './Footer'
 import Icons from '../data/Icons.js'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -25,6 +26,7 @@ const Settings = () => {
     const [isPublic, setIsPublic] = useState(true)
     const togglePublic = () => setIsPublic(previousState => !previousState)
     const toggleQuality = () => user.setQuality(!user.quality)
+    const toggleNotifications = () => user.setNotifications(!user.notifications)
     const [newUsername, setNewUsername] = useState(user?user.username:'')
     const [newName, setNewName] = useState(user?user.fullname:'')
     const [oldDescription, setOldDescription] = useState('')
@@ -38,6 +40,7 @@ const Settings = () => {
     const [loading, setLoading] = useState(false)
     const [progress, setProgress] = useState(0)
     const navigation = useNavigation()
+    const route = useRoute()
     const fetchContent = async (uri) => {
         setLoading(true)
         const response = await fetch(uri)
@@ -80,6 +83,7 @@ const Settings = () => {
                 .catch((error)=> console.log(error))  
             })
         }
+        await AsyncStorage.setItem('notifications', user.notifications)
     }
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -111,6 +115,7 @@ const Settings = () => {
     useEffect(()=> {
         setPreview(image)
     }, [image])
+
     return (
         <View style={styles.settingsPage}>
             <KeyboardAvoidingView
@@ -167,7 +172,7 @@ const Settings = () => {
                                     placeholderTextColor={'rgba(221, 221, 221, 1)'}
                                     value={newUsername}/>
                             </View>
-                            <View style={[styles.userInfoContainer, {marginTop:2}]}>
+                            <View style={[styles.userInfoContainer, {marginTop:0}]}>
                                 <View style={styles.userInfoHeader}>
                                     <Text style={styles.userInfoHeaderText}>
                                         NAME
@@ -180,7 +185,7 @@ const Settings = () => {
                                     placeholderTextColor={'rgba(221, 221, 221, 1)'}
                                     value={newName}/>
                             </View>
-                            <View style={[styles.userInfoContainer, {marginTop:2}]}>
+                            <View style={[styles.userInfoContainer, {marginTop:0}]}>
                                 <View style={styles.userInfoHeader}>
                                     <Text style={styles.userInfoHeaderText}>
                                         DESCRIPTION
@@ -193,7 +198,7 @@ const Settings = () => {
                                     placeholderTextColor={'rgba(221, 221, 221, 1)'}
                                     value={newDescription}/>
                             </View>
-                            <View style={[styles.userInfoContainer, {marginTop:2}]}>
+                            <View style={[styles.userInfoContainer, {marginTop:0}]}>
                                 <View style={styles.userInfoHeader}>
                                     <Text style={styles.userInfoHeaderText}>
                                         EMAIL ADDRESS
@@ -206,7 +211,7 @@ const Settings = () => {
                                     placeholderTextColor={'rgba(221, 221, 221, 1)'}
                                     value={newEmail}/>
                             </View>
-                            <View style={styles.publicAccountContainer}>
+                            <View style={[styles.publicAccountContainer, {marginTop:(windowH>900)?4:2}]}>
                                 <Text style={styles.userInfoHeaderText}>
                                     PUBLIC ACCOUNT
                                 </Text>
@@ -218,7 +223,19 @@ const Settings = () => {
                                     onValueChange={togglePublic}
                                     value={isPublic}
                                 />
-                               
+                            </View>
+                            <View style={[styles.notificationsContainer]}>
+                                <Text style={styles.userInfoHeaderText}>
+                                    ENABLE NOTIFICATIONS
+                                </Text>
+                                <Switch
+                                    style={{ transform: [{ scaleX: .6 }, { scaleY: .6}], top:-1, marginLeft:windowW*(4/windowW)}}
+                                    trackColor={{ false: "#bbb", true: "#35AE92" }}
+                                    thumbColor={user.quality ? "#1f1e1e" : "#1f1e1e"}
+                                    ios_backgroundColor="#eee"
+                                    onValueChange={toggleNotifications}
+                                    value={user.notifications}
+                                />    
                             </View>
                             <View style={[styles.qualityContainer]}>
                                 <Text style={styles.userInfoHeaderText}>
@@ -231,11 +248,11 @@ const Settings = () => {
                                     ios_backgroundColor="#eee"
                                     onValueChange={toggleQuality}
                                     value={user.quality}
-                                />
-                               
+                                />    
                             </View>
+                            
                             <Pressable onPress={handleChanges}
-                                style={styles.saveChangesButton}
+                                style={[styles.saveChangesButton, {marginTop:(windowH>900)?10:5}]}
                                 >
                                 <View style={styles.resetButtonContent} > 
                                     <Text style={[styles.saveChangesText]}>
@@ -253,7 +270,7 @@ const Settings = () => {
                                     </Text>
                                 </View>
                             </Pressable>
-
+                            {  /* does nothing for now
                             <View style={styles.userProfileLinkContainer}>
                                 <Icon 
                                     style={{transform:[{rotate:"-45deg"}], top:-0.5}}
@@ -262,8 +279,9 @@ const Settings = () => {
                                     color='rgba(178, 178, 178, 1)'
                                     size={23}
                                 />
-                                <Text style={styles.userProfileLink}> {`milestone.com/${user.username}`}</Text>
+                              <Text style={styles.userProfileLink}> {`milestone.com/${user.username}`}</Text>
                             </View>
+                            */}
                         </View>
                     </View>
                     </ScrollView>
@@ -306,12 +324,12 @@ const styles = StyleSheet.create({
         fontSize:12.5,
         color:"#35AE92",
         alignSelf:"center",
-        marginTop:0.02*windowH
+        marginTop:0.015*windowH
     },
     userInfo: {
         height: windowH * (348/windowH),
         width:windowW * (288/windowW),
-        marginTop:windowH*(22/windowH)
+        marginTop:windowH*(20/windowH)
     },
     userInfoContainer: {
         width:windowW * (288/windowW),
@@ -351,19 +369,31 @@ const styles = StyleSheet.create({
     publicAccountContainer: {
         flexDirection:"row",
         alignItems:"center",
+        justifyContent:"space-between",
         left:0,
         maxWidth:windowW * (288/windowW),
         height: windowH * (20/windowH),
         marginTop:windowH*(4/windowH),
+        marginBottom:windowH*(15/windowH),
+    },
+    notificationsContainer: {
+        flexDirection:"row",
+        alignItems:"center",
+        left:0,
+        justifyContent:"space-between",
+        maxWidth:windowW * (288/windowW),
+        height: windowH * (20/windowH),
         marginBottom:windowH*(16/windowH),
     },
     qualityContainer: {
         flexDirection:"row",
         alignItems:"center",
+        justifyContent:"space-between",
         left:0,
+        
         maxWidth:windowW * (288/windowW),
         height: windowH * (20/windowH),
-        marginBottom:windowH*(20/windowH),
+        marginBottom:windowH*(16/windowH),
     },
     publicAccountToggle: {
         marginLeft:windowW * (18/windowW)
@@ -371,7 +401,7 @@ const styles = StyleSheet.create({
     saveChangesButton: {
         alignSelf:"center",
         width: windowW*(288/windowW),
-        height: windowH*(28/windowH),
+        height: windowH*(30/windowH),
         alignItems:"center",
         borderRadius:5,
         textAlign:"center",
@@ -382,7 +412,7 @@ const styles = StyleSheet.create({
         marginTop:14,
         alignSelf:"center",
         width: windowW*(288/windowW),
-        height: windowH*(28/windowH),
+        height: windowH*(30/windowH),
         alignItems:"center",
         borderRadius:5,
         borderStyle:"dashed",

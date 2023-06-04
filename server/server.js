@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const mysql = require('mysql')
+const axios = require('axios')
 const cors = require('cors')
 app.use(express.json())
 app.use(cors())
@@ -390,6 +391,26 @@ app.post('/api/postnotification', (req, res) => {
     })
 })
 
+// send request to Expo HTTP API for push notifications
+app.post('/api/send-push-notification', async (req,res) => {
+    const expoPushToken = req.body.expoPushToken
+    const message = req.body.message
+    const headers = {
+        'Accept': 'application/json',
+        'Accept-encoding': 'gzip, deflate',
+        'Content-Type': 'application/json'
+    }
+    try {
+        await axios.post('https://exp.host/--/api/v2/push/send', message, {headers});
+        console.log('Push notification sent successfully');
+        res.status(200).json({ message: 'Push notification sent successfully' });
+    } 
+    catch (error) {
+        console.log('Error sending push notification:', error);
+        res.status(500).json({ error: 'Error sending push notification' });
+    }
+})
+
 app.put('/api/updatepost', (req, res) => {
     const postid = req.body.postid
     const caption = req.body.caption
@@ -476,7 +497,18 @@ app.put('/api/acceptfriend', (req, res) => {
         }
     })
 })
-
+app.put('/api/updatetoken', (req, res) => {
+    const id = req.body.id
+    const token = req.body.token
+    db.query('UPDATE users SET pushtoken = ? WHERE id = ?', [token, id],
+    (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
 app.delete('/api/deletefriend', (req, res) => {
     const requesterid = req.body.requesterid
     const recipientid = req.body.recipientid

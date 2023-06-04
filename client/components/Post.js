@@ -12,12 +12,14 @@ import MilestoneTag from "./MilestoneTag";
 import RequestButton from "./RequestButton.js";
 import CommentBox from "./CommentBox.js";
 import Navbar from "./Navbar.js";
+import pushContext from "../contexts/pushContext.js";
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
 const Post = ({navigation, route}) => {
     const user = useContext(userContext)
+    const push = useContext(pushContext)
     const milestoneData = require('../data/Milestones.json')
     const [commentToggle, setCommentToggle] = useState(route.params.comments?true:false)
     const [postId, setPostId] = useState(route.params.item.postId?route.params.item.postId:0)
@@ -25,6 +27,7 @@ const Post = ({navigation, route}) => {
     const [linkedMilestones, setLinkedMilestones] = useState([])
     const [milestoneList, setMilestoneList] = useState([])
     const [newComment, setNewComment] = useState('')
+    const [userToken, setUserToken] = useState()
     const [commentList, setCommentList] = useState([])
     const [likesList, setLikesList] = useState([])
     const [userList, setUserList] = useState([])
@@ -32,6 +35,15 @@ const Post = ({navigation, route}) => {
     const currentRoute = useRoute()
     const [loading, setLoading] = useState(true)
     const scrollY = useRef(new Animated.Value(0)).current
+
+    //put post info in commentMessage so the notification can route here
+    const commentMessage = {
+        to: push.expoPushToken,
+        sound: 'default',
+        title: 'Milestone',
+        body: `${user.username} commented on your post.`,  
+        data: { route: "Notifications" },
+    };
 
     function submitComment(comment) {
         setNewComment(comment)
@@ -46,8 +58,23 @@ const Post = ({navigation, route}) => {
                     console.log("comment notified")
                 })
                 .catch((error)=> console.log(error))
+                if (userToken) {
+                    const sendPush = async() => {
+                        await push.sendPushNotification(userToken, commentMessage)
+                    }
+                    sendPush()
+                }
             }
     }
+    useEffect(()=> {    // for push notification on comments
+        axios.get(`http://${user.network}:19001/api/getusers`)  
+        .then((response)=> {
+            if (route.params.item.ownerId !== undefined) {
+                setUserToken(response.data.filter((item)=> item.id === route.params.item.ownerId)[0].pushtoken?
+                `ExponentPushToken[${response.data.filter((item)=> item.id === route.params.item.ownerId)[0].pushtoken}]`:null)    
+            }
+        }).catch(error => console.log(error))
+    }, [])
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getuserlikes/${postId}`)  
         .then((response)=> {

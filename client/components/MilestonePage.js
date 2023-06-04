@@ -342,7 +342,7 @@ const MilestonePage = ({route}) => {
                     {(duration !== null)&&
                     <View style={styles.durationWrapper}>
                         <Text style={[styles.durationText, {fontSize:(windowH>900)?12:11.5, bottom:(windowH>900)?windowH*0.021:windowH*0.024}]}> 
-                        {`Expire${checkDate()?'d':'s'} on ${new Date(duration).toLocaleDateString('en-US',{month:'short', day:'numeric',year:'numeric'})}`}
+                        {`${checkDate()?'Completed':'Expires'} on ${new Date(duration).toLocaleDateString('en-US',{month:'short', day:'numeric',year:'numeric'})}`}
                         </Text>
                     </View>
                     }

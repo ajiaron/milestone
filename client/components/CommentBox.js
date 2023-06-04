@@ -22,7 +22,7 @@ const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentL
     const slideup = () => {
         setToggled(true)
         Animated.timing(animatedvalue,{
-            toValue:(mediaType === 'mov')?(windowH > 900)?windowH*.83:windowH*.78:(windowH > 900)?windowH*.84:windowH*.7,
+            toValue:(mediaType === 'mov')?windowH*.83:(windowH > 900)?windowH*.84:windowH*.7,
             duration:300,
             useNativeDriver:false,
         }).start()
@@ -156,7 +156,7 @@ const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentL
                 scrollEventThrottle={0}
                 scrollEnabled={toggled && scrollable}
             > 
-                <View style={{paddingBottom:(mediaType === 'mov')?14:2,
+                <View style={{paddingBottom:(mediaType === 'mov')?(toggled)?2:16:2,
                 flexDirection:"row", alignItems:"center", flex:1, paddingLeft:20, paddingRight:20, backgroundColor:"rgba(18,18,18,1)"}}>
                 <TextInput style={[styles.commentText,{flex:1, bottom:(!toggled)?2:(windowH>900)?-2:-1}]} 
                 scrollEnabled={true}

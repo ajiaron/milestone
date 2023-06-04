@@ -122,6 +122,7 @@ const Navbar = ({title, scrollY, id, date, count, newNotification, onClearNotifi
                     </Pressable>
                     {(route.name==='Feed') ?
                     <Animated.View style={{position:"relative", paddingLeft:(windowH>900)?108.5:90}}>
+                        
                         <Pressable onPress={()=>navigation.navigate("Notifications")}>
                             {(newNotification)?
                             <View style={styles.settingsNotification}/>:null

@@ -7,12 +7,17 @@ import PostItem from './PostItem'
 import axios from 'axios'
 import MilestoneReel from "./MilestoneReel";
 import Navbar from "./Navbar";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Device from 'expo-device'
+import * as Notifications from 'expo-notifications';
 import userContext from '../contexts/userContext'
+import pushContext from "../contexts/pushContext";
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
 const Feed = ({route}) => {
+    const push = useContext(pushContext)
     const user = useContext(userContext)
     const navigation = useNavigation()
     const postData = require('../data/PostData.json')
@@ -21,6 +26,8 @@ const Feed = ({route}) => {
     const [isViewable, setIsViewable] = useState([0])
     const [loading, setLoading] = useState(true)
     const [notification, setNotification] = useState(false)
+    const notificationListener = useRef();
+    const responseListener = useRef();
     const isFocused = useIsFocused()
     const scrollRef = useRef()
     const scrollY = useRef(new Animated.Value(0)).current
@@ -61,7 +68,7 @@ const Feed = ({route}) => {
     const viewabilityConfigCallbackPairs = useRef([{ viewabilityConfig, onViewableItemsChanged }])
     
     useEffect(()=> {
-        axios.get(`http://ec2-13-52-215-193.us-west-1.compute.amazonaws.com:19001/api/getposts`)  // if this throws an error, replace 10.0.0.160 with localhost
+        axios.get(`http://ec2-13-52-215-193.us-west-1.compute.amazonaws.com:19001/api/getposts`) 
         .then((response)=> {
             setPostFeed(response.data.filter((item)=>(item.public === 1)||(item.public=== 0 && item.ownerid === user.userId)))
         }).catch(error => console.log(error))
@@ -74,6 +81,49 @@ const Feed = ({route}) => {
         })
         .catch((error) => console.log(error))
     }, [isFocused])
+
+    const message = {
+        to: push.expoPushToken,
+        sound: 'default',
+        title: 'Milestone',
+        body: 'Working on something lately?',
+        data: { route: "Feed" },
+    };
+
+    // handling notifications here
+    Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+            shouldShowAlert: true,
+            shouldPlaySound: true,
+            shouldSetBadge: true,
+        }),
+    });
+        
+    useEffect(()=> {
+        push.registerForPushNotificationsAsync().then(token => push.setExpoPushToken(token))
+        notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+            push.setPushNotification(notification);
+        });
+        responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+            const {
+                notification: {
+                    request: {
+                        content: {
+                            data: { route },
+                        },
+                    },
+                },
+            } = response;
+            if (route) {
+                navigation.navigate(route)
+            }
+        });
+        return () => {
+            Notifications.removeNotificationSubscription(notificationListener.current);
+            Notifications.removeNotificationSubscription(responseListener.current);
+        };      
+    }, [])
+
     const renderPost = ({ item }) => {
       return (
         <>
@@ -106,6 +156,17 @@ const Feed = ({route}) => {
             </Animated.View>
           }
           <Navbar title={"milestone"} scrollY={scrollY} newNotification={notification}/>
+          { /*test push notifications
+            Device.isDevice &&
+            <Pressable onPress={async() => {
+                await push.sendPushNotification(push.expoPushToken, message)
+            }}
+            style={{minWidth:windowW, minHeight:50, backgroundColor:'rgba(43,154,106,1)', alignItems:"center", zIndex:999, top:'12%'}}>
+                <Text style={{color:'white', fontFamily:"InterBold", fontSize:16, alignSelf:"center", marginTop:16}}>
+                    Test
+                </Text>
+            </Pressable>*/
+          }
           <View style={styles.feedContainer}>
                 <Animated.FlatList 
                 ref={scrollRef}

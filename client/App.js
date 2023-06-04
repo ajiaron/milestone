@@ -5,6 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useFonts } from 'expo-font'
 import userContext from './contexts/userContext'
+import pushContext from "./contexts/pushContext";
 import Landing from './components/Landing'
 import Login from './components/Login'
 import Register from './components/Register'
@@ -27,6 +28,7 @@ import Friends from './components/Friends'
 import MilestoneFeed from './components/MilestoneFeed'
 import { Amplify, Storage } from 'aws-amplify';
 import awsconfig from './src/aws-exports';
+import PushProvider from "./contexts/PushProvider";
 Amplify.configure(awsconfig);
 
 const Stack = createNativeStackNavigator()
@@ -43,6 +45,7 @@ function App() {
   }
   return (
     <UserProvider>
+        <PushProvider>
         <NavigationContainer>
           <Stack.Navigator screenOptions={{headerShown:false}} initialRouteName={"Landing"}>
             <Stack.Screen name="Landing" component={Landing} />
@@ -64,9 +67,9 @@ function App() {
             <Stack.Screen name="EditMilestone" component={EditMilestone} />
             <Stack.Screen name="MilestonePage" component={MilestonePage} />
             <Stack.Screen name="MilestoneFeed" component={MilestoneFeed} />
-            
           </Stack.Navigator>
         </NavigationContainer>
+        </PushProvider>
       </UserProvider>
     );
   }
