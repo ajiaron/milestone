@@ -52,8 +52,8 @@ const PushProvider = ({children}) => {
             console.log('Error:',error)
         })
     };
-    async function schedulePushNotification(date, milestone) {       // route this to new CreateMilestone page
-        await Notifications.scheduleNotificationAsync({
+    async function schedulePushNotification(date, milestone, id) {       // route this to new CreateMilestone page
+        const scheduledNotification = await Notifications.scheduleNotificationAsync({
           content: {
             title: "Milestone",
             body: `${milestone} is set to expire tomorrow! ⏰`,
@@ -63,6 +63,12 @@ const PushProvider = ({children}) => {
             date: new Date(date)
          },
         });
+        axios.put(`http://${user.network}:19001/api/updatemilestonetoken`, 
+        {id:id, token:scheduledNotification})
+        .then(()=>{
+            console.log('milestone token saved')
+        })
+        console.log(scheduledNotification)
       }
     async function getScheduledNotifications() {
         try {
@@ -76,6 +82,17 @@ const PushProvider = ({children}) => {
     const cancelScheduledNotification = async (notificationId) => {
         await Notifications.cancelScheduledNotificationAsync(notificationId);
     };      
+    const cancelAllScheduled = async() => {
+        try {
+            await Notifications.cancelAllScheduledNotificationsAsync()
+            console.log('scheduled notifications deleted')
+        }
+        catch (e) {
+            console.log('error:', e)
+        }
+
+        
+    }
     return (
         <pushContext.Provider value = {{
             expoPushToken:expoPushToken, setExpoPushToken:setExpoPushToken,
@@ -84,7 +101,8 @@ const PushProvider = ({children}) => {
             registerForPushNotificationsAsync:registerForPushNotificationsAsync,
             sendPushNotification:sendPushNotification, schedulePushNotification,
             getScheduledNotifications:getScheduledNotifications,
-            cancelScheduledNotification:cancelScheduledNotification
+            cancelScheduledNotification:cancelScheduledNotification,
+            cancelAllScheduled:cancelAllScheduled
         }}>
           {children}
         </pushContext.Provider>

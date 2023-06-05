@@ -129,18 +129,18 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getlinkedmilestones`)
         .then((response)=> {
-            setPosts(response.data.filter((item)=> item.milestoneid === id).length)
+            setPosts(response.data.filter((item)=> item.milestoneid == id).length)
         })
         .catch((error)=> console.log(error))
     },[isEmpty])
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response)=> {
-            setStartDate(new Date(response.data.filter((item)=> item.idmilestones === id).map((item)=>
+            setStartDate(new Date(response.data.filter((item)=> item.idmilestones == id).map((item)=>
             item.date)[0]).toLocaleDateString("en-US", {month:"short", day:"numeric"}))
-            setFullDate(new Date(response.data.filter((item)=> item.idmilestones === id).map((item)=>
+            setFullDate(new Date(response.data.filter((item)=> item.idmilestones == id).map((item)=>
             item.date)[0]).toLocaleDateString("en-US", {month:"short", day:"numeric", year:"numeric"}))
-            setDuration(response.data.filter((item)=> item.idmilestones === id)[0].duration)
+            setDuration(response.data.filter((item)=> item.idmilestones == id)[0].duration)
         })
         .catch((error)=> console.log(error))
     }, [])

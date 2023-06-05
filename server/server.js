@@ -526,7 +526,7 @@ app.put('/api/updatetoken', (req, res) => {
 app.put('/api/updatemilestonetoken', (req, res) => {    // need to put this in ec2 to update duration token
     const id = req.body.id
     const token = req.body.token
-    db.query('UPDATE milestones SET token = ? WHERE id = ?', [token, id],
+    db.query('UPDATE milestones SET token = ? WHERE idmilestones = ?', [token, id],
     (err, result) => {
         if (err) {
             console.log(err)

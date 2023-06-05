@@ -125,6 +125,7 @@ const MilestonePage = ({route}) => {
     const [viewPermission, setViewPermission] = useState('Everyone')
     const [duration, setDuration] = useState(null)
     const [timestamp, setTimestamp] = useState()
+    const [token, setToken] = useState()
     const scrollY = useRef(new Animated.Value(0)).current;
     const animatedvalue = useRef(new Animated.Value(0)).current;
     var fileExt = (image !== undefined)?image.toString().split('.').pop():'calender'
@@ -187,7 +188,7 @@ const MilestonePage = ({route}) => {
     }, [])
     function handlePress() {    // pass props to EditMilestone
         navigation.navigate("EditMilestone", {id:route.params.milestone.id, title:title, description:description, src:image,
-        postable:postPermission, viewable:viewPermission, duration:duration})
+        postable:postPermission, viewable:viewPermission, duration:duration, token:token})
     }
     function handleFavorite() {     // change displayed milestone on profile page
         setFavorite(!favorite)
@@ -207,9 +208,11 @@ const MilestonePage = ({route}) => {
         }).start(()=>setLoading(false))
     }
     function handleTest() {
-        console.log('Posts:', postPermission)
-        console.log('Views:', viewPermission)
-        console.log(timestamp)
+      //  console.log('Posts:', postPermission)
+       // console.log('Views:', viewPermission)
+       // console.log(timestamp)
+       // console.log(route.params.milestone.id)
+        console.log(postList)
     }
     function checkDate() {
         if ((new Date(duration) - new Date())/86400000 < 0 && duration !== null) {
@@ -223,14 +226,15 @@ const MilestonePage = ({route}) => {
         }
         axios.get(`http://${user.network}:19001/api/getmilestones`)  // combine these states using useReducer or some object
         .then((response)=> {
-            setTitle(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].title)
-            setImage(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].src)
-            setStreak(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].streak)
-            setDescription(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].description)
-            setOwnerId(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].ownerId)
-            setPostPermission(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].postable)
-            setViewPermission(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].viewable)
-            setDuration(response.data.filter((item)=> item.idmilestones === route.params.milestone.id)[0].duration)
+            setTitle(response.data.filter((item)=> item.idmilestones == route.params.milestone.id)[0].title)
+            setImage(response.data.filter((item)=> item.idmilestones == route.params.milestone.id)[0].src)
+            setStreak(response.data.filter((item)=> item.idmilestones == route.params.milestone.id)[0].streak)
+            setDescription(response.data.filter((item)=> item.idmilestones == route.params.milestone.id)[0].description)
+            setOwnerId(response.data.filter((item)=> item.idmilestones == route.params.milestone.id)[0].ownerId)
+            setPostPermission(response.data.filter((item)=> item.idmilestones == route.params.milestone.id)[0].postable)
+            setViewPermission(response.data.filter((item)=> item.idmilestones == route.params.milestone.id)[0].viewable)
+            setDuration(response.data.filter((item)=> item.idmilestones == route.params.milestone.id)[0].duration)
+            setToken(response.data.filter((item)=> item.idmilestones == route.params.milestone.id)[0].token)
         })
         .then(()=>slideUp())
         .catch(error => console.log(error))
@@ -244,7 +248,7 @@ const MilestonePage = ({route}) => {
     useEffect(()=> {    // check if current milestone is favorited
         axios.get(`http://${user.network}:19001/api/getusers`)
         .then((response)=> {
-            setFavorite(response.data.filter((item)=> item.id === user.userId)[0].favoriteid === route.params.milestone.id)
+            setFavorite(response.data.filter((item)=> item.id === user.userId)[0].favoriteid == route.params.milestone.id)
         })
      }, [])
     const renderGrid = ({item}) => {    // for calender
@@ -349,7 +353,7 @@ const MilestonePage = ({route}) => {
                     <View style={styles.descriptionContainer}>
                         <Text style={[styles.descriptionText, {fontSize:(windowH>900)?13:12.5}]}>
                             {(description)?description:
-                            `Re-learning piano.\nCurrently trying to learn: Fantasie Impromptu\n\n🔥 Follow me on my journey!`}
+                            `New start, new milestone!`}
                         </Text>
                     </View>
                 </View>

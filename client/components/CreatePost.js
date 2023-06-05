@@ -38,7 +38,7 @@ const CreatePost = ({route}) => {
     const navigation = useNavigation()
     const user = useContext(userContext)
     const isFocused = useIsFocused()
-    const [postId, setPostId] = useState(0)
+    const [postId, setPostId] = useState(uuid.v4())
     const [file, setFile] = useState()
     const [personalMilestones,setPersonalMilestones] = useState([])
     const [loading, setLoading] = useState(false)
@@ -54,7 +54,6 @@ const CreatePost = ({route}) => {
         data: { route: "MilestonePage" },
     };
     
-
     function switchPersonal() {
         Animated.timing(animatedvalue,{
             toValue:100,
@@ -75,13 +74,6 @@ const CreatePost = ({route}) => {
         } 
         return false
     }
-    useEffect(()=> {
-        axios.get(`http://${user.network}:19001/api/getposts`)
-        .then((response)=> {
-            setPostId(uuid.v4())
-        })
-        .catch((error)=> console.log(error))
-    }, [])
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response)=> {
@@ -133,10 +125,6 @@ const CreatePost = ({route}) => {
         .catch((e)=>console.log(e))
     }
     function handleUpload() {
-       // console.log('comments:',commmentsEnabled)
-       // console.log('likes:',likesEnabled)
-       // console.log('public:',sharingEnabled)
-       // console.log(postId)
         console.log(milestones)
        // console.log(milestoneList.filter((item)=>item.ownerId === user.userId).length )
     }

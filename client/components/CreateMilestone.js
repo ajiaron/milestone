@@ -13,6 +13,7 @@ import * as ImagePicker from 'expo-image-picker'
 import DatePicker from 'react-native-date-picker';
 import pushContext from "../contexts/pushContext.js";
 import { Amplify, Storage } from 'aws-amplify';
+import uuid from 'react-native-uuid';
 import awsconfig from '../src/aws-exports';
 import { UserAgent } from "amazon-cognito-identity-js";
 Amplify.configure(awsconfig);
@@ -144,6 +145,7 @@ const CreateMilestone = ({route}) => {
     const [duration, setDuration] = useState('Indefinitely')
     const [loading, setLoading] = useState(false)
     const [progress, setProgress] = useState(0)
+    const [id, setId] = useState(uuid.v4())
     const animatedval= useRef(new Animated.Value(0)).current;
     const scrollY = useRef(new Animated.Value(0)).current;
     const routes = navigation.getState()?.routes;
@@ -178,8 +180,16 @@ const CreateMilestone = ({route}) => {
     }
     function handlePress() {
         const modifiedISOString = handleDate()
+        const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
+        const myDate = new Date(new Date(modifiedISOString).getFullYear(),new Date(modifiedISOString).getMonth()
+        ,new Date(modifiedISOString).getDate()-1).toISOString().substring(0,11) + currentTime
+
+        //if (duration !== "Indefinitely" && duration !== "Next Day") {
+        //   push.schedulePushNotification(myDate, title, id)      // remove notification if user edits duration
+        //}
+        //push.cancelAllScheduled()
         console.log(push.getScheduledNotifications())
-        console.log("Posts:", postPermission, "| Views:", viewPermission, "| Duration:", duration)
+       // console.log("Posts:", postPermission, "| Views:", viewPermission, "| Duration:", duration)
        // console.log("Comments:", commmentsEnabled, "| Likes:", likesEnabled, "| Sharing:", sharingEnabled)
     }
     const pickImage = async () => {
@@ -214,13 +224,19 @@ const CreateMilestone = ({route}) => {
         })
         .then((res)=> {
             const modifiedISOString = handleDate()
+            const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
+            const myDate = new Date(new Date(modifiedISOString).getFullYear(),new Date(modifiedISOString).getMonth()
+            ,new Date(modifiedISOString).getDate()-1).toISOString().substring(0,11) + currentTime
             console.log('result ---',`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`)
             axios.post(`http://${user.network}:19001/api/postmilestones`, 
-            {title: title,src:image?`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`:'defaultmilestone',
+            {idmilestones:id, title: title, src:image?`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`:'defaultmilestone',
             streak:0, description:description, ownerid:user.userId, postable:postPermission, viewable:viewPermission, 
             duration:modifiedISOString}) 
             .then(() => {
                 console.log('new milestone saved')
+                if (duration !== "Indefinitely" && duration !== "Next Day") {
+                    push.schedulePushNotification(myDate, title, id)      
+                }
                 setLoading(false)
                 if (fromCreate) {
                     navigation.goBack()
@@ -243,9 +259,6 @@ const CreateMilestone = ({route}) => {
         }
         else {
             uploadContent(image)
-            if (duration !== "Indefinitely" && duration !== "Next Day") {
-                push.schedulePushNotification(myDate, title)      // remove notification if user edits duration
-            }
         }
     }
     return (

@@ -136,6 +136,7 @@ const EditMilestone = ({route}) => {
     const [image, setImage] = useState((route.params.src !== undefined)?route.params.src:null)
     const [photoUri, setPhotoUri] = useState()
     const [title, setTitle] = useState((route.params.title !== undefined)?route.params.title:'')
+    const [token, setToken] = useState((route.params.token !== undefined)?route.params.token:null)
     const [description, setDescription] = useState((route.params.description !== undefined)?route.params.description:'')
     const [commmentsEnabled, setCommentsEnabled] = useState(true)
     const toggleComments = () => setCommentsEnabled(previousState => !previousState)
@@ -175,6 +176,7 @@ const EditMilestone = ({route}) => {
         DeleteAlert().then((resolve)=> {
             if (resolve) {
                   deleteMilestone()
+                  push.cancelScheduledNotification(token)
                   navigation.navigate("Feed")
             }}
         )
@@ -225,6 +227,11 @@ const EditMilestone = ({route}) => {
         })
         .then((res)=> {
             const modifiedISOString = handleDate()
+            const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
+            const myDate = new Date(new Date(modifiedISOString).getFullYear(),new Date(modifiedISOString).getMonth()
+            ,new Date(modifiedISOString).getDate()-1).toISOString().substring(0,11) + currentTime
+
+            push.cancelScheduledNotification(token)
             console.log('result ---',`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`)
             axios.put(`http://${user.network}:19001/api/updatemilestone`, 
             {milestoneid: route.params.id, title: title, description:description,
@@ -232,6 +239,9 @@ const EditMilestone = ({route}) => {
             duration:modifiedISOString})
             .then(() => {
                 console.log('milestone updated')
+                if (duration !== "Indefinitely" && duration !== "Next Day") {
+                    push.schedulePushNotification(myDate, title, route.params.id)      
+                }
                 setLoading(false)
                 navigation.navigate("Feed")
             })
@@ -245,11 +255,18 @@ const EditMilestone = ({route}) => {
        }
        else {
         const modifiedISOString = handleDate()
+        const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
+        const myDate = new Date(new Date(modifiedISOString).getFullYear(),new Date(modifiedISOString).getMonth()
+        ,new Date(modifiedISOString).getDate()-1).toISOString().substring(0,11) + currentTime
+        push.cancelScheduledNotification(token)
         axios.put(`http://${user.network}:19001/api/updatemilestone`, 
         {milestoneid: route.params.id, title: title, description:description, 
         src:image, postable:postPermission, viewable:viewPermission, duration:modifiedISOString})
         .then(() => {
             console.log('milestone updated')
+            if (duration !== "Indefinitely" && duration !== "Next Day") {
+                push.schedulePushNotification(myDate, title, route.params.id)      
+            }
             setLoading(false)
             navigation.navigate("Feed")
         })
@@ -261,8 +278,11 @@ const EditMilestone = ({route}) => {
     }, [routes])
     function handleTest() {
         const modifiedISOString = handleDate()
-        console.log(modifiedISOString)
-       // push.cancelScheduledNotification('35af2a30-21be-42dd-af19-8d1978874c2d')
+      //  console.log(modifiedISOString)
+      //  console.log(duration)
+      //  console.log(token)
+      //  console.log(route.params.id)
+      //  push.cancelScheduledNotification(token)
     }
     return (
         <View style={styles.createMilestonePage}>

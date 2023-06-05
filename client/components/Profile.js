@@ -67,9 +67,9 @@ const Profile = ({route}) => {
     useEffect(()=> {    // set displayed milestone to the favorited one
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response)=> {
-            setMilestones(response.data.filter((item)=> item.idmilestones === favorite))
+            setMilestones(response.data.filter((item)=> item.idmilestones == favorite))
             // display how many milestones the user owns in their insights
-            setMilestoneCount(response.data.filter((item)=>item.ownerId === userid).length)
+            setMilestoneCount(response.data.filter((item)=>item.ownerId == userid).length)
         })
     }, [favorite])
     useEffect(()=> {
