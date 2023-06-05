@@ -133,6 +133,17 @@ app.get('/api/getuserlikes/:postid', (req, res) => {
         }
     })
 })
+app.get('/api/getusertoken/:userid', (req, res) => {
+    const userid = req.params.userid
+    const sql = 'SELECT pushtoken FROM milestone_db.users WHERE id = ?' 
+    db.query(sql, [userid], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
 app.get('/api/getusercomments/:postid', (req, res) => {
     const postid = req.params.postid
     const sql = 'SELECT id as userid, name, src as img, postcomments.commentid, postcomments.comment, postcomments.date FROM milestone_db.users' +
@@ -146,6 +157,7 @@ app.get('/api/getusercomments/:postid', (req, res) => {
         }
     })
 })
+
 // grabs the milestones that have been posted to within the last week, 
 // if your either own the milestone, or if the post owner is in your friends list
 app.get('/api/getrecentupdates/:id', (req, res) => {
@@ -260,8 +272,9 @@ app.post('/api/postmilestones', (req, res) => {
     const postable = req.body.postable
     const viewable = req.body.viewable
     const duration = req.body.duration
-    db.query('INSERT INTO milestones (title, src, streak, description, ownerid, postable, viewable, duration) VALUES (?,?,?,?,?,?,?,?)',
-    [title, src, streak, description, ownerid, postable, viewable, duration], (err, result) => {
+    const token = req.body.token
+    db.query('INSERT INTO milestones (title, src, streak, description, ownerid, postable, viewable, duration, token) VALUES (?,?,?,?,?,?,?,?,?)',
+    [title, src, streak, description, ownerid, postable, viewable, duration, token], (err, result) => {
         if(err) {
             console.log(err)
         } else {
@@ -450,8 +463,9 @@ app.put('/api/updatemilestone', (req, res) => {
     const postable = req.body.postable
     const viewable = req.body.viewable
     const duration = req.body.duration
-    db.query('UPDATE milestones SET title = ?, description = ?, src = ?, postable = ?, viewable = ?, duration = ? WHERE idmilestones = ?',
-    [title, description, src, postable, viewable, duration, milestoneid],
+    const token = req.body.token
+    db.query('UPDATE milestones SET title = ?, description = ?, src = ?, postable = ?, viewable = ?, duration = ?, token = ? WHERE idmilestones = ?',
+    [title, description, src, postable, viewable, duration, token, milestoneid],
     (err, result)=> {
         if (err) {
             console.log(err)
@@ -501,6 +515,18 @@ app.put('/api/updatetoken', (req, res) => {
     const id = req.body.id
     const token = req.body.token
     db.query('UPDATE users SET pushtoken = ? WHERE id = ?', [token, id],
+    (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.put('/api/updatemilestonetoken', (req, res) => {    // need to put this in ec2 to update duration token
+    const id = req.body.id
+    const token = req.body.token
+    db.query('UPDATE milestones SET token = ? WHERE id = ?', [token, id],
     (err, result) => {
         if (err) {
             console.log(err)

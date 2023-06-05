@@ -11,6 +11,7 @@ const PushProvider = ({children}) => {
     const [pushNotification, setPushNotification] = useState(false);
     const notificationListener = useRef();
     const responseListener = useRef();
+      
     const registerForPushNotificationsAsync = async () => {
         let token;
         if (Device.isDevice) {
@@ -51,14 +52,39 @@ const PushProvider = ({children}) => {
             console.log('Error:',error)
         })
     };
-
+    async function schedulePushNotification(date, milestone) {       // route this to new CreateMilestone page
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "Milestone",
+            body: `${milestone} is set to expire tomorrow! ⏰`,
+            data: { route: 'Feed' },                                // attach a key here to fetch from database, then get identifier
+          },
+          trigger: { 
+            date: new Date(date)
+         },
+        });
+      }
+    async function getScheduledNotifications() {
+        try {
+            const triggers = await Notifications.getAllScheduledNotificationsAsync()
+            console.log(triggers)
+        }
+        catch (e) {
+            console.log(e)
+        }
+    }
+    const cancelScheduledNotification = async (notificationId) => {
+        await Notifications.cancelScheduledNotificationAsync(notificationId);
+    };      
     return (
         <pushContext.Provider value = {{
             expoPushToken:expoPushToken, setExpoPushToken:setExpoPushToken,
             pushNotification:pushNotification, setPushNotification:setPushNotification,
             notificationListener:notificationListener, responseListener:responseListener,
             registerForPushNotificationsAsync:registerForPushNotificationsAsync,
-            sendPushNotification:sendPushNotification
+            sendPushNotification:sendPushNotification, schedulePushNotification,
+            getScheduledNotifications:getScheduledNotifications,
+            cancelScheduledNotification:cancelScheduledNotification
         }}>
           {children}
         </pushContext.Provider>

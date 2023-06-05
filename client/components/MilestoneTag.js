@@ -21,6 +21,7 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
     const [startDate, setStartDate] = useState()
     const [fullDate, setFullDate] = useState()
     const [isLoading, setIsLoading] = useState(false)
+    const [token, setToken] = useState()
     const [duration, setDuration] = useState(null)
     var fileExt = (img !== undefined)?img.toString().split('.').pop():'money'
     const user = useContext(userContext)
@@ -88,6 +89,9 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
         milestoneData.streak = streak
         milestoneData.img = img
         milestoneData.ownerid = ownerid
+        milestoneData.date = fullDate
+        milestoneData.count = posts
+        milestoneData.token = token
     }
     function checkDate() {
         if ((new Date(duration)- new Date())/86400000 < 0 && duration !== null) {
@@ -115,10 +119,19 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
         }
     }
     useEffect(()=> {
+        if (route.name === "CreatePost") {
+            axios.get(`http://${user.network}:19001/api/getusertoken/${ownerid}`)
+            .then((response)=> {
+                setToken(response.data[0].pushtoken)
+            })
+        }
+    }, [])
+    useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getlinkedmilestones`)
         .then((response)=> {
             setPosts(response.data.filter((item)=> item.milestoneid === id).length)
         })
+        .catch((error)=> console.log(error))
     },[isEmpty])
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getmilestones`)
@@ -134,11 +147,11 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
 
     useEffect(()=> {
         if (route.name === 'EditPost') {
-            //console.log(title)
-           // animatedvalue.setValue(isSelected?100:0)
+         // console.log(title)
+         // animatedvalue.setValue(isSelected?100:0)
             setIsSelected(selected)
             sendPost()
-        //    onSelectMilestone(milestoneData)
+         // onSelectMilestone(milestoneData)
         }
     }, [selected, navigation])
     useEffect(()=> {

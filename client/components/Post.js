@@ -36,13 +36,12 @@ const Post = ({navigation, route}) => {
     const [loading, setLoading] = useState(true)
     const scrollY = useRef(new Animated.Value(0)).current
 
-    //put post info in commentMessage so the notification can route here
     const commentMessage = {
-        to: push.expoPushToken,
+        to: userToken,
         sound: 'default',
         title: 'Milestone',
         body: `${user.username} commented on your post.`,  
-        data: { route: "Notifications" },
+        data: { route: "Post", item:route.params.item, comments:true},
     };
 
     function submitComment(comment) {
@@ -95,8 +94,9 @@ const Post = ({navigation, route}) => {
         }).catch(error=>console.log(error))
     }, [])
     function handlePress() {
-        console.log(likesList)
-        console.log(commentList)
+        console.log(route.params)
+     //   console.log(likesList)
+     //   console.log(commentList)
     }
     const renderMilestone = ({ item }) => {
         return (

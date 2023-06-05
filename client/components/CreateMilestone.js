@@ -11,6 +11,7 @@ import axios from 'axios'
 import { ScrollView } from "react-native-gesture-handler";
 import * as ImagePicker from 'expo-image-picker'
 import DatePicker from 'react-native-date-picker';
+import pushContext from "../contexts/pushContext.js";
 import { Amplify, Storage } from 'aws-amplify';
 import awsconfig from '../src/aws-exports';
 import { UserAgent } from "amazon-cognito-identity-js";
@@ -126,6 +127,7 @@ const CreateMilestone = ({route}) => {
     const permissionList = ['Everyone', 'Friends', 'Groups', 'Only You']
     const durationList = ['Next Day', '1 Month', 'Indefinitely', 'Custom']
     const user = useContext(userContext)
+    const push = useContext(pushContext)
     const navigation = useNavigation();
     const [image, setImage] = useState(null)
     const [photoUri, setPhotoUri] = useState()
@@ -176,8 +178,8 @@ const CreateMilestone = ({route}) => {
     }
     function handlePress() {
         const modifiedISOString = handleDate()
-        console.log(user.isExpo)
-        console.log("Posts:", postPermission, "| Views:", viewPermission, "| Duration:", modifiedISOString)
+        console.log(push.getScheduledNotifications())
+        console.log("Posts:", postPermission, "| Views:", viewPermission, "| Duration:", duration)
        // console.log("Comments:", commmentsEnabled, "| Likes:", likesEnabled, "| Sharing:", sharingEnabled)
     }
     const pickImage = async () => {
@@ -213,7 +215,7 @@ const CreateMilestone = ({route}) => {
         .then((res)=> {
             const modifiedISOString = handleDate()
             console.log('result ---',`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`)
-            axios.post(`http://${user.network}:19001/api/postmilestones`, // TODO: put in duration
+            axios.post(`http://${user.network}:19001/api/postmilestones`, 
             {title: title,src:image?`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`:'defaultmilestone',
             streak:0, description:description, ownerid:user.userId, postable:postPermission, viewable:viewPermission, 
             duration:modifiedISOString}) 
@@ -232,11 +234,18 @@ const CreateMilestone = ({route}) => {
         .catch((e)=>console.log(e))
     }
     function submitMilestone() {
+        const modifiedISOString = handleDate()
+        const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
+        const myDate = new Date(new Date(modifiedISOString).getFullYear(),new Date(modifiedISOString).getMonth()
+        ,new Date(modifiedISOString).getDate()-1).toISOString().substring(0,11) + currentTime
         if (!image) {
             shakeLeft(animatedval)
         }
         else {
             uploadContent(image)
+            if (duration !== "Indefinitely" && duration !== "Next Day") {
+                push.schedulePushNotification(myDate, title)      // remove notification if user edits duration
+            }
         }
     }
     return (

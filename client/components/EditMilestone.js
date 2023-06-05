@@ -9,6 +9,7 @@ import Icons from '../data/Icons.js'
 import userContext from '../contexts/userContext'
 import axios from 'axios'
 import { ScrollView } from "react-native-gesture-handler";
+import pushContext from "../contexts/pushContext";
 import * as ImagePicker from 'expo-image-picker'
 import DatePicker from 'react-native-date-picker';
 import { Amplify, Storage } from 'aws-amplify';
@@ -128,6 +129,7 @@ const EditMilestone = ({route}) => {
     const durationListLarge = ['Until Tomorrow', 'Next Month', 'Indefinitely', 'Custom']
     const durationList = ['Next Day', '1 Month', 'Indefinitely', 'Custom']
     const user = useContext(userContext)
+    const push = useContext(pushContext)
     const routes = useRoute()
     const navigation = useNavigation();
     const [originalImage, setOriginalImage] = useState()
@@ -260,6 +262,7 @@ const EditMilestone = ({route}) => {
     function handleTest() {
         const modifiedISOString = handleDate()
         console.log(modifiedISOString)
+       // push.cancelScheduledNotification('35af2a30-21be-42dd-af19-8d1978874c2d')
     }
     return (
         <View style={styles.createMilestonePage}>

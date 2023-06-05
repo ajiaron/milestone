@@ -5,7 +5,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useFonts } from 'expo-font'
 import userContext from './contexts/userContext'
-import pushContext from "./contexts/pushContext";
 import Landing from './components/Landing'
 import Login from './components/Login'
 import Register from './components/Register'

@@ -9,6 +9,7 @@ import userContext from '../contexts/userContext'
 import axios from 'axios'
 import FastImage from "react-native-fast-image";
 import uuid from 'react-native-uuid';
+import pushContext from "../contexts/pushContext.js";
 import { Video } from 'expo-av'
 import { Amplify, Storage } from 'aws-amplify';
 import awsconfig from '../src/aws-exports';
@@ -18,6 +19,7 @@ const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
 const CreatePost = ({route}) => {
+    const push = useContext(pushContext)
     const img = (route.params.uri !== undefined)?route.params.uri:require('../assets/samplepostwide.png')
     const imgType = (route.params.type !== undefined)?route.params.type:"back"
     const asset = (route.params.asset !== undefined)?route.params.asset:'image'
@@ -43,6 +45,15 @@ const CreatePost = ({route}) => {
     const [progress, setProgress] = useState(0)
     const [isPersonal, setIsPersonal] = useState(true)
     const animatedvalue = useRef(new Animated.Value(0)).current;
+
+    const postMessage = {
+        to: push.expoPushToken,
+        sound: 'default',
+        title: 'Milestone',
+        body: `${user.username} made a post to your milestone!`,  
+        data: { route: "MilestonePage" },
+    };
+    
 
     function switchPersonal() {
         Animated.timing(animatedvalue,{
@@ -126,7 +137,8 @@ const CreatePost = ({route}) => {
        // console.log('likes:',likesEnabled)
        // console.log('public:',sharingEnabled)
        // console.log(postId)
-        console.log(milestoneList.filter((item)=>item.ownerId === user.userId).length )
+        console.log(milestones)
+       // console.log(milestoneList.filter((item)=>item.ownerId === user.userId).length )
     }
     function handlePress() {
         uploadContent(img)
@@ -138,13 +150,22 @@ const CreatePost = ({route}) => {
                 console.log('milestones linked')
             })    
             .catch((error)=> console.log(error))
-            if (item.ownerid !== user.userId) {
+            if (item.ownerid !== user.userId && sharingEnabled) {
                 axios.post(`http://${user.network}:19001/api/postnotification`,
                 {requesterId:user.userId, recipientId:item.ownerid, type:'post', postId:postId, milestoneId:item.id})
                 .then(() => {
                     console.log('post notified')
                 }) 
                 .catch((error)=> console.log(error))
+                if (item.token) {
+                    postMessage.to =  `ExponentPushToken[${item.token}]`
+                    postMessage.body = `${user.username} made a post to ${item.title}!`
+                    postMessage.data = { route: "MilestonePage", item:item, date:item.date, count:item.count}
+                    const sendPush = async() => {
+                        await push.sendPushNotification(item.token, postMessage)
+                    }
+                    sendPush()
+                }
             }
         })
     }

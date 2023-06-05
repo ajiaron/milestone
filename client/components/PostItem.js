@@ -39,14 +39,19 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     const animatedsize = useRef(new Animated.Value(route.name === "MilestoneFeed"?100:0)).current;
     const AnimatedImage = Animated.createAnimatedComponent(FastImage);
     const [expanded, setExpanded] = useState(true)
-    const likeMessage = {
-        to: push.expoPushToken,
-        sound: 'default',
-        title: 'Milestone',
-        body: `${user.username} liked your post.`,
-        data: { route: "Notifications" },
-    };
-    
+    const data = {
+        postId:postId,
+        username:username,
+        src:src,
+        image:image,
+        caption:caption, 
+        liked:isLiked,
+        milestones:milestoneList,
+        ownerId:ownerid,
+        isPublic:isPublic,
+        date:date
+    }
+
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getlikes`)  
         .then((response)=> {
@@ -73,7 +78,13 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     useEffect(()=> {
         setViewable(isViewable)     // render first video without threshold
     }, [isViewable])
-
+    const likeMessage = {
+        to: userToken,
+        sound: 'default',
+        title: 'Milestone',
+        body: `${user.username} liked your post.`,
+        data: { route: "Post", item: data, comments:false },
+    };
     function expandPost() {
         Animated.timing(animatedsize,{
             toValue:100,
@@ -151,18 +162,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     const toggleMute = () => {
         setIsMuted(!isMuted)
     }
-    const data = {
-        postId:postId,
-        username:username,
-        src:src,
-        image:image,
-        caption:caption, 
-        liked:isLiked,
-        milestones:milestoneList,
-        ownerId:ownerid,
-        isPublic:isPublic,
-        date:date
-    }
+
     useEffect(()=> {
         if (!expanded) {
             expandPost()

@@ -109,13 +109,21 @@ const Feed = ({route}) => {
                 notification: {
                     request: {
                         content: {
-                            data: { route },
+                            data: {route, item, comments, date, count},
                         },
                     },
                 },
             } = response;
             if (route) {
-                navigation.navigate(route)
+                if (item && route === "Post") {
+                    navigation.navigate("Post", {item:item, comments:comments})
+                } 
+                else if (route === "MilestonePage" && date && count) {
+                    navigation.navigate("MilestonePage", {milestone:item, date:date, count:count})
+                }
+                else {
+                    navigation.navigate("Feed")
+                }
             }
         });
         return () => {
