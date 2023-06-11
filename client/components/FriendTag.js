@@ -5,18 +5,27 @@ import { Icon } from 'react-native-elements'
 import { useNavigation, useRoute } from "@react-navigation/native";
 import userContext from '../contexts/userContext'
 import axios from 'axios'
+import pushContext from "../contexts/pushContext";
 import FastImage from "react-native-fast-image";
 
 const windowW= Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const FriendTag = ({id, username, img}) => {
+const FriendTag = ({id, username, img, token}) => {
     const navigation= useNavigation()
+    const push = useContext(pushContext)
     const user = useContext(userContext)
     const [friends, setFriends] = useState([])
     const [approval, setApproval] = useState(false)
     const [isFriend, setIsFriend] = useState(false)
     const [pending, setPending] = useState(false)
+    const friendMessage = {
+        to: `ExponentPushToken[${token}]`,
+        sound: 'default',
+        title: 'Milestone',
+        body: `${user.username} sent you a friend request.`,  
+        data: { route: "Friends" },
+    };
     function acceptFriend() {
         axios.put(`http://${user.network}:19001/api/acceptfriend`, 
         {requesterid:id,recipientid:user.userId})
@@ -32,6 +41,13 @@ const FriendTag = ({id, username, img}) => {
             console.log('acceptance notified')
         })
         .catch((error)=> console.log(error))
+        if (token) {    // must be using a physical device to send push notifications
+            const sendPush = async() => {
+                friendMessage.body = `${user.username} accepted your friend request!`
+                await push.sendPushNotification(`ExponentPushToken[${token}]`, friendMessage)
+            }
+            sendPush()
+        }
     }
     function requestFriend() {
         axios.post(`http://${user.network}:19001/api/requestfriend`, 
@@ -47,7 +63,13 @@ const FriendTag = ({id, username, img}) => {
             console.log('friend request notified')
         })
         .catch((error)=> console.log(error))
-        
+        if (token) {    // must be using a physical device to send push notifications
+            const sendPush = async() => {
+                friendMessage.body = `${user.username} sent you a friend request!`
+                await push.sendPushNotification(`ExponentPushToken[${token}]`, friendMessage)
+            }
+            sendPush()
+        }
     }
     function deleteFriend() {
         axios.delete(`http://${user.network}:19001/api/deletefriend`, {data: {requesterid:user.userId, recipientid:id}})
@@ -61,9 +83,10 @@ const FriendTag = ({id, username, img}) => {
         setApproval(false)
     }
     function handleTest() {
-        console.log('friend:',isFriend)
-        console.log('pending:',pending)
-        console.log('approval:',approval)
+       // console.log('friend:',isFriend)
+       // console.log('pending:',pending)
+       // console.log('approval:',approval)
+        console.log(token)
     }
     function navigateProfile() {
         navigation.popToTop()

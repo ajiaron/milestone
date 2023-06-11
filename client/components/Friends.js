@@ -10,22 +10,8 @@ import FriendTag from "./FriendTag";
 import userContext from '../contexts/userContext'
 import axios from 'axios'
 
-const windowW = Dimensions.get('window').width      // get screen width
-const windowH = Dimensions.get('window').height     // get screen height
-
-/*
-frontend:
-    - fetch list of users and display
-    - search friends
-    - display list of added friends
-        - link to their profile
-    - display list on unadded friends
-        - display button to add friend
-backend:
-    - friends & requests (table)
-        - add request
-database:
-*/
+const windowW = Dimensions.get('window').width 
+const windowH = Dimensions.get('window').height    
 
 function Friends(){
     const [users, setUsers] = useState([])
@@ -33,7 +19,7 @@ function Friends(){
     const user = useContext(userContext)
     const route = useRoute()
     const [friends, setFriends] = useState([])
-    const [milestoneList, setMilestoneList] = useState([]) // initializes array
+    const [milestoneList, setMilestoneList] = useState([]) 
     const animatedvalue = useRef(new Animated.Value(0)).current
     const animatedcolor = useRef(new Animated.Value(0)).current
     const [query, setQuery] = useState('')
@@ -49,7 +35,9 @@ function Friends(){
             setRefreshing(false);
         }, 800);
     }, []);
-    
+    function handleTest() {
+        console.log(filtered)
+    }
     const slideUp = () =>{
         Animated.timing(animatedvalue,{
             toValue:100,
@@ -78,7 +66,7 @@ function Friends(){
         } else {
             setFiltered(users)
         }
-    }, [query])
+    }, [query, userToggle])
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getrequests`) 
         .then((response)=>{ 
@@ -109,7 +97,7 @@ function Friends(){
                 id = {item.id}
                 username = {item.name}
                 img = {item.src}
-
+                token = {item.pushtoken}
             />
         )
     }
@@ -170,6 +158,7 @@ function Friends(){
                     style=
                     {{maxHeight:(windowH > 900)?((windowH*0.0952)-14)*8:((windowH*0.0952)-12)*7}}
                     snapToInterval={(windowH*0.075)+16}
+                    maxToRenderPerBatch={10}
                     showsVerticalScrollIndicator={false}
                     data={(query.length > 0)?filtered:users}
                     renderItem={renderFriend} 

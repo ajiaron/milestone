@@ -62,8 +62,16 @@ const Profile = ({route}) => {
     const animatedvalue = useRef(new Animated.Value(0)).current;
     const [accept, setAccept] = useState(false)
     const [isFriend, setIsFriend] = useState(false)
+    const [userToken, setUserToken] = useState()
     const [friends, setFriends] = useState([])
 
+    const friendMessage = {
+        to: userToken,
+        sound: 'default',
+        title: 'Milestone',
+        body: `${user.username} sent you a friend request.`,  
+        data: { route: "Friends" },
+    };
     useEffect(()=> {    // set displayed milestone to the favorited one
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response)=> {
@@ -78,6 +86,8 @@ const Profile = ({route}) => {
             setProfilePic(response.data.filter((item)=>item.id === userid)[0].src)
             setUserData(response.data.filter((item)=> item.id === userid)[0])
             setFavorite(response.data.filter((item)=> item.id === userid)[0].favoriteid)
+            setUserToken(response.data.filter((item)=> item.id === userid)[0].pushtoken?
+            `ExponentPushToken[${response.data.filter((item)=> item.id === userid)[0].pushtoken}]`:null)
         })
         axios.get(`http://${user.network}:19001/api/getrequests`)
         .then((response)=> {
@@ -114,6 +124,13 @@ const Profile = ({route}) => {
             console.log('friend request notified')
         })
         .catch((error)=> console.log(error))
+        if (userToken) {    // must be using a physical device to send push notifications
+            const sendPush = async() => {
+                friendMessage.body = `${user.username} sent you a friend request.`
+                await push.sendPushNotification(userToken, friendMessage)
+            }
+            sendPush()
+        }
     }
     function acceptFriend() {
         axios.put(`http://${user.network}:19001/api/acceptfriend`, 
@@ -127,6 +144,13 @@ const Profile = ({route}) => {
             console.log('acceptance notified')
         })
         .catch((error)=> console.log(error))
+        if (userToken) {    // must be using a physical device to send push notifications
+            const sendPush = async() => {
+                friendMessage.body = `${user.username} accepted your friend request!`
+                await push.sendPushNotification(userToken, friendMessage)
+            }
+            sendPush()
+        }
     }
     function deleteFriend() {
         axios.delete(`http://${user.network}:19001/api/deletefriend`, {data: {requesterid:user.userId, recipientid:userid}})
@@ -156,7 +180,7 @@ const Profile = ({route}) => {
        // console.log(userid)
        // console.log(userData)
        // console.log(fileExt)
-       console.log(push)
+       console.log(userToken)
       // console.log(windowH, windowW)
       // console.log(user)
     }
