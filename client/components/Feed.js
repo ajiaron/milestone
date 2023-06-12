@@ -100,7 +100,7 @@ const Feed = ({route}) => {
     });
         
     useEffect(()=> {
-        push.registerForPushNotificationsAsync().then(token => push.setExpoPushToken(token))
+        push.registerForPushNotificationsAsync("Feed").then(token => push.setExpoPushToken(token))
         notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
             push.setPushNotification(notification);
         });

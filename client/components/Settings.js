@@ -9,6 +9,7 @@ import Footer from './Footer'
 import Icons from '../data/Icons.js'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MilestoneTag from "./MilestoneTag";
+import pushContext from "../contexts/pushContext";
 import userContext from '../contexts/userContext'
 import FastImage from "react-native-fast-image";
 import axios from 'axios'
@@ -21,6 +22,7 @@ const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
 const Settings = () => {
+    const push = useContext(pushContext)
     const user = useContext(userContext)
     var fileExt = (user.image !== undefined)?user.image.toString().split('.').pop():'png';
     const [isPublic, setIsPublic] = useState(true)
@@ -40,12 +42,15 @@ const Settings = () => {
     const [loading, setLoading] = useState(false)
     const [progress, setProgress] = useState(0)
     const navigation = useNavigation()
-    const route = useRoute()
     const fetchContent = async (uri) => {
         setLoading(true)
         const response = await fetch(uri)
         const blob = await response.blob()
         return blob
+    }
+    function handleNotifications() {
+        toggleNotifications()
+        push.registerForPushNotificationsAsync("Settings").then(token => push.setExpoPushToken(token))
     }
     const handleChanges = async () => {
         const content = await fetchContent(image)
@@ -233,7 +238,7 @@ const Settings = () => {
                                     trackColor={{ false: "#bbb", true: "#35AE92" }}
                                     thumbColor={user.quality ? "#1f1e1e" : "#1f1e1e"}
                                     ios_backgroundColor="#eee"
-                                    onValueChange={toggleNotifications}
+                                    onValueChange={handleNotifications}
                                     value={user.notifications}
                                 />    
                             </View>

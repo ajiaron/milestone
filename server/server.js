@@ -414,15 +414,48 @@ app.post('/api/send-push-notification', async (req,res) => {
         'Content-Type': 'application/json'
     }
     try {
-        await axios.post('https://exp.host/--/api/v2/push/send', message, {headers});
-        console.log('Push notification sent successfully');
-        res.status(200).json({ message: 'Push notification sent successfully' });
+        const response = await axios.post('https://exp.host/--/api/v2/push/send', message, {headers});
+        const { data } = response;
+        const {data: pushTickets, errors} = data;
+        if (errors) {
+            console.log('Errors sending push notifications:', errors)
+            res.status(500).json({error:errors})
+        }
+        else {
+            res.status(200).json({ pushTickets });
+        }
     } 
     catch (error) {
         console.log('Error sending push notification:', error);
         res.status(500).json({ error: 'Error sending push notification' });
     }
 })
+
+app.post('/api/get-push-receipts', async (req,res) => {
+    const ids = req.body.ids
+    const headers = {
+        'Accept': 'application/json',
+        'Accept-encoding': 'gzip, deflate',
+        'Content-Type': 'application/json'
+    }
+    try {
+        const response = await axios.post('https://exp.host/--/api/v2/push/getReceipts',{ids:ids}, {headers});
+        const { data } = response;
+        const {data: pushReceipts, errors} = data;
+        if (errors) {
+            console.log('Error getting push receipts:', errors)
+            res.status(500).json({error:errors})
+        }
+        else {
+            res.status(200).json({ pushReceipts });
+        }
+    } 
+    catch (error) {
+        console.log('Error getting push receipts:', error);
+        res.status(500).json({ error: 'Error getting push receipts.' });
+    }
+})
+
 
 app.put('/api/updatepost', (req, res) => {
     const postid = req.body.postid
@@ -515,6 +548,17 @@ app.put('/api/updatetoken', (req, res) => {
     const id = req.body.id
     const token = req.body.token
     db.query('UPDATE users SET pushtoken = ? WHERE id = ?', [token, id],
+    (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.put('/api/cleartoken', (req, res) => {
+    const token = req.body.token
+    db.query('UPDATE users SET pushtoken = ? WHERE pushtoken = ?', [null, token],
     (err, result) => {
         if (err) {
             console.log(err)
