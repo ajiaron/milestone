@@ -22,7 +22,7 @@ const MilestoneList = () => {
         .then((response)=> {
             setMilestoneList(response.data)})
         .catch((error)=> console.log(error))
-    })
+    }, [])
    
     const renderMilestone = ({ item }) => {
         return (

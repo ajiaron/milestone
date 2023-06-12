@@ -18,6 +18,7 @@ import CreatePost from './components/CreatePost'
 import EditPost from './components/EditPost'
 import TakePost from './components/TakePost'
 import Notifications from "./components/Notifications";
+import MilestoneExplore from "./components/MilestoneExplore";
 import CreateMilestone from './components/CreateMilestone'
 import EditMilestone from './components/EditMilestone'
 import MilestonePage from './components/MilestonePage'
@@ -62,6 +63,7 @@ function App() {
             <Stack.Screen name="CreatePost" component={CreatePost} />
             <Stack.Screen name="EditPost" component={EditPost} />
             <Stack.Screen name="Friends" component={Friends} />
+            <Stack.Screen name="MilestoneExplore" component={MilestoneExplore} />
             <Stack.Screen name="CreateMilestone" component={CreateMilestone} />
             <Stack.Screen name="EditMilestone" component={EditMilestone} />
             <Stack.Screen name="MilestonePage" component={MilestonePage} />

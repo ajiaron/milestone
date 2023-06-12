@@ -178,12 +178,14 @@ const CreateMilestone = ({route}) => {
         `${now.substr(0, 11)}${currentTime}${now.substr(19, 5)}`:null
         return modifiedISOString
     }
+    function navigateExplore() {    // temporary link to new explore page
+        navigation.navigate("MilestoneExplore")
+    }
     function handlePress() {
         const modifiedISOString = handleDate()
         const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
         const myDate = new Date(new Date(modifiedISOString).getFullYear(),new Date(modifiedISOString).getMonth()
         ,new Date(modifiedISOString).getDate()-1).toISOString().substring(0,11) + currentTime
-
         //if (duration !== "Indefinitely" && duration !== "Next Day") {
         //   push.schedulePushNotification(myDate, title, id)      // remove notification if user edits duration
         //}
@@ -370,7 +372,7 @@ const CreateMilestone = ({route}) => {
                         </View>
                     </View>            
                         <View style={[styles.buttonContainer]}>
-                            <Pressable onPress={handlePress}>
+                            <Pressable onPress={navigateExplore}>
                                 <View style={styles.saveButtonContainer}>
                                     <Text style={styles.saveButtonText}>Archive</Text>
                                 </View>

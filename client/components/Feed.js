@@ -122,7 +122,7 @@ const Feed = ({route}) => {
                     navigation.navigate("MilestonePage", {milestone:item, date:date, count:count})
                 }
                 else {
-                    navigation.navigate("Feed")
+                    navigation.navigate(route)
                 }
             }
         });
