@@ -147,11 +147,8 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
 
     useEffect(()=> {
         if (route.name === 'EditPost') {
-         // console.log(title)
-         // animatedvalue.setValue(isSelected?100:0)
             setIsSelected(selected)
             sendPost()
-         // onSelectMilestone(milestoneData)
         }
     }, [selected, navigation])
     useEffect(()=> {
@@ -159,10 +156,9 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
             autoSelect()
         }
     }, [navigation])
-    
     /*
     useEffect(()=> {
-                 clear selected milestones if screen changes 
+        clear selected milestones if screen changes 
         const deselect = navigation.addListener('focus', ()=> {
             setIsSelected(false)
             if ((route.name === "CreatePost" || route.name === "EditPost")) {

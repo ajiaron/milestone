@@ -5,6 +5,7 @@ import { Icon } from 'react-native-elements'
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Navbar from "./Navbar";
 import Footer from './Footer'
+import FastImage from "react-native-fast-image";
 import MilestoneTag from "./MilestoneTag";
 import Icons from '../data/Icons.js'
 import userContext from '../contexts/userContext'
@@ -14,6 +15,64 @@ import { ScrollView } from "react-native-gesture-handler";
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
+
+const MilestoneTab = () => {
+    const user = useContext(userContext)
+    const fileExt= 'svg'
+    const [image, setImage] = useState('guitar')
+    return (
+        <View style={[styles.milestoneTabContainer]}>
+            <View style={styles.headerContentWrapper}>
+                <View style={{flex:1, flexDirection:"row", alignItems:"center"}}>
+                    <View style={[styles.milestoneIconContainer, {alignSelf:"center"}]}>
+                        <Pressable onPress={()=>console.log('ayo')}>
+                            {
+                            (!user.isExpo)?
+                            <FastImage
+                                style={styles.milestoneIcon}
+                                resizeMode={FastImage.resizeMode.cover}
+                                source={
+                                    (fileExt==='jpg' || fileExt==='png')?
+                                    {
+                                        uri:image,
+                                        priority:FastImage.priority.normal
+                                    }:
+                                    Icons[image]
+                                }/>
+                            :
+                            <Image
+                                style={styles.milestoneIcon}
+                                resizeMode="cover"
+                                source={(fileExt==='jpg' || fileExt==='png')?{uri:image}:Icons[image]}/>
+                            }
+                        </Pressable>
+                    </View>
+        
+                    <View style={{alignSelf:"center", alignItems:"center"}}>
+                        <Text style={[styles.milestoneTitle]}>{'Guitar Gang'}</Text>
+                    </View>
+      
+                    <Pressable onPress={()=>console.log('ayo')}>
+                        <Icon 
+                            style={{transform:[{rotate:"-45deg"}], left:2, top:-.5, alignSelf:"center"}}
+                            name='insert-link'
+                            type='material'
+                            color='rgba(178, 178, 178, 1)'
+                            size={21}/>
+                    </Pressable>
+                </View>
+
+                <Pressable style={{ alignSelf:"center", height:windowH*(28/windowH), paddingTop:0.5}}>
+                    <View style={[styles.addMilestoneContainer]}>
+                        <Text style={{color:'#fff', fontSize:(windowH>900)?14:12, fontFamily:"InterBold", alignSelf:"center"}}>
+                            Join
+                        </Text>
+                    </View>
+                </Pressable>
+            </View>
+        </View>
+    )
+}
 
 const MilestoneExplore = () => {
     const user = useContext(userContext)
@@ -47,10 +106,13 @@ const MilestoneExplore = () => {
     }, [])
     return (
         <View style={[styles.milestoneExplorePage]}>
+    
+
+    
             <Navbar title={'milestone'} scrollY={scrollY}/>
             {(loading)&&
                 <Animated.View style={{zIndex:999,alignSelf:"center",width:"100%",top:"50%", height:animatedvalue.interpolate({inputRange:[0,100], outputRange:[windowH, 0]})}}>
-                    <ActivityIndicator size="large" color="#FFFFFF" style={{top:"50%", position:"absolute", alignSelf:"center"}}/>
+                
                 </Animated.View>
             }
             <View style={[styles.milestoneExploreContent]}>
@@ -74,7 +136,6 @@ const MilestoneExplore = () => {
                         placeholder={'Search a milestone...'}
                         placeholderTextColor={'rgba(221, 221, 221, 1)'}
                         value={query}>
-                     
                     </TextInput>
                     <Icon
                         name='search'
@@ -83,8 +144,13 @@ const MilestoneExplore = () => {
                         style={{zIndex:10, paddingTop:0.5}}
                     />
                 </View>
+
+                <View style={{paddingTop:22}}>
+                    <MilestoneTab/>
+                </View>
+
             </View>
-          
+      
             <View style={{bottom:0, position:"absolute"}}>
                 <Footer/>
             </View>
@@ -102,7 +168,7 @@ const styles = StyleSheet.create({
         height:windowH,
         width:windowW*0.8,
         alignItems:"center",
-        paddingTop:(windowH>900)?windowH*0.125:windowH*0.1375,
+        paddingTop:(windowH>900)?windowH*0.1275:windowH*0.1375,
         alignSelf:"center",
     },
     milestoneEmptyContainer: {
@@ -146,8 +212,58 @@ const styles = StyleSheet.create({
         textAlign:"left",
         alignItems:"center",
         justifyContent:"center",
-        fontSize:12,
+        fontSize:(windowH>900)?12.5:12,
         color:"white"
+    },
+    // tab component
+    milestoneTabContainer: {
+        minWidth:(windowW * 0.8),
+        borderRadius:10,
+        minHeight:windowH*0.225,
+      //  backgroundColor:'rgba(100,100,100,1)',
+        alignSelf:"center",
+    },
+    headerContentWrapper: {
+        maxHeight: (windowH*0.0425),
+        flex:1,
+        flexDirection:"row",
+        backgroundColor: "rgba(28, 28, 28, 1)",
+        alignItems:"center",
+        paddingLeft:4,
+        paddingRight:4,
+    },
+    milestoneIconContainer: {
+        width:(windowH*0.0425),
+        height:(windowH*0.0425),
+        backgroundColor: "rgba(214, 214, 214, 1)",
+        borderRadius:5,
+        justifyContent:"center",
+    },
+    milestoneIcon: {
+        width:"100%",
+        height:"100%",
+        alignItems:"center",
+        borderRadius:5,
+        justifyContent:"center",
+        alignSelf:"center"
+    },
+    milestoneTitle: {
+        fontFamily:"InterBold",
+        fontSize:20,
+        color:"rgba(255,255,255,1)",
+        alignSelf:"center",
+        marginBottom:2.5,
+        marginLeft:windowW*(15/windowW),
+        marginRight:windowW*(10/windowW),
+    },
+    addMilestoneContainer: {
+        minWidth:windowW * (88/windowW),
+        height: windowH * (28/windowH),
+      //  backgroundColor:"#565454",
+        backgroundColor:"rgba(0, 82, 63, 1)",
+        borderRadius:4,
+        justifyContent:"center",
+        
     },
 })
 export default MilestoneExplore
