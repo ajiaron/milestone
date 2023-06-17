@@ -10,16 +10,98 @@ import MilestoneTag from "./MilestoneTag";
 import Icons from '../data/Icons.js'
 import userContext from '../contexts/userContext'
 import pushContext from "../contexts/pushContext.js";
+import { Video } from 'expo-av'
 import axios from 'axios'
 import { ScrollView } from "react-native-gesture-handler";
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const MilestoneTab = () => {
+
+const PostImage = ({item}) => {
     const user = useContext(userContext)
-    const fileExt= 'svg'
-    const [image, setImage] = useState('guitar')
+    var fileExt = (item.src !== undefined)?item.src.toString().split('.').pop():'png'
+    return (
+        <Pressable onPress={()=>console.log(fileExt)}>
+            {
+            (fileExt ==='jpg' || fileExt==='png')?
+                (!user.isExpo)?
+                <FastImage
+                    style={styles.milestoneIcon}
+                    resizeMode={FastImage.resizeMode.cover}
+                    source={{
+                            uri: (fileExt==='jpg' || fileExt==='png')&&item.src,
+                            priority: FastImage.priority.normal
+                    }}/>
+                :
+                <Image
+                    style={styles.milestoneIcon}
+                    resizeMode="cover"
+                    source={{uri:(fileExt==='jpg' || fileExt==='png')&&item.src}}/>
+                :
+                (fileExt === 'mov' || fileExt === 'mp4')?
+                     <Video
+                        shouldPlay={false}
+                        isMuted={true}
+                        resizeMode={'cover'}
+                        style={{height:"100%", width:"100%", opacity:1, borderRadius:5}}
+                        source={{uri:item.src}}
+                    />
+               :null
+            }
+        </Pressable>
+    )
+}
+const renderItem = ({item}) => {
+
+    return (
+        <View style={[styles.postContainer]}>
+            {(item.src !== undefined) &&
+                <PostImage item={item}/>
+            }
+        </View>
+    )
+
+}
+
+const MilestoneTab = ({item}) => {
+    const user = useContext(userContext)
+    var fileExt = (item.src !== undefined)?item.src.toString().split('.').pop():item.src
+    const [image, setImage] = useState(item.src)
+    const [postList, setPostList] = useState([])
+    const [joined, setJoined] = useState(false)
+    const animatedcolor = useRef(new Animated.Value(0)).current
+    function handleJoin() {
+        if (joined) {
+            Animated.timing(animatedcolor,{
+                toValue:100,
+                duration:150,
+                useNativeDriver:false,
+            }).start()
+        } else {
+            Animated.timing(animatedcolor,{
+                toValue:0,
+                duration:150,
+                useNativeDriver:false,
+            }).start()
+        }
+    }
+    function handleTest() {
+        //console.log(postList.map((item)=> new Date(item.date).toLocaleDateString("en-US",{month:"long", day:"numeric",year:"numeric"})))
+        console.log(postList.map((item=> (item.src !== undefined)?item.src.toString().split('.').pop():'png')))
+        //console.log(postList.length)
+    }
+    useEffect(()=> {
+        handleJoin()
+    }, [joined])
+    
+    useEffect(()=> {    
+        axios.get(`http://${user.network}:19001/api/getlinkedposts/${item.idmilestones}`)
+        .then((response) => {
+            setPostList([...response.data.filter((item)=> item.public === 1)].reverse().concat([0,0,0,0]).slice(0,4))
+        }).catch(error=>console.log(error))
+    }, [])
+
     return (
         <View style={[styles.milestoneTabContainer]}>
             <View style={styles.headerContentWrapper}>
@@ -48,29 +130,59 @@ const MilestoneTab = () => {
                         </Pressable>
                     </View>
         
-                    <View style={{alignSelf:"center", alignItems:"center"}}>
-                        <Text style={[styles.milestoneTitle]}>{'Guitar Gang'}</Text>
+                    <View style={{alignSelf:"center", alignItems:"center", maxWidth:windowW*0.45}}>
+                        <Text style={[styles.milestoneTitle]} numberOfLines={1}>{item.title}</Text>
                     </View>
       
-                    <Pressable onPress={()=>console.log('ayo')}>
+                    <Pressable onPress={handleTest}>
                         <Icon 
-                            style={{transform:[{rotate:"-45deg"}], left:2, top:-.5, alignSelf:"center"}}
+                            style={{transform:[{rotate:"-45deg"}], alignSelf:"center"}}
                             name='insert-link'
                             type='material'
-                            color='rgba(178, 178, 178, 1)'
-                            size={21}/>
+                            color='rgba(160, 160, 160, 1)'
+                            size={19}/>
                     </Pressable>
                 </View>
-
-                <Pressable style={{ alignSelf:"center", height:windowH*(28/windowH), paddingTop:0.5}}>
-                    <View style={[styles.addMilestoneContainer]}>
-                        <Text style={{color:'#fff', fontSize:(windowH>900)?14:12, fontFamily:"InterBold", alignSelf:"center"}}>
+                
+                {/*  replace function with backend request, put animation toggle in there */}
+                <Pressable onPress={()=>setJoined(!joined)}
+                style={{ alignSelf:"center", height:windowH*(28/windowH)}}>
+                    <Animated.View 
+                    style={[styles.addMilestoneContainer, {
+                    backgroundColor:animatedcolor.interpolate({inputRange:[0,100], outputRange:["rgba(0, 82, 63, 1)","#565454"]})
+                    }]}>
+                        <Animated.Text 
+                        style={{color:animatedcolor.interpolate({inputRange:[0,100], outputRange:["white","rgba(10,10,10,1)"]}),
+                         fontSize:(windowH>900)?14:12.5, fontFamily:"InterBold", alignSelf:"center"}}>
                             Join
-                        </Text>
-                    </View>
+                        </Animated.Text>
+                    </Animated.View>
                 </Pressable>
             </View>
+            <View style={styles.descriptionContainer}>
+                <Text style={[styles.descriptionText]}>
+                    {(item.description && item.description.length > 0)?item.description:
+                    `New start, new milestone! `}
+                </Text>
+            </View>
+            <View style={[styles.postListContainer]}>
+                <FlatList
+                    horizontal
+                    renderItem={renderItem}
+                    maxToRenderPerBatch={4}
+                    contentContainerStyle={{flex:1, flexDirection:"row", justifyContent:"space-around"}}
+                    showsHorizontalScrollIndicator={false}
+                    initialNumToRender={4}
+                    data={postList}
+                />
+            </View>
         </View>
+    )
+}
+
+const renderTab = ({item}) => {
+    return (
+        <MilestoneTab item={item}/>
     )
 }
 
@@ -83,6 +195,7 @@ const MilestoneExplore = () => {
     const [loading, setLoading] = useState(true)
     const [milestones, setMilestones] = useState([])
     const [query, setQuery] = useState()
+
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         setTimeout(() => {
@@ -100,19 +213,16 @@ const MilestoneExplore = () => {
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response)=> {
-            setMilestones(response.data)})
+            setMilestones(response.data.filter((item=>item.postable === "Everyone" && item.viewable === "Everyone")).slice(0,10))
+        })
         .catch((error)=> console.log(error))
         slideUp()
     }, [])
     return (
         <View style={[styles.milestoneExplorePage]}>
-    
-
-    
             <Navbar title={'milestone'} scrollY={scrollY}/>
             {(loading)&&
                 <Animated.View style={{zIndex:999,alignSelf:"center",width:"100%",top:"50%", height:animatedvalue.interpolate({inputRange:[0,100], outputRange:[windowH, 0]})}}>
-                
                 </Animated.View>
             }
             <View style={[styles.milestoneExploreContent]}>
@@ -139,18 +249,21 @@ const MilestoneExplore = () => {
                     </TextInput>
                     <Icon
                         name='search'
-                        size={20}
-                        color={'rgba(160,160,160,1)'}
-                        style={{zIndex:10, paddingTop:0.5}}
+                        size={19}
+                        color={'rgba(180,180,180,1)'}
+                        style={{zIndex:10, paddingTop:0}}
                     />
                 </View>
+                <View style={{paddingTop:24, paddingBottom:windowH*0.215, backgroundColor:'rgba(28,28,28,0)'}}>
+                    <FlatList 
+                        data={milestones}
+                        renderItem={renderTab}
+                        maxToRenderPerBatch={10}
+                        showsVerticalScrollIndicator={false}
 
-                <View style={{paddingTop:22}}>
-                    <MilestoneTab/>
+                    />
                 </View>
-
             </View>
-      
             <View style={{bottom:0, position:"absolute"}}>
                 <Footer/>
             </View>
@@ -168,7 +281,7 @@ const styles = StyleSheet.create({
         height:windowH,
         width:windowW*0.8,
         alignItems:"center",
-        paddingTop:(windowH>900)?windowH*0.1275:windowH*0.1375,
+        paddingTop:(windowH>900)?windowH*0.125:windowH*0.1375,
         alignSelf:"center",
     },
     milestoneEmptyContainer: {
@@ -181,7 +294,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         borderWidth:2.25,
         borderStyle:"dashed",
-        marginBottom:16,
+        marginBottom:20,
         shadowColor: '#000',
         shadowOffset: {
         width: 0,
@@ -194,7 +307,7 @@ const styles = StyleSheet.create({
     userInfoContainer: {
         width:(windowW * 0.8) + 4.5,
         alignSelf:"center",
-        maxHeight: windowH * (36/windowH),
+        minHeight: windowH * (36/windowH),
         justifyContent:"flex-start",
         borderRadius:10,
         backgroundColor:"rgba(10, 10, 10, 1)",
@@ -219,22 +332,22 @@ const styles = StyleSheet.create({
     milestoneTabContainer: {
         minWidth:(windowW * 0.8),
         borderRadius:10,
-        minHeight:windowH*0.225,
-      //  backgroundColor:'rgba(100,100,100,1)',
+        maxHeight:windowH*0.3,
         alignSelf:"center",
+        marginBottom:windowH*0.0425,
     },
     headerContentWrapper: {
-        maxHeight: (windowH*0.0425),
+        maxHeight: (windowH*0.04),
         flex:1,
         flexDirection:"row",
         backgroundColor: "rgba(28, 28, 28, 1)",
         alignItems:"center",
-        paddingLeft:4,
-        paddingRight:4,
+        paddingLeft:6,
+        paddingRight:6,
     },
     milestoneIconContainer: {
-        width:(windowH*0.0425),
-        height:(windowH*0.0425),
+        width:(windowH*0.04),
+        height:(windowH*0.04),
         backgroundColor: "rgba(214, 214, 214, 1)",
         borderRadius:5,
         justifyContent:"center",
@@ -252,9 +365,9 @@ const styles = StyleSheet.create({
         fontSize:20,
         color:"rgba(255,255,255,1)",
         alignSelf:"center",
-        marginBottom:2.5,
+        marginBottom:2,
         marginLeft:windowW*(15/windowW),
-        marginRight:windowW*(10/windowW),
+        marginRight:windowW*(7/windowW),
     },
     addMilestoneContainer: {
         minWidth:windowW * (88/windowW),
@@ -263,7 +376,64 @@ const styles = StyleSheet.create({
         backgroundColor:"rgba(0, 82, 63, 1)",
         borderRadius:4,
         justifyContent:"center",
-        
+        shadowColor: '#000',
+        shadowOffset: {
+        width: 0,
+        height: 1,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
     },
+    descriptionContainer: {
+        width: windowW * .8,
+        height: windowH * (79 / windowH),
+        alignSelf:"center",
+        backgroundColor:"rgba(10,10,10,1)",
+        marginTop:14,
+        shadowColor: '#000',
+        shadowOffset: {
+        width: 0,
+        height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        flexDirection:"row",
+        borderRadius:10,
+        paddingTop:21,
+        paddingLeft:22,
+        paddingBottom:20,
+        paddingRight:22,
+    },
+    descriptionText: {
+        fontFamily:"Inter",
+        fontSize:windowH>900?13.5:13,
+        lineHeight:18,
+        color:"white",
+
+    },
+    // images
+    postListContainer: {
+        maxHeight:77,
+        maxWidth:windowW*0.8,
+        alignSelf:"center",
+        justifyContent:"space-around",
+        alignItems:"center",
+        marginTop:13,
+        flex:1,
+        flexDirection:"row"
+    },
+    postContainer: {
+        width:79,
+        height:77,
+        borderRadius:10,
+        backgroundColor:'rgba(100,100,100,0.5)',
+        shadowColor: '#000',
+        shadowOffset: {
+        width: 0,
+        height: 4,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 10,
+    }
 })
 export default MilestoneExplore

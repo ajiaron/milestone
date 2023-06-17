@@ -176,7 +176,7 @@ const EditMilestone = ({route}) => {
         DeleteAlert().then((resolve)=> {
             if (resolve) {
                   deleteMilestone()
-                  push.cancelScheduledNotification(token)
+         //         push.cancelScheduledNotification(token)
                   navigation.navigate("Feed")
             }}
         )
@@ -230,8 +230,10 @@ const EditMilestone = ({route}) => {
             const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
             const myDate = new Date(new Date(modifiedISOString).getFullYear(),new Date(modifiedISOString).getMonth()
             ,new Date(modifiedISOString).getDate()-1).toISOString().substring(0,11) + currentTime
-
-            push.cancelScheduledNotification(token)
+            if (token) {
+                push.cancelScheduledNotification(token)
+            }
+            
             console.log('result ---',`https://d2g0fzf6hn8q6g.cloudfront.net/public/${res.key}`)
             axios.put(`http://${user.network}:19001/api/updatemilestone`, 
             {milestoneid: route.params.id, title: title, description:description,
@@ -258,7 +260,9 @@ const EditMilestone = ({route}) => {
         const currentTime = new Date().toLocaleTimeString('en-US', { hour12: false });
         const myDate = new Date(new Date(modifiedISOString).getFullYear(),new Date(modifiedISOString).getMonth()
         ,new Date(modifiedISOString).getDate()-1).toISOString().substring(0,11) + currentTime
-        push.cancelScheduledNotification(token)
+        if (token) {
+            push.cancelScheduledNotification(token)
+        }
         axios.put(`http://${user.network}:19001/api/updatemilestone`, 
         {milestoneid: route.params.id, title: title, description:description, 
         src:image, postable:postPermission, viewable:viewPermission, duration:modifiedISOString})
@@ -278,6 +282,7 @@ const EditMilestone = ({route}) => {
     }, [routes])
     function handleTest() {
         const modifiedISOString = handleDate()
+        console.log(token)
       //  console.log(modifiedISOString)
       //  console.log(duration)
       //  console.log(token)
