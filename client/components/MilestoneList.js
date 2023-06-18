@@ -20,7 +20,7 @@ const MilestoneList = () => {
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response)=> {
-            setMilestoneList(response.data)})
+            setMilestoneList(response.data.filter((item)=>item.ownerId === user.userId))})
         .catch((error)=> console.log(error))
     }, [])
    

@@ -60,7 +60,7 @@ const Footer = ({disable, id, onPressTouch}) => {
                 </View>
                 </Pressable>
                 <Pressable  style={{height:"100%", justifyContent:"center"}}
-                    onPress={() => navigation.navigate("CreateMilestone")}>
+                    onPress={() => navigation.navigate("MilestoneExplore")}>
                 <View styles={styles.addMilestoneIcon}>    
                 <Image
                     style={styles.milebookImage}

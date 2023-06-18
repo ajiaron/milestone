@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef, useCallback } from "react";
-import { Animated, Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, Switch, Dimensions, ActivityIndicator, TouchableOpacity } from "react-native";
+import { Animated, Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, Switch, Dimensions, ActivityIndicator, RefreshControl } from "react-native";
 import * as Device from 'expo-device'
 import { Icon } from 'react-native-elements'
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -20,9 +20,23 @@ const windowH = Dimensions.get('window').height
 
 const PostImage = ({item}) => {
     const user = useContext(userContext)
+    const navigation = useNavigation()
+    const data = {
+        postId:item.idposts,
+        username:item.username,
+        src:item.profilepic,
+        image:item.src,
+        caption:item.caption, 
+        ownerId:item.ownerid,
+        isPublic:item.public,
+        date:item.date
+    }
     var fileExt = (item.src !== undefined)?item.src.toString().split('.').pop():'png'
+    function navigatePost() {
+        navigation.navigate("Post", {item:data, comments:false})
+    }
     return (
-        <Pressable onPress={()=>console.log(fileExt)}>
+        <Pressable onPress={navigatePost}>
             {
             (fileExt ==='jpg' || fileExt==='png')?
                 (!user.isExpo)?
@@ -53,7 +67,6 @@ const PostImage = ({item}) => {
     )
 }
 const renderItem = ({item}) => {
-
     return (
         <View style={[styles.postContainer]}>
             {(item.src !== undefined) &&
@@ -61,15 +74,17 @@ const renderItem = ({item}) => {
             }
         </View>
     )
-
 }
 
 const MilestoneTab = ({item}) => {
     const user = useContext(userContext)
+    const navigation = useNavigation()
     var fileExt = (item.src !== undefined)?item.src.toString().split('.').pop():item.src
     const [image, setImage] = useState(item.src)
     const [postList, setPostList] = useState([])
     const [joined, setJoined] = useState(false)
+    const [count, setCount] = useState(0)
+    const [timestamp, setTimestamp] = useState()
     const animatedcolor = useRef(new Animated.Value(0)).current
     function handleJoin() {
         if (joined) {
@@ -88,26 +103,70 @@ const MilestoneTab = ({item}) => {
     }
     function handleTest() {
         //console.log(postList.map((item)=> new Date(item.date).toLocaleDateString("en-US",{month:"long", day:"numeric",year:"numeric"})))
-        console.log(postList.map((item=> (item.src !== undefined)?item.src.toString().split('.').pop():'png')))
+       // console.log(postList.map((item=> (item.src !== undefined)?item.src.toString().split('.').pop():'png')))
         //console.log(postList.length)
+        //console.log(new Date(item.date).toLocaleDateString("en-US", {month:"short", day:"numeric", year:"numeric"}))
+       // console.log(postList.filter((item)=>item !== 0).length)
+       // console.log(item)
+        //console.log(new Date(postList[0].date).toLocaleDateString("en-US", {month:"short", day:"numeric", year:"numeric"}))
+        //console.log(timestamp)
+        //console.log(item)
+        console.log(postList)
+    }
+    function navigateMilestone() {
+        item.id = item.idmilestones
+        navigation.push("MilestonePage",
+        { 
+            milestone:item, 
+            date:new Date(item.date).toLocaleDateString("en-US", {month:"short", day:"numeric", year:"numeric"}), 
+            count:count
+        })
     }
     useEffect(()=> {
         handleJoin()
     }, [joined])
-    
+
+    useEffect(()=> {     // last update timeframe
+        const newDate = new Date()
+        const postDate = new Date((count !== 0 && postList[0].date !== undefined)?postList[0].date:new Date())
+        if ((Math.abs(newDate-postDate)/3600000) < 24) {
+            setTimestamp(' today')
+        }
+        else if ((Math.abs(newDate-postDate)/86400000) < 7) {
+            setTimestamp((Math.floor(Math.abs(newDate-postDate)/86400000) < 2)?
+                ' yesterday': Math.floor(Math.abs(newDate-postDate)/86400000).toString()+' days')
+        }
+        else if ((Math.abs(newDate-postDate)/86400000) <= 30) {
+            setTimestamp((Math.floor(Math.floor(Math.abs(newDate-postDate)/86400000)/7) < 2)?
+                Math.floor(Math.floor(Math.abs(newDate-postDate)/86400000)/7).toString()+
+                ' week':Math.floor(Math.floor(Math.abs(newDate-postDate)/86400000)/7).toString()+' weeks')
+        }
+        else if ((Math.abs(newDate-postDate)/2592000000) <= 12) {
+            setTimestamp((Math.floor(Math.abs(newDate-postDate)/2592000000) < 2)?
+                Math.floor(Math.abs(newDate-postDate)/2592000000).toString()+
+                ' month': Math.floor(Math.abs(newDate-postDate)/2592000000).toString()+' months')
+        } else {
+            setTimestamp((Math.floor(Math.abs(newDate-postDate)/31536000000)< 2)?
+                Math.floor(Math.abs(newDate-postDate)/31536000000).toString()+
+                ' year':Math.floor(Math.abs(newDate-postDate)/31536000000).toString()+' years')
+        }
+    }, [postList, count])
+
     useEffect(()=> {    
         axios.get(`http://${user.network}:19001/api/getlinkedposts/${item.idmilestones}`)
         .then((response) => {
             setPostList([...response.data.filter((item)=> item.public === 1)].reverse().concat([0,0,0,0]).slice(0,4))
+            setCount(response.data.length)
         }).catch(error=>console.log(error))
     }, [])
-
     return (
+        <>
+        {(postList.filter((item)=>item !== 0).length > 0) && 
         <View style={[styles.milestoneTabContainer]}>
             <View style={styles.headerContentWrapper}>
                 <View style={{flex:1, flexDirection:"row", alignItems:"center"}}>
                     <View style={[styles.milestoneIconContainer, {alignSelf:"center"}]}>
-                        <Pressable onPress={()=>console.log('ayo')}>
+                        <Pressable onPress={navigateMilestone}>
                             {
                             (!user.isExpo)?
                             <FastImage
@@ -130,7 +189,7 @@ const MilestoneTab = ({item}) => {
                         </Pressable>
                     </View>
         
-                    <View style={{alignSelf:"center", alignItems:"center", maxWidth:windowW*0.45}}>
+                    <View style={{alignSelf:"center", alignItems:"center", maxWidth:windowW*0.425}}>
                         <Text style={[styles.milestoneTitle]} numberOfLines={1}>{item.title}</Text>
                     </View>
       
@@ -176,7 +235,14 @@ const MilestoneTab = ({item}) => {
                     data={postList}
                 />
             </View>
+            <View style={{paddingLeft:4, paddingTop:9}}>
+                <Text style={{fontFamily:"InterBold", color:'rgba(180,180,180,1)', fontSize:13}}>
+                        {`Updated ${timestamp} ${(timestamp !== "Today" && timestamp !== "Yesterday")? 'ago':''}`}
+                </Text>
+            </View>
         </View>
+        }
+        </>
     )
 }
 
@@ -193,15 +259,18 @@ const MilestoneExplore = () => {
     const scrollY = useRef(new Animated.Value(0)).current
     const animatedvalue = useRef(new Animated.Value(0)).current
     const [loading, setLoading] = useState(true)
+    const [refreshing, setRefreshing] = useState(false)
     const [milestones, setMilestones] = useState([])
-    const [query, setQuery] = useState()
+    const [query, setQuery] = useState('')
+    const [filtered, setFiltered] = useState([])
+    const [tabCount, setTabCount] = useState(10)
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         setTimeout(() => {
             setRefreshing(false);
         }, 800);
-    }, []);
+    }, [query]);
     const slideUp = () =>{
         Animated.timing(animatedvalue,{
             toValue:100,
@@ -211,13 +280,22 @@ const MilestoneExplore = () => {
         }).start(()=>setLoading(false))
     }
     useEffect(()=> {
+        if (query.length > 0) {
+            setFiltered(milestones.filter((item)=>item.title.toLowerCase().includes(query.toLowerCase())))
+            onRefresh
+        } else {
+            setFiltered(milestones)
+        }
+    }, [query, refreshing])
+    useEffect(()=> {
+        setLoading(true)
         axios.get(`http://${user.network}:19001/api/getmilestones`)
-        .then((response)=> {
-            setMilestones(response.data.filter((item=>item.postable === "Everyone" && item.viewable === "Everyone")).slice(0,10))
-        })
-        .catch((error)=> console.log(error))
-        slideUp()
-    }, [])
+            .then((response)=> {
+                setMilestones(response.data.filter((item=>item.postable === "Everyone" && item.viewable === "Everyone")))
+                slideUp()
+            })
+            .catch((error)=> console.log(error))
+    }, [refreshing])
     return (
         <View style={[styles.milestoneExplorePage]}>
             <Navbar title={'milestone'} scrollY={scrollY}/>
@@ -226,7 +304,7 @@ const MilestoneExplore = () => {
                 </Animated.View>
             }
             <View style={[styles.milestoneExploreContent]}>
-                <Pressable onPress={()=>navigation.navigate("CreateMilestone", {from:'explore'})}>
+                <Pressable onPress={()=>navigation.navigate("CreateMilestone", {from:'explore'}) }>
                     <View style={[styles.milestoneEmptyContainer]}>
                         <View style={{alignItems:"center",alignSelf:"center", justifyContent:"space-evenly"}}>
                             <Icon
@@ -254,14 +332,19 @@ const MilestoneExplore = () => {
                         style={{zIndex:10, paddingTop:0}}
                     />
                 </View>
-                <View style={{paddingTop:24, paddingBottom:windowH*0.215, backgroundColor:'rgba(28,28,28,0)'}}>
+                <View style={{marginBottom:windowH*0.2175, backgroundColor:'rgba(28,28,28,0)'}}>
+      
                     <FlatList 
-                        data={milestones}
+                        data={(query.length > 0)?filtered:milestones}
                         renderItem={renderTab}
                         maxToRenderPerBatch={10}
+                        refreshControl={
+                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                        }
                         showsVerticalScrollIndicator={false}
-
+                        keyExtractor={(item, index)=>index}
                     />
+      
                 </View>
             </View>
             <View style={{bottom:0, position:"absolute"}}>
@@ -334,7 +417,9 @@ const styles = StyleSheet.create({
         borderRadius:10,
         maxHeight:windowH*0.3,
         alignSelf:"center",
-        marginBottom:windowH*0.0425,
+        marginTop:windowH*0.0215,
+        paddingTop:4,
+        marginBottom:(windowH*0.0215)-4,
     },
     headerContentWrapper: {
         maxHeight: (windowH*0.04),
@@ -366,8 +451,8 @@ const styles = StyleSheet.create({
         color:"rgba(255,255,255,1)",
         alignSelf:"center",
         marginBottom:2,
-        marginLeft:windowW*(15/windowW),
-        marginRight:windowW*(7/windowW),
+        marginLeft:windowW*(14/windowW),
+        marginRight:windowW*(6/windowW),
     },
     addMilestoneContainer: {
         minWidth:windowW * (88/windowW),
@@ -418,7 +503,7 @@ const styles = StyleSheet.create({
         alignSelf:"center",
         justifyContent:"space-around",
         alignItems:"center",
-        marginTop:13,
+        marginTop:14,
         flex:1,
         flexDirection:"row"
     },

@@ -30,6 +30,7 @@ const Post = ({navigation, route}) => {
     const [userToken, setUserToken] = useState()
     const [commentList, setCommentList] = useState([])
     const [likesList, setLikesList] = useState([])
+    const [isLiked, setIsLiked] = useState(route.params.item.liked?route.params.item.liked:likesList.map((item)=>item.userid).indexOf(user.userId)>-1)
     const [userList, setUserList] = useState([])
     const [mediaType, setMediaType] = useState(route.params.item.image.toString().split('.').pop())
     const currentRoute = useRoute()
@@ -78,6 +79,7 @@ const Post = ({navigation, route}) => {
         axios.get(`http://${user.network}:19001/api/getuserlikes/${postId}`)  
         .then((response)=> {
             setLikesList(response.data)
+            setIsLiked(response.data.map((item)=>item.userid).indexOf(user.userId)>-1)
         }).catch(error => console.log(error))
     }, [])
     useEffect(()=> {
@@ -94,8 +96,8 @@ const Post = ({navigation, route}) => {
         }).catch(error=>console.log(error))
     }, [])
     function handlePress() {
-        console.log(route.params)
-     //   console.log(likesList)
+   //     console.log(route.params)
+        console.log(likesList)
      //   console.log(commentList)
     }
     const renderMilestone = ({ item }) => {
@@ -118,7 +120,7 @@ const Post = ({navigation, route}) => {
                 <PostItem username={route.params.item.username} caption={route.params.item.caption} 
                 src={route.params.item.src} image={route.params.item.image} postId={route.params.item.postId} 
                 ownerId={route.params.item.ownerId} date={route.params.item.date}
-                liked={route.params.item.liked} isLast={false} isPublic={route.params.item.isPublic} isViewable={true} onToggleComment={()=>setCommentToggle(!commentToggle)}/>
+                liked={isLiked} isLast={false} isPublic={route.params.item.isPublic} isViewable={true} onToggleComment={()=>setCommentToggle(!commentToggle)}/>
             </View>
             <View style={{marginTop:windowH*0.02}}>
                 <View style={[(windowH>900)?styles.milestoneHeaderContainerLarge:styles.milestoneHeaderContainer]}>

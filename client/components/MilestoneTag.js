@@ -33,7 +33,6 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
         ownerid:ownerid,
     }
     const autoSelect = () => {
-       
         if (selected) {
             Animated.timing(animatedvalue,{
                 toValue:100,
@@ -47,7 +46,6 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
                 useNativeDriver:false,
             }).start()
         }
-        
     }
    
     const toggleSelect = () => {
