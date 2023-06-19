@@ -76,7 +76,7 @@ const renderItem = ({item}) => {
     )
 }
 
-const MilestoneTab = ({item}) => {
+const MilestoneTab = ({item, index}) => {
     const user = useContext(userContext)
     const navigation = useNavigation()
     var fileExt = (item.src !== undefined)?item.src.toString().split('.').pop():item.src
@@ -90,28 +90,19 @@ const MilestoneTab = ({item}) => {
         if (joined) {
             Animated.timing(animatedcolor,{
                 toValue:100,
-                duration:150,
+                duration:200,
                 useNativeDriver:false,
             }).start()
         } else {
             Animated.timing(animatedcolor,{
                 toValue:0,
-                duration:150,
+                duration:200,
                 useNativeDriver:false,
             }).start()
         }
     }
     function handleTest() {
-        //console.log(postList.map((item)=> new Date(item.date).toLocaleDateString("en-US",{month:"long", day:"numeric",year:"numeric"})))
-       // console.log(postList.map((item=> (item.src !== undefined)?item.src.toString().split('.').pop():'png')))
-        //console.log(postList.length)
-        //console.log(new Date(item.date).toLocaleDateString("en-US", {month:"short", day:"numeric", year:"numeric"}))
-       // console.log(postList.filter((item)=>item !== 0).length)
-       // console.log(item)
-        //console.log(new Date(postList[0].date).toLocaleDateString("en-US", {month:"short", day:"numeric", year:"numeric"}))
-        //console.log(timestamp)
-        //console.log(item)
-        console.log(postList)
+        console.log(index)
     }
     function navigateMilestone() {
         item.id = item.idmilestones
@@ -157,12 +148,13 @@ const MilestoneTab = ({item}) => {
         .then((response) => {
             setPostList([...response.data.filter((item)=> item.public === 1)].reverse().concat([0,0,0,0]).slice(0,4))
             setCount(response.data.length)
+            setImage(item.src)
         }).catch(error=>console.log(error))
-    }, [])
+    }, [item])
     return (
         <>
         {(postList.filter((item)=>item !== 0).length > 0) && 
-        <View style={[styles.milestoneTabContainer]}>
+        <View style={[styles.milestoneTabContainer, {marginTop:windowH*0.0215}]}>
             <View style={styles.headerContentWrapper}>
                 <View style={{flex:1, flexDirection:"row", alignItems:"center"}}>
                     <View style={[styles.milestoneIconContainer, {alignSelf:"center"}]}>
@@ -189,10 +181,10 @@ const MilestoneTab = ({item}) => {
                         </Pressable>
                     </View>
         
-                    <View style={{alignSelf:"center", alignItems:"center", maxWidth:windowW*0.425}}>
-                        <Text style={[styles.milestoneTitle]} numberOfLines={1}>{item.title}</Text>
+                    <View style={{alignSelf:"center", alignItems:"center", maxWidth:(windowH>900)?windowW*0.425:windowW*0.45}}>
+                        <Text style={[styles.milestoneTitle]} numberOfLines={(windowH>900)?1:2}>{item.title}</Text>
                     </View>
-      
+                    {(windowH>900)&&
                     <Pressable onPress={handleTest}>
                         <Icon 
                             style={{transform:[{rotate:"-45deg"}], alignSelf:"center"}}
@@ -201,11 +193,13 @@ const MilestoneTab = ({item}) => {
                             color='rgba(160, 160, 160, 1)'
                             size={19}/>
                     </Pressable>
+                    }
                 </View>
                 
                 {/*  replace function with backend request, put animation toggle in there */}
+                {
                 <Pressable onPress={()=>setJoined(!joined)}
-                style={{ alignSelf:"center", height:windowH*(28/windowH)}}>
+                style={{ alignSelf:"center", height:(windowH>900)?28:26}}>
                     <Animated.View 
                     style={[styles.addMilestoneContainer, {
                     backgroundColor:animatedcolor.interpolate({inputRange:[0,100], outputRange:["rgba(0, 82, 63, 1)","#565454"]})
@@ -217,9 +211,10 @@ const MilestoneTab = ({item}) => {
                         </Animated.Text>
                     </Animated.View>
                 </Pressable>
+                }
             </View>
             <View style={styles.descriptionContainer}>
-                <Text style={[styles.descriptionText]}>
+                <Text style={[styles.descriptionText]} numberOfLines={2}>
                     {(item.description && item.description.length > 0)?item.description:
                     `New start, new milestone! `}
                 </Text>
@@ -231,12 +226,13 @@ const MilestoneTab = ({item}) => {
                     maxToRenderPerBatch={4}
                     contentContainerStyle={{flex:1, flexDirection:"row", justifyContent:"space-around"}}
                     showsHorizontalScrollIndicator={false}
+                    scrollEnabled={false}
                     initialNumToRender={4}
                     data={postList}
                 />
             </View>
-            <View style={{paddingLeft:4, paddingTop:9}}>
-                <Text style={{fontFamily:"InterBold", color:'rgba(180,180,180,1)', fontSize:13}}>
+            <View style={{paddingLeft:8, paddingTop:(windowH>900)?10:10}}>
+                <Text style={{fontFamily:"InterBold", color:'rgba(180,180,180,1)', fontSize:(windowH>900)?13:11.5}}>
                         {`Updated ${timestamp} ${(timestamp !== "Today" && timestamp !== "Yesterday")? 'ago':''}`}
                 </Text>
             </View>
@@ -246,9 +242,9 @@ const MilestoneTab = ({item}) => {
     )
 }
 
-const renderTab = ({item}) => {
+const renderTab = ({item, index}) => {
     return (
-        <MilestoneTab item={item}/>
+        <MilestoneTab item={item} index={index}/>
     )
 }
 
@@ -264,6 +260,52 @@ const MilestoneExplore = () => {
     const [query, setQuery] = useState('')
     const [filtered, setFiltered] = useState([])
     const [tabCount, setTabCount] = useState(10)
+    const [scrollDirection, setScrollDirection] = useState("start");
+    const prevScrollY = useRef(0);
+    const offsetY = useRef(new Animated.Value(0)).current
+    const animatedoffset = useRef(new Animated.Value(0)).current
+    const scrollRef = useRef()
+
+    const slideIn = () =>{
+        Animated.timing(animatedoffset,{
+            toValue:100,
+            delay:0,
+            duration:200,
+            useNativeDriver:true,
+            extrapolate:"clamp"
+        }).start()
+    }
+    const slideOut = ()=> {
+        Animated.timing(animatedoffset,{
+            toValue:0,
+            delay:0,
+            duration:150,
+            useNativeDriver:true,
+            extrapolate:"clamp"
+        }).start()
+    }
+    useEffect(()=> {
+        console.log(offsetY)
+        if (scrollDirection === 'down') {
+            slideOut()
+        }
+        else {
+            if (scrollDirection === 'up' || scrollDirection ==='start') {
+                slideIn()
+            }
+        }
+    }, [scrollDirection])
+    useEffect(()=> {
+        const listener = offsetY.addListener((value) => {
+            setScrollDirection((value.value - prevScrollY.current === 0)?'none':
+            ((value.value <= prevScrollY.current) || (value.value <= 0))
+            ? 'up' : 'down')
+            offsetY.current = value.value;
+          });
+          return () => {
+            offsetY.removeListener(listener);
+          };
+    }, [offsetY])
 
     const onRefresh = useCallback(() => {
         setRefreshing(true);
@@ -304,48 +346,59 @@ const MilestoneExplore = () => {
                 </Animated.View>
             }
             <View style={[styles.milestoneExploreContent]}>
-                <Pressable onPress={()=>navigation.navigate("CreateMilestone", {from:'explore'}) }>
-                    <View style={[styles.milestoneEmptyContainer]}>
-                        <View style={{alignItems:"center",alignSelf:"center", justifyContent:"space-evenly"}}>
-                            <Icon
-                            name = {'add-to-photos'}
-                            color="rgba(58, 184, 156, 1)"
-                            size={(windowH>900)?27.5:26}
-                            />
-                            <Text style={{fontFamily:"Inter", color:"rgba(58, 184, 156, 1)", 
-                            fontSize:(windowH>900)?12:11, paddingTop:6}}>Add a new milestone...</Text>
+                <Animated.View style={{maxHeight:126.4, zIndex:999, position:"absolute", top:94 + ((windowH>900)?windowH*0.0235:windowH*0.022),
+                    transform:[{translateY: animatedoffset.interpolate(({inputRange:[0,100], outputRange:[-162,0]}))}],}}>
+                    <Pressable onPress={()=>navigation.navigate("CreateMilestone", {from:'explore'}) }>
+                        <View style={[styles.milestoneEmptyContainer]}>
+                            <View style={{alignItems:"center",alignSelf:"center", justifyContent:"space-evenly"}}>
+                                <Icon
+                                name = {'add-to-photos'}
+                                color="rgba(58, 184, 156, 1)"
+                                size={(windowH>900)?27.5:26}
+                                />
+                                <Text style={{fontFamily:"Inter", color:"rgba(58, 184, 156, 1)", 
+                                fontSize:(windowH>900)?12:11, paddingTop:6}}>Add a new milestone...</Text>
+                            </View>
                         </View>
+                    </Pressable>
+                    <View style={[styles.userInfoContainer]}>
+                        <TextInput 
+                            style={styles.userInfoInput}
+                            onChangeText={(e)=>setQuery(e)}
+                            placeholder={'Search a milestone...'}
+                            placeholderTextColor={'rgba(221, 221, 221, 1)'}
+                            value={query}>
+                        </TextInput>
+                        <Icon
+                            name='search'
+                            size={19}
+                            color={'rgba(180,180,180,1)'}
+                            style={{zIndex:10, paddingTop:0}}
+                        />
                     </View>
-                </Pressable>
-                <View style={[styles.userInfoContainer]}>
-                    <TextInput 
-                        style={styles.userInfoInput}
-                        onChangeText={(e)=>setQuery(e)}
-                        placeholder={'Search a milestone...'}
-                        placeholderTextColor={'rgba(221, 221, 221, 1)'}
-                        value={query}>
-                    </TextInput>
-                    <Icon
-                        name='search'
-                        size={19}
-                        color={'rgba(180,180,180,1)'}
-                        style={{zIndex:10, paddingTop:0}}
-                    />
-                </View>
-                <View style={{marginBottom:windowH*0.2175, backgroundColor:'rgba(28,28,28,0)'}}>
-      
-                    <FlatList 
+                </Animated.View>
+
+                <Animated.View style={{marginBottom:(windowH>900)?windowH*0.085:windowH*0.095,
+                     backgroundColor:'rgba(28,28,28,0)'}}>
+                    <Animated.FlatList 
                         data={(query.length > 0)?filtered:milestones}
                         renderItem={renderTab}
                         maxToRenderPerBatch={10}
+                        onScroll={Animated.event(
+                            [{nativeEvent: 
+                                {contentOffset: {y: offsetY} } 
+                            }],
+                            {useNativeDriver: true}
+                        )}
+                        ref={scrollRef}
+                        contentContainerStyle={{paddingTop:126.4}}
                         refreshControl={
                             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                         }
                         showsVerticalScrollIndicator={false}
-                        keyExtractor={(item, index)=>index}
+                        keyExtractor={(item, index)=> index}
                     />
-      
-                </View>
+                </Animated.View>
             </View>
             <View style={{bottom:0, position:"absolute"}}>
                 <Footer/>
@@ -364,7 +417,7 @@ const styles = StyleSheet.create({
         height:windowH,
         width:windowW*0.8,
         alignItems:"center",
-        paddingTop:(windowH>900)?windowH*0.125:windowH*0.1375,
+        paddingTop:(windowH>900)?windowH*0.125:windowH*0.125,
         alignSelf:"center",
     },
     milestoneEmptyContainer: {
@@ -390,7 +443,7 @@ const styles = StyleSheet.create({
     userInfoContainer: {
         width:(windowW * 0.8) + 4.5,
         alignSelf:"center",
-        minHeight: windowH * (36/windowH),
+        maxHeight: windowH * (36/windowH),
         justifyContent:"flex-start",
         borderRadius:10,
         backgroundColor:"rgba(10, 10, 10, 1)",
@@ -400,7 +453,7 @@ const styles = StyleSheet.create({
     },
     userInfoInput: {
         width:'90%',
-        minHeight: windowH * (36/windowH),
+        height: windowH * (36/windowH),
         paddingTop:1,
         paddingLeft:windowW * (16/windowW),
         paddingRight:windowW * (16/windowW),
@@ -417,7 +470,6 @@ const styles = StyleSheet.create({
         borderRadius:10,
         maxHeight:windowH*0.3,
         alignSelf:"center",
-        marginTop:windowH*0.0215,
         paddingTop:4,
         marginBottom:(windowH*0.0215)-4,
     },
@@ -447,16 +499,16 @@ const styles = StyleSheet.create({
     },
     milestoneTitle: {
         fontFamily:"InterBold",
-        fontSize:20,
+        fontSize:(windowH>900)?20:19,
         color:"rgba(255,255,255,1)",
-        alignSelf:"center",
+   
         marginBottom:2,
-        marginLeft:windowW*(14/windowW),
+        marginLeft:windowW*(12/windowW),
         marginRight:windowW*(6/windowW),
     },
     addMilestoneContainer: {
-        minWidth:windowW * (88/windowW),
-        height: windowH * (28/windowH),
+        minWidth:(windowH>900)?88:82,
+        height: (windowH>900)?28:26,
       //  backgroundColor:"#565454",
         backgroundColor:"rgba(0, 82, 63, 1)",
         borderRadius:4,
@@ -471,7 +523,7 @@ const styles = StyleSheet.create({
     },
     descriptionContainer: {
         width: windowW * .8,
-        height: windowH * (79 / windowH),
+        height: windowH*0.0853,
         alignSelf:"center",
         backgroundColor:"rgba(10,10,10,1)",
         marginTop:14,
@@ -484,32 +536,33 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         flexDirection:"row",
         borderRadius:10,
-        paddingTop:21,
+        paddingTop:(windowH>900)?20:18,
         paddingLeft:22,
         paddingBottom:20,
         paddingRight:22,
     },
     descriptionText: {
         fontFamily:"Inter",
-        fontSize:windowH>900?13.5:13,
-        lineHeight:18,
+        fontSize:windowH>900?13.5:12,
+        lineHeight:(windowH>900)?18:17,
         color:"white",
-
     },
     // images
     postListContainer: {
-        maxHeight:77,
+        maxHeight:windowH*0.083,
         maxWidth:windowW*0.8,
+        paddingLeft:2,
+        paddingRight:2,
+        marginTop:15,
         alignSelf:"center",
         justifyContent:"space-around",
         alignItems:"center",
-        marginTop:14,
         flex:1,
         flexDirection:"row"
     },
     postContainer: {
-        width:79,
-        height:77,
+        width:windowW*0.18,
+        height:windowH*0.083,
         borderRadius:10,
         backgroundColor:'rgba(100,100,100,0.5)',
         shadowColor: '#000',
