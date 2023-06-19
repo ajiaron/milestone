@@ -20,9 +20,11 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
     const [postImg, setPostImg] = useState()
     const [postData, setPostData] = useState()
     const [timestamp, setTimestamp] = useState()
+    const [milestoneData, setMilestoneData] = useState()
     const [milestoneImg, setMilestoneImg] = useState()
     const [prompt, setPrompt] = useState()
     const [accepted, setAccepted] = useState(false)
+    const [fileExt, setFileExt] = useState('')
     const [isFriend, setIsFriend] = useState(false)
     const animatedvalue = useRef(new Animated.Value(0)).current
     function clearNotification() {
@@ -61,7 +63,18 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
     }
     function handleNavigation() {
         if (!postData) {
-            Alert.alert("This post no longer exists.", "The owner has removed this post, or it could not be found.")
+            if (type === 'join' && milestoneData) {
+                milestoneData.id = milestoneData.idmilestones
+                navigation.push("MilestonePage",
+                { 
+                    milestone:milestoneData, 
+                    date:new Date(milestoneData.date).toLocaleDateString("en-US", {month:"short", day:"numeric", year:"numeric"}), 
+                    count:milestoneData.count
+                })
+            }
+            else {
+                Alert.alert("This post no longer exists.", "The owner has removed this post, or it could not be found.")
+            }
         }
         else {
             navigation.navigate("Post", {item:{
@@ -77,7 +90,10 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
         }
     }
     function handleTest() {
-        console.log(timestamp)
+        console.log(fileExt)
+    }
+    function navigateProfile() {
+        navigation.navigate("Profile", {id:requesterId})
     }
     useEffect(()=> {
         const postDate = new Date(date)
@@ -115,10 +131,22 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
         }
     }, [])
     useEffect(()=> {
-        if (type !=='friend' && type !== 'accept') {
+        if (type == 'join') {
+            axios.get(`http://${user.network}:19001/api/getmilestonedetails/${milestoneId}`)
+            .then((response)=> {
+                setMilestoneImg(response.data[0].src)
+                setFileExt((response.data[0].src !== undefined)?response.data[0].src.toString().split('.').pop():response.data[0].src)
+                setMilestoneData(response.data[0])
+            })
+            .catch((error)=> console.log(error))  
+        }
+    }, [])
+    useEffect(()=> {
+        if (type !=='friend' && type !== 'accept' && type !== 'join') {
             axios.get(`http://${user.network}:19001/api/getposts`) 
             .then((response)=> {
                 setPostImg(response.data.filter((item)=> item.idposts === postId)[0].src)
+                setFileExt(response.data.filter((item)=> item.idposts === postId)[0].src.toString().split('.').pop())
                 setPostData(response.data.filter((item)=> item.idposts === postId)[0])
             })
             .catch((error)=> console.log(error))
@@ -142,7 +170,7 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
                 <View style={[styles.notificationContent, ]}>
                     <View style={{flexDirection:"row"}}>
                         <View style={{maxHeight:33, alignItems:"center", paddingRight:12, alignSelf:"center"}}>
-                            <Pressable onPress={()=>navigation.navigate("Profile", {id:requesterId})}>
+                            <Pressable onPress={handleTest}>
                                 {
                                 (!user.isExpo)?
                                 <FastImage
@@ -169,7 +197,6 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
                                     (type === 'like')&&
                                     <Text>{` liked your recent post. `}<Text style={{fontSize:13}}>👍</Text>
                                     </Text>
-
                                 }
                                 {
                                     (type === 'comment')&&<Text numberOfLines={1}>{` commented: ${comment}`}</Text>
@@ -189,28 +216,47 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
                                     <Text>{` posted to your milestone!`}
                                     </Text>
                                 }
+                                {
+                                    (type === 'join')&&
+                                    <Text>{` joined your milestone!`}
+                                    </Text>
+                                }
                                     <Text style={{color:"rgba(140,140,140,1)", fontSize:13, fontStyle:"InterLight"}}>  {timestamp}</Text>
                                 </Text>
                             </Text>
                         </View>
                     </View>
             
-                    <View style={{maxHeight:32,maxWidth:32, alignItems:"center", right:16, position:"absolute"}}>
+                    <View style={{maxHeight:(fileExt==='jpg' || fileExt==='png')?34:31,maxWidth:(fileExt==='jpg' || fileExt==='png')?34:31, 
+                    alignItems:"center", right:16, position:"absolute"}}>
                         <Pressable onPress={handleNavigation}>
                             {
                             (!user.isExpo)?
                             <FastImage
-                                style={{height:32, width:32, borderRadius:4, alignSelf:"center"}}
-                                source={{
-                                    uri:postImg,
-                                    priority:FastImage.priority.normal
-                                }}
+                                style={{height:(fileExt==='jpg' || fileExt==='png')?34:31, width:(fileExt==='jpg' || fileExt==='png')?34:31, 
+                                borderRadius:4, alignSelf:"center"}}
+                                source={
+                                    (type==='join')?
+                                        (fileExt==='jpg' || fileExt==='png')?
+                                        {     
+                                            uri:milestoneImg,
+                                            priority:FastImage.priority.normal
+                                        }
+                                        :
+                                        Icons[milestoneImg]
+                                    :
+                                    {
+                                        uri:postImg,
+                                        priority:FastImage.priority.normal
+                                    }
+                                }
                                 resizeMode={FastImage.resizeMode.cover}
                             />
                             :
                             <Image
-                                style={{height:32, width:32, borderRadius:4, alignSelf:"center"}}
-                                source={{uri:postImg}}
+                                style={{height:(fileExt==='jpg' || fileExt==='png')?34:31, width:(fileExt==='jpg' || fileExt==='png')?34:31,
+                                borderRadius:4, alignSelf:"center"}}
+                                source={(fileExt!=='jpg'&&fileExt!=='png')?Icons[milestoneImg]:{uri:(type === 'join')?milestoneImg:postImg}}
                                 resizeMode='cover'
                             />
                             }

@@ -117,6 +117,12 @@ const MilestoneTab = ({item, index}) => {
         axios.post(`http://${user.network}:19001/api/postmember`, 
         {idmilestones:item.idmilestones, userid:user.userId})
         .then(() => {
+            axios.post(`http://${user.network}:19001/api/postnotification`,
+            {requesterId:user.userId, recipientId:item.ownerId, type:'join', milestoneId:item.idmilestones})
+            .then(() => {
+                console.log('join notified')
+            }) 
+            .catch((error)=> console.log(error))
             console.log('new member added')
             setJoined(true)
         }).catch(error=>console.log(error))

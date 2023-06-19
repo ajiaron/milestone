@@ -280,6 +280,19 @@ app.get('/api/getusermilestones/:id', (req, res) => {
         }
     })
 })
+app.get('/api/getmilestonedetails/:idmilestones', (req, res) => {
+    const idmilestones = req.params.idmilestones
+    const sql = 'SELECT DISTINCT milestones.*, COUNT(DISTINCT postid) as count FROM milestone_db.postmilestones '+
+                'RIGHT JOIN milestone_db.milestones ON milestoneid = idmilestones '+ 
+                'WHERE idmilestones = ?;'
+    db.query(sql, [idmilestones], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
 
 app.post('/api/registeruser', (req, res)=> {
     const name = req.body.username

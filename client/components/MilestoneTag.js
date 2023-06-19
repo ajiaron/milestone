@@ -125,9 +125,9 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
         }
     }, [])
     useEffect(()=> {
-        axios.get(`http://${user.network}:19001/api/getlinkedmilestones`)
+        axios.get(`http://${user.network}:19001/api/getlinkedposts/${id}`)
         .then((response)=> {
-            setPosts(response.data.filter((item)=> item.milestoneid == id).length)
+            setPosts(response.data.length)
         })
         .catch((error)=> console.log(error))
     },[isEmpty])
