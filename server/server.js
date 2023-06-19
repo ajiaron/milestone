@@ -220,6 +220,66 @@ app.get('/api/getfriendslist/:id', (req, res) => {
         }
     })
 })
+app.get('/api/getmembers/:idmilestones', (req, res) => {
+    const idmilestones = req.params.idmilestones
+    const sql = 'SELECT * FROM milestone_db.users WHERE id IN (SELECT memberid FROM milestone_db.members WHERE idmilestones = ?);'
+    db.query(sql, [idmilestones], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.get('/api/getmemberposts/:idmilestones/:id', (req, res) => {
+    const idmilestones = req.params.idmilestones
+    const id = req.params.id
+    const sql = 'SELECT DISTINCT * FROM milestone_db.userposts ' +
+    'WHERE idposts IN (SELECT postid FROM milestone_db.postmilestones WHERE milestoneid = ?) '+
+    'AND ownerid IN (SELECT id FROM milestone_db.users WHERE id = ?); '
+    db.query(sql, [idmilestones, id], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.get('/api/getmembermilestones/:id', (req, res) => {
+    const id = req.params.id
+    const sql = 'SELECT * FROM milestone_db.milestones WHERE idmilestones IN ' +
+    'SELECT idmilestones FROM milestone_db.members WHERE memberid = ?);'
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.get('/api/getmemberdetails/:id', (req, res) => {
+    const id = req.params.id
+    const sql = 'SELECT * FROM milestone_db.users WHERE id IN (SELECT memberid FROM milestone_db.members) AND id = ?; ' 
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.get('/api/getusermilestones/:id', (req, res) => {
+    const id = req.params.id
+    const sql = 'SELECT * FROM milestone_db.milestones WHERE idmilestones IN '+
+                '(SELECT idmilestones FROM milestone_db.members WHERE memberid = ?) OR ownerid = ?;' 
+    db.query(sql, [id, id], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
 
 app.post('/api/registeruser', (req, res)=> {
     const name = req.body.username
@@ -454,6 +514,18 @@ app.post('/api/get-push-receipts', async (req,res) => {
         console.log('Error getting push receipts:', error);
         res.status(500).json({ error: 'Error getting push receipts.' });
     }
+})
+app.post('/api/postmember', (req, res) => {
+    const idmilestones = req.body.idmilestones
+    const memberid = req.body.userid
+    db.query('INSERT INTO members (idmilestones, memberid) VALUES (?,?);',
+    [idmilestones, memberid], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send("friend notification sent")
+        }
+    })
 })
 
 
@@ -692,6 +764,28 @@ app.delete('/api/clearnotifications', (req, res) => {
         }
     })
 })
+app.delete('/api/clearmembers', (req, res) => {
+    const idmilestones = req.body.idmilestones
+    db.query("DELETE FROM milestone_db.members WHERE idmilestones = ?", [idmilestones], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send('members cleared')
+        }
+    })
+})
+app.delete('/api/removemember', (req, res) => {
+    const userid = req.body.userid
+    const idmilestones = req.body.idmilestones
+    db.query("DELETE FROM milestone_db.members WHERE memberid = ? AND idmilestones = ?", [userid, idmilestones], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send('member removed')
+        }
+    })
+})
+
 
 app.listen(19001, () => {
     console.log("ayo server running on port 19001")

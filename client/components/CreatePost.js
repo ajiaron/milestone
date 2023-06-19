@@ -75,9 +75,14 @@ const CreatePost = ({route}) => {
         return false
     }
     useEffect(()=> {
+        axios.get(`http://${user.network}:19001/api/getusermilestones/${user.userId}`)
+        .then((response)=> {
+            setPersonalMilestones(response.data.filter((item)=>checkDate(item.duration)))})      // TODO: Friends condition
+        .catch((error)=> console.log(error))
+    },[isFocused])
+    useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response)=> {
-            setPersonalMilestones(response.data.filter((item)=>item.ownerId === user.userId))
             setMilestoneList(response.data.filter((item)=>item.postable === "Everyone" && checkDate(item.duration)))
         })
         .catch((error)=> console.log(error))
@@ -169,8 +174,7 @@ const CreatePost = ({route}) => {
                 id={milestoneList.length>0?item.idmilestones:item.id} 
                 ownerid={milestoneList.length>0?item.ownerId:0}
                 isLast={milestoneList.map(item=>item.idmilestones).indexOf(item.idmilestones) === milestoneList.length-1}
-                isEmpty={isPersonal && milestoneList.filter((val)=>val.ownerId === user.userId).indexOf(item) === 
-                    milestoneList.filter((val)=>val.ownerId === user.userId).length-1}
+                isEmpty={isPersonal && personalMilestones.indexOf(item) === 0}
                 date={item.date}
                 onSelectMilestone={(selected) => setMilestones([...milestones,selected])}
                 onRemoveMilestone={(selected) => setMilestones(milestones.filter((item) => item.id !== selected.id))}
@@ -262,7 +266,7 @@ const CreatePost = ({route}) => {
                         snapToInterval={(windowH*0.0756)+16}
                         showsVerticalScrollIndicator={false}
                         style={[styles.milestoneList]} 
-                        data={isPersonal?[...milestoneList.filter((item)=>item.ownerId === user.userId)].reverse():milestoneList} 
+                        data={isPersonal?personalMilestones:milestoneList} 
                         renderItem={renderMilestone} 
                         keyExtractor={(item)=>item.idmilestones.toString()}>
                     </FlatList> }

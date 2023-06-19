@@ -18,9 +18,9 @@ const MilestoneList = () => {
     const navigation = useNavigation()
     const scrollY = useRef(new Animated.Value(0)).current;
     useEffect(()=> {
-        axios.get(`http://${user.network}:19001/api/getmilestones`)
+        axios.get(`http://${user.network}:19001/api/getusermilestones/${user.userId}`)
         .then((response)=> {
-            setMilestoneList(response.data.filter((item)=>item.ownerId === user.userId))})
+            setMilestoneList(response.data)})
         .catch((error)=> console.log(error))
     }, [])
    

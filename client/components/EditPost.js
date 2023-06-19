@@ -87,6 +87,12 @@ const EditPost = ({route}) => {
         }).catch(error => console.log(error))
     }, [])
     useEffect(()=> {
+        axios.get(`http://${user.network}:19001/api/getusermilestones/${user.userId}`)
+        .then((response)=> {
+            setPersonalMilestones(response.data.filter((item)=>checkDate(item.duration)))})      // TODO: Friends condition
+        .catch((error)=> console.log(error))
+    },[isFocused, refreshing])
+    useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getmilestones`)
         .then((response)=> {
             setMilestoneList(response.data.filter((item)=>item.postable === "Everyone" && checkDate(item.duration)))})      // TODO: Friends condition
@@ -166,8 +172,7 @@ const EditPost = ({route}) => {
                 ownerid={milestoneList.length>0?item.ownerId:0}
                 isLast={milestoneList.indexOf(item) === milestoneList.length}
                 selected={linkedMilestones.indexOf(item.idmilestones) > -1}
-                isEmpty={isPersonal && milestoneList.filter((val)=>val.ownerId === user.userId).indexOf(item) === 
-                milestoneList.filter((val)=>val.ownerId === user.userId).length-1}
+                isEmpty={isPersonal && personalMilestones.indexOf(item) === 0}
                 date={item.date}
                 onSelectMilestone={(selected) => setMilestones([...milestones,selected])}
                 onRemoveMilestone={(selected) => setMilestones(milestones.filter((item) => item.idmilestones !== selected.idmilestones))}
@@ -266,7 +271,7 @@ const EditPost = ({route}) => {
                             snapToInterval={(windowH*0.0756)+16}
                             showsVerticalScrollIndicator={false}
                             style={[styles.milestoneList]} 
-                            data={isPersonal?[...milestoneList.filter((item)=>item.ownerId === user.userId)].reverse():milestoneList} 
+                            data={isPersonal?personalMilestones:milestoneList} 
                             renderItem={renderMilestone} 
                             keyExtractor={(item)=>item.idmilestones.toString()}>
                         </FlatList> 

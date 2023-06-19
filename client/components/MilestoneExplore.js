@@ -102,7 +102,7 @@ const MilestoneTab = ({item, index}) => {
         }
     }
     function handleTest() {
-        console.log(index)
+        console.log(item)
     }
     function navigateMilestone() {
         item.id = item.idmilestones
@@ -112,6 +112,21 @@ const MilestoneTab = ({item, index}) => {
             date:new Date(item.date).toLocaleDateString("en-US", {month:"short", day:"numeric", year:"numeric"}), 
             count:count
         })
+    }
+    function joinMilestone() {
+        axios.post(`http://${user.network}:19001/api/postmember`, 
+        {idmilestones:item.idmilestones, userid:user.userId})
+        .then(() => {
+            console.log('new member added')
+            setJoined(true)
+        }).catch(error=>console.log(error))
+    }
+    function leaveMilestone() {
+        axios.delete(`http://${user.network}:19001/api/removemember`, {data: {userid:user.userId, idmilestones:item.idmilestones}})
+        .then((response)=> {
+            setJoined(false)
+            console.log("removed member")
+        }).catch(error=>console.log(error))
     }
     useEffect(()=> {
         handleJoin()
@@ -142,7 +157,13 @@ const MilestoneTab = ({item, index}) => {
                 ' year':Math.floor(Math.abs(newDate-postDate)/31536000000).toString()+' years')
         }
     }, [postList, count])
-
+    useEffect(()=> {
+        axios.get(`http://${user.network}:19001/api/getusermilestones/${user.userId}`)
+        .then((response)=> {
+          setJoined(response.data.filter((val)=>val.idmilestones === item.idmilestones).length > 0)
+        })
+        .catch((error)=> console.log(error))
+    }, [])
     useEffect(()=> {    
         axios.get(`http://${user.network}:19001/api/getlinkedposts/${item.idmilestones}`)
         .then((response) => {
@@ -198,7 +219,7 @@ const MilestoneTab = ({item, index}) => {
                 
                 {/*  replace function with backend request, put animation toggle in there */}
                 {
-                <Pressable onPress={()=>setJoined(!joined)}
+                <Pressable onPress={(item.ownerId === user.userId)?()=>console.log('owner'):(joined)?leaveMilestone:joinMilestone}
                 style={{ alignSelf:"center", height:(windowH>900)?28:26}}>
                     <Animated.View 
                     style={[styles.addMilestoneContainer, {
@@ -207,7 +228,7 @@ const MilestoneTab = ({item, index}) => {
                         <Animated.Text 
                         style={{color:animatedcolor.interpolate({inputRange:[0,100], outputRange:["white","rgba(10,10,10,1)"]}),
                          fontSize:(windowH>900)?14:12.5, fontFamily:"InterBold", alignSelf:"center"}}>
-                            Join
+                            {(item.ownerId === user.userId)?'Owner':'Join'}
                         </Animated.Text>
                     </Animated.View>
                 </Pressable>
@@ -259,6 +280,7 @@ const MilestoneExplore = () => {
     const [milestones, setMilestones] = useState([])
     const [query, setQuery] = useState('')
     const [filtered, setFiltered] = useState([])
+    const [joinedMilestones, setJoinedMilestones] = useState([])
     const [tabCount, setTabCount] = useState(10)
     const [scrollDirection, setScrollDirection] = useState("start");
     const prevScrollY = useRef(0);
@@ -338,6 +360,7 @@ const MilestoneExplore = () => {
             })
             .catch((error)=> console.log(error))
     }, [refreshing])
+
     return (
         <View style={[styles.milestoneExplorePage]}>
             <Navbar title={'milestone'} scrollY={scrollY}/>
