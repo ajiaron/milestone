@@ -42,7 +42,7 @@ const MilestoneList = () => {
                     <Text style={[styles.milestoneHeader]}>
                         Your Milestones
                     </Text>
-                    <Pressable onPress={()=> {navigation.navigate("MilestoneList")}}>
+                    <Pressable onPress={()=> {console.log(milestoneList)}}>
                         <Icon 
                         name='navigate-next' 
                         size={30} 
@@ -52,16 +52,31 @@ const MilestoneList = () => {
                     
                 </View>
              <View style={(windowH > 900)?styles.postTagContainerLarge:styles.postTagContainer}>
+                {(milestoneList.length>0)?
                     <FlatList 
                         snapToAlignment="start"
                         decelerationRate={"fast"}
                         snapToInterval={(windowH*0.0756)+16}
                         showsVerticalScrollIndicator={false}
                         style={[styles.milestoneList]} 
-                        data={milestoneList.length>0?milestoneList:milestoneData} 
+                        data={milestoneList} 
                         renderItem={renderMilestone} 
                         keyExtractor={(item)=>(milestoneList.length>0)?item.idmilestones.toString():item.id.toString()}>
-                    </FlatList> 
+                    </FlatList> :
+                    <Pressable onPress={()=>navigation.navigate("CreateMilestone", {from:'explore'}) }>
+                        <View style={[styles.milestoneEmptyContainer]}>
+                            <View style={{alignItems:"center",alignSelf:"center", justifyContent:"space-evenly"}}>
+                                <Icon
+                                name = {'add-to-photos'}
+                                color="rgba(58, 184, 156, 1)"
+                                size={(windowH>900)?27.5:26}
+                                />
+                                <Text style={{fontFamily:"Inter", color:"rgba(58, 184, 156, 1)", 
+                                fontSize:(windowH>900)?12:11, paddingTop:6}}>Add a new milestone...</Text>
+                            </View>
+                        </View>
+                    </Pressable>
+                }
                 </View>   
 
                 <View style={{position:"absolute", bottom:0}}>
@@ -106,8 +121,27 @@ const styles = StyleSheet.create({
         fontFamily:"Inter",
         fontSize: 20,
         color:"white",
-    }
-   
+    },
+    milestoneEmptyContainer: {
+        alignItems:"center",
+        padding:(windowH*0.0185)-2.25,
+        width:windowW*0.8,
+        height: windowH*0.0756,
+        backgroundColor: "rgba(28, 28, 28, 1)",
+        borderColor:"rgba(58, 184, 156, 1)",
+        borderRadius: 8,
+        borderWidth:2.25,
+        borderStyle:"dashed",
+        marginBottom:20,
+        shadowColor: '#000',
+        shadowOffset: {
+        width: 0,
+        height: 2,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
+        alignSelf:"center"
+    },
 
 })
 export default MilestoneList

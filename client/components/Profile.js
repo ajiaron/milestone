@@ -180,7 +180,7 @@ const Profile = ({route}) => {
        // console.log(userid)
        // console.log(userData)
        // console.log(fileExt)
-       console.log(userToken)
+       console.log(user)
       // console.log(windowH, windowW)
       // console.log(user)
     }
