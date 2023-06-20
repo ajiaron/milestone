@@ -222,8 +222,10 @@ app.get('/api/getfriendslist/:id', (req, res) => {
 })
 app.get('/api/getmembers/:idmilestones', (req, res) => {
     const idmilestones = req.params.idmilestones
-    const sql = 'SELECT * FROM milestone_db.users WHERE id IN (SELECT memberid FROM milestone_db.members WHERE idmilestones = ?);'
-    db.query(sql, [idmilestones], (err, result) => {
+    const sql = 'SELECT DISTINCT * FROM milestone_db.users '+
+                'WHERE id IN (SELECT ownerId FROM milestone_db.milestones WHERE idmilestones = ?) '+
+                'OR id IN (SELECT memberid FROM milestone_db.members WHERE idmilestones = ?);'
+    db.query(sql, [idmilestones, idmilestones], (err, result) => {
         if (err) {
             console.log(err)
         } else {

@@ -49,8 +49,14 @@ const Settings = () => {
         return blob
     }
     function handleNotifications() {
-        toggleNotifications()
-        push.registerForPushNotificationsAsync("Settings").then(token => push.setExpoPushToken(token))
+        if (user.notifications === true) {
+            Alert.alert("Turn off notifications", "Go to Settings > Milestone > Tap Notifications > Disable Notifications")
+            push.registerForPushNotificationsAsync("Settings").then(token => push.setExpoPushToken(token))
+        }
+        else {
+            toggleNotifications()
+            push.registerForPushNotificationsAsync("Settings").then(token => push.setExpoPushToken(token))
+        }
     }
     const handleChanges = async () => {
         const content = await fetchContent(image)

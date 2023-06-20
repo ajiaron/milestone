@@ -10,6 +10,7 @@ import Navbar from "./Navbar";
 import Icons from '../data/Icons.js'
 import userContext from '../contexts/userContext'
 import axios from 'axios'
+import { ScrollView } from "react-native-gesture-handler";
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
@@ -126,8 +127,11 @@ const MilestonePage = ({route}) => {
     const [duration, setDuration] = useState(null)
     const [timestamp, setTimestamp] = useState()
     const [token, setToken] = useState()
+    const [members, setMembers] = useState([])
     const scrollY = useRef(new Animated.Value(0)).current;
     const animatedvalue = useRef(new Animated.Value(0)).current;
+    const animatedcolor = useRef(new Animated.Value(0)).current;
+    const animatedheight = useRef(new Animated.Value(0)).current;
     var fileExt = (image !== undefined)?image.toString().split('.').pop():'calender'
 
     const viewabilityConfig = {
@@ -212,7 +216,8 @@ const MilestonePage = ({route}) => {
        // console.log('Views:', viewPermission)
        // console.log(timestamp)
        // console.log(route.params.milestone.id)
-        console.log(postList)
+        console.log(members)
+       // console.log(postList)
     }
     function checkDate() {
         if ((new Date(duration) - new Date())/86400000 < 0 && duration !== null) {
@@ -220,6 +225,12 @@ const MilestonePage = ({route}) => {
         } 
         return false
     }
+    useEffect(()=> {
+        axios.get(`http://${user.network}:19001/api/getmembers/${route.params.milestone.id}`)
+        .then((response)=>{
+            setMembers(response.data)
+        })
+    }, [])
     useEffect(()=> {    // fetch milestone info
         if (route) {
             setMilestoneId(route.params.milestone.id)
@@ -251,6 +262,45 @@ const MilestonePage = ({route}) => {
             setFavorite(response.data.filter((item)=> item.id === user.userId)[0].favoriteid == route.params.milestone.id)
         })
      }, [])
+    
+    const renderMember = ({item}) => {
+        return (
+            <View style={{maxWidth:windowW*0.8, flex:1, flexDirection:"row", paddingBottom:windowH*0.0125, alignItems:"center", justifyContent:"flex-start"}}>
+                 <Pressable onPress={()=>navigation.navigate("Profile", {id:item.id})}>
+                    {
+                    (!user.isExpo)?
+                    <FastImage
+                        style={{width:31, height:31, borderRadius:31}}
+                        resizeMode={FastImage.resizeMode.cover}
+                        source={
+                            {
+                                uri:item.src,
+                                priority:FastImage.priority.normal
+                            }
+                        }/>
+                    :
+                    <Image
+                    style={{width:30, height:30, borderRadius:30}}
+                        resizeMode="cover"
+                        source={{uri:item.src}}/>
+                    }
+                </Pressable>
+                <Text style={{paddingLeft:13,paddingRight:9,fontSize:(windowH>900)?16:15, paddingBottom:1,color:'#fff', fontFamily:"InterBold", alignSelf:"center"}}>
+                    {item.name} 
+                </Text>
+                {
+                    (ownerId === item.id)&&
+                    <Icon
+                        name={'star-half'}
+                        color={'rgba(53, 174, 146, 1)'}
+                        size={(windowH>900)?22:21}
+                        style={{paddingBottom:1}}
+                    />
+                }
+   
+            </View>
+        )
+    }
     const renderGrid = ({item}) => {    // for calender
         return (
             <ProgressView count={item.count} 
@@ -420,13 +470,42 @@ const MilestonePage = ({route}) => {
                      })}
                      keyExtractor={(item, index)=>index}/>
                 {
+                    (members.length > 0)&&
+                    <View style={{maxWidth:windowW*0.8, alignSelf:"center", flex:1}}>
+                        <View style={[styles.membersContainer,{right:6, flex:1, flexDirection:"row"}]}>
+                            <Animated.Text style={{fontSize:(windowH>900)?19:18.5, color:'#fff', fontFamily:"Inter", paddingBottom:windowH*0.02}}>
+                                📚 Contributors
+                            </Animated.Text>
+                            <Pressable>
+                                <Icon 
+                                name='navigate-next' 
+                                size={30} 
+                                color="rgba(53, 174, 146, 1)" 
+                                style={{top:.25}}
+                            />
+                            </Pressable>
+                        </View>
+                        <ScrollView horizontal scrollEnabled={false} contentContainerStyle={{paddingBottom:windowH*0.02}}>
+                            <FlatList
+                                data={members}
+                                renderItem={renderMember}
+                                maxToRenderPerBatch={5}
+                             
+                                keyExtractor={(item, index)=> index}
+                                showsVerticalScrollIndicator={false}
+                            />
+                        </ScrollView>
+                    </View>
+                }
+                {
                     (ownerId===user.userId)?    
-                        <Pressable onPress={handlePress} style={[styles.buttonContainer]}>
+                    <Pressable onPress={handlePress} style={[styles.buttonContainer]}>
                         <View style={[styles.deletePostButtonContainer, {minHeight:(windowH>900)?windowH*0.035: windowH * 0.0375}]}>
                             <Text style={[styles.deletePostButtonText, {fontSize:(windowW > 400)?14.5:13.5}]}>Edit Milestone</Text>
                         </View>
                     </Pressable>:null
                 }
+    
             </Animated.ScrollView>   
             <Footer/>
         </View>
@@ -672,6 +751,10 @@ const styles = StyleSheet.create({
         fontSize:12,
         marginLeft:(windowH>900)?windowW*0.1275:windowW*0.13,
         bottom:windowH*0.021
+    },
+    membersContainer: {
+        minWidth:windowW*0.8,
+        alignSelf:"center",
     }
 })
 export default MilestonePage

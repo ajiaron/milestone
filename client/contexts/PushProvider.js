@@ -22,7 +22,7 @@ const PushProvider = ({children}) => {
             console.log(existingStatus)
             if (existingStatus !== 'granted') {
                 const { status } = await Notifications.requestPermissionsAsync();
-                user.setNotifications(false)
+               // user.setNotifications(false)
                 finalStatus = status;
             }
             if (finalStatus !== 'granted') {
@@ -30,7 +30,7 @@ const PushProvider = ({children}) => {
                     Alert.alert('Configure Settings','You can re-enable push notifications on your profile settings.');
                     await AsyncStorage.setItem('notificationPrompt', 'confirmed')
                 }
-                if (route === "Settings") {
+                if (route === "Settings" && user.notifications !== true) {
                     Alert.alert("Enable Notifications", 'Go to Settings > Milestone > Tap Notifications > Allow Notifications')
                 }
                 

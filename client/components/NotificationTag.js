@@ -170,7 +170,7 @@ const NotificationTag = ({id, requesterId, recipientId, type, comment, postId, m
                 <View style={[styles.notificationContent, ]}>
                     <View style={{flexDirection:"row"}}>
                         <View style={{maxHeight:33, alignItems:"center", paddingRight:12, alignSelf:"center"}}>
-                            <Pressable onPress={handleTest}>
+                            <Pressable onPress={navigateProfile}>
                                 {
                                 (!user.isExpo)?
                                 <FastImage
