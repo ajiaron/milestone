@@ -16,8 +16,7 @@ import { ScrollView } from "react-native-gesture-handler";
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
-
-
+const PAGE_SIZE = 5
 const PostImage = ({item}) => {
     const user = useContext(userContext)
     const navigation = useNavigation()
@@ -287,6 +286,8 @@ const MilestoneExplore = () => {
     const [query, setQuery] = useState('')
     const [filtered, setFiltered] = useState([])
     const [joinedMilestones, setJoinedMilestones] = useState([])
+    const [currentPage, setCurrentPage] = useState(1)
+    const [isFetched, setIsFetched] = useState(false)
     const [tabCount, setTabCount] = useState(10)
     const [scrollDirection, setScrollDirection] = useState("start");
     const prevScrollY = useRef(0);
@@ -312,8 +313,12 @@ const MilestoneExplore = () => {
             extrapolate:"clamp"
         }).start()
     }
+    const handleLoad = () => {
+        if (!loading) {
+            setCurrentPage(currentPage => currentPage + 1)
+        }
+    }
     useEffect(()=> {
-        console.log(offsetY)
         if (scrollDirection === 'down') {
             slideOut()
         }
@@ -356,16 +361,20 @@ const MilestoneExplore = () => {
         } else {
             setFiltered(milestones)
         }
-    }, [query, refreshing])
+    }, [query, refreshing, currentPage])
     useEffect(()=> {
         setLoading(true)
-        axios.get(`http://${user.network}:19001/api/getmilestones`)
+        axios.get(`http://${user.network}:19001/api/paginatemilestones/${user.userId}/${PAGE_SIZE}/${(currentPage-1)*PAGE_SIZE}`)
             .then((response)=> {
-                setMilestones(response.data.filter((item=>item.postable === "Everyone" && item.viewable === "Everyone")))
+                //setMilestones(response.data.filter((item=>item.postable === "Everyone" && item.viewable === "Everyone")))
+                setMilestones([...milestones, ...response.data.filter((item=>item.postable === "Everyone" && item.viewable === "Everyone"))])
+                if (query.length > 0) {
+                    setFiltered([...milestones, ...response.data.filter((item=>item.postable === "Everyone" && item.viewable === "Everyone"))].filter((item)=>item.title.toLowerCase().includes(query.toLowerCase())))
+                }
                 slideUp()
             })
             .catch((error)=> console.log(error))
-    }, [refreshing])
+    }, [refreshing, currentPage])
 
     return (
         <View style={[styles.milestoneExplorePage]}>
@@ -420,6 +429,8 @@ const MilestoneExplore = () => {
                             {useNativeDriver: true}
                         )}
                         ref={scrollRef}
+                        onEndReachedThreshold={0}
+                        onEndReached={handleLoad}
                         contentContainerStyle={{paddingTop:126.4}}
                         refreshControl={
                             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

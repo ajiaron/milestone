@@ -16,16 +16,20 @@ import pushContext from "../contexts/pushContext";
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
+const PAGE_SIZE = 10;
+
 const Feed = ({route}) => {
     const push = useContext(pushContext)
     const user = useContext(userContext)
     const navigation = useNavigation()
     const postData = require('../data/PostData.json')
-    const [postFeed, setPostFeed]= useState(postData)
+    const [postFeed, setPostFeed]= useState([])
     const [refreshing, setRefreshing] = useState(false)
     const [isViewable, setIsViewable] = useState([0])
     const [loading, setLoading] = useState(true)
     const [notification, setNotification] = useState(false)
+    const [currentPage, setCurrentPage] = useState(1)
+    const [isFetched, setIsFetched] = useState(false)
     const notificationListener = useRef();
     const responseListener = useRef();
     const isFocused = useIsFocused()
@@ -68,12 +72,18 @@ const Feed = ({route}) => {
     const viewabilityConfigCallbackPairs = useRef([{ viewabilityConfig, onViewableItemsChanged }])
     
     useEffect(()=> {
-        axios.get(`http://ec2-13-52-215-193.us-west-1.compute.amazonaws.com:19001/api/getposts`) 
-        .then((response)=> {
-            setPostFeed(response.data.filter((item)=>(item.public === 1)||(item.public=== 0 && item.ownerid === user.userId)))
-        }).catch(error => console.log(error))
-        .then(()=>slideUp())
-    }, [route, refreshing])
+        if (!isFetched) {
+            setLoading(true)
+            axios.get(`http://ec2-13-52-215-193.us-west-1.compute.amazonaws.com:19001/api/paginateposts/${user.userId}/${PAGE_SIZE}/${(currentPage-1)*PAGE_SIZE}`) 
+            .then((response)=> {
+               // setPostFeed([...postFeed.reverse(), ...response.data.filter((item)=>(item.public === 1)||(item.public=== 0 && item.ownerid === user.userId))].reverse())
+                setPostFeed([...postFeed, ...response.data.filter((item)=>(item.public === 1)||(item.public=== 0 && item.ownerid === user.userId))])
+                setIsFetched(true)
+                console.log(response.data.filter((item)=>(item.public === 1)||(item.public=== 0 && item.ownerid === user.userId)).length)
+            }).catch(error => console.log(error))
+            .then(()=>slideUp())
+        }
+    }, [route, refreshing, currentPage, isFetched])
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getnotifications`) 
         .then((response)=>{ 
@@ -131,8 +141,13 @@ const Feed = ({route}) => {
             Notifications.removeNotificationSubscription(responseListener.current);
         };      
     }, [])
-
-    const renderPost = ({ item }) => {
+    const handleLoad = () => {
+        if (!loading) {
+            setCurrentPage(currentPage => currentPage + 1)
+            setIsFetched(false)
+        }
+    }
+    const renderPost = ({ item, index }) => {
       return (
         <>
         {
@@ -153,6 +168,10 @@ const Feed = ({route}) => {
               isPublic={item.public}
               isViewable={isViewable.indexOf([...postFeed].reverse().indexOf(item))>=0}
           />
+          {(index === postFeed.length-1) && 
+            <View style={{paddingTop:96}}>
+            </View>
+          }
           </>
       )
   }
@@ -164,17 +183,6 @@ const Feed = ({route}) => {
             </Animated.View>
           }
           <Navbar title={"milestone"} scrollY={scrollY} newNotification={notification}/>
-          { /*test push notifications
-            Device.isDevice &&
-            <Pressable onPress={async() => {
-                await push.sendPushNotification(push.expoPushToken, message)
-            }}
-            style={{minWidth:windowW, minHeight:50, backgroundColor:'rgba(43,154,106,1)', alignItems:"center", zIndex:999, top:'12%'}}>
-                <Text style={{color:'white', fontFamily:"InterBold", fontSize:16, alignSelf:"center", marginTop:16}}>
-                    Test
-                </Text>
-            </Pressable>*/
-          }
           <View style={styles.feedContainer}>
                 <Animated.FlatList 
                 ref={scrollRef}
@@ -194,8 +202,11 @@ const Feed = ({route}) => {
                 style={{paddingTop:100}}
                 snapToAlignment="start"
                 showsVerticalScrollIndicator={false}
-                data={[...postFeed].reverse()} 
+                data={postFeed} 
                 renderItem={renderPost} 
+                onEndReachedThreshold={0.25}
+                onEndReached={handleLoad}
+                ListFooterComponent={loading && <Text style={{color:'#fff', fontFamily:"Inter"}}>Loading...</Text>}
                 keyExtractor={(item, index)=>index}>
             </Animated.FlatList> 
         </View>

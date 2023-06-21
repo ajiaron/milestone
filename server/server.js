@@ -801,6 +801,99 @@ app.delete('/api/removemember', (req, res) => {
     })
 })
 
+// pagination
+app.get('/api/paginateposts/:userid/:next/:current', (req, res) => {
+    const userid = req.params.userid
+    const next = req.params.next
+    const current = req.params.current
+    const sql = 'SELECT * FROM userposts WHERE public = 1 OR ownerid = ? ORDER BY date DESC LIMIT ? OFFSET ?;' 
+    db.query(sql, [userid, next, current], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.get('/api/paginatearchive/:ownerid/:userid/:next/:current', (req, res) => {
+    const ownerid = req.params.ownerid
+    const userid = req.params.userid
+    const next = req.params.next
+    const current = req.params.current
+    const sql = 'SELECT * FROM milestone_db.userposts '+
+                'WHERE ownerid = ? AND (public = 1 OR ownerid = ?) ORDER BY date DESC LIMIT ? OFFSET ?;' 
+    db.query(sql, [ownerid, userid, next, current], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.get('/api/paginatemilestones/:userid/:next/:current', (req, res) => {
+    const userid = req.params.userid
+    const next = req.params.next
+    const current = req.params.current
+    const sql = 'SELECT DISTINCT milestones.* FROM milestone_db.milestones  '+
+                'LEFT JOIN milestone_db.postmilestones ON idmilestones = milestoneid ' +
+                'LEFT JOIN milestone_db.userposts ON (idposts = postid AND (public = 1 OR userposts.ownerid = ?)) '+
+                'ORDER BY userposts.date DESC LIMIT ? OFFSET ?;'
+    db.query(sql, [userid, next, current], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.get('/api/paginateusers/:next/:current', (req, res) => {
+    const next = req.params.next
+    const current = req.params.current
+    const sql = 'SELECT * FROM milestone_db.users LIMIT ? OFFSET ?;'
+    db.query(sql, [next, current], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.get('/api/paginatefriends/:userid/:next/:current', (req, res) => {
+    const userid = req.params.userid
+    const next = req.params.next
+    const current = req.params.current
+    const sql = 'SELECT DISTINCT users.*, friends.approved FROM milestone_db.users '+
+                'JOIN milestone_db.friends ON (id = requesterId OR id = recipientId) '+
+                'WHERE id IN ( '+
+                'SELECT requesterId FROM milestone_db.friends WHERE (recipientId = ?) UNION '+
+                'SELECT recipientId FROM milestone_db.friends WHERE (requesterId = ?)) '+
+                'LIMIT ? OFFSET ?;'
+    db.query(sql, [userid, userid, next, current], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.get('/api/paginatelinkedposts/:idmilestones/:userid/:next/:current', (req, res) => {
+    const idmilestones = req.params.idmilestones
+    const userid = req.params.userid
+    const next = req.params.next
+    const current = req.params.current
+    const sql = 'SELECT DISTINCT * FROM milestone_db.userposts '+
+                'WHERE idposts IN (SELECT postid FROM milestone_db.postmilestones WHERE milestoneid = ?) '+
+                'AND (public = 1 OR ownerid = ?) ' +
+                'ORDER BY date DESC LIMIT ? OFFSET ?;'
+    db.query(sql, [idmilestones, userid, next, current], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+
 
 app.listen(19001, () => {
     console.log("ayo server running on port 19001")

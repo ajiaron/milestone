@@ -253,7 +253,7 @@ const MilestonePage = ({route}) => {
     useEffect(()=> {    
         axios.get(`http://${user.network}:19001/api/getlinkedposts/${route.params.milestone.id}`)
         .then((response) => {
-            setPostList(response.data)
+            setPostList(response.data.filter((item)=> item.public === 1 || item.ownerid === user.userId))
         }).catch(error=>console.log(error))
     }, [])
     useEffect(()=> {    // check if current milestone is favorited
@@ -297,7 +297,6 @@ const MilestonePage = ({route}) => {
                         style={{paddingBottom:1}}
                     />
                 }
-   
             </View>
         )
     }
