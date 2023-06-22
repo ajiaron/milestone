@@ -60,7 +60,7 @@ const Feed = ({route}) => {
         });
     }
     const viewabilityConfig = {
-        itemVisiblePercentThreshold:70 // lower this to make videos render sooner when on screen
+        itemVisiblePercentThreshold:80 // lower this to make videos render sooner when on screen
     }
     const onViewableItemsChanged = ({
         viewableItems, changed
@@ -165,7 +165,7 @@ const Feed = ({route}) => {
               ownerId={item.ownerid}
               date={item.date}
               isPublic={item.public}
-              isViewable={isViewable.indexOf([...postFeed].reverse().indexOf(item))>=0}
+              isViewable={isViewable.indexOf(postFeed.indexOf(item))>=0}
           />
           {(index === postFeed.length-1) && 
             <View style={{paddingTop:96}}>
@@ -182,6 +182,7 @@ const Feed = ({route}) => {
             </Animated.View>
           }
           <Navbar title={"milestone"} scrollY={scrollY} newNotification={notification}/>
+        
           <View style={styles.feedContainer}>
                 <Animated.FlatList 
                 ref={scrollRef}

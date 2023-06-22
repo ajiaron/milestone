@@ -102,7 +102,14 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     function blurIn() {
         Animated.timing(animatedvalue,{
             toValue:100,
-            duration:200,
+            duration:(fileExt==='mov'||fileExt==='mp4')?150:200,
+            useNativeDriver:false,
+        }).start()
+    }
+    function blurOut() {
+        Animated.timing(animatedvalue,{
+            toValue:0,
+            duration:(fileExt==='mov'||fileExt==='mp4')?150:200,
             useNativeDriver:false,
         }).start()
     }
@@ -156,13 +163,27 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
     const handleSelect = () => {
         //console.log(image)
      //   console.log(userToken)
-        console.log(route)
+     //   console.log(fileExt)
         setIsActive(!isActive)
+        if (fileExt === 'mov' || fileExt === 'mp4') {
+            if (!isActive && viewable) {
+                blurIn()
+            }
+            if (isActive || !viewable) {
+                blurOut()
+            }
+        }
     }
     const toggleMute = () => {
         setIsMuted(!isMuted)
     }
-
+    useEffect(()=> {
+        if (!viewable) {
+            blurOut()
+        } else {
+            blurIn()
+        }
+    }, [viewable])
     useEffect(()=> {
         if (!expanded) {
             expandPost()
@@ -284,6 +305,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                 }
                 {(route.name === 'MilestonePage' || image !=='defaultpost')?
                 (fileExt === 'mov' || fileExt === 'mp4')? 
+                <Animated.View style={{opacity:animatedvalue.interpolate({inputRange:[0,100],outputRange:[0.4,1]})}}>
                     <Video isLooping shouldPlay={isActive && viewable}
                         isMuted={isMuted} 
                         source={{uri:image}}
@@ -301,6 +323,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                             </TouchableOpacity>
                         </View>
                     </Video>
+                </Animated.View>
                 :
                 (!user.isExpo)?
                 <AnimatedImage
