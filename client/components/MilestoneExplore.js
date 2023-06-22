@@ -16,7 +16,7 @@ import { ScrollView } from "react-native-gesture-handler";
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
-const PAGE_SIZE = 5
+const PAGE_SIZE = 6
 const PostImage = ({item}) => {
     const user = useContext(userContext)
     const navigation = useNavigation()
@@ -40,7 +40,7 @@ const PostImage = ({item}) => {
             (fileExt ==='jpg' || fileExt==='png')?
                 (!user.isExpo)?
                 <FastImage
-                    style={styles.milestoneIcon}
+                    style={[styles.milestoneIcon]}
                     resizeMode={FastImage.resizeMode.cover}
                     source={{
                             uri: (fileExt==='jpg' || fileExt==='png')&&item.src,
@@ -57,7 +57,7 @@ const PostImage = ({item}) => {
                         shouldPlay={false}
                         isMuted={true}
                         resizeMode={'cover'}
-                        style={{height:"100%", width:"100%", opacity:1, borderRadius:5}}
+                        style={{height:"100%", width:"100%", opacity:1, borderRadius:5., opacity:0.6}}
                         source={{uri:item.src}}
                     />
                :null
@@ -101,6 +101,7 @@ const MilestoneTab = ({item, index}) => {
         }
     }
     function handleTest() {
+       // console.log(item)
         console.log(item)
     }
     function navigateMilestone() {
@@ -109,7 +110,7 @@ const MilestoneTab = ({item, index}) => {
         { 
             milestone:item, 
             date:new Date(item.date).toLocaleDateString("en-US", {month:"short", day:"numeric", year:"numeric"}), 
-            count:count
+            count:item.count
         })
     }
     function joinMilestone() {
@@ -170,9 +171,9 @@ const MilestoneTab = ({item, index}) => {
         .catch((error)=> console.log(error))
     }, [])
     useEffect(()=> {    
-        axios.get(`http://${user.network}:19001/api/getlinkedposts/${item.idmilestones}`)
+        axios.get(`http://${user.network}:19001/api/paginatelinkedposts/${item.idmilestones}/${user.userId}/${4}/${0}`)
         .then((response) => {
-            setPostList([...response.data.filter((item)=> item.public === 1)].reverse().concat([0,0,0,0]).slice(0,4))
+            setPostList(response.data.concat([0,0,0,0]).slice(0,4))
             setCount(response.data.length)
             setImage(item.src)
         }).catch(error=>console.log(error))
@@ -416,7 +417,7 @@ const MilestoneExplore = () => {
                     </View>
                 </Animated.View>
 
-                <Animated.View style={{marginBottom:(windowH>900)?windowH*0.085:windowH*0.095,
+                <Animated.View style={{marginBottom:(windowH>900)?windowH*0.0825:windowH*0.0925, width:windowW,
                      backgroundColor:'rgba(28,28,28,0)'}}>
                     <Animated.FlatList 
                         data={(query.length > 0)?filtered:milestones}
@@ -431,11 +432,18 @@ const MilestoneExplore = () => {
                         ref={scrollRef}
                         onEndReachedThreshold={0}
                         onEndReached={handleLoad}
-                        contentContainerStyle={{paddingTop:126.4}}
+                        contentContainerStyle={{paddingTop:(windowH>900)?windowH*0.16:windowH*0.1625, width:"100%"}}
                         refreshControl={
                             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                         }
                         showsVerticalScrollIndicator={false}
+                        ListFooterComponent={
+                            <Animated.View 
+                              style={{ backgroundColor:'rgba(28,28,28,1)',
+                              zIndex:999, width:"100%", alignItems:"center", justifyContent:"center",
+                              minHeight:windowH*0.035, height:animatedvalue.interpolate({inputRange:[0,100], outputRange:[windowH*0.035, 0]})}}>
+                               <ActivityIndicator size="small" color="#FFFFFF"/>
+                            </Animated.View>}
                         keyExtractor={(item, index)=> index}
                     />
                 </Animated.View>
@@ -455,9 +463,10 @@ const styles = StyleSheet.create({
     },
     milestoneExploreContent: {
         height:windowH,
-        width:windowW*0.8,
+        width:windowW,
         alignItems:"center",
-        paddingTop:(windowH>900)?windowH*0.125:windowH*0.125,
+        paddingTop:94,
+        //paddingTop:windowH*0.125,
         alignSelf:"center",
     },
     milestoneEmptyContainer: {

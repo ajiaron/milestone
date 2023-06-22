@@ -15,6 +15,8 @@ const MilestoneFeed = ({route}) => {
     const user = useContext(userContext)
     const navigation = useNavigation()
     const [postFeed, setPostFeed]= useState(route.params?route.params.postFeed:[])
+    const routes = navigation.getState()?.routes;
+    const prevRoute = routes[routes.length - 2]
     const [refreshing, setRefreshing] = useState(false);
     const [isViewable, setIsViewable] = useState([0])
     const [loading, setLoading] = useState(true)
@@ -30,6 +32,10 @@ const MilestoneFeed = ({route}) => {
             duration:300,
             useNativeDriver:false,
         }).start(()=>setLoading(false))
+    }
+    function handleTest() {
+     //  console.log(route.params)
+        console.log(prevRoute.name)
     }
     const onRefresh = useCallback(() => {
         if (user.quality) {
@@ -72,7 +78,7 @@ const MilestoneFeed = ({route}) => {
         })
     },[])
     useEffect(()=> {
-        if (postFeed.length === 0 || postFeed[0].idmilestones !== route.params?.id) {
+        if ((postFeed.length === 0 || postFeed[0].idmilestones !== route.params?.id) && prevRoute.name !== 'MilestonePage') {
             axios.get(`http://${user.network}:19001/api/getrecentposts/${route.params?.id}`) 
             .then((response)=>{ 
                 setPostFeed(response.data)
@@ -103,9 +109,12 @@ const MilestoneFeed = ({route}) => {
           <Navbar title={route.params.title} id={route.params?.id} date={startDate} count={postCount} scrollY={scrollY}/>
             <View style={[styles.feedContainer,]}>
                 {(postFeed.filter((item)=>(item.public === 1)||(item.ownerid === user.userId)).length === 0)?
-                <Text style={{fontFamily:"Inter", color:"rgba(180,180,180,1)", fontSize:16,alignItems:"center", alignSelf:"center"}}>
-                    Private posts won't be listed here!
-                </Text>:
+                <Pressable onPress={handleTest}>
+                    <Text style={{fontFamily:"Inter", color:"rgba(180,180,180,1)", fontSize:16,alignItems:"center", alignSelf:"center"}}>
+                         Private posts won't be listed here!
+                    </Text>
+                </Pressable>
+                :
                 <FlatList 
                 ref={scrollRef}
                 refreshControl={

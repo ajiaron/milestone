@@ -110,7 +110,7 @@ const Archive = ({route}) => {
           <View style={[styles.feedContainer,]}>
           {(loading)&&
             <Animated.View style={{zIndex:999,width:"100%", height:animatedvalue.interpolate({inputRange:[0,100], outputRange:[windowH, 0]})}}>
-             <ActivityIndicator size="large" color="#FFFFFF" style={{top:"50%", position:"absolute", alignSelf:"center"}}/>
+             {/*<ActivityIndicator size="large" color="#FFFFFF" style={{top:"50%", position:"absolute", alignSelf:"center"}}/>*/}
             </Animated.View>
           }
                 <FlatList 
@@ -122,8 +122,6 @@ const Archive = ({route}) => {
                 removeClippedSubviews
                 initialNumToRender={3}
                 maxToRenderPerBatch={3}
-
-             
                 snapToAlignment="start"
                 showsVerticalScrollIndicator={false}
                 data={[...postFeed].reverse()} 

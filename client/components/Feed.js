@@ -79,7 +79,6 @@ const Feed = ({route}) => {
                // setPostFeed([...postFeed.reverse(), ...response.data.filter((item)=>(item.public === 1)||(item.public=== 0 && item.ownerid === user.userId))].reverse())
                 setPostFeed([...postFeed, ...response.data.filter((item)=>(item.public === 1)||(item.public=== 0 && item.ownerid === user.userId))])
                 setIsFetched(true)
-                console.log(response.data.filter((item)=>(item.public === 1)||(item.public=== 0 && item.ownerid === user.userId)).length)
             }).catch(error => console.log(error))
             .then(()=>slideUp())
         }
@@ -151,7 +150,7 @@ const Feed = ({route}) => {
       return (
         <>
         {
-            ([...postFeed].reverse().indexOf(item) === 0
+            (index === 0
              && <MilestoneReel refresh={refreshing} focus={isFocused}/>)
         }
           <PostItem 
@@ -206,7 +205,13 @@ const Feed = ({route}) => {
                 renderItem={renderPost} 
                 onEndReachedThreshold={0.25}
                 onEndReached={handleLoad}
-                ListFooterComponent={loading && <Text style={{color:'#fff', fontFamily:"Inter"}}>Loading...</Text>}
+                ListFooterComponent={
+                  <Animated.View 
+                    style={{ backgroundColor:'rgba(28,28,28,1)',bottom:94,
+                    zIndex:999, width:"100%", alignItems:"center", justifyContent:"center",
+                    minHeight:windowH*0.035, height:animatedvalue.interpolate({inputRange:[0,100], outputRange:[windowH*0.035, 0]})}}>
+                     <ActivityIndicator size="small" color="#FFFFFF"/>
+                  </Animated.View>}
                 keyExtractor={(item, index)=>index}>
             </Animated.FlatList> 
         </View>

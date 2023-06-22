@@ -12,6 +12,7 @@ import axios from 'axios'
 
 const windowW = Dimensions.get('window').width 
 const windowH = Dimensions.get('window').height    
+PAGE_SIZE = 7
 
 function Friends(){
     const [users, setUsers] = useState([])
@@ -25,10 +26,16 @@ function Friends(){
     const [query, setQuery] = useState('')
     const scrollY = useRef(new Animated.Value(0)).current
     const [refreshing, setRefreshing] = useState(false)
+    const [friendsList, setFriendsList] = useState([])
     const [filtered, setFiltered] = useState([])
     const [userToggle, setUserToggle] = useState(false)
     const [userFullList, setUserFullList] = useState([])
-
+    const [currentPage, setCurrentPage] = useState(1)
+    const handleLoad = () => {
+        if (!loading) {
+            setCurrentPage(currentPage=>currentPage+1)
+        }
+    }
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         setTimeout(() => {
@@ -62,10 +69,22 @@ function Friends(){
     }
     useEffect(()=> {
         if (query.length > 0) {
-            setFiltered(users.filter((item)=>item.name.toLowerCase().includes(query.toLowerCase())))
+           // if (!userToggle) {
+           //     setFiltered(friendsList.filter((item)=>item.name.toLowerCase().includes(query.toLowerCase())))
+           // }
+           // else {
+                setFiltered(users.filter((item)=>item.name.toLowerCase().includes(query.toLowerCase())))
+           // }
+           // onRefresh
         } else {
-            setFiltered(users)
-        }
+           // if (!userToggle) {
+                setFiltered(users)
+            }
+           // else {
+           //     setFiltered(friendsList)
+           // }
+       // }
+       //query, userToggle, currentPage, refreshing]
     }, [query, userToggle])
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getrequests`) 
@@ -74,22 +93,31 @@ function Friends(){
         })
     },[refreshing])
     useEffect(()=> {
-        axios.get(`http://${user.network}:19001/api/getusers`) 
+        setLoading(true)
+        setQuery('')
+       // axios.get(`http://${user.network}:19001/api/paginateusers/${PAGE_SIZE}/${(currentPage-1)*PAGE_SIZE}`) 
+       axios.get(`http://${user.network}:19001/api/getusers`) 
         .then((response)=> {
             if (userToggle) {
+                //setUsers([...users.filter(item=>response.data.map(item=>item.id).indexOf(item.id) == -1), ...response.data.filter((item)=> item.public == true)])
                 setUsers(response.data.filter((item)=> item.public == true))
                 slideUp()
                 toggleColorOff()
             }
             else {
                 setUsers(response.data.filter((item)=>(
-                (friends.map((val)=>val.requesterId).indexOf(item.id) > -1)  // match users to requests
-                ||(friends.map((val)=> val.recipientId).indexOf(item.id) > -1)) && item.id !== user.userId))
+                    (friends.map((val)=>val.requesterId).indexOf(item.id) > -1)  // match users to requests
+                    ||(friends.map((val)=> val.recipientId).indexOf(item.id) > -1)) && item.id !== user.userId))
+               // setFriendsList([...friendsList.filter(item=>response.data.map(item=>item.id).indexOf(item.id) == -1)
+               // ,...response.data.filter((item)=>(
+               // (friends.map((val)=>val.requesterId).indexOf(item.id) > -1)  // match users to requests
+               // ||(friends.map((val)=> val.recipientId).indexOf(item.id) > -1)) && item.id !== user.userId)])
                 slideUp()
                 toggleColorOn()
             }
         })
         .catch((error)=> console.log(error))
+        //[friends, route, userToggle, currentPage, refreshing]
     }, [friends, route, userToggle])
     const renderFriend = ({ item }) => {
         return (
@@ -106,10 +134,11 @@ function Friends(){
             <Navbar title={'milestone'} scrollY={scrollY}/>
             {(loading)&&
                 <Animated.View style={{zIndex:999,alignSelf:"center",width:"100%",top:"50%", height:animatedvalue.interpolate({inputRange:[0,100], outputRange:[windowH, 0]})}}>
-                    <ActivityIndicator size="large" color="#FFFFFF" style={{top:"50%", position:"absolute", alignSelf:"center"}}/>
+                    <ActivityIndicator size="large" color="#FFFFFF" style={{alignSelf:"center", top:"50%", position:"absolute"}}/>
                 </Animated.View>
             }
             <View style={styles.friendsWrapper}>
+          
                 <View style={{flexDirection:"row", justifyContent:'space-between', width:windowW*.775, alignSelf:"center"}}> 
                     {(userToggle)?
                     <Pressable onPress={()=> setUserToggle(!userToggle)}>
@@ -147,7 +176,7 @@ function Friends(){
                         value={query}/>
                 </View>
   
-                {!loading &&
+            {!loading &&
                 <View style={(windowH > 900)?styles.postTagContainerLarge:styles.postTagContainer}>
                 <FlatList 
                     snapToAlignment="start"
@@ -159,8 +188,11 @@ function Friends(){
                     {{maxHeight:(windowH > 900)?((windowH*0.0952)-14)*8:((windowH*0.0952)-12)*7}}
                     snapToInterval={(windowH*0.075)+16}
                     maxToRenderPerBatch={10}
+                    //onEndReachedThreshold={0}
+                    //onEndReached={handleLoad}
                     showsVerticalScrollIndicator={false}
                     data={(query.length > 0)?filtered:users}
+                    //data={(query.length > 0)?filtered:(userToggle)?users:friendsList}
                     renderItem={renderFriend} 
                     keyExtractor={(item)=>(milestoneList.length>0)?item.idmilestones.toString():item.id.toString()}
                     >

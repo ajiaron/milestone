@@ -832,13 +832,18 @@ app.get('/api/paginatearchive/:ownerid/:userid/:next/:current', (req, res) => {
 })
 app.get('/api/paginatemilestones/:userid/:next/:current', (req, res) => {
     const userid = req.params.userid
-    const next = req.params.next
-    const current = req.params.current
-    const sql = 'SELECT DISTINCT milestones.* FROM milestone_db.milestones  '+
-                'LEFT JOIN milestone_db.postmilestones ON idmilestones = milestoneid ' +
+    const next = Number(req.params.next)
+    const current = Number(req.params.current)
+    const sql = 'SELECT DISTINCT milestones.*, '+
+                'SUM( CASE ' +
+                'WHEN (postmilestones.milestoneid = idmilestones AND idposts = postid AND (userposts.public = 1 OR userposts.ownerid = ?)) THEN 1 ELSE 0 '+
+                'END ) as count '+
+                'FROM milestone_db.milestones '+
+                'LEFT JOIN (SELECT DISTINCT * FROM milestone_db.postmilestones) postmilestones ON (idmilestones = milestoneid) '+
                 'LEFT JOIN milestone_db.userposts ON (idposts = postid AND (public = 1 OR userposts.ownerid = ?)) '+
-                'ORDER BY userposts.date DESC LIMIT ? OFFSET ?;'
-    db.query(sql, [userid, next, current], (err, result) => {
+                'GROUP BY idmilestones '+
+                'ORDER BY MAX(userposts.date) DESC LIMIT ? OFFSET ?; '
+    db.query(sql, [userid, userid, next, current], (err, result) => {
         if (err) {
             console.log(err)
         } else {

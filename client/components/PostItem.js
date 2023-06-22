@@ -276,7 +276,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                 height:(route.name === 'MilestonePage')?windowW:
                 ((fileExt === 'mov' || fileExt === 'mp4') && route.name !=="Archive" && route.name !== 'MilestoneFeed')
                 ?windowH*(526/windowH):(route.name==="Archive" || route.name === 'MilestoneFeed')?
-                animatedsize.interpolate({inputRange:[0,100], outputRange:[windowW,windowH-152]}):
+                animatedsize.interpolate({inputRange:[0,100], outputRange:[windowW,(route.name === 'MilestoneFeed')?windowH-170:windowH-152]}):
                 windowW 
             }]}>                                                                                                               
                 {(loading)&&

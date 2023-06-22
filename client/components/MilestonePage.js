@@ -14,7 +14,7 @@ import { ScrollView } from "react-native-gesture-handler";
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
-
+const PAGE_SIZE = 3
 const ProgressView = ({count, postlist, month, monthname, monthnumber, year, duration}) => {
     const [selected, setSelected] = useState(false)
     const currentDate =  new Date().toLocaleDateString("en-US",{month:"long", day:"numeric",year:"numeric"})
@@ -122,18 +122,24 @@ const MilestonePage = ({route}) => {
     const [isViewable, setIsViewable] = useState(0)
     const [favorite, setFavorite] = useState(false)
     const [loading, setLoading] = useState(true)
+    const [isFetched, setIsFetched] = useState(false)
     const [postPermission, setPostPermission] = useState('Everyone')
     const [viewPermission, setViewPermission] = useState('Everyone')
     const [duration, setDuration] = useState(null)
     const [timestamp, setTimestamp] = useState()
     const [token, setToken] = useState()
     const [members, setMembers] = useState([])
+    const [currentPage, setCurrentPage] = useState()
     const scrollY = useRef(new Animated.Value(0)).current;
     const animatedvalue = useRef(new Animated.Value(0)).current;
     const animatedcolor = useRef(new Animated.Value(0)).current;
     const animatedheight = useRef(new Animated.Value(0)).current;
     var fileExt = (image !== undefined)?image.toString().split('.').pop():'calender'
-
+    const handleLoad = () => {
+        if (!isFetched) {
+            setCurrentPage(currentPage => currentPage + 1)
+        }
+    }
     const viewabilityConfig = {
         itemVisiblePercentThreshold:30  // render videos when more than 30% of it is visible
     }
@@ -216,7 +222,8 @@ const MilestonePage = ({route}) => {
        // console.log('Views:', viewPermission)
        // console.log(timestamp)
        // console.log(route.params.milestone.id)
-        console.log(members)
+       // console.log(members)
+        console.log(postList[0], postList.length)
        // console.log(postList)
     }
     function checkDate() {
@@ -294,7 +301,7 @@ const MilestonePage = ({route}) => {
                         name={'star-half'}
                         color={'rgba(53, 174, 146, 1)'}
                         size={(windowH>900)?22:21}
-                        style={{paddingBottom:1}}
+                        style={{paddingBottom:1.5}}
                     />
                 }
             </View>
@@ -312,8 +319,10 @@ const MilestonePage = ({route}) => {
                 />
         )
     }
-    const renderPost = ({item}) => {    // for post list
+    const renderPost = ({item, index}) => {    // for post list
         return (
+            <>
+            {
             <Pressable onPress={()=>console.log(item.date)}>
                 <View style={{maxWidth:windowW}}>
                     <PostItem
@@ -331,7 +340,25 @@ const MilestonePage = ({route}) => {
                     isViewable= {[...postList].reverse().indexOf(item)===isViewable}
                     />
                 </View>
+                {(postList.length>3 && index === PAGE_SIZE-1)&&
+                <Pressable onPress={()=>navigation.navigate("MilestoneFeed", {title:title, postFeed:postList, id:route.params.milestone.id})}
+                style={{position:"absolute", bottom:3.5, right:(windowH>900)?16:13, flex:1, flexDirection:"row",
+                alignItems:"center"}}>
+                    <Text style={{fontFamily:"InterBold", fontSize:14,  color:'rgba(53, 174, 146, 1)'}}>
+                        {`View all posts`}
+                    </Text>
+                    <Icon 
+                        name='navigate-next' 
+                        size={20} 
+                        color="rgba(53, 174, 146, 1)" 
+                        style={{top:.75}}
+                    />
+                </Pressable>
+                }
             </Pressable>
+            }
+            </>
+
         )
     }
     return (
@@ -427,7 +454,7 @@ const MilestonePage = ({route}) => {
                      maxToRenderPerBatch={3}
                      snapToAlignment="start"
                      showsHorizontalScrollIndicator={false}
-                     data={[...postList].reverse()}
+                     data={[...postList].reverse().slice(0,PAGE_SIZE)}
                      style={[styles.postListView, {minWidth:375}]}
                      renderItem={renderPost}
                      keyExtractor={(item, index)=>index}/>
@@ -476,7 +503,7 @@ const MilestonePage = ({route}) => {
                                 📚 Contributors
                             </Animated.Text>
                             <Pressable>
-                                <Icon 
+                            <Icon 
                                 name='navigate-next' 
                                 size={30} 
                                 color="rgba(53, 174, 146, 1)" 
@@ -489,7 +516,6 @@ const MilestonePage = ({route}) => {
                                 data={members}
                                 renderItem={renderMember}
                                 maxToRenderPerBatch={5}
-                             
                                 keyExtractor={(item, index)=> index}
                                 showsVerticalScrollIndicator={false}
                             />
