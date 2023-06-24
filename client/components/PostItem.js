@@ -185,7 +185,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         }
     }, [viewable])
     useEffect(()=> {
-        if (!expanded) {
+        if (!expanded && route.name !== 'MilestoneFeed') {
             expandPost()
         } else {
             compressPost() 
@@ -201,7 +201,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                     {(!user.isExpo)?
                      <FastImage
                      style={(route.name==="Archive" || route.name === 'MilestoneFeed')?
-                     {height:38, width:38, borderRadius:38, alignSelf:"center",top:2,left:2}:
+                     {height:38, width:38, borderRadius:38, alignSelf:"center",top:4,left:2}:
                      {height:34, width:34, borderRadius:34, alignSelf:"center"}}
                      resizeMode={FastImage.resizeMode.cover}
                      source={{
@@ -291,7 +291,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
             }
         </View>
 }
-        <Pressable onPress={(route.name === 'Archive' || route.name === 'MilestoneFeed')?()=>setExpanded(!expanded):handleSelect}>
+        <Pressable onPress={handleSelect}>
             <Animated.View style={[styles.postWrapper, 
                 {backgroundColor:"rgba(10,10,10,1)",
                 height:(route.name === 'MilestonePage')?windowW:
@@ -352,6 +352,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
             </Animated.View>
         </Pressable>
         <View style={[(route.name === "Archive"|| route.name === "MilestoneFeed")?styles.actionbarAlt:styles.actionbarContainer]}>
+            {(route.name !=="Archive" && route.name !== "MilestoneFeed")&&
             <View style={[(route.name==="Archive" || route.name === "MilestoneFeed")?styles.actionIconAlt:styles.actionIcon, 
             (route.name==="Archive" || route.name === "MilestoneFeed")?styles.actionThumbsAlt:styles.actionThumbsUp]}>
                 <Pressable onPress={handleLike}>
@@ -361,7 +362,8 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                     color={(isLiked)?'rgba(53, 174, 146, 1)':'white'}/>
                 </Pressable>
             </View>
-            
+            }
+            {(route.name !=="Archive" && route.name !== "MilestoneFeed")&&
                 <View style={[(route.name==="Archive" || route.name === "MilestoneFeed")?
                 styles.actionIconAlt:styles.actionIcon, styles.actionComment, 
                 {paddingTop:(route.name === 'Archive' || route.name ==='MilestoneFeed'?2:0)}]}>
@@ -373,21 +375,12 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
                         />
                     </Pressable>
                 </View>
+            }
             
-            {(route.name === 'MilestonePage')?      // scroll slider on milestone page; doesn't really work well
-                (index !== undefined && count < 4)?
-                <View style={{flexDirection:"row", 
-                alignSelf:"center", justifyContent:"space-around",
-                 minWidth:windowW*(43/windowW), marginLeft:(windowW > 400)?windowW*0.1875:windowW*0.145}}> 
-                    {(count > 1)&&
-                    <View style={[styles.postIndex, {backgroundColor:(index == 0)?"rgba(53, 174, 146, 1)":"#D9D9D9"}]}/>}
-                    {(count > 1)&&
-                    <View style={[styles.postIndex, {backgroundColor:(index == 1)?"rgba(53, 174, 146, 1)":"#D9D9D9"}]}/>}
-                    {(count > 2)&&
-                    <View style={[styles.postIndex, {backgroundColor:(index >= 2)?"rgba(53, 174, 146, 1)":"#D9D9D9"}]}/>}
-                </View>:null
+            
+            {(route.name === 'MilestonePage' || route.name ==="Archive" || route.name === "MilestoneFeed")?      // scroll slider on milestone page; doesn't really work well
+              null
             :
-           
             <Pressable onPress={()=> navigation.navigate("Post", {item:data, comments:false})}>
                 <View style={[(route.name==="Archive" || route.name === "MilestoneFeed")
                 ?styles.actionIconAlt:styles.actionIcon, {right:(route.name ==="Archive" || route.name === "MilestoneFeed")?2:0, 
@@ -525,11 +518,10 @@ const styles = StyleSheet.create({
         right:4,
         width:50,
         paddingLeft:3,
-        paddingBottom:3,
+ 
         justifyContent:"space-evenly",
         alignSelf:"center",
-
-        bottom:"12.5%",
+        bottom:0,
         //backgroundColor:"rgba(28, 28, 28, 0.25)",
         height:'37.5%',
     },
