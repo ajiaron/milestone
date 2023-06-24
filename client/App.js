@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useContext } from "react"
-import { FlatList, StyleSheet, Text, View, Button } from 'react-native';
+import { FlatList, StyleSheet, Text, View, Button, NativeModules } from 'react-native';
 import 'react-native-gesture-handler'
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -29,9 +29,10 @@ import MilestoneFeed from './components/MilestoneFeed'
 import { Amplify, Storage } from 'aws-amplify';
 import awsconfig from './src/aws-exports';
 import PushProvider from "./contexts/PushProvider";
-Amplify.configure(awsconfig);
 
+Amplify.configure(awsconfig);
 const Stack = createNativeStackNavigator()
+
 function App() {
   const user = useContext(userContext)
   const [loaded] = useFonts({

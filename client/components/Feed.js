@@ -1,5 +1,5 @@
 import  React, {useState, useEffect, useContext, useCallback, useRef} from "react";
-import {Animated, Text, ActivityIndicator, StyleSheet, View, Image, Pressable, ScrollView, FlatList, Dimensions, RefreshControl, Alert} from "react-native";
+import {Animated, Text, ActivityIndicator, StyleSheet, View, Image, Pressable, ScrollView, FlatList, Dimensions, RefreshControl, NativeModules} from "react-native";
 import { Icon } from 'react-native-elements'
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import Footer from './Footer'
@@ -12,11 +12,13 @@ import * as Device from 'expo-device'
 import * as Notifications from 'expo-notifications';
 import userContext from '../contexts/userContext'
 import pushContext from "../contexts/pushContext";
+import SharedGroupPreferences from 'react-native-shared-group-preferences';
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
-
 const PAGE_SIZE = 10;
+const group = 'group.com.ajiaron.milestonenative'
+const SharedStorage = NativeModules.SharedStorage;
 
 const Feed = ({route}) => {
     const push = useContext(pushContext)
@@ -36,6 +38,17 @@ const Feed = ({route}) => {
     const scrollRef = useRef()
     const scrollY = useRef(new Animated.Value(0)).current
     const animatedvalue = useRef(new Animated.Value(0)).current
+    const [latestPost, setLatestPost] = useState()
+    const widgetData = {
+        latestPost
+    }
+    const handleWidget = async () => {
+        try {
+            await SharedGroupPreferences.setItem('widgetKey', widgetData, group)
+        } catch (error) {
+            console.log(error)
+        }
+    }
     const slideUp=() =>{
         Animated.timing(animatedvalue,{
             toValue:100,
@@ -70,13 +83,17 @@ const Feed = ({route}) => {
         }
       };
     const viewabilityConfigCallbackPairs = useRef([{ viewabilityConfig, onViewableItemsChanged }])
-    
+    useEffect(()=> {
+        axios.get(`http://ec2-13-52-215-193.us-west-1.compute.amazonaws.com:19001/api/paginateposts/${user.userId}/${1}/${0}`) 
+        .then((response)=> {
+            setLatestPost(response.data.filter((item)=>(item.public === 1)||(item.public=== 0 && item.ownerid === user.userId))[0])
+        }).catch(error => console.log(error))
+    }, [])
     useEffect(()=> {
         if (!isFetched) {
             setLoading(true)
             axios.get(`http://ec2-13-52-215-193.us-west-1.compute.amazonaws.com:19001/api/paginateposts/${user.userId}/${PAGE_SIZE}/${(currentPage-1)*PAGE_SIZE}`) 
             .then((response)=> {
-               // setPostFeed([...postFeed.reverse(), ...response.data.filter((item)=>(item.public === 1)||(item.public=== 0 && item.ownerid === user.userId))].reverse())
                 setPostFeed([...postFeed, ...response.data.filter((item)=>(item.public === 1)||(item.public=== 0 && item.ownerid === user.userId))])
                 setIsFetched(true)
             }).catch(error => console.log(error))

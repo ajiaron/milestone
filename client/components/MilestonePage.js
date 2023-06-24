@@ -340,21 +340,7 @@ const MilestonePage = ({route}) => {
                     isViewable= {[...postList].reverse().indexOf(item)===isViewable}
                     />
                 </View>
-                {(postList.length>3 && index === PAGE_SIZE-1)&&
-                <Pressable onPress={()=>navigation.navigate("MilestoneFeed", {title:title, postFeed:postList, id:route.params.milestone.id})}
-                style={{position:"absolute", bottom:3.5, right:(windowH>900)?16:13, flex:1, flexDirection:"row",
-                alignItems:"center"}}>
-                    <Text style={{fontFamily:"InterBold", fontSize:14,  color:'rgba(53, 174, 146, 1)'}}>
-                        {`View all posts`}
-                    </Text>
-                    <Icon 
-                        name='navigate-next' 
-                        size={20} 
-                        color="rgba(53, 174, 146, 1)" 
-                        style={{top:.75}}
-                    />
-                </Pressable>
-                }
+               
             </Pressable>
             }
             </>
@@ -441,6 +427,21 @@ const MilestonePage = ({route}) => {
                      `🌟 ${route.params.count} ${(route.params.count>1)?'Posts':'Post'}${(timestamp === " Today"?'':' in ')}${timestamp}`
                     }
                     </Text>
+                    {(postList.length>3)&&
+                <Pressable onPress={()=>navigation.navigate("MilestoneFeed", {title:title, postFeed:postList, id:route.params.milestone.id})}
+                style={{position:"absolute", bottom:1.5, right:(windowH>900)?-16:-20, flex:1, flexDirection:"row",
+                alignItems:"center", justifyContent:"center"}}>
+                    <Text style={{fontFamily:"InterBold", fontSize:15,  color:'rgba(53, 174, 146, 1)', alignSelf:"center"}}>
+                        {`View all`}
+                    </Text>
+                    <Icon 
+                        name='navigate-next' 
+                        size={20} 
+                        color="rgba(53, 174, 146, 1)" 
+                        style={{top:.75}}
+                    />
+                </Pressable>
+                }
                 </View>
                 <View style={[(postList.length > 0)?styles.postContainerScroll:styles.postContainer,{marginTop:windowH*0.015}]}>
                     {(postList.length > 0)?

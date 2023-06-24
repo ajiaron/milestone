@@ -12,10 +12,43 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
+		4E6DC22B2A47A2E70038CA22 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E6DC22A2A47A2E70038CA22 /* WidgetKit.framework */; };
+		4E6DC22D2A47A2E70038CA22 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E6DC22C2A47A2E70038CA22 /* SwiftUI.framework */; };
+		4E6DC2302A47A2E70038CA22 /* widgetMilestoneBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6DC22F2A47A2E70038CA22 /* widgetMilestoneBundle.swift */; };
+		4E6DC2322A47A2E70038CA22 /* widgetMilestoneLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6DC2312A47A2E70038CA22 /* widgetMilestoneLiveActivity.swift */; };
+		4E6DC2342A47A2E70038CA22 /* widgetMilestone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6DC2332A47A2E70038CA22 /* widgetMilestone.swift */; };
+		4E6DC2372A47A2E90038CA22 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E6DC2362A47A2E90038CA22 /* Assets.xcassets */; };
+		4E6DC2392A47A2E90038CA22 /* widgetMilestone.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 4E6DC2352A47A2E70038CA22 /* widgetMilestone.intentdefinition */; };
+		4E6DC23A2A47A2E90038CA22 /* widgetMilestone.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 4E6DC2352A47A2E70038CA22 /* widgetMilestone.intentdefinition */; };
+		4E6DC23D2A47A2E90038CA22 /* widgetMilestoneExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4E6DC2292A47A2E70038CA22 /* widgetMilestoneExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		96905EF65AED1B983A6B3ABC /* libPods-milestonenative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-milestonenative.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4E6DC23B2A47A2E90038CA22 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4E6DC2282A47A2E70038CA22;
+			remoteInfo = widgetMilestoneExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4E6DC23E2A47A2E90038CA22 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				4E6DC23D2A47A2E90038CA22 /* widgetMilestoneExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
@@ -25,6 +58,15 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = milestonenative/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = milestonenative/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = milestonenative/main.m; sourceTree = "<group>"; };
+		4E6DC2292A47A2E70038CA22 /* widgetMilestoneExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = widgetMilestoneExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		4E6DC22A2A47A2E70038CA22 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		4E6DC22C2A47A2E70038CA22 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		4E6DC22F2A47A2E70038CA22 /* widgetMilestoneBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = widgetMilestoneBundle.swift; sourceTree = "<group>"; };
+		4E6DC2312A47A2E70038CA22 /* widgetMilestoneLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = widgetMilestoneLiveActivity.swift; sourceTree = "<group>"; };
+		4E6DC2332A47A2E70038CA22 /* widgetMilestone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = widgetMilestone.swift; sourceTree = "<group>"; };
+		4E6DC2352A47A2E70038CA22 /* widgetMilestone.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = widgetMilestone.intentdefinition; sourceTree = "<group>"; };
+		4E6DC2362A47A2E90038CA22 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4E6DC2382A47A2E90038CA22 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-milestonenative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-milestonenative.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C2E3173556A471DD304B334 /* Pods-milestonenative.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-milestonenative.debug.xcconfig"; path = "Target Support Files/Pods-milestonenative/Pods-milestonenative.debug.xcconfig"; sourceTree = "<group>"; };
 		6E0C23240AA04F7FABA97C4A /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "milestonenative/noop-file.swift"; sourceTree = "<group>"; };
@@ -41,6 +83,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				96905EF65AED1B983A6B3ABC /* libPods-milestonenative.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4E6DC2262A47A2E70038CA22 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4E6DC22D2A47A2E70038CA22 /* SwiftUI.framework in Frameworks */,
+				4E6DC22B2A47A2E70038CA22 /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -68,8 +119,23 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				58EEBF8E8E6FB1BC6CAF49B5 /* libPods-milestonenative.a */,
+				4E6DC22A2A47A2E70038CA22 /* WidgetKit.framework */,
+				4E6DC22C2A47A2E70038CA22 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4E6DC22E2A47A2E70038CA22 /* widgetMilestone */ = {
+			isa = PBXGroup;
+			children = (
+				4E6DC22F2A47A2E70038CA22 /* widgetMilestoneBundle.swift */,
+				4E6DC2312A47A2E70038CA22 /* widgetMilestoneLiveActivity.swift */,
+				4E6DC2332A47A2E70038CA22 /* widgetMilestone.swift */,
+				4E6DC2352A47A2E70038CA22 /* widgetMilestone.intentdefinition */,
+				4E6DC2362A47A2E90038CA22 /* Assets.xcassets */,
+				4E6DC2382A47A2E90038CA22 /* Info.plist */,
+			);
+			path = widgetMilestone;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -84,6 +150,7 @@
 			children = (
 				13B07FAE1A68108700A75B9A /* milestonenative */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
+				4E6DC22E2A47A2E70038CA22 /* widgetMilestone */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				D65327D7A22EEC0BE12398D9 /* Pods */,
@@ -98,6 +165,7 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* milestonenative.app */,
+				4E6DC2292A47A2E70038CA22 /* widgetMilestoneExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -150,15 +218,34 @@
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
+				4E6DC23E2A47A2E90038CA22 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				4E6DC23C2A47A2E90038CA22 /* PBXTargetDependency */,
 			);
 			name = milestonenative;
 			productName = milestonenative;
 			productReference = 13B07F961A680F5B00A75B9A /* milestonenative.app */;
 			productType = "com.apple.product-type.application";
+		};
+		4E6DC2282A47A2E70038CA22 /* widgetMilestoneExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4E6DC2412A47A2E90038CA22 /* Build configuration list for PBXNativeTarget "widgetMilestoneExtension" */;
+			buildPhases = (
+				4E6DC2252A47A2E70038CA22 /* Sources */,
+				4E6DC2262A47A2E70038CA22 /* Frameworks */,
+				4E6DC2272A47A2E70038CA22 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = widgetMilestoneExtension;
+			productName = widgetMilestoneExtension;
+			productReference = 4E6DC2292A47A2E70038CA22 /* widgetMilestoneExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -166,10 +253,15 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1420;
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1250;
+					};
+					4E6DC2282A47A2E70038CA22 = {
+						CreatedOnToolsVersion = 14.2;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -187,6 +279,7 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* milestonenative */,
+				4E6DC2282A47A2E70038CA22 /* widgetMilestoneExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -199,6 +292,14 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4E6DC2272A47A2E70038CA22 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4E6DC2372A47A2E90038CA22 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -291,18 +392,39 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				4E6DC23A2A47A2E90038CA22 /* widgetMilestone.intentdefinition in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
 				09733AFB993D4B07B46969FB /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4E6DC2252A47A2E70038CA22 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4E6DC2302A47A2E70038CA22 /* widgetMilestoneBundle.swift in Sources */,
+				4E6DC2322A47A2E70038CA22 /* widgetMilestoneLiveActivity.swift in Sources */,
+				4E6DC2392A47A2E90038CA22 /* widgetMilestone.intentdefinition in Sources */,
+				4E6DC2342A47A2E70038CA22 /* widgetMilestone.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4E6DC23C2A47A2E90038CA22 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4E6DC2282A47A2E70038CA22 /* widgetMilestoneExtension */;
+			targetProxy = 4E6DC23B2A47A2E90038CA22 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6C2E3173556A471DD304B334 /* Pods-milestonenative.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = milestonenative/milestonenative.entitlements;
@@ -333,6 +455,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7A4D352CD337FB3A3BF06240 /* Pods-milestonenative.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = milestonenative/milestonenative.entitlements;
@@ -350,6 +473,77 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		4E6DC23F2A47A2E90038CA22 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = widgetMilestone/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = widgetMilestone;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ajiaron.milestonenative.widgetMilestone;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4E6DC2402A47A2E90038CA22 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = widgetMilestone/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = widgetMilestone;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ajiaron.milestonenative.widgetMilestone;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -403,7 +597,10 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
-				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
+				LIBRARY_SEARCH_PATHS = (
+					"$(SDKROOT)/usr/lib/swift\"$(inherited)\"",
+					"$(SDKROOT)/usr/lib/swift-5.2\"$(inherited)\"",
+				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
@@ -454,7 +651,10 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
-				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
+				LIBRARY_SEARCH_PATHS = (
+					"$(SDKROOT)/usr/lib/swift\"$(inherited)\"",
+					"$(SDKROOT)/usr/lib/swift-5.2\"$(inherited)\"",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
@@ -470,6 +670,15 @@
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
 				13B07F951A680F5B00A75B9A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4E6DC2412A47A2E90038CA22 /* Build configuration list for PBXNativeTarget "widgetMilestoneExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4E6DC23F2A47A2E90038CA22 /* Debug */,
+				4E6DC2402A47A2E90038CA22 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
