@@ -142,11 +142,11 @@ const MilestoneTab = ({item, index}) => {
         const newDate = new Date()
         const postDate = new Date((count !== 0 && postList[0].date !== undefined)?postList[0].date:new Date())
         if ((Math.abs(newDate-postDate)/3600000) < 24) {
-            setTimestamp(' today')
+            setTimestamp('Today')
         }
         else if ((Math.abs(newDate-postDate)/86400000) < 7) {
             setTimestamp((Math.floor(Math.abs(newDate-postDate)/86400000) < 2)?
-                ' yesterday': Math.floor(Math.abs(newDate-postDate)/86400000).toString()+' days')
+                ' Yesterday': Math.floor(Math.abs(newDate-postDate)/86400000).toString()+' days')
         }
         else if ((Math.abs(newDate-postDate)/86400000) <= 30) {
             setTimestamp((Math.floor(Math.floor(Math.abs(newDate-postDate)/86400000)/7) < 2)?
@@ -181,7 +181,7 @@ const MilestoneTab = ({item, index}) => {
     return (
         <>
         {(postList.filter((item)=>item !== 0).length > 0) && 
-        <View style={[styles.milestoneTabContainer, {marginTop:windowH*0.0215}]}>
+        <View style={[styles.milestoneTabContainer, {marginTop:(windowH > 850 && windowH < 900)?windowH*0.022:windowH*0.0215}]}>
             <View style={styles.headerContentWrapper}>
                 <View style={{flex:1, flexDirection:"row", alignItems:"center"}}>
                     <View style={[styles.milestoneIconContainer, {alignSelf:"center"}]}>

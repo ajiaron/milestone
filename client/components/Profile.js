@@ -8,6 +8,7 @@ import GroupTag from "./GroupTag";
 import FastImage from 'react-native-fast-image'
 import pushContext from "../contexts/pushContext";
 import userContext from '../contexts/userContext'
+import SharedGroupPreferences from 'react-native-shared-group-preferences';
 import axios from 'axios'
 
 const windowW = Dimensions.get('window').width
@@ -176,14 +177,23 @@ const Profile = ({route}) => {
         }
         // handle friend request here
     }
-    function handleTest() {
-       // console.log(userid)
-       // console.log(userData)
-       // console.log(fileExt)
-       console.log(user)
-      // console.log(windowH, windowW)
-      // console.log(user)
+    const testWidget = async () => {
+        try {
+            const widgetData = await SharedGroupPreferences.getItem("widgetKey", "group.com.ajiaron.milestonenative")
+            if (widgetData) {
+                console.log(widgetData)
+            }
+            else {
+                console.log("data not found")
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
+    function handleTest() {
+        testWidget()
+    }
+
     function handlePress() {
         navigation.navigate("Settings")
     }

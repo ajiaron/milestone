@@ -18,7 +18,6 @@ const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 const PAGE_SIZE = 10;
 const group = 'group.com.ajiaron.milestonenative'
-const SharedStorage = NativeModules.SharedStorage;
 
 const Feed = ({route}) => {
     const push = useContext(pushContext)
@@ -39,14 +38,17 @@ const Feed = ({route}) => {
     const scrollY = useRef(new Animated.Value(0)).current
     const animatedvalue = useRef(new Animated.Value(0)).current
     const [latestPost, setLatestPost] = useState()
-    const widgetData = {
-        latestPost
-    }
+    const [widgetText, setWidgetText] = useState('ajiaron')
+
     const handleWidget = async () => {
+        const widgetData = {
+            text:"connected!"
+        }
         try {
-            await SharedGroupPreferences.setItem('widgetKey', widgetData, group)
+            await SharedGroupPreferences.setItem("widgetKey", widgetData, group)
+            console.log("data sent")
         } catch (error) {
-            console.log(error)
+            console.log("didnt work")
         }
     }
     const slideUp=() =>{
@@ -84,9 +86,12 @@ const Feed = ({route}) => {
       };
     const viewabilityConfigCallbackPairs = useRef([{ viewabilityConfig, onViewableItemsChanged }])
     useEffect(()=> {
+        handleWidget()
+    },[])
+    useEffect(()=> {
         axios.get(`http://ec2-13-52-215-193.us-west-1.compute.amazonaws.com:19001/api/paginateposts/${user.userId}/${1}/${0}`) 
         .then((response)=> {
-            setLatestPost(response.data.filter((item)=>(item.public === 1)||(item.public=== 0 && item.ownerid === user.userId))[0])
+            setWidgetText(response.data.filter((item)=>(item.public === 1)||(item.public=== 0 && item.ownerid === user.userId))[0].username)
         }).catch(error => console.log(error))
     }, [])
     useEffect(()=> {

@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:milestonenative.xcodeproj">
+      location = "group:../client/ios">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
