@@ -295,6 +295,19 @@ app.get('/api/getmilestonedetails/:idmilestones', (req, res) => {
         }
     })
 })
+app.get('/api/getwidgetpost/:userid', (req, res) => {
+    const userid = req.params.userid
+    const sql = 'SELECT * FROM milestone_db.userposts WHERE ownerid != ? AND public = 1 '+
+                'ORDER BY date DESC '+ 
+                'LIMIT 1 OFFSET 0;'
+    db.query(sql, [userid], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
 
 app.post('/api/registeruser', (req, res)=> {
     const name = req.body.username

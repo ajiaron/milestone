@@ -9,10 +9,12 @@ import FastImage from 'react-native-fast-image'
 import pushContext from "../contexts/pushContext";
 import userContext from '../contexts/userContext'
 import SharedGroupPreferences from 'react-native-shared-group-preferences';
+import Constants from "expo-constants";
 import axios from 'axios'
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
+const group = `group.${Constants.manifest.ios.bundleIdentifier}`
 
 const ProfileInfo = ({name, milestones, groups, friends}) => {
     return (
@@ -179,9 +181,11 @@ const Profile = ({route}) => {
     }
     const testWidget = async () => {
         try {
-            const widgetData = await SharedGroupPreferences.getItem("widgetKey", "group.com.ajiaron.milestonenative")
+            const widgetData = await SharedGroupPreferences.getItem("widgetKey", group)
+            const widgetImage = await SharedGroupPreferences.getItem("widgetImage", group)
             if (widgetData) {
                 console.log(widgetData)
+                console.log(widgetImage.data.substring(0,30))
             }
             else {
                 console.log("data not found")
@@ -192,6 +196,7 @@ const Profile = ({route}) => {
     }
     function handleTest() {
         testWidget()
+   //     console.log(group)
     }
 
     function handlePress() {

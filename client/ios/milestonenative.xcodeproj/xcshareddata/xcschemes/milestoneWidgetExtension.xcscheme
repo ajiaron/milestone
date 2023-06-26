@@ -95,6 +95,10 @@
             isEnabled = "NO">
          </EnvironmentVariable>
       </EnvironmentVariables>
+      <LocationScenarioReference
+         identifier = "com.apple.dt.IDEFoundation.CurrentLocationScenarioIdentifier"
+         referenceType = "1">
+      </LocationScenarioReference>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -104,16 +108,26 @@
       debugDocumentVersioning = "YES"
       askForAppToLaunch = "Yes"
       launchAutomaticallySubstyle = "2">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <RemoteRunnable
+         runnableDebuggingMode = "2"
+         BundleIdentifier = "com.apple.springboard">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "milestone.app"
-            BlueprintName = "milestonenative"
+            BlueprintIdentifier = "4EDAC4902A481E4D00B2613E"
+            BuildableName = "milestoneWidgetExtension.appex"
+            BlueprintName = "milestoneWidgetExtension"
             ReferencedContainer = "container:milestonenative.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </RemoteRunnable>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "4EDAC4902A481E4D00B2613E"
+            BuildableName = "milestoneWidgetExtension.appex"
+            BlueprintName = "milestoneWidgetExtension"
+            ReferencedContainer = "container:milestonenative.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

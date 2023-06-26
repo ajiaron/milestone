@@ -13,11 +13,16 @@ import * as Notifications from 'expo-notifications';
 import userContext from '../contexts/userContext'
 import pushContext from "../contexts/pushContext";
 import SharedGroupPreferences from 'react-native-shared-group-preferences';
+import RNFS from 'react-native-fs'
+import RNFetchBlob from 'rn-fetch-blob'
+import Constants from 'expo-constants';
+import ImgToBase64 from 'react-native-image-base64';
+
 
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 const PAGE_SIZE = 10;
-const group = 'group.com.ajiaron.milestonenative'
+const group = `group.${Constants.manifest.ios.bundleIdentifier}`
 
 const Feed = ({route}) => {
     const push = useContext(pushContext)
@@ -37,18 +42,74 @@ const Feed = ({route}) => {
     const scrollRef = useRef()
     const scrollY = useRef(new Animated.Value(0)).current
     const animatedvalue = useRef(new Animated.Value(0)).current
-    const [latestPost, setLatestPost] = useState()
-    const [widgetText, setWidgetText] = useState('ajiaron')
-
+    const [widgetPost, setWidgetPost] = useState()
+    const [widgetText, setWidgetText] = useState('')
+    const [widgetImage, setWidgetImage] = useState()
+    const [timestamp, setTimestamp] = useState('now')
+    const [rendered, setRendered] = useState(false)
+    const fetchContent = async (imageUrl) => {
+        if (imageUrl) {
+            try {
+                const response = await RNFetchBlob.config({ fileCache: true }).fetch('GET', encodeURI(imageUrl));
+                const base64Data = await response.base64();
+                return base64Data
+              } catch (error) {
+                console.log('Error fetching and converting image:', error);
+              }
+        }
+     };
     const handleWidget = async () => {
+        const photoPromise = fetchContent(widgetImage)
+        const timePromise = handleDate(timestamp)
+        var fileExt = (widgetImage !== undefined)?widgetImage.toString().split('.').pop():'jpg'
+        const time = await timePromise
+        const photo = await photoPromise
+
         const widgetData = {
-            text:"connected!"
+            text: `${widgetText} posted ${time === 'now'? time:time + ' ago.'}`
+        }
+        const widgetPhoto = {
+            data:`data:image/${fileExt};base64,${photo}`
         }
         try {
             await SharedGroupPreferences.setItem("widgetKey", widgetData, group)
+            await SharedGroupPreferences.setItem("widgetImage", widgetPhoto, group)
             console.log("data sent")
         } catch (error) {
             console.log("didnt work")
+        }
+    }
+    const handleDate = (date) => {
+        if (date) {
+            const postDate = new Date(date)
+            const newDate = new Date()
+            if ((Math.abs(newDate-postDate)/1000) < 60) {
+                return 'now'
+            }
+            else if ((Math.abs(newDate-postDate)/60000) <= 60) {
+                return Math.round(Math.abs(newDate-postDate)/60000)<=1?
+                '1 min':Math.round(Math.abs(newDate-postDate)/60000).toString()+' mins'
+            }
+            else if ((Math.abs(newDate-postDate)/3600000) <= 24) {
+                return Math.round(Math.abs(newDate-postDate)/3600000)<=1?
+                '1 hour':Math.round(Math.abs(newDate-postDate)/3600000).toString()+' hours'
+            }
+            else if ((Math.abs(newDate-postDate)/86400000) <= 7) {
+                return Math.round(Math.abs(newDate-postDate)/86400000)<=1?
+                'yesterday':Math.round(Math.abs(newDate-postDate)/86400000).toString()+' days'
+            }
+            else if ((Math.abs(newDate-postDate)/86400000) <= 30) {
+                return Math.round(Math.round(Math.abs(newDate-postDate)/86400000)/7)<=1?
+                '1 week':Math.round(Math.round(Math.abs(newDate-postDate)/86400000)/7).toString()+' weeks'
+            }
+            else if ((Math.abs(newDate-postDate)/2592000000) <= 12) {
+                return Math.round(Math.abs(newDate-postDate)/2592000000)<=1?
+                "1 month":Math.round(Math.abs(newDate-postDate)/2592000000).toString()+' months'
+            } else {
+                return Math.round(Math.abs(newDate-postDate)/31536000000).toString()+' years'
+            }
+        } else {
+            console.log('hey',date)
         }
     }
     const slideUp=() =>{
@@ -85,19 +146,29 @@ const Feed = ({route}) => {
         }
       };
     const viewabilityConfigCallbackPairs = useRef([{ viewabilityConfig, onViewableItemsChanged }])
+      
+
     useEffect(()=> {
-        handleWidget()
-    },[])
+        if (rendered) {
+            handleWidget()
+        }
+    },[rendered])
     useEffect(()=> {
-        axios.get(`http://ec2-13-52-215-193.us-west-1.compute.amazonaws.com:19001/api/paginateposts/${user.userId}/${1}/${0}`) 
+        axios.get(`http://${user.network}:19001/api/getwidgetpost/${user.userId}`)    // write request to fetch latest post that isn't your own
         .then((response)=> {
-            setWidgetText(response.data.filter((item)=>(item.public === 1)||(item.public=== 0 && item.ownerid === user.userId))[0].username)
-        }).catch(error => console.log(error))
+            setWidgetImage(response.data[0].src)
+            setWidgetText(response.data[0].username)
+            setTimestamp(response.data[0].date)
+        })
+        .then(()=> {
+            setRendered(true)
+        })
+        .catch(error => console.log(error))
     }, [])
     useEffect(()=> {
         if (!isFetched) {
             setLoading(true)
-            axios.get(`http://ec2-13-52-215-193.us-west-1.compute.amazonaws.com:19001/api/paginateposts/${user.userId}/${PAGE_SIZE}/${(currentPage-1)*PAGE_SIZE}`) 
+            axios.get(`http://${user.network}:19001/api/paginateposts/${user.userId}/${PAGE_SIZE}/${(currentPage-1)*PAGE_SIZE}`) 
             .then((response)=> {
                 setPostFeed([...postFeed, ...response.data.filter((item)=>(item.public === 1)||(item.public=== 0 && item.ownerid === user.userId))])
                 setIsFetched(true)
