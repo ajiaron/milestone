@@ -47,10 +47,10 @@ const Feed = ({route}) => {
     const [widgetImage, setWidgetImage] = useState()
     const [timestamp, setTimestamp] = useState('now')
     const [rendered, setRendered] = useState(false)
-    const fetchContent = async (imageUrl) => {
+    const fetchContent = async (imageUrl) => {  // for base64 encoding; doesn't work with widget
         if (imageUrl) {
             try {
-                const response = await RNFetchBlob.config({ fileCache: true }).fetch('GET', encodeURI(imageUrl));
+                const response = await RNFetchBlob.config({ fileCache: true }).fetch('GET', imageUrl);
                 const base64Data = await response.base64();
                 return base64Data
               } catch (error) {
@@ -59,17 +59,17 @@ const Feed = ({route}) => {
         }
      };
     const handleWidget = async () => {
-        const photoPromise = fetchContent(widgetImage)
+        //const photoPromise = fetchContent(widgetImage)
         const timePromise = handleDate(timestamp)
-        var fileExt = (widgetImage !== undefined)?widgetImage.toString().split('.').pop():'jpg'
+       // var fileExt = (widgetImage !== undefined)?widgetImage.toString().split('.').pop():'jpg'
         const time = await timePromise
-        const photo = await photoPromise
+        //const photo = await photoPromise
 
         const widgetData = {
-            text: `${widgetText} posted ${time === 'now'? time:time + ' ago.'}`
+            text: `${widgetText} posted ${time === 'now' || time === 'yesterday' ? time+'.':time + ' ago.'}`
         }
         const widgetPhoto = {
-            data:`data:image/${fileExt};base64,${photo}`
+            data:widgetImage
         }
         try {
             await SharedGroupPreferences.setItem("widgetKey", widgetData, group)

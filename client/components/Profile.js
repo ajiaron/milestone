@@ -185,7 +185,7 @@ const Profile = ({route}) => {
             const widgetImage = await SharedGroupPreferences.getItem("widgetImage", group)
             if (widgetData) {
                 console.log(widgetData)
-                console.log(widgetImage.data.substring(0,30))
+                console.log(widgetImage)
             }
             else {
                 console.log("data not found")

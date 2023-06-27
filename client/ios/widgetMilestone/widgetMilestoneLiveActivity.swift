@@ -1,15 +1,15 @@
 //
-//  milestoneWidgetLiveActivity.swift
-//  milestoneWidget
+//  widgetMilestoneLiveActivity.swift
+//  widgetMilestone
 //
-//  Created by Aaron Jiang on 6/25/23.
+//  Created by Aaron Jiang on 6/26/23.
 //
 
 import ActivityKit
 import WidgetKit
 import SwiftUI
 
-struct milestoneWidgetAttributes: ActivityAttributes {
+struct widgetMilestoneAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
         // Dynamic stateful properties about your activity go here!
         var value: Int
@@ -19,9 +19,9 @@ struct milestoneWidgetAttributes: ActivityAttributes {
     var name: String
 }
 
-struct milestoneWidgetLiveActivity: Widget {
+struct widgetMilestoneLiveActivity: Widget {
     var body: some WidgetConfiguration {
-        ActivityConfiguration(for: milestoneWidgetAttributes.self) { context in
+        ActivityConfiguration(for: widgetMilestoneAttributes.self) { context in
             // Lock screen/banner UI goes here
             VStack {
                 Text("Hello")
@@ -56,9 +56,9 @@ struct milestoneWidgetLiveActivity: Widget {
     }
 }
 
-struct milestoneWidgetLiveActivity_Previews: PreviewProvider {
-    static let attributes = milestoneWidgetAttributes(name: "Me")
-    static let contentState = milestoneWidgetAttributes.ContentState(value: 3)
+struct widgetMilestoneLiveActivity_Previews: PreviewProvider {
+    static let attributes = widgetMilestoneAttributes(name: "Me")
+    static let contentState = widgetMilestoneAttributes.ContentState(value: 3)
 
     static var previews: some View {
         attributes

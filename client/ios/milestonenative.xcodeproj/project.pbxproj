@@ -11,17 +11,43 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
+		4E63BBB32A4A30E200A1A300 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EDAC43F2A47A9AD00B2613E /* WidgetKit.framework */; };
+		4E63BBB42A4A30E200A1A300 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EDAC4412A47A9AE00B2613E /* SwiftUI.framework */; };
+		4E63BBB72A4A30E300A1A300 /* widgetMilestoneBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63BBB62A4A30E300A1A300 /* widgetMilestoneBundle.swift */; };
+		4E63BBB92A4A30E300A1A300 /* widgetMilestoneLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63BBB82A4A30E300A1A300 /* widgetMilestoneLiveActivity.swift */; };
+		4E63BBBB2A4A30E300A1A300 /* widgetMilestone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63BBBA2A4A30E300A1A300 /* widgetMilestone.swift */; };
+		4E63BBBE2A4A30E400A1A300 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBBD2A4A30E400A1A300 /* Assets.xcassets */; };
+		4E63BBC02A4A30E400A1A300 /* widgetMilestone.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 4E63BBBC2A4A30E300A1A300 /* widgetMilestone.intentdefinition */; };
+		4E63BBC12A4A30E400A1A300 /* widgetMilestone.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 4E63BBBC2A4A30E300A1A300 /* widgetMilestone.intentdefinition */; };
+		4E63BBC42A4A30E400A1A300 /* widgetMilestoneExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4E63BBB22A4A30E200A1A300 /* widgetMilestoneExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4E63BBCB2A4A5EB600A1A300 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBCA2A4A5EB600A1A300 /* logo.png */; };
+		4E63BBCC2A4A5EB600A1A300 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBCA2A4A5EB600A1A300 /* logo.png */; };
+		4E63BBCE2A4A61ED00A1A300 /* book.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBCD2A4A61ED00A1A300 /* book.png */; };
+		4E63BBCF2A4A61ED00A1A300 /* book.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBCD2A4A61ED00A1A300 /* book.png */; };
+		4E63BBD12A4A629000A1A300 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBD02A4A629000A1A300 /* icon.png */; };
+		4E63BBD22A4A629000A1A300 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBD02A4A629000A1A300 /* icon.png */; };
+		4E63BBD42A4A633B00A1A300 /* widgeticon.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBD32A4A633B00A1A300 /* widgeticon.png */; };
+		4E63BBD52A4A633B00A1A300 /* widgeticon.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBD32A4A633B00A1A300 /* widgeticon.png */; };
+		4E63BBD72A4A63D100A1A300 /* outline.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBD62A4A63D100A1A300 /* outline.png */; };
+		4E63BBD82A4A63D100A1A300 /* outline.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBD62A4A63D100A1A300 /* outline.png */; };
+		4E63BBDA2A4A641300A1A300 /* outline2.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBD92A4A641300A1A300 /* outline2.png */; };
+		4E63BBDB2A4A641300A1A300 /* outline2.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBD92A4A641300A1A300 /* outline2.png */; };
+		4E63BBDD2A4A652600A1A300 /* outline3.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBDC2A4A652500A1A300 /* outline3.png */; };
+		4E63BBDE2A4A652600A1A300 /* outline3.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBDC2A4A652500A1A300 /* outline3.png */; };
+		4E63BBE02A4A67B000A1A300 /* outline4.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBDF2A4A67B000A1A300 /* outline4.png */; };
+		4E63BBE12A4A67B000A1A300 /* outline4.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBDF2A4A67B000A1A300 /* outline4.png */; };
+		4E63BBE32A4A67F500A1A300 /* outline5.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBE22A4A67F500A1A300 /* outline5.png */; };
+		4E63BBE42A4A67F500A1A300 /* outline5.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBE22A4A67F500A1A300 /* outline5.png */; };
+		4E63BBE62A4A688100A1A300 /* outline6.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBE52A4A688100A1A300 /* outline6.png */; };
+		4E63BBE72A4A688100A1A300 /* outline6.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBE52A4A688100A1A300 /* outline6.png */; };
+		4E63BBE92A4A6B4A00A1A300 /* outline7.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBE82A4A6B4A00A1A300 /* outline7.png */; };
+		4E63BBEA2A4A6B4A00A1A300 /* outline7.png in Resources */ = {isa = PBXBuildFile; fileRef = 4E63BBE82A4A6B4A00A1A300 /* outline7.png */; };
 		4E82E77F2A4921380068FF55 /* URLImage in Frameworks */ = {isa = PBXBuildFile; productRef = 4E82E77E2A4921380068FF55 /* URLImage */; };
 		4E82E7812A4921380068FF55 /* URLImageStore in Frameworks */ = {isa = PBXBuildFile; productRef = 4E82E7802A4921380068FF55 /* URLImageStore */; };
-		4EDAC4922A481E4D00B2613E /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EDAC43F2A47A9AD00B2613E /* WidgetKit.framework */; };
-		4EDAC4932A481E4D00B2613E /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4EDAC4412A47A9AE00B2613E /* SwiftUI.framework */; };
-		4EDAC4962A481E4D00B2613E /* milestoneWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDAC4952A481E4D00B2613E /* milestoneWidgetBundle.swift */; };
-		4EDAC4982A481E4D00B2613E /* milestoneWidgetLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDAC4972A481E4D00B2613E /* milestoneWidgetLiveActivity.swift */; };
-		4EDAC49A2A481E4D00B2613E /* milestoneWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EDAC4992A481E4D00B2613E /* milestoneWidget.swift */; };
-		4EDAC49D2A481E4F00B2613E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4EDAC49C2A481E4F00B2613E /* Assets.xcassets */; };
-		4EDAC49F2A481E4F00B2613E /* milestoneWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 4EDAC49B2A481E4D00B2613E /* milestoneWidget.intentdefinition */; };
-		4EDAC4A02A481E4F00B2613E /* milestoneWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 4EDAC49B2A481E4D00B2613E /* milestoneWidget.intentdefinition */; };
-		4EDAC4A32A481E4F00B2613E /* milestoneWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4EDAC4912A481E4D00B2613E /* milestoneWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4ED650A52A4A810700532DB7 /* URLImage in Frameworks */ = {isa = PBXBuildFile; productRef = 4ED650A42A4A810700532DB7 /* URLImage */; };
+		4ED650A72A4A810D00532DB7 /* URLImageStore in Frameworks */ = {isa = PBXBuildFile; productRef = 4ED650A62A4A810D00532DB7 /* URLImageStore */; };
+		4ED650A92A4A887900532DB7 /* outline8.png in Resources */ = {isa = PBXBuildFile; fileRef = 4ED650A82A4A887900532DB7 /* outline8.png */; };
+		4ED650AA2A4A887900532DB7 /* outline8.png in Resources */ = {isa = PBXBuildFile; fileRef = 4ED650A82A4A887900532DB7 /* outline8.png */; };
 		96905EF65AED1B983A6B3ABC /* libPods-milestonenative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-milestonenative.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
@@ -29,12 +55,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		4EDAC4A12A481E4F00B2613E /* PBXContainerItemProxy */ = {
+		4E63BBC22A4A30E400A1A300 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 4EDAC4902A481E4D00B2613E;
-			remoteInfo = milestoneWidgetExtension;
+			remoteGlobalIDString = 4E63BBB12A4A30E200A1A300;
+			remoteInfo = widgetMilestoneExtension;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -45,7 +71,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				4EDAC4A32A481E4F00B2613E /* milestoneWidgetExtension.appex in Embed Foundation Extensions */,
+				4E63BBC42A4A30E400A1A300 /* widgetMilestoneExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -60,17 +86,29 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = milestonenative/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = milestonenative/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = milestonenative/main.m; sourceTree = "<group>"; };
+		4E63BBB22A4A30E200A1A300 /* widgetMilestoneExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = widgetMilestoneExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		4E63BBB62A4A30E300A1A300 /* widgetMilestoneBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = widgetMilestoneBundle.swift; sourceTree = "<group>"; };
+		4E63BBB82A4A30E300A1A300 /* widgetMilestoneLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = widgetMilestoneLiveActivity.swift; sourceTree = "<group>"; };
+		4E63BBBA2A4A30E300A1A300 /* widgetMilestone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = widgetMilestone.swift; sourceTree = "<group>"; };
+		4E63BBBC2A4A30E300A1A300 /* widgetMilestone.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = widgetMilestone.intentdefinition; sourceTree = "<group>"; };
+		4E63BBBD2A4A30E400A1A300 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4E63BBBF2A4A30E400A1A300 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4E63BBC82A4A31FF00A1A300 /* widgetMilestoneExtensionDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = widgetMilestoneExtensionDebug.entitlements; sourceTree = "<group>"; };
+		4E63BBC92A4A322F00A1A300 /* widgetMilestoneExtensionRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = widgetMilestoneExtensionRelease.entitlements; sourceTree = "<group>"; };
+		4E63BBCA2A4A5EB600A1A300 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo.png; sourceTree = "<group>"; };
+		4E63BBCD2A4A61ED00A1A300 /* book.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = book.png; sourceTree = "<group>"; };
+		4E63BBD02A4A629000A1A300 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
+		4E63BBD32A4A633B00A1A300 /* widgeticon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = widgeticon.png; sourceTree = "<group>"; };
+		4E63BBD62A4A63D100A1A300 /* outline.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = outline.png; sourceTree = "<group>"; };
+		4E63BBD92A4A641300A1A300 /* outline2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = outline2.png; sourceTree = "<group>"; };
+		4E63BBDC2A4A652500A1A300 /* outline3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = outline3.png; sourceTree = "<group>"; };
+		4E63BBDF2A4A67B000A1A300 /* outline4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = outline4.png; sourceTree = "<group>"; };
+		4E63BBE22A4A67F500A1A300 /* outline5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = outline5.png; sourceTree = "<group>"; };
+		4E63BBE52A4A688100A1A300 /* outline6.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = outline6.png; sourceTree = "<group>"; };
+		4E63BBE82A4A6B4A00A1A300 /* outline7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = outline7.png; sourceTree = "<group>"; };
+		4ED650A82A4A887900532DB7 /* outline8.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = outline8.png; sourceTree = "<group>"; };
 		4EDAC43F2A47A9AD00B2613E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		4EDAC4412A47A9AE00B2613E /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
-		4EDAC4572A47AAE800B2613E /* milestoneWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = milestoneWidget.swift; sourceTree = "<group>"; };
-		4EDAC4912A481E4D00B2613E /* milestoneWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = milestoneWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		4EDAC4952A481E4D00B2613E /* milestoneWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = milestoneWidgetBundle.swift; sourceTree = "<group>"; };
-		4EDAC4972A481E4D00B2613E /* milestoneWidgetLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = milestoneWidgetLiveActivity.swift; sourceTree = "<group>"; };
-		4EDAC4992A481E4D00B2613E /* milestoneWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = milestoneWidget.swift; sourceTree = "<group>"; };
-		4EDAC49B2A481E4D00B2613E /* milestoneWidget.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = milestoneWidget.intentdefinition; sourceTree = "<group>"; };
-		4EDAC49C2A481E4F00B2613E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		4EDAC49E2A481E4F00B2613E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4EDAC4A82A483F6B00B2613E /* milestoneWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = milestoneWidgetExtension.entitlements; sourceTree = "<group>"; };
 		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-milestonenative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-milestonenative.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C2E3173556A471DD304B334 /* Pods-milestonenative.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-milestonenative.debug.xcconfig"; path = "Target Support Files/Pods-milestonenative/Pods-milestonenative.debug.xcconfig"; sourceTree = "<group>"; };
 		7A4D352CD337FB3A3BF06240 /* Pods-milestonenative.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-milestonenative.release.xcconfig"; path = "Target Support Files/Pods-milestonenative/Pods-milestonenative.release.xcconfig"; sourceTree = "<group>"; };
@@ -92,12 +130,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4EDAC48E2A481E4D00B2613E /* Frameworks */ = {
+		4E63BBAF2A4A30E200A1A300 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4EDAC4932A481E4D00B2613E /* SwiftUI.framework in Frameworks */,
-				4EDAC4922A481E4D00B2613E /* WidgetKit.framework in Frameworks */,
+				4ED650A72A4A810D00532DB7 /* URLImageStore in Frameworks */,
+				4E63BBB42A4A30E200A1A300 /* SwiftUI.framework in Frameworks */,
+				4ED650A52A4A810700532DB7 /* URLImage in Frameworks */,
+				4E63BBB32A4A30E200A1A300 /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -116,7 +156,6 @@
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
 				834F5A517630428CADA19352 /* noop-file.swift */,
-				4EDAC4572A47AAE800B2613E /* milestoneWidget.swift */,
 			);
 			name = milestonenative;
 			sourceTree = "<group>";
@@ -132,17 +171,29 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		4EDAC4942A481E4D00B2613E /* milestoneWidget */ = {
+		4E63BBB52A4A30E300A1A300 /* widgetMilestone */ = {
 			isa = PBXGroup;
 			children = (
-				4EDAC4952A481E4D00B2613E /* milestoneWidgetBundle.swift */,
-				4EDAC4972A481E4D00B2613E /* milestoneWidgetLiveActivity.swift */,
-				4EDAC4992A481E4D00B2613E /* milestoneWidget.swift */,
-				4EDAC49B2A481E4D00B2613E /* milestoneWidget.intentdefinition */,
-				4EDAC49C2A481E4F00B2613E /* Assets.xcassets */,
-				4EDAC49E2A481E4F00B2613E /* Info.plist */,
+				4ED650A82A4A887900532DB7 /* outline8.png */,
+				4E63BBD62A4A63D100A1A300 /* outline.png */,
+				4E63BBD32A4A633B00A1A300 /* widgeticon.png */,
+				4E63BBDC2A4A652500A1A300 /* outline3.png */,
+				4E63BBE82A4A6B4A00A1A300 /* outline7.png */,
+				4E63BBE52A4A688100A1A300 /* outline6.png */,
+				4E63BBD92A4A641300A1A300 /* outline2.png */,
+				4E63BBD02A4A629000A1A300 /* icon.png */,
+				4E63BBDF2A4A67B000A1A300 /* outline4.png */,
+				4E63BBE22A4A67F500A1A300 /* outline5.png */,
+				4E63BBCD2A4A61ED00A1A300 /* book.png */,
+				4E63BBCA2A4A5EB600A1A300 /* logo.png */,
+				4E63BBB62A4A30E300A1A300 /* widgetMilestoneBundle.swift */,
+				4E63BBB82A4A30E300A1A300 /* widgetMilestoneLiveActivity.swift */,
+				4E63BBBA2A4A30E300A1A300 /* widgetMilestone.swift */,
+				4E63BBBC2A4A30E300A1A300 /* widgetMilestone.intentdefinition */,
+				4E63BBBD2A4A30E400A1A300 /* Assets.xcassets */,
+				4E63BBBF2A4A30E400A1A300 /* Info.plist */,
 			);
-			path = milestoneWidget;
+			path = widgetMilestone;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -155,10 +206,11 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				4EDAC4A82A483F6B00B2613E /* milestoneWidgetExtension.entitlements */,
+				4E63BBC92A4A322F00A1A300 /* widgetMilestoneExtensionRelease.entitlements */,
+				4E63BBC82A4A31FF00A1A300 /* widgetMilestoneExtensionDebug.entitlements */,
 				13B07FAE1A68108700A75B9A /* milestonenative */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				4EDAC4942A481E4D00B2613E /* milestoneWidget */,
+				4E63BBB52A4A30E300A1A300 /* widgetMilestone */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				D65327D7A22EEC0BE12398D9 /* Pods */,
@@ -173,7 +225,7 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* milestone.app */,
-				4EDAC4912A481E4D00B2613E /* milestoneWidgetExtension.appex */,
+				4E63BBB22A4A30E200A1A300 /* widgetMilestoneExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -231,7 +283,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				4EDAC4A22A481E4F00B2613E /* PBXTargetDependency */,
+				4E63BBC32A4A30E400A1A300 /* PBXTargetDependency */,
 			);
 			name = milestonenative;
 			packageProductDependencies = (
@@ -242,21 +294,25 @@
 			productReference = 13B07F961A680F5B00A75B9A /* milestone.app */;
 			productType = "com.apple.product-type.application";
 		};
-		4EDAC4902A481E4D00B2613E /* milestoneWidgetExtension */ = {
+		4E63BBB12A4A30E200A1A300 /* widgetMilestoneExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4EDAC4A62A481E4F00B2613E /* Build configuration list for PBXNativeTarget "milestoneWidgetExtension" */;
+			buildConfigurationList = 4E63BBC72A4A30E500A1A300 /* Build configuration list for PBXNativeTarget "widgetMilestoneExtension" */;
 			buildPhases = (
-				4EDAC48D2A481E4D00B2613E /* Sources */,
-				4EDAC48E2A481E4D00B2613E /* Frameworks */,
-				4EDAC48F2A481E4D00B2613E /* Resources */,
+				4E63BBAE2A4A30E200A1A300 /* Sources */,
+				4E63BBAF2A4A30E200A1A300 /* Frameworks */,
+				4E63BBB02A4A30E200A1A300 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = milestoneWidgetExtension;
-			productName = milestoneWidgetExtension;
-			productReference = 4EDAC4912A481E4D00B2613E /* milestoneWidgetExtension.appex */;
+			name = widgetMilestoneExtension;
+			packageProductDependencies = (
+				4ED650A42A4A810700532DB7 /* URLImage */,
+				4ED650A62A4A810D00532DB7 /* URLImageStore */,
+			);
+			productName = widgetMilestoneExtension;
+			productReference = 4E63BBB22A4A30E200A1A300 /* widgetMilestoneExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -269,13 +325,10 @@
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = Q25B536UFT;
 						LastSwiftMigration = 1250;
 					};
-					4EDAC4902A481E4D00B2613E = {
+					4E63BBB12A4A30E200A1A300 = {
 						CreatedOnToolsVersion = 14.2;
-						DevelopmentTeam = Q25B536UFT;
-						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -296,7 +349,7 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* milestonenative */,
-				4EDAC4902A481E4D00B2613E /* milestoneWidgetExtension */,
+				4E63BBB12A4A30E200A1A300 /* widgetMilestoneExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -306,17 +359,41 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E63BBE62A4A688100A1A300 /* outline6.png in Resources */,
+				4E63BBCB2A4A5EB600A1A300 /* logo.png in Resources */,
+				4E63BBCE2A4A61ED00A1A300 /* book.png in Resources */,
+				4E63BBDD2A4A652600A1A300 /* outline3.png in Resources */,
+				4E63BBE92A4A6B4A00A1A300 /* outline7.png in Resources */,
+				4E63BBD12A4A629000A1A300 /* icon.png in Resources */,
+				4E63BBE32A4A67F500A1A300 /* outline5.png in Resources */,
+				4ED650A92A4A887900532DB7 /* outline8.png in Resources */,
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
+				4E63BBDA2A4A641300A1A300 /* outline2.png in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
+				4E63BBD72A4A63D100A1A300 /* outline.png in Resources */,
+				4E63BBE02A4A67B000A1A300 /* outline4.png in Resources */,
+				4E63BBD42A4A633B00A1A300 /* widgeticon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4EDAC48F2A481E4D00B2613E /* Resources */ = {
+		4E63BBB02A4A30E200A1A300 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4EDAC49D2A481E4F00B2613E /* Assets.xcassets in Resources */,
+				4E63BBD82A4A63D100A1A300 /* outline.png in Resources */,
+				4E63BBD22A4A629000A1A300 /* icon.png in Resources */,
+				4ED650AA2A4A887900532DB7 /* outline8.png in Resources */,
+				4E63BBE42A4A67F500A1A300 /* outline5.png in Resources */,
+				4E63BBDE2A4A652600A1A300 /* outline3.png in Resources */,
+				4E63BBD52A4A633B00A1A300 /* widgeticon.png in Resources */,
+				4E63BBE12A4A67B000A1A300 /* outline4.png in Resources */,
+				4E63BBDB2A4A641300A1A300 /* outline2.png in Resources */,
+				4E63BBCC2A4A5EB600A1A300 /* logo.png in Resources */,
+				4E63BBBE2A4A30E400A1A300 /* Assets.xcassets in Resources */,
+				4E63BBCF2A4A61ED00A1A300 /* book.png in Resources */,
+				4E63BBEA2A4A6B4A00A1A300 /* outline7.png in Resources */,
+				4E63BBE72A4A688100A1A300 /* outline6.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -410,31 +487,31 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
-				4EDAC4A02A481E4F00B2613E /* milestoneWidget.intentdefinition in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				4E63BBC12A4A30E400A1A300 /* widgetMilestone.intentdefinition in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
 				D868FF8D875142AD90CA75B2 /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4EDAC48D2A481E4D00B2613E /* Sources */ = {
+		4E63BBAE2A4A30E200A1A300 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4EDAC4962A481E4D00B2613E /* milestoneWidgetBundle.swift in Sources */,
-				4EDAC49A2A481E4D00B2613E /* milestoneWidget.swift in Sources */,
-				4EDAC49F2A481E4F00B2613E /* milestoneWidget.intentdefinition in Sources */,
-				4EDAC4982A481E4D00B2613E /* milestoneWidgetLiveActivity.swift in Sources */,
+				4E63BBB72A4A30E300A1A300 /* widgetMilestoneBundle.swift in Sources */,
+				4E63BBB92A4A30E300A1A300 /* widgetMilestoneLiveActivity.swift in Sources */,
+				4E63BBC02A4A30E400A1A300 /* widgetMilestone.intentdefinition in Sources */,
+				4E63BBBB2A4A30E300A1A300 /* widgetMilestone.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		4EDAC4A22A481E4F00B2613E /* PBXTargetDependency */ = {
+		4E63BBC32A4A30E400A1A300 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4EDAC4902A481E4D00B2613E /* milestoneWidgetExtension */;
-			targetProxy = 4EDAC4A12A481E4F00B2613E /* PBXContainerItemProxy */;
+			target = 4E63BBB12A4A30E200A1A300 /* widgetMilestoneExtension */;
+			targetProxy = 4E63BBC22A4A30E400A1A300 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -447,6 +524,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = milestonenative/milestonenative.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Q25B536UFT;
 				ENABLE_BITCODE = NO;
@@ -455,7 +534,7 @@
 					"FB_SONARKIT_ENABLED=1",
 				);
 				INFOPLIST_FILE = milestonenative/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -468,6 +547,7 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ajiaron.milestonenative;
 				PRODUCT_NAME = milestone;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -483,10 +563,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = milestonenative/milestonenative.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Q25B536UFT;
 				INFOPLIST_FILE = milestonenative/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -499,13 +581,14 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ajiaron.milestonenative;
 				PRODUCT_NAME = milestone;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
 		};
-		4EDAC4A42A481E4F00B2613E /* Debug */ = {
+		4E63BBC52A4A30E500A1A300 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -517,15 +600,16 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = milestoneWidgetExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = widgetMilestoneExtensionDebug.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = Q25B536UFT;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = milestoneWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = milestoneWidget;
+				INFOPLIST_FILE = widgetMilestone/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = widgetMilestone;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -537,7 +621,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = com.ajiaron.milestonenative.milestoneWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ajiaron.milestonenative.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -548,7 +632,7 @@
 			};
 			name = Debug;
 		};
-		4EDAC4A52A481E4F00B2613E /* Release */ = {
+		4E63BBC62A4A30E500A1A300 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -560,7 +644,8 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = milestoneWidgetExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = widgetMilestoneExtensionRelease.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
@@ -568,8 +653,8 @@
 				DEVELOPMENT_TEAM = Q25B536UFT;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = milestoneWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = milestoneWidget;
+				INFOPLIST_FILE = widgetMilestone/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = widgetMilestone;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -580,7 +665,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = com.ajiaron.milestonenative.milestoneWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ajiaron.milestonenative.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -639,7 +724,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -694,7 +779,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -721,11 +806,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4EDAC4A62A481E4F00B2613E /* Build configuration list for PBXNativeTarget "milestoneWidgetExtension" */ = {
+		4E63BBC72A4A30E500A1A300 /* Build configuration list for PBXNativeTarget "widgetMilestoneExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4EDAC4A42A481E4F00B2613E /* Debug */,
-				4EDAC4A52A481E4F00B2613E /* Release */,
+				4E63BBC52A4A30E500A1A300 /* Debug */,
+				4E63BBC62A4A30E500A1A300 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -759,6 +844,16 @@
 			productName = URLImage;
 		};
 		4E82E7802A4921380068FF55 /* URLImageStore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4E82E77D2A4921380068FF55 /* XCRemoteSwiftPackageReference "url-image" */;
+			productName = URLImageStore;
+		};
+		4ED650A42A4A810700532DB7 /* URLImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4E82E77D2A4921380068FF55 /* XCRemoteSwiftPackageReference "url-image" */;
+			productName = URLImage;
+		};
+		4ED650A62A4A810D00532DB7 /* URLImageStore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 4E82E77D2A4921380068FF55 /* XCRemoteSwiftPackageReference "url-image" */;
 			productName = URLImageStore;
