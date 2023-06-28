@@ -165,7 +165,7 @@ const CreatePost = ({route}) => {
     function submitPost() {
         handlePress()
     }
-    const renderMilestone = ({ item }) => {
+    const renderMilestone = ({ item, index }) => {
         return (
             <MilestoneTag 
                 title={item.title} 
@@ -173,7 +173,7 @@ const CreatePost = ({route}) => {
                 img={milestoneList.length>0?item.src:item.img} 
                 id={milestoneList.length>0?item.idmilestones:item.id} 
                 ownerid={milestoneList.length>0?item.ownerId:0}
-                isLast={milestoneList.map(item=>item.idmilestones).indexOf(item.idmilestones) === milestoneList.length-1}
+                isLast={(isPersonal)?index === personalMilestones.length - 1:index === milestoneList.length-1}
                 isEmpty={isPersonal && personalMilestones.indexOf(item) === 0}
                 date={item.date}
                 onSelectMilestone={(selected) => setMilestones([...milestones,selected])}
@@ -268,7 +268,7 @@ const CreatePost = ({route}) => {
                         style={[styles.milestoneList]} 
                         data={isPersonal?personalMilestones:milestoneList} 
                         renderItem={renderMilestone} 
-                        keyExtractor={(item)=>item.idmilestones.toString()}>
+                        keyExtractor={(item, index)=>index}>
                     </FlatList> }
                 </View>   
                 <View style={styles.switchContainer}>

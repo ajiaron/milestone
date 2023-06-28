@@ -76,11 +76,10 @@ const Profile = ({route}) => {
         data: { route: "Friends" },
     };
     useEffect(()=> {    // set displayed milestone to the favorited one
-        axios.get(`http://${user.network}:19001/api/getmilestones`)
+        axios.get(`http://${user.network}:19001/api/getusermilestones/${user.userId}`)
         .then((response)=> {
-            setMilestones(response.data.filter((item)=> item.idmilestones == favorite))
-            // display how many milestones the user owns in their insights
-            setMilestoneCount(response.data.filter((item)=>item.ownerId == userid).length)
+            setMilestones(response.data)
+            setMilestoneCount(response.data.length)
         })
     }, [favorite])
     useEffect(()=> {
@@ -108,9 +107,9 @@ const Profile = ({route}) => {
      useEffect(()=> {
         handleRequest()
      }, [requested])
-    const renderMilestone = ({ item }) => {
+    const renderMilestone = ({ item, index }) => {
         return (
-            <MilestoneTag title={item.title} streak={item.streak} img={item.src} id={item.idmilestones} isLast={false}/>
+            <MilestoneTag title={item.title} streak={item.streak} img={item.src} id={item.idmilestones} isLast={index === milestones.length - 1} />
         )
     }
     function requestFriend() {
@@ -185,7 +184,7 @@ const Profile = ({route}) => {
             const widgetImage = await SharedGroupPreferences.getItem("widgetImage", group)
             if (widgetData) {
                 console.log(widgetData)
-                console.log(widgetImage)
+              //  console.log(widgetImage)
             }
             else {
                 console.log("data not found")
@@ -195,8 +194,8 @@ const Profile = ({route}) => {
         }
     }
     function handleTest() {
-        testWidget()
-   //     console.log(group)
+   //     testWidget()
+        console.log(milestones[0])
     }
 
     function handlePress() {
@@ -296,22 +295,17 @@ const Profile = ({route}) => {
                     </Pressable>
                 </View>
                 <FlatList 
-                    scrollEnabled={false}
-                    style={[styles.milestoneList]} 
+                    scrollEnabled={true}
+                    style={[styles.milestoneList, {maxHeight:(windowH>850)?(((windowH*0.0756)+16)*4)-4:((windowH*0.0756)+16)*3}]} 
                     data={milestones} 
+                    showsVerticalScrollIndicator={false}
                     renderItem={renderMilestone} 
-                    keyExtractor={(item)=>item.idmilestones.toString()}>
+                    snapToInterval={(windowH*0.0756)+16}
+                    snapToAlignment="start"
+                    decelerationRate={"fast"}
+                    keyExtractor={(item, index)=> index}>
                 </FlatList>  
-                <View style={[styles.groupHeaderContainer]}>
-                    <Text style={[styles.groupHeader]}>
-                        Groups
-                    </Text>
-                </View>
-                <View style={[styles.groupTagList]}>
-                    <GroupTag title={"Gym Grind"} users={['hzenry', 'antruong']} img={require("../assets/dumbbell.png")}/>
-                    <GroupTag title={"Diversity Hires"} users={['antruong','timwang']} img={require("../assets/money.png")}/>
-                    <GroupTag title={"Guitar Gang"} users={['jdason', 'hzenry']} img={require("../assets/guitar.png")}/>
-                </View>
+               
             </View>
             <Footer id={userid}/>
         </View>
@@ -326,10 +320,10 @@ const styles = StyleSheet.create({
         overflow:"scroll",
     },
     profileInfoContainer: {
-        width:windowW*0.8,
+        width:windowW*0.80,
         height: windowH*0.185,
         borderRadius:15,
-        top:windowH*0.2125,
+        top:windowH*0.23,
         position:"absolute",
         shadowColor: '#000',
         shadowOffset: {
@@ -405,7 +399,7 @@ const styles = StyleSheet.create({
         fontFamily:"Inter",
         fontSize: 20,
         color:"white",
-        left:3,
+        left:4,
         alignSelf:"center",
         top:-2
     },
@@ -433,10 +427,9 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     milestoneList: {
-        top:15,
+        top:18,
         width:windowW*0.8,
         alignSelf:"center",
-        maxHeight:92,
         borderRadius: 8,
     },
     groupTagList: {
@@ -448,10 +441,10 @@ const styles = StyleSheet.create({
         width: 336,
         alignSelf:"center",
         position:"relative",
-        bottom:windowH*(30/windowH) + 4
+        bottom:windowH*(12/windowH) 
     },
     userInfoContainer: {
-        top:"24.5%",
+        top:"27.5%",
         left:2,
         alignSelf:"center",
         maxWidth:windowW*0.8275,

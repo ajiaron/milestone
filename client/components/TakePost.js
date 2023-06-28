@@ -48,7 +48,7 @@ const TakePost = ({route}) => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing:true,
-            quality:1,
+            quality:.75,
         })
         if (!result.canceled) {
         //  const asset = await MediaLibrary.createAssetAsync(result.assets[0].uri)  // get local uri instead of cache uri
@@ -128,7 +128,7 @@ const TakePost = ({route}) => {
       } 
     let takePicture = async () => {
         let options = {
-            quality:.8,
+            quality:.75,
             isImageMirror:true,
             exif:false,
         }

@@ -113,23 +113,19 @@ struct widgetMilestoneEntryView : View {
       
       VStack {
         HStack {
-          /*
-          if let imagePath = URL(string: entry.imageData) {
-            postImage(url:imagePath)
-              .aspectRatio(contentMode: .fit)
-              .frame(width:35, height:35)
-          }
-          else {
-            Text("Lastest Post")
-              .bold()
-              .foregroundColor(.white)
-              .multilineTextAlignment(.center)
-          }
-          Spacer()*/
+
           if let imageURL = Bundle.main.url(forResource: "outline8", withExtension: "png") {
-            RemoteImage(url: imageURL)
-              .aspectRatio(contentMode: .fit)
-              .frame(width:36, height:36)
+            ZStack {
+              Circle()
+                .foregroundColor(Color(red: 90, green: 90, blue: 90))
+                .frame(width:46, height:46)
+              Circle()
+                .foregroundColor(Color(red: 60, green: 60, blue: 60))
+                .frame(width:44, height:44)
+              RemoteImage(url: imageURL)
+                .aspectRatio(contentMode: .fit)
+                .frame(width:34, height:34)
+            }
           } else {
             Text("nothing worked")
               .bold()
@@ -137,16 +133,28 @@ struct widgetMilestoneEntryView : View {
               .multilineTextAlignment(.center)
           }
         }
-      } .padding(.top,-4)
+      } .padding(.top,-6)
+        .padding(.trailing,-3)
         .padding(20)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
       VStack {
         Spacer()
-        Text(entry.text)
-          .bold()
-          .foregroundColor(.white)
-          .font(.system(size: 16.5))
-        
+        let components = entry.text.split(separator: " ", maxSplits: 2, omittingEmptySubsequences: true)
+        if components.count >= 3 {
+          Text("\(String(components[0])) \(String(components[1])) ")
+               .bold()
+               .foregroundColor(.white)
+               .font(.system(size: 16.5))
+           + Text("\(String(components[2]))")
+            .fontWeight(.bold)
+               .foregroundColor(Color(red:63, green: 184, blue:156, opacity: 1))
+               .font(.system(size: 16.5))
+        } else {
+          Text(entry.text)
+            .bold()
+            .foregroundColor(.white)
+            .font(.system(size: 16.5))
+        }
       }.padding(20)
         .padding(.bottom,2)
     }
@@ -164,7 +172,8 @@ struct RemoteImage: View {
                 .cornerRadius(10)
                 .clipped()
                 .aspectRatio(contentMode: .fill)
-                .frame(width: 36, height: 36)
+                .padding(.top,-0.5)
+                .frame(width: 34, height: 34)
         } else {
           Text("nothing worked")
             .bold()
@@ -173,43 +182,7 @@ struct RemoteImage: View {
         }
     }
 }
-struct postImage: View {
-  let url: URL
-  var body: some View {
-    Group {
-      if let imagePath = url,
-         let imageURL = try? Data(contentsOf: imagePath),
-         let uiImage = UIImage(data:imageURL) {
-        Image(uiImage:uiImage)
-          .resizable()
-          .aspectRatio(contentMode:.fill)
-      }
-      else {
-        Text("u tried")
-      }
-    }
-  }
-  /*
-  var body: some View {
-    URLImage(url) {
-      EmptyView()
-    } inProgress: { progress in
-      // Display progress
-      Text("Loading...")
-    } failure: { error, retry in
-      // Display error and retry button
-      VStack {
-        Text(error.localizedDescription)
-        Button("Retry", action: retry)
-      }
-    } content: { image in
-      // Downloaded image
-      image
-        .resizable()
-        .aspectRatio(contentMode: .fit)
-    }
-  }*/
-}
+
     
 
 

@@ -222,6 +222,9 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
                             </Animated.Text>
                         </Animated.Text>
                     </View>
+                    {
+
+                    }
                     {(checkDate())&&
                     <View style={{top:1, left:8, alignSelf:"flex-start", marginBottom:'auto'}}>
                         <Icon 
@@ -303,7 +306,7 @@ const styles = StyleSheet.create({
         padding:(windowH*0.0185)-4,
         width:(windowW*0.800),
         height: (windowH*0.0756),
-        paddingBottom:16,
+
         borderRadius: 8,
         alignSelf:"center"
     },
@@ -349,7 +352,7 @@ const styles = StyleSheet.create({
     milestoneContainerLast: {
         alignItems:"center",
         paddingTop:windowH*0.0185,
-        marginBottom:16,
+        marginBottom:8,
         width:windowW*0.800,
         height: windowH*0.0756,
         backgroundColor: "rgba(10, 10, 10, 1)",

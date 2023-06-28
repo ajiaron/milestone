@@ -27,13 +27,13 @@ const MilestoneReel = ({refresh, focus, milestones}) => {
         })
     }
     function handlePress() {
-       setAscending(!ascending)
+       console.log(recentMilestones)
     }
     useEffect(()=> {
-        axios.get(`http://${user.network}:19001/api/getrecentupdates/${user.userId}`) 
+        axios.get(`http://${user.network}:19001/api/getrecentupdates/${user.userId}`)   // only shows updates from friends
         .then((response)=>{ 
             setRecentMilestones([...response.data.filter((item)=>
-                item.viewable === "Everyone"|| (item.viewable === "Only You") && user.userId === item.mileOwner)].reverse())
+                item.viewable === "Everyone"|| (item.viewable === "Only You" && user.userId === item.mileOwner))].reverse())
         })
         .catch((error) => console.log(error))
     }, [refresh, focus, isFocused])

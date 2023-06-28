@@ -162,7 +162,7 @@ const EditPost = ({route}) => {
             }
         )
     }
-    const renderMilestone = ({ item }) => {
+    const renderMilestone = ({ item, index }) => {
         return (
             <MilestoneTag 
                 title={item.title} 
@@ -170,7 +170,7 @@ const EditPost = ({route}) => {
                 img={milestoneList.length>0?item.src:item.img} 
                 id={milestoneList.length>0?item.idmilestones:item.id} 
                 ownerid={milestoneList.length>0?item.ownerId:0}
-                isLast={milestoneList.indexOf(item) === milestoneList.length}
+                isLast={(isPersonal)?index === personalMilestones.length-1:index === milestoneList.length-1}
                 selected={linkedMilestones.indexOf(item.idmilestones) > -1}
                 isEmpty={isPersonal && personalMilestones.indexOf(item) === 0}
                 date={item.date}
@@ -273,7 +273,7 @@ const EditPost = ({route}) => {
                             style={[styles.milestoneList]} 
                             data={isPersonal?personalMilestones:milestoneList} 
                             renderItem={renderMilestone} 
-                            keyExtractor={(item)=>item.idmilestones.toString()}>
+                            keyExtractor={(item, index)=>index}>
                         </FlatList> 
                     }
                     </View>   

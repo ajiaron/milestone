@@ -1,6 +1,6 @@
 PODS:
   - boost (1.76.0)
-  - BVLinearGradient (2.6.2):
+  - BVLinearGradient (2.7.3):
     - React-Core
   - DoubleConversion (1.1.6)
   - EXApplication (5.0.1):
@@ -31,7 +31,7 @@ PODS:
     - ExpoModulesCore
   - EXNotifications (0.17.0):
     - ExpoModulesCore
-  - Expo (47.0.13):
+  - Expo (47.0.14):
     - ExpoModulesCore
   - expo-dev-client (2.0.1):
     - EXManifests
@@ -351,7 +351,7 @@ PODS:
     - glog
   - react-native-date-picker (4.2.13):
     - React-Core
-  - react-native-get-random-values (1.8.0):
+  - react-native-get-random-values (1.9.0):
     - React-Core
   - react-native-image-base64 (0.1.4):
     - React
@@ -431,7 +431,7 @@ PODS:
     - React-perflogger (= 0.70.8)
   - rn-fetch-blob (0.12.0):
     - React-Core
-  - RNAWSCognito (6.2.0):
+  - RNAWSCognito (6.3.1):
     - React-Core
   - RNCAsyncStorage (1.17.12):
     - React-Core
@@ -693,7 +693,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost: a7c83b31436843459a1961bfd74b96033dc77234
-  BVLinearGradient: 34a999fda29036898a09c6a6b728b0b4189e1a44
+  BVLinearGradient: fbe308a1d19a8133f69e033abc85d8008644f5e3
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   EXApplication: 034b1c40a8e9fe1bff76a1e511ee90dff64ad834
   EXAV: 8e4e12377926c071843498d19adfa27802695385
@@ -708,7 +708,7 @@ SPEC CHECKSUMS:
   EXMediaLibrary: b1c4f78878e45f6a359aff3a059e1660c41b73ab
   EXNetwork: c16feb0dc85dacaf11fef55721e0b8ead2a8038f
   EXNotifications: babce2a87b7922051354fcfe7a74dd279b7e272a
-  Expo: b9fa98bf260992312ee3c424400819fb9beadafe
+  Expo: 5f4240506a147162542178989696e56e3dd72924
   expo-dev-client: d723d52ccfbe2eb47ee24d1ac0cf5b39001589c2
   expo-dev-launcher: 953f564f7d006f1af50b119cacb48cafcad40c73
   expo-dev-menu: 73476baf8eb6ab44ede1bc0033074fe21aa50f19
@@ -740,7 +740,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 5e5497c844f2381e8648ec3a7d0ad25b3f27f23e
   React-logger: b277ad8f4473f2506fb30b762b6348534a3de10e
   react-native-date-picker: 04e866ba4e7857f83abd504ad42e787f0f02ae00
-  react-native-get-random-values: a6ea6a8a65dc93e96e24a11105b1a9c8cfe1d72a
+  react-native-get-random-values: dee677497c6a740b71e5612e8dbd83e7539ed5bb
   react-native-image-base64: 2ff9ac788639c87a91361ab6652cc95e871b1e54
   react-native-netinfo: 85b2a435c4d3705c08b0c42ff2d6ef6b9622ea0a
   react-native-safe-area-context: 99b24a0c5acd0d5dcac2b1a7f18c49ea317be99a
@@ -757,7 +757,7 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: f795fd426264709901c09432c6ce072f8400147e
   ReactCommon: c440e7f15075e81eb29802521c58a1f38b1aa903
   rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
-  RNAWSCognito: 100c2a1e21010f4e201d8ac43deb400b8d5e7ba6
+  RNAWSCognito: 5687577d12900389a893a9705ce31b6fa71c3805
   RNCAsyncStorage: 09fc8595e6d6f6d5abf16b23a56b257d9c6b7c5b
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNFastImage: 5c9c9fed9c076e521b3f509fe79e790418a544e8
