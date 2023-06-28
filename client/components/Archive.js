@@ -135,7 +135,7 @@ const Archive = ({route}) => {
     const viewabilityConfigCallbackPairs = useRef([{ viewabilityConfig, onViewableItemsChanged }])
     
     useEffect(()=> {
-        axios.get(`http://ec2-13-52-215-193.us-west-1.compute.amazonaws.com:19001/api/getposts`)
+        axios.get(`http://${user.network}:19001/api/getposts`)
         .then((response)=> {
             setPostFeed(response.data.filter((item)=> (item.ownerid === route.params.id)
              && (item.public === 1 || (item.public === 0 && item.ownerid === user.userId))).reverse())
