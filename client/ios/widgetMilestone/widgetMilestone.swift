@@ -9,6 +9,7 @@ import WidgetKit
 import SwiftUI
 import Intents
 import URLImage
+import os
 
 extension Color {
   init(red: Double, green: Double, blue: Double, opacity: Double = 1) {
@@ -20,6 +21,15 @@ extension Color {
       opacity: opacity
     )
   }
+}
+let imageURL = Bundle.main.url(forResource: "outline8", withExtension: "png")
+func getWidgetImage(_ imageDataString: String?) -> UIImage {
+    guard let imageDataString = imageDataString,
+          let imageData = Data(base64Encoded: "data:image/jpg;base64,"+imageDataString) else {
+        // Return a default image if no data could be decoded
+        return UIImage(systemName: "photo") ?? UIImage()
+    }
+    return UIImage(data: imageData) ?? UIImage()
 }
 struct WidgetData: Decodable {
   var text: String
@@ -33,14 +43,16 @@ struct Provider: IntentTimelineProvider {
   }
   
   func getSnapshot(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-    let entry = SimpleEntry(date: Date(), configuration: configuration, text:"See who's posting", imageData:"no image")
+    let entry = SimpleEntry(date: Date(), configuration: configuration, text:"Aaron posted 2 hours ago.", imageData:"no image")
     completion(entry)
   }
   
   func getTimeline(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> ()) {
+
     let userDefaults = UserDefaults.init(suiteName: "group.com.ajiaron.milestonenative")
     //  var entries: [SimpleEntry] = []
     let currentDate = Date()
+   
     //  for hourOffset in 0 ..< 5 {
     //      let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
     //      let entry = SimpleEntry(date: entryDate, configuration: configuration)
@@ -61,10 +73,10 @@ struct Provider: IntentTimelineProvider {
          // if let imageData = Data(base64Encoded: savedImageData) {
           if let parsedImageData = try? decoder.decode(WidgetImage.self, from: imageData!) {
             // username, date and image are parsed
-            let base64String = parsedImageData.data
-            print(base64String)
+            let urlString = parsedImageData.data
+         
             let nextRefresh = Calendar.current.date(byAdding: .minute, value: 1, to: entryDate)!
-            let entry = SimpleEntry(date: nextRefresh, configuration: configuration, text: parsedData.text, imageData:base64String)
+            let entry = SimpleEntry(date: nextRefresh, configuration: configuration, text: parsedData.text, imageData:urlString)
             let timeline = Timeline(entries: [entry], policy: .atEnd)
             completion(timeline)
           } // username, date parsed but image is not
@@ -103,6 +115,7 @@ struct SimpleEntry: TimelineEntry {
   let configuration: ConfigurationIntent
   let text: String
   let imageData: String
+ // let imageURL: String
 }
 
 struct widgetMilestoneEntryView : View {
@@ -113,7 +126,20 @@ struct widgetMilestoneEntryView : View {
       
       VStack {
         HStack {
-
+     //     if let imageDataString = entry.imageData {
+     //       Image(uiImage: getWidgetImage(imageDataString))
+     //                    .resizable()
+     //                    .aspectRatio(contentMode: .fit)
+     //
+     //     } else {
+     //       Text("nothing worked")
+     //         .bold()
+     //         .foregroundColor(.white)
+     //         .multilineTextAlignment(.center)
+     //     }
+       //   postImage(entry:entry)
+       //       .frame(width: 46, height: 46)
+       //       .padding(.trailing,12)
           if let imageURL = Bundle.main.url(forResource: "outline8", withExtension: "png") {
             ZStack {
               Circle()
@@ -126,6 +152,7 @@ struct widgetMilestoneEntryView : View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width:34, height:34)
             }
+            .padding(.trailing,-3)
           } else {
             Text("nothing worked")
               .bold()
@@ -134,7 +161,7 @@ struct widgetMilestoneEntryView : View {
           }
         }
       } .padding(.top,-6)
-        .padding(.trailing,-3)
+
         .padding(20)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
       VStack {
@@ -156,7 +183,7 @@ struct widgetMilestoneEntryView : View {
             .font(.system(size: 16.5))
         }
       }.padding(20)
-        .padding(.bottom,2)
+        .padding(.bottom,1)
     }
   }
 }
@@ -183,8 +210,23 @@ struct RemoteImage: View {
     }
 }
 
-    
+struct postImage: View {
+    var entry: Provider.Entry
+    var body: some View {
+        if let url = URL(string: entry.imageData) {
 
+          URLImage(url) { image in
+            image
+              .resizable()
+              .aspectRatio(contentMode: .fill)
+          }
+          .frame(width: 34, height: 34)
+        } else {
+          Text(entry.imageData)
+            .foregroundColor(.red)
+        }
+    }
+}
 
 
 
@@ -195,8 +237,8 @@ struct widgetMilestone: Widget {
         IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: Provider()) { entry in
             widgetMilestoneEntryView(entry: entry)
         }
-        .configurationDisplayName("My Widget")
-        .description("This is an example widget.")
+        .configurationDisplayName("Latest Post")
+        .description("View the latest activity on your feed straight from your home screen.")
     }
 }
 

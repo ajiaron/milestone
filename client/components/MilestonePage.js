@@ -273,7 +273,7 @@ const MilestonePage = ({route}) => {
     const renderMember = ({item}) => {
         return (
             <View style={{maxWidth:windowW*0.8, flex:1, flexDirection:"row", paddingBottom:windowH*0.0125, alignItems:"center", justifyContent:"flex-start"}}>
-                 <Pressable onPress={()=>navigation.navigate("Profile", {id:item.id})}>
+                 <Pressable onPress={()=>navigation.push("Profile", {id:item.id})}>
                     {
                     (!user.isExpo)?
                     <FastImage

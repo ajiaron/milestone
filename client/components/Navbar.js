@@ -35,7 +35,13 @@ const Navbar = ({title, scrollY, id, date, count, newNotification, onClearNotifi
         })
     }
     function navigateBack() {
-        navigation.goBack()
+        if (prevRoute.name === "Landing" && route.name === "Profile") { // temp fix
+            //console.log(prevRoute)
+            navigation.navigate("Feed")
+        }
+        else {
+            navigation.goBack()
+        }
     }
     function clearNotifications() {
         DeleteAlert().then((resolve)=> {

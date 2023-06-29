@@ -89,8 +89,8 @@ const FriendTag = ({id, username, img, token}) => {
         console.log(token)
     }
     function navigateProfile() {
-        navigation.popToTop()
-        navigation.navigate("Profile",{id:id})
+       // navigation.popToTop()
+        navigation.push("Profile",{id:id})
     }
     useEffect(()=> {
         axios.get(`http://${user.network}:19001/api/getrequests`) 

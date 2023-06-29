@@ -199,10 +199,30 @@ const MilestoneTag = ({title, streak, img, id, ownerid, isLast, description, sel
                 ]}>    
                 <View style={[styles.milestoneContentContainer]}>  
                 <View style={[styles.milestoneIconContainer]}>
+                {(fileExt ==='jpg'||fileExt ==='png')?
+                        (!user.isExpo)?
+                        <FastImage
+                            style={styles.milestoneIcon}
+                            resizeMode={FastImage.resizeMode.cover}
+                            defaultSource={require("../assets/profile-pic-empty.png")}
+                            source={{
+                                uri:img,
+                                priority: FastImage.priority.normal
+                            }}
+                        />
+                        :
+                        <Image
+                            style={{width:windowW*(60/windowW), height:windowH*(60/windowH), alignSelf:"center", borderRadius:60}}
+                            resizeMode="contain"
+                            defaultSource={require("../assets/profile-pic-empty.png")}
+                            source={{uri:img}}
+                        />
+                :
                     <Image
                         style={styles.milestoneIcon}
                         resizeMode="cover"
                         source={(fileExt ==='jpg'||fileExt ==='png')?{uri:img}:Icons[img]}/>
+                }
                 </View>
                     <View style={[styles.milestoneContext]}>
                         <Text style={[styles.milestoneTitle]}>
@@ -357,7 +377,14 @@ const styles = StyleSheet.create({
         height: windowH*0.0756,
         backgroundColor: "rgba(10, 10, 10, 1)",
         borderRadius: 8,
-        alignSelf:"center"
+        alignSelf:"center",
+        shadowColor: '#000',
+        shadowOffset: {
+        width: 0,
+        height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
     },
     milestoneContentContainer: {
         width:(windowW*0.8)*0.875,

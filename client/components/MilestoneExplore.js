@@ -208,9 +208,10 @@ const MilestoneTab = ({item, index}) => {
                         </Pressable>
                     </View>
         
-                    <View style={{alignSelf:"center", alignItems:"center", maxWidth:(windowH>900)?windowW*0.425:windowW*0.45}}>
+                    <Pressable onPress={navigateMilestone}
+                    style={{alignSelf:"center", alignItems:"center", maxWidth:(windowH>900)?windowW*0.425:windowW*0.45}}>
                         <Text style={[styles.milestoneTitle]} numberOfLines={(windowH>900)?1:2}>{item.title}</Text>
-                    </View>
+                    </Pressable>
                     {(windowH>900)&&
                     <Pressable onPress={handleTest}>
                         <Icon 
@@ -471,13 +472,14 @@ const styles = StyleSheet.create({
     },
     milestoneEmptyContainer: {
         alignItems:"center",
-        padding:(windowH*0.0185)-2.25,
-        width:windowW*0.8,
+        padding:(windowH*0.0185),
+        width:windowW*0.8 - 2.25,
         height: windowH*0.0756,
         backgroundColor: "rgba(28, 28, 28, 1)",
         borderColor:"rgba(58, 184, 156, 1)",
         borderRadius: 8,
         borderWidth:2.25,
+        alignSelf:"center",
         borderStyle:"dashed",
         marginBottom:20,
         shadowColor: '#000',

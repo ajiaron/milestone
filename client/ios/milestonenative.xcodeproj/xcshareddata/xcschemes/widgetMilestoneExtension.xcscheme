@@ -57,20 +57,27 @@
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES"
       launchAutomaticallySubstyle = "2">
-      <MacroExpansion>
+      <RemoteRunnable
+         runnableDebuggingMode = "2"
+         BundleIdentifier = "com.apple.springboard">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "milestone.app"
-            BlueprintName = "milestonenative"
+            BlueprintIdentifier = "4E63BBB12A4A30E200A1A300"
+            BuildableName = "widgetMilestoneExtension.appex"
+            BlueprintName = "widgetMilestoneExtension"
             ReferencedContainer = "container:milestonenative.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </RemoteRunnable>
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "_XCWidgetKind"
             value = ""
             isEnabled = "NO">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "OS_ACTIVITY_MODE"
+            value = "debug"
+            isEnabled = "YES">
          </EnvironmentVariable>
          <EnvironmentVariable
             key = "_XCWidgetDefaultView"
@@ -92,16 +99,26 @@
       debugDocumentVersioning = "YES"
       askForAppToLaunch = "Yes"
       launchAutomaticallySubstyle = "2">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <RemoteRunnable
+         runnableDebuggingMode = "2"
+         BundleIdentifier = "com.apple.springboard">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "milestone.app"
-            BlueprintName = "milestonenative"
+            BlueprintIdentifier = "4E63BBB12A4A30E200A1A300"
+            BuildableName = "widgetMilestoneExtension.appex"
+            BlueprintName = "widgetMilestoneExtension"
             ReferencedContainer = "container:milestonenative.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </RemoteRunnable>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "4E63BBB12A4A30E200A1A300"
+            BuildableName = "widgetMilestoneExtension.appex"
+            BlueprintName = "widgetMilestoneExtension"
+            ReferencedContainer = "container:milestonenative.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

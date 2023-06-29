@@ -4,7 +4,7 @@ import { Icon } from 'react-native-elements'
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Footer from './Footer'
 import MilestoneTag from "./MilestoneTag";
-import GroupTag from "./GroupTag";
+import Navbar from "./Navbar";
 import FastImage from 'react-native-fast-image'
 import pushContext from "../contexts/pushContext";
 import userContext from '../contexts/userContext'
@@ -16,9 +16,9 @@ const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 const group = `group.${Constants.manifest.ios.bundleIdentifier}`
 
-const ProfileInfo = ({name, milestones, groups, friends}) => {
+const ProfileInfo = ({name, milestones, count, friends, owner}) => {
     return (
-        <View style={[styles.profileInfoContainer]}>
+        <View style={[styles.profileInfoContainer, {top:(owner)?windowH*0.23:windowH*0.2385}]}>
             <View style={[styles.profileNameWrapper]}>
                <Text style={[styles.profileInfoName]}>{name}</Text>
             </View>
@@ -31,8 +31,8 @@ const ProfileInfo = ({name, milestones, groups, friends}) => {
                     </View>
 
                     <View style={[styles.milestoneInsightWrapper]}>
-                        <Text style={[styles.milestoneInsightText]}>GROUPS</Text>
-                        <Text style={[styles.milestoneInsightItem]}>{groups}</Text>
+                        <Text style={[styles.milestoneInsightText]}>POSTS</Text>
+                        <Text style={[styles.milestoneInsightItem]}>{count}</Text>
                     </View>
 
                     <View style={[styles.milestoneInsightWrapper]}>
@@ -54,15 +54,16 @@ const Profile = ({route}) => {
     const [userid, setUserid] = useState(route.params.id)
     const [owner, setOwner] = useState(route.params.id === user.userId)
     const [userData, setUserData] = useState()
+    const [postCount, setPostCount] = useState(0)
     const [loading, setLoading] = useState(true)
     const [requested, setRequested] = useState(false)
     const [milestones, setMilestones] = useState([])
     const [favorite, setFavorite] = useState(1)
     const [milestoneCount, setMilestoneCount] = useState(0)
-    const milestoneData = require('../data/Milestones.json')
     const navigation = useNavigation()
     var fileExt = (user.image !== undefined)?user.image.toString().split('.').pop():'png';
     const animatedvalue = useRef(new Animated.Value(0)).current;
+    const scrollY = useRef(new Animated.Value(0)).current;
     const [accept, setAccept] = useState(false)
     const [isFriend, setIsFriend] = useState(false)
     const [userToken, setUserToken] = useState()
@@ -76,19 +77,20 @@ const Profile = ({route}) => {
         data: { route: "Friends" },
     };
     useEffect(()=> {    // set displayed milestone to the favorited one
-        axios.get(`http://${user.network}:19001/api/getusermilestones/${user.userId}`)
+        axios.get(`http://${user.network}:19001/api/getjoinedmilestones/${(owner)?user.userId:userid}`)
         .then((response)=> {
             setMilestones(response.data)
             setMilestoneCount(response.data.length)
         })
     }, [favorite])
     useEffect(()=> {
-        axios.get(`http://${user.network}:19001/api/getusers`)
+        axios.get(`http://${user.network}:19001/api/getuserdetails/${userid}`)
         .then((response)=> {
-            setProfilePic(response.data.filter((item)=>item.id === userid)[0].src)
-            setUserData(response.data.filter((item)=> item.id === userid)[0])
-            setFavorite(response.data.filter((item)=> item.id === userid)[0].favoriteid)
-            setUserToken(response.data.filter((item)=> item.id === userid)[0].pushtoken?
+            setProfilePic(response.data[0].src)
+            setUserData(response.data[0])
+            setPostCount(response.data[0].count)
+            setFavorite(response.data[0].favoriteid)
+            setUserToken(response.data[0].pushtoken?
             `ExponentPushToken[${response.data.filter((item)=> item.id === userid)[0].pushtoken}]`:null)
         })
         axios.get(`http://${user.network}:19001/api/getrequests`)
@@ -184,7 +186,7 @@ const Profile = ({route}) => {
             const widgetImage = await SharedGroupPreferences.getItem("widgetImage", group)
             if (widgetData) {
                 console.log(widgetData)
-              //  console.log(widgetImage)
+                console.log(widgetImage)
             }
             else {
                 console.log("data not found")
@@ -194,7 +196,7 @@ const Profile = ({route}) => {
         }
     }
     function handleTest() {
-   //     testWidget()
+        testWidget()
         console.log(milestones[0])
     }
 
@@ -203,6 +205,7 @@ const Profile = ({route}) => {
     }
     return (
         <View style={[styles.profilePage]}>
+            {(owner)?
             <View style={{flex:1,flexDirection:"row", height:76, position:"absolute", backgroundColor:"#171717",
             top:0, alignSelf:"center", width:'100%', justifyContent:"space-around", alignItems:"flex-end", 
             paddingBottom:(windowH>900)?10:8, borderBottomLeftRadius:15, borderBottomRightRadius:15}}>
@@ -217,8 +220,11 @@ const Profile = ({route}) => {
                     fontFamily:(route.name==="Profile")?"InterBold":"Inter"}]}>Profile</Text>
                 </View>
 
-            </View>
-            <View style={[styles.userInfoContainer, {marginBottom:windowH*0.0175}]}>
+            </View>:
+            <Navbar title={'milestone'} scrollY={scrollY} />
+            }
+            <View style={[styles.userInfoContainer, {top:(owner)?"27.5%":"30.5%",
+                marginBottom:(owner)?windowH*0.0175:windowH*0.025}]}>
                     <Pressable onPress={handleTest}>
                         {
                         (!user.isExpo)?
@@ -280,23 +286,28 @@ const Profile = ({route}) => {
             </View>
 
             <ProfileInfo name={(!owner && userData !== undefined)?userData.fullname:
-                user.fullname?user.fullname:"Johnny Appleseed"} milestones={milestoneCount} groups={3} friends={friends} />
+                user.fullname?user.fullname:"Johnny Appleseed"} milestones={milestones.length} count={postCount} friends={friends}
+                owner={owner} />
             <View style={[styles.profileTagContainer]}>
                 <View style={[styles.milestoneHeaderContainer]}>
                     <Text style={[styles.milestoneHeader]}>
-                        Personal Milestones
+                        {`Personal Milestones`}
                     </Text>
-                    <Pressable onPress={()=> {navigation.navigate("MilestoneList")}}>
+                    {(milestones.length>4 || owner)&&
+                    <Pressable onPress={()=> {navigation.navigate("MilestoneList",
+                    {id:(owner)?user.userId:userid, username:(owner)?user.username:userData.name})}}>
                         <Icon 
                         name='navigate-next' 
                         size={30} 
                         color="rgba(53, 174, 146, 1)" 
-                        style={{bottom:4.5, left:4}}/>
+                        style={{bottom:4, left:5}}/>
                     </Pressable>
+                    }
                 </View>
+                {(milestones.length>0)?
                 <FlatList 
-                    scrollEnabled={true}
-                    style={[styles.milestoneList, {maxHeight:(windowH>850)?(((windowH*0.0756)+16)*4)-4:((windowH*0.0756)+16)*3}]} 
+                    scrollEnabled={(milestones.length>4)?true:false}
+                    style={[styles.milestoneList, {maxHeight:(((windowH*0.0756)+16)*4)-4}]} 
                     data={milestones} 
                     showsVerticalScrollIndicator={false}
                     renderItem={renderMilestone} 
@@ -304,7 +315,28 @@ const Profile = ({route}) => {
                     snapToAlignment="start"
                     decelerationRate={"fast"}
                     keyExtractor={(item, index)=> index}>
-                </FlatList>  
+                </FlatList>:
+                (owner)?
+                <Pressable onPress={()=>navigation.navigate("CreateMilestone", {from:'explore'})} 
+                   style={{top:18}} >
+                    <View style={[styles.milestoneEmptyContainer]}>
+                        <View style={{alignItems:"center",alignSelf:"center", justifyContent:"space-evenly"}}>
+                            <Icon
+                            name = {'add-to-photos'}
+                            color="rgba(58, 184, 156, 1)"
+                            size={(windowH>900)?27.5:26}
+                            />
+                            <Text style={{fontFamily:"Inter", color:"rgba(58, 184, 156, 1)", 
+                            fontSize:(windowH>900)?12:11, paddingTop:6}}>Add a new milestone...</Text>
+                        </View>
+                    </View>
+                </Pressable>:
+                <View style={{width:windowW*0.8, alignSelf:"center", paddingLeft:4, paddingTop:10}}>
+                    <Text style={{fontSize:14.5, fontFamily:"Inter", color:"#aaa" }}>   
+                        Nothing just yet!
+                    </Text>
+                </View>
+                }
                
             </View>
             <Footer id={userid}/>
@@ -501,6 +533,27 @@ const styles = StyleSheet.create({
         fontFamily:"Inter",
         fontSize:14,
         color:"rgba(160,160,160,1)",
-    }
+    },
+    milestoneEmptyContainer: {
+        alignItems:"center",
+        padding:(windowH*0.0185)-2.25,
+        width:windowW*0.8 - 2.25,
+        height: windowH*0.0756,
+        backgroundColor: "rgba(28, 28, 28, 1)",
+        borderColor:"rgba(58, 184, 156, 1)",
+        borderRadius: 8,
+        borderWidth:2.25,
+        borderStyle:"dashed",
+        alignSelf:"center",
+        marginBottom:20,
+        shadowColor: '#000',
+        shadowOffset: {
+        width: 0,
+        height: 2,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
+        alignSelf:"center"
+    },
 })
 export default Profile

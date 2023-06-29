@@ -70,7 +70,7 @@ const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentL
                 paddingBottom:(commentList.indexOf(item) === commentList.length - 1)?22:10}}>
                     <View style={{flexDirection:"row", backgroundColor:"rgba(21,21,21,1)",justifyContent:"space-between"}}>
                         <View style={{flexDirection:"row", alignItems:"center"}}>
-                            <Pressable style={{flexDirection:"row", alignItems:"center"}} onPress={()=>{navigation.navigate("Profile", {id:item.userid})}}>
+                            <Pressable style={{flexDirection:"row", alignItems:"center"}} onPress={()=>{navigation.push("Profile", {id:item.userid})}}>
                                 {
                                 (!user.isExpo)?
                                 <FastImage
@@ -104,7 +104,7 @@ const CommentBox = ({postId, userId, startToggle, mediaType, likesList, commentL
             paddingBottom:(commentList.indexOf(item) === commentList.length - 1)?22:8}}>
                 <View style={{flexDirection:"row", backgroundColor:"rgba(21,21,21,1)"}}>
                     <View style={{flexDirection:"row", alignItems:"center", maxWidth:windowW-120}}>
-                        <Pressable style={{flexDirection:"row", alignItems:"center"}} onPress={()=>{navigation.navigate("Profile", {id:item.userid})}}>
+                        <Pressable style={{flexDirection:"row", alignItems:"center"}} onPress={()=>{navigation.push("Profile", {id:item.userid})}}>
                             {
                             (!user.isExpo)?
                             <FastImage

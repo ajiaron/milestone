@@ -11,14 +11,16 @@ import axios from 'axios'
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 
-const MilestoneList = () => {
+const MilestoneList = ({route}) => {
     const milestoneData = require('../data/Milestones.json')
     const user = useContext(userContext)
+    const [userid, setUserid] = useState(route.params?route.params.id:user.userId)
+    const [username, setUsername] = useState(route.params?route.params.username:user.username)
     const [milestoneList, setMilestoneList] = useState([])
     const navigation = useNavigation()
     const scrollY = useRef(new Animated.Value(0)).current;
     useEffect(()=> {
-        axios.get(`http://${user.network}:19001/api/getusermilestones/${user.userId}`)
+        axios.get(`http://${user.network}:19001/api/getusermilestones/${(userid)}`)
         .then((response)=> {
             setMilestoneList(response.data)})
         .catch((error)=> console.log(error))
@@ -38,9 +40,9 @@ const MilestoneList = () => {
     return (
         <View style={styles.milestoneListPage}>
             <Navbar title={'milestone'} scrollY={scrollY} />
-              <View style={[styles.milestoneHeaderContainer, {top:(windowH > 900)?windowH * 0.15:windowH*0.15}]}>
+              <View style={[styles.milestoneHeaderContainer, {top:windowH*0.1525}]}>
                     <Text style={[styles.milestoneHeader]}>
-                        Your Milestones
+                        {(user.userId === userid)?`Your Milestones`:`${username}'s Milestones`}
                     </Text>
                     <Pressable onPress={()=> {console.log(milestoneList)}}>
                         <Icon 
@@ -62,7 +64,7 @@ const MilestoneList = () => {
                         data={milestoneList} 
                         renderItem={renderMilestone} 
                         keyExtractor={(item)=>(milestoneList.length>0)?item.idmilestones.toString():item.id.toString()}>
-                    </FlatList> :
+                    </FlatList> :(userid === user.userId)?
                     <Pressable onPress={()=>navigation.navigate("CreateMilestone", {from:'explore'}) }>
                         <View style={[styles.milestoneEmptyContainer]}>
                             <View style={{alignItems:"center",alignSelf:"center", justifyContent:"space-evenly"}}>
@@ -75,7 +77,7 @@ const MilestoneList = () => {
                                 fontSize:(windowH>900)?12:11, paddingTop:6}}>Add a new milestone...</Text>
                             </View>
                         </View>
-                    </Pressable>
+                    </Pressable>:null
                 }
                 </View>   
 
@@ -108,6 +110,7 @@ const styles = StyleSheet.create({
     milestoneList: {
         minWidth:windowW*0.8,
         alignSelf:"center",
+        maxHeight:(((windowH*0.0756)+16)*7)-4,
         borderRadius: 8,
     },
     milestoneHeaderContainer: {

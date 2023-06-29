@@ -16,7 +16,6 @@ import SharedGroupPreferences from 'react-native-shared-group-preferences';
 import RNFS from 'react-native-fs'
 import RNFetchBlob from 'rn-fetch-blob'
 import Constants from 'expo-constants';
-import ImgToBase64 from 'react-native-image-base64';
 
 
 const windowW = Dimensions.get('window').width
@@ -52,19 +51,18 @@ const Feed = ({route}) => {
             try {
                 const response = await RNFetchBlob.config({ fileCache: true }).fetch('GET', imageUrl);
                 const base64Data = await response.base64();
-                return base64Data
+                return base64Data 
               } catch (error) {
                 console.log('Error fetching and converting image:', error);
               }
         }
      };
     const handleWidget = async () => {
-        //const photoPromise = fetchContent(widgetImage)
         const timePromise = handleDate(timestamp)
-       // var fileExt = (widgetImage !== undefined)?widgetImage.toString().split('.').pop():'jpg'
+        var fileExt = (widgetImage !== undefined)?widgetImage.toString().split('.').pop():'jpg'
         const time = await timePromise
-        //const photo = await photoPromise
-
+        const prefixString = `data:image/${fileExt};base64,`
+        //const photo = await fetchContent(widgetImage)
         const widgetData = {
             text: `${widgetText} posted ${time === 'now' || time === 'yesterday' ? time+'.':time + ' ago.'}`
         }

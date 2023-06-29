@@ -308,7 +308,45 @@ app.get('/api/getwidgetpost/:userid', (req, res) => {
         }
     })
 })
-
+/* profile */
+app.get('/api/getuserdetails/:id', (req, res) => {
+    const id = req.params.id
+    const sql = 'SELECT users.*, COUNT(DISTINCT idposts) as count FROM milestone_db.userposts ' +
+                'INNER JOIN milestone_db.users ON id = ownerid '+
+                'WHERE id = ?;'
+    db.query(sql, [id], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
+app.get('/api/getjoinedmilestones/:id', (req, res) => {
+    const id = req.params.id
+    const sql = 'SELECT DISTINCT milestones.*, '+
+    '(CASE '+
+    'WHEN ((SELECT favoriteid FROM milestone_db.users WHERE id = ?) = 0) THEN 0 '+
+    'WHEN (milestones.idmilestones = (SELECT favoriteid FROM milestone_db.users WHERE id = ?)) THEN 1 '+
+    'ELSE 0 '+
+    'END) as isfavorite, '+
+    '(CASE '+
+    'WHEN (milestones.idmilestones NOT IN(SELECT idmilestones FROM milestone_db.members WHERE memberid = ?))THEN milestones.date '+
+    'WHEN (members.date > milestones.date AND members.memberid = 1) THEN members.date '+
+    'ELSE milestones.date '+
+    'END) as timestamp FROM milestone_db.milestones '+
+    'LEFT JOIN (SELECT DISTINCT * FROM milestone_db.members) as members '+
+    'ON (members.idmilestones = milestones.idmilestones AND members.memberid = ?) '+
+    'WHERE memberid = ? OR ownerid = ? '+
+    'ORDER BY isfavorite DESC, timestamp DESC;' 
+    db.query(sql, [id, id, id, id, id, id], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.send(result)
+        }
+    })
+})
 app.post('/api/registeruser', (req, res)=> {
     const name = req.body.username
     const milestones = req.body.milestones
