@@ -17,7 +17,6 @@ import RNFS from 'react-native-fs'
 import RNFetchBlob from 'rn-fetch-blob'
 import Constants from 'expo-constants';
 
-
 const windowW = Dimensions.get('window').width
 const windowH = Dimensions.get('window').height
 const PAGE_SIZE = 10;
@@ -46,6 +45,8 @@ const Feed = ({route}) => {
     const [widgetImage, setWidgetImage] = useState()
     const [timestamp, setTimestamp] = useState('now')
     const [rendered, setRendered] = useState(false)
+    const { SharedContainer } = NativeModules;
+
     const fetchContent = async (imageUrl) => {  // for base64 encoding; doesn't work with widget
         if (imageUrl) {
             try {
@@ -54,24 +55,47 @@ const Feed = ({route}) => {
                 return base64Data 
               } catch (error) {
                 console.log('Error fetching and converting image:', error);
-              }
+              }   
         }
      };
+    const saveImage = async (imageUrl) => {
+        const path = RNFS.DocumentDirectoryPath + '/image.jpg';
+        if (imageUrl) {
+            const fileExists = await RNFS.exists(path)
+            if (fileExists) {
+                await RNFS.unlink(path)
+                console.log("removed existing path: ", path) 
+            }
+            await RNFetchBlob.config({
+                fileCache: true,
+                path: path,
+            })
+            .fetch('GET', imageUrl)
+            console.log('Image has been saved to:', path);
+            return path
+        } else {
+            console.log('no image provided')
+            return null
+        }
+    }
     const handleWidget = async () => {
-        const timePromise = handleDate(timestamp)
-        var fileExt = (widgetImage !== undefined)?widgetImage.toString().split('.').pop():'jpg'
-        const time = await timePromise
-        const prefixString = `data:image/${fileExt};base64,`
-        //const photo = await fetchContent(widgetImage)
+        // var fileExt = (widgetImage !== undefined)?widgetImage.toString().split('.').pop():'jpg'
+        // const prefixString = `data:image/${fileExt};base64,`
+        // const photo = await fetchContent(widgetImage)
+
+        
+        const time = await handleDate(timestamp)
+        const photo = await saveImage(widgetImage)
         const widgetData = {
             text: `${widgetText} posted ${time === 'now' || time === 'yesterday' ? time+'.':time + ' ago.'}`
         }
         const widgetPhoto = {
-            data:widgetImage
+            data:photo
         }
         try {
             await SharedGroupPreferences.setItem("widgetKey", widgetData, group)
             await SharedGroupPreferences.setItem("widgetImage", widgetPhoto, group)
+            await SharedGroupPreferences.setItem("widgetDataKey", widgetPhoto, group)
             console.log("data sent")
         } catch (error) {
             console.log("didnt work")

@@ -1,5 +1,5 @@
 import  React, {useState, useEffect, useContext, useRef} from "react";
-import { Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, ScrollView, Dimensions, Animated} from "react-native";
+import { Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, ScrollView, Dimensions, Animated, NativeModules} from "react-native";
 import { Icon } from 'react-native-elements'
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Footer from './Footer'
@@ -68,6 +68,7 @@ const Profile = ({route}) => {
     const [isFriend, setIsFriend] = useState(false)
     const [userToken, setUserToken] = useState()
     const [friends, setFriends] = useState([])
+    const { SharedContainer } = NativeModules;
 
     const friendMessage = {
         to: userToken,
@@ -182,11 +183,19 @@ const Profile = ({route}) => {
     }
     const testWidget = async () => {
         try {
+            const sharedPath = await SharedContainer.getSharedContainerPath()
+            console.log(sharedPath)
+        } catch(error) {
+            console.log(error)
+        }
+        try {
             const widgetData = await SharedGroupPreferences.getItem("widgetKey", group)
             const widgetImage = await SharedGroupPreferences.getItem("widgetImage", group)
-            if (widgetData) {
+            const widgetPath = await SharedGroupPreferences.getItem("widgetDataKey", group)
+            if (widgetData && widgetImage && widgetPath) {
                 console.log(widgetData)
-                console.log(widgetImage)
+                console.log(widgetImage.data.length)
+                console.log(widgetPath)
             }
             else {
                 console.log("data not found")
@@ -197,7 +206,6 @@ const Profile = ({route}) => {
     }
     function handleTest() {
         testWidget()
-        console.log(milestones[0])
     }
 
     function handlePress() {

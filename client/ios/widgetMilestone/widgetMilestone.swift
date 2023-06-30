@@ -31,6 +31,7 @@ func getWidgetImage(_ imageDataString: String?) -> UIImage {
     }
     return UIImage(data: imageData) ?? UIImage()
 }
+
 struct WidgetData: Decodable {
   var text: String
 }
@@ -74,16 +75,17 @@ struct Provider: IntentTimelineProvider {
           if let parsedImageData = try? decoder.decode(WidgetImage.self, from: imageData!) {
             // username, date and image are parsed
             let urlString = parsedImageData.data
-         
             let nextRefresh = Calendar.current.date(byAdding: .minute, value: 1, to: entryDate)!
             let entry = SimpleEntry(date: nextRefresh, configuration: configuration, text: parsedData.text, imageData:urlString)
             let timeline = Timeline(entries: [entry], policy: .atEnd)
             completion(timeline)
           } // username, date parsed but image is not
-          let nextRefresh = Calendar.current.date(byAdding: .minute, value: 1, to: entryDate)!
-          let entry = SimpleEntry(date: nextRefresh, configuration: configuration, text: "image not parsed", imageData:"no image")
-          let timeline = Timeline(entries: [entry], policy: .atEnd)
-          completion(timeline)
+          else {
+            let nextRefresh = Calendar.current.date(byAdding: .minute, value: 1, to: entryDate)!
+            let entry = SimpleEntry(date: nextRefresh, configuration: configuration, text: "image not parsed", imageData:"no image")
+            let timeline = Timeline(entries: [entry], policy: .atEnd)
+            completion(timeline)
+          }
         } else {
           // neither could be parsed
           print("Could not parse data")
@@ -126,7 +128,30 @@ struct widgetMilestoneEntryView : View {
       
       VStack {
         HStack {
-     //     if let imageDataString = entry.imageData {
+          let fileManager = FileManager.default
+          if let containerURL = fileManager.containerURL(forSecurityApplicationGroupIdentifier: "group.com.ajiaron.milestonenative") {
+              let imageDir = containerURL.appendingPathComponent("image.jpg").path
+              Text(imageDir)
+                .bold()
+                .foregroundColor(.white)
+              // Use imagePath to access the image
+          }
+          if let imagePath = try? Data(contentsOf: URL(fileURLWithPath: entry.imageData)),
+             let uiImage = UIImage(data:imagePath) {
+              Image(uiImage: uiImage)
+              .resizable()
+              .aspectRatio(contentMode: .fit)
+          } else {
+            if let imagePath = try? Data(contentsOf: URL(fileURLWithPath: entry.imageData)) {
+              Text(String(entry.imageData.count))
+                  .bold()
+                  .foregroundColor(.white)
+            }
+            
+          //  Text("cannot process image")
+          //      .bold()
+          //      .foregroundColor(.white)
+          }
      //       Image(uiImage: getWidgetImage(imageDataString))
      //                    .resizable()
      //                    .aspectRatio(contentMode: .fit)
@@ -183,7 +208,6 @@ struct widgetMilestoneEntryView : View {
             .font(.system(size: 16.5))
         }
       }.padding(20)
-        .padding(.bottom,1)
     }
   }
 }

@@ -20,6 +20,8 @@
 		4E63BBC02A4A30E400A1A300 /* widgetMilestone.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 4E63BBBC2A4A30E300A1A300 /* widgetMilestone.intentdefinition */; };
 		4E63BBC12A4A30E400A1A300 /* widgetMilestone.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 4E63BBBC2A4A30E300A1A300 /* widgetMilestone.intentdefinition */; };
 		4E63BBC42A4A30E400A1A300 /* widgetMilestoneExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4E63BBB22A4A30E200A1A300 /* widgetMilestoneExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4E67BDD02A4E678700718AD3 /* SharedContainerBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E67BDCF2A4E678700718AD3 /* SharedContainerBridge.m */; };
+		4E67BDD22A4E796B00718AD3 /* SharedContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E67BDD12A4E796B00718AD3 /* SharedContainer.swift */; };
 		4E82E77F2A4921380068FF55 /* URLImage in Frameworks */ = {isa = PBXBuildFile; productRef = 4E82E77E2A4921380068FF55 /* URLImage */; };
 		4E82E7812A4921380068FF55 /* URLImageStore in Frameworks */ = {isa = PBXBuildFile; productRef = 4E82E7802A4921380068FF55 /* URLImageStore */; };
 		4ED650A52A4A810700532DB7 /* URLImage in Frameworks */ = {isa = PBXBuildFile; productRef = 4ED650A42A4A810700532DB7 /* URLImage */; };
@@ -77,6 +79,10 @@
 		4E63BBBF2A4A30E400A1A300 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4E63BBC82A4A31FF00A1A300 /* widgetMilestoneExtensionDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = widgetMilestoneExtensionDebug.entitlements; sourceTree = "<group>"; };
 		4E63BBC92A4A322F00A1A300 /* widgetMilestoneExtensionRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = widgetMilestoneExtensionRelease.entitlements; sourceTree = "<group>"; };
+		4E67BDCE2A4E678700718AD3 /* SharedContainerBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SharedContainerBridge.h; path = milestonenative/SharedContainerBridge.h; sourceTree = "<group>"; };
+		4E67BDCF2A4E678700718AD3 /* SharedContainerBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = SharedContainerBridge.m; path = milestonenative/SharedContainerBridge.m; sourceTree = "<group>"; };
+		4E67BDD12A4E796B00718AD3 /* SharedContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SharedContainer.swift; path = milestonenative/SharedContainer.swift; sourceTree = "<group>"; };
+		4E67BDD32A4E79AC00718AD3 /* milestonenative-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "milestonenative-Bridging-Header.h"; path = "milestonenative/milestonenative-Bridging-Header.h"; sourceTree = "<group>"; };
 		4ED650A82A4A887900532DB7 /* outline8.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = outline8.png; sourceTree = "<group>"; };
 		4ED650B12A4B8B9F00532DB7 /* outline11.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = outline11.png; sourceTree = "<group>"; };
 		4ED650B72A4B8CC800532DB7 /* outline13.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = outline13.png; sourceTree = "<group>"; };
@@ -123,12 +129,16 @@
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
+				4E67BDD32A4E79AC00718AD3 /* milestonenative-Bridging-Header.h */,
+				4E67BDD12A4E796B00718AD3 /* SharedContainer.swift */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
 				834F5A517630428CADA19352 /* noop-file.swift */,
+				4E67BDCE2A4E678700718AD3 /* SharedContainerBridge.h */,
+				4E67BDCF2A4E678700718AD3 /* SharedContainerBridge.m */,
 			);
 			name = milestonenative;
 			sourceTree = "<group>";
@@ -433,9 +443,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
+				4E67BDD02A4E678700718AD3 /* SharedContainerBridge.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				4E63BBC12A4A30E400A1A300 /* widgetMilestone.intentdefinition in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
+				4E67BDD22A4E796B00718AD3 /* SharedContainer.swift in Sources */,
 				D868FF8D875142AD90CA75B2 /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -494,7 +506,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ajiaron.milestonenative;
 				PRODUCT_NAME = milestone;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = "milestonenative/milestonenative-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -528,6 +542,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ajiaron.milestonenative;
 				PRODUCT_NAME = milestone;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = "milestonenative/milestonenative-Bridging-Header.h";
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
