@@ -185,7 +185,7 @@ struct widgetMilestoneEntryView : View {
             }
 
             //       Spacer()
-            .padding(.top, 14)
+            .padding(.top, 14.5)
             .padding(.trailing, 15.5)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
           } else {
@@ -221,7 +221,7 @@ struct widgetMilestoneEntryView : View {
       }.padding(.top,20)
         .padding(.trailing, 20)
         .padding(.leading, 20)
-        .padding(.bottom, 16)
+        .padding(.bottom, 17)
     }
   }
 }

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import { Animated, ActivityIndicator, Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, Switch, Dimensions, TouchableOpacity } from "react-native";
+import { Animated, ActivityIndicator, Text, StyleSheet, View, Image, FlatList, Pressable, TextInput, Switch, Dimensions, TouchableOpacity, Alert} from "react-native";
 import * as Device from 'expo-device'
 import { Icon } from 'react-native-elements'
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 import Footer from './Footer'
 import PostItem from "./PostItem";
 import FastImage from "react-native-fast-image";
@@ -129,11 +129,13 @@ const MilestonePage = ({route}) => {
     const [timestamp, setTimestamp] = useState()
     const [token, setToken] = useState()
     const [members, setMembers] = useState([])
+    const [isMember, setIsMember] = useState(false)
     const [currentPage, setCurrentPage] = useState()
     const scrollY = useRef(new Animated.Value(0)).current;
     const animatedvalue = useRef(new Animated.Value(0)).current;
     const animatedcolor = useRef(new Animated.Value(0)).current;
     const animatedheight = useRef(new Animated.Value(0)).current;
+    const isFocused = useIsFocused()
     var fileExt = (image !== undefined)?image.toString().split('.').pop():'calender'
     const handleLoad = () => {
         if (!isFetched) {
@@ -196,6 +198,42 @@ const MilestonePage = ({route}) => {
                 ' Year':Math.floor(Math.abs(newDate-postDate)/31536000000).toString()+' Years')
         }
     }, [])
+    function joinMilestone() {
+        axios.post(`http://${user.network}:19001/api/postmember`, 
+        {idmilestones:route.params.milestone.id, userid:user.userId})
+        .then(() => {
+            axios.post(`http://${user.network}:19001/api/postnotification`,
+            {requesterId:user.userId, recipientId:ownerId, type:'join', milestoneId:route.params.milestone.id})
+            .then(() => {
+                console.log('join notified')
+            }) 
+            .catch((error)=> console.log(error))
+            console.log('new member added')
+            setIsMember(true)
+        }).catch(error=>console.log(error))
+    }
+    function leaveMilestone() {
+        axios.delete(`http://${user.network}:19001/api/removemember`, {data: {userid:user.userId, idmilestones:route.params.milestone.id}})
+        .then((response)=> {
+            setIsMember(false)
+            console.log("removed member")
+        }).catch(error=>console.log(error))
+    }
+    const DeleteAlert = () => {
+        return new Promise((resolve, reject) => {
+            Alert.alert('Leave this milestone?', 'Any posts you have made here will stay archived.', [{
+                text:'Cancel',
+                onPress: () => resolve(false),
+                style: 'cancel'
+            },
+            {
+                text:"Leave",
+                onPress: () => resolve(true),
+                style:{fontFamily:"Inter", color:"red"}
+            }
+            ], {cancelable:false})
+        })
+    }
     function handlePress() {    // pass props to EditMilestone
         navigation.navigate("EditMilestone", {id:route.params.milestone.id, title:title, description:description, src:image,
         postable:postPermission, viewable:viewPermission, duration:duration, token:token})
@@ -208,6 +246,13 @@ const MilestonePage = ({route}) => {
             .then(() => {console.log('favorite updated')})
             .catch((error)=> console.log(error))
         }
+    }
+    function handleLeave() {
+        DeleteAlert().then((resolve)=> {
+            if (resolve) {
+                  leaveMilestone()
+            }}
+        )
     }
     const slideUp=() =>{    // for loading animation
         Animated.timing(animatedvalue,{
@@ -222,8 +267,8 @@ const MilestonePage = ({route}) => {
        // console.log('Views:', viewPermission)
        // console.log(timestamp)
        // console.log(route.params.milestone.id)
-       // console.log(members)
-        console.log(postList[0], postList.length)
+        console.log(members)
+       //console.log(postList[0], postList.length)
        // console.log(postList)
     }
     function checkDate() {
@@ -236,8 +281,9 @@ const MilestonePage = ({route}) => {
         axios.get(`http://${user.network}:19001/api/getmembers/${route.params.milestone.id}`)
         .then((response)=>{
             setMembers(response.data)
+            setIsMember(response.data.filter((item)=>item.id === user.userId).length > 0)
         })
-    }, [])
+    }, [isFocused])
     useEffect(()=> {    // fetch milestone info
         if (route) {
             setMilestoneId(route.params.milestone.id)
@@ -523,6 +569,21 @@ const MilestonePage = ({route}) => {
                         </ScrollView>
                     </View>
                 }
+                {(!isMember && (ownerId !== user.userId))&&
+                 <Pressable onPress={joinMilestone} style={[styles.buttonContainer]}>
+                     <View style={[styles.deletePostButtonContainer, {minHeight:(windowH>900)?windowH*0.035: windowH * 0.0375}]}>
+                         <Text style={[styles.deletePostButtonText, {fontSize:(windowW > 400)?14.5:13.5}]}>Join Milestone</Text>
+                     </View>
+                 </Pressable>
+                }
+                {
+                    (isMember && (ownerId !== user.userId))?    
+                    <Pressable onPress={handleLeave} style={[styles.buttonContainer]}>
+                        <View style={[styles.leaveButtonContainer, {minHeight:(windowH>900)?windowH*0.035: windowH * 0.0375}]}>
+                            <Text style={[styles.deletePostButtonText, {fontSize:(windowW > 400)?14.5:13.5}]}>Leave Milestone</Text>
+                        </View>
+                    </Pressable>:null
+                }
                 {
                     (ownerId===user.userId)?    
                     <Pressable onPress={handlePress} style={[styles.buttonContainer]}>
@@ -745,6 +806,20 @@ const styles = StyleSheet.create({
         justifyContent:"space-between",
         minHeight:windowH*0.075,
         minWidth: windowW*0.85,
+    },
+    leaveButtonContainer: {
+        shadowColor: '#000',
+        shadowOffset: {
+        width: 0,
+        height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        minWidth:windowW * 0.8,
+        backgroundColor:"#9c3a53",
+        borderRadius:4,
+        justifyContent:"center",
+        alignSelf:"center",
     },
     deletePostButtonContainer: {
         shadowColor: '#000',
