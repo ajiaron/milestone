@@ -14,11 +14,11 @@ class SharedContainer: NSObject {
         return true
     }
 
-    @objc(getSharedContainerPath:withRejecter:)
-    func getSharedContainerPath(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-        let fileManager = FileManager.default
+    @objc(getSharedContainerPath:rejecter:)
+    func getSharedContainerPath(_ resolve: RCTPromiseResolveBlock, rejecter reject: RCTPromiseRejectBlock) -> Void {
+      let fileManager = FileManager.default
         if let containerURL = fileManager.containerURL(forSecurityApplicationGroupIdentifier: "group.com.ajiaron.milestonenative") {
-            resolve(containerURL.path)
+            resolve(containerURL.appendingPathComponent("image.png").path)
         } else {
             reject("SharedContainerError", "Could not get shared container path", nil)
         }

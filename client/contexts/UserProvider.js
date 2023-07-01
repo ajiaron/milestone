@@ -23,7 +23,7 @@ const UserProvider = ({children}) => {
         quality:quality, setQuality:setQuality,
         logged:logged, setLogged:setLogged,
         notifications:notifications, setNotifications:setNotifications,
-        token:token, setToken:setToken
+        token:token, setToken:setToken,
         }}>
           {children}
         </userContext.Provider>

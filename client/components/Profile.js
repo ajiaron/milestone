@@ -182,12 +182,7 @@ const Profile = ({route}) => {
         // handle friend request here
     }
     const testWidget = async () => {
-        try {
-            const sharedPath = await SharedContainer.getSharedContainerPath()
-            console.log(sharedPath)
-        } catch(error) {
-            console.log(error)
-        }
+
         try {
             const widgetData = await SharedGroupPreferences.getItem("widgetKey", group)
             const widgetImage = await SharedGroupPreferences.getItem("widgetImage", group)
@@ -204,8 +199,16 @@ const Profile = ({route}) => {
             console.log(error)
         }
     }
+    const testModule = async() => {
+        try {
+            const sharedPath = await SharedContainer.getSharedContainerPath()
+            console.log(sharedPath)
+        } catch(error) {
+            console.log(error)
+        }
+    }
     function handleTest() {
-        testWidget()
+        testModule()
     }
 
     function handlePress() {

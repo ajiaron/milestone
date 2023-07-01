@@ -161,7 +161,7 @@ const PostItem = ({username, caption, src, image, postId, liked, isLast, milesto
         } 
     }
     const handleSelect = () => {
-        //console.log(image)
+        console.log(image)
      //   console.log(userToken)
      //   console.log(fileExt)
         setIsActive(!isActive)

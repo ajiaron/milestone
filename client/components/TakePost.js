@@ -144,7 +144,7 @@ const TakePost = ({route}) => {
                 shareAsync(photo)
             }
         }
-        let savePhoto = () => {
+        let savePhoto = () => {         // saves to you photos app
             if (video !== undefined) {
                 MediaLibrary.saveToLibraryAsync(video)
             } else {

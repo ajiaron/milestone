@@ -15,6 +15,7 @@ import pushContext from "../contexts/pushContext";
 import SharedGroupPreferences from 'react-native-shared-group-preferences';
 import RNFS from 'react-native-fs'
 import RNFetchBlob from 'rn-fetch-blob'
+import ImageResizer from 'react-native-image-resizer';
 import Constants from 'expo-constants';
 
 const windowW = Dimensions.get('window').width
@@ -59,31 +60,34 @@ const Feed = ({route}) => {
         }
      };
     const saveImage = async (imageUrl) => {
-        const path = RNFS.DocumentDirectoryPath + '/image.jpg';
         if (imageUrl) {
-            const fileExists = await RNFS.exists(path)
-            if (fileExists) {
-                await RNFS.unlink(path)
-                console.log("removed existing path: ", path) 
+            try {
+                const {uri: resizedImagePath} = await ImageResizer.createResizedImage(
+                    imageUrl,145,145,'PNG',100);
+                const sharedPath = await SharedContainer.getSharedContainerPath()
+                const fileExists = await RNFS.exists(sharedPath)
+                if (fileExists) {
+                    await RNFS.unlink(sharedPath)
+                    console.log("removed existing path: ", sharedPath) 
+                }
+                await RNFS.moveFile(resizedImagePath, sharedPath)
+                //const res = await RNFetchBlob.config({
+                //    fileCache: true,
+                    //path: sharedPath,
+               // })
+               // .fetch('GET', imageUrl)
+                //console.log('Image has been saved to:', res.path());
+                console.log('Image has been resized and saved to:', sharedPath);
+                return sharedPath
+            } catch(error) {
+                console.log(error)
             }
-            await RNFetchBlob.config({
-                fileCache: true,
-                path: path,
-            })
-            .fetch('GET', imageUrl)
-            console.log('Image has been saved to:', path);
-            return path
         } else {
             console.log('no image provided')
             return null
         }
     }
     const handleWidget = async () => {
-        // var fileExt = (widgetImage !== undefined)?widgetImage.toString().split('.').pop():'jpg'
-        // const prefixString = `data:image/${fileExt};base64,`
-        // const photo = await fetchContent(widgetImage)
-
-        
         const time = await handleDate(timestamp)
         const photo = await saveImage(widgetImage)
         const widgetData = {
@@ -95,7 +99,6 @@ const Feed = ({route}) => {
         try {
             await SharedGroupPreferences.setItem("widgetKey", widgetData, group)
             await SharedGroupPreferences.setItem("widgetImage", widgetPhoto, group)
-            await SharedGroupPreferences.setItem("widgetDataKey", widgetPhoto, group)
             console.log("data sent")
         } catch (error) {
             console.log("didnt work")
