@@ -150,7 +150,7 @@ struct widgetMilestoneEntryView : View {
                 Image(uiImage: uiImage)
                   .resizable()
                   .scaledToFill()
-                  .frame(width: 64, height: 73)
+                  .frame(width: 62, height: 73)
                // .aspectRatio(contentMode: .fit)
                   .clipShape(RoundedRectangle(cornerRadius:10))
                   .clipped()
@@ -221,7 +221,7 @@ struct widgetMilestoneEntryView : View {
       }.padding(.top,20)
         .padding(.trailing, 20)
         .padding(.leading, 20)
-        .padding(.bottom, 17)
+        .padding(.bottom, 16)
     }
   }
 }
